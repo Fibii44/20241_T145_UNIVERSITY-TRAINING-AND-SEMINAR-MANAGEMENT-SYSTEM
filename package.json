@@ -2,8 +2,9 @@
   "name": "20241_t145_university-training-and-seminar-management-system",
   "version": "1.0.0",
   "description": "This system helps manage and organize university training sessions and seminars. It includes features such as scheduling management, user registration, attendance tracking, and certificate generation. It streamlines the management process for CITL and Department Representative, ensuring that training events run smoothly and that participants receive timely updates and feedback.",
-  "main": "index.js",
+  "main": "App.js",
   "scripts": {
+    "test": "nodemon App.js",
     "startDev": "nodemon user_routes.js",
     "startDev1": "nodemon admin_routes.js"
   },
@@ -11,7 +12,10 @@
   "author": "James Rio",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.21.1"
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "mongoose": "^8.7.2"
   },
   "devDependencies": {
     "nodemon": "^3.1.7"

@@ -1,17 +1,17 @@
 const express = require('express');
-const app = express();
+const userRoutes = express.Router()
 
 //Landing Page
-app.get('/', (req,res) => {
+userRoutes.get('/', (req,res) => {
     res.send('Landing Page');
 });
 
 //Login Page
-app.get('/login', (req, res) => {
+userRoutes.get('/u/login', (req, res) => {
     res.send('(Login Input Here)')
 });
 /*
-app.post('/login', (req, res) => {
+userRoutes.post('/login', (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
 
@@ -28,43 +28,52 @@ app.post('/login', (req, res) => {
 
 
 //Events
-app.get('/events', (req,res) => {
+userRoutes.get('/u/events', (req,res) => {
     res.send('List of events page');
 });
+
 //Open an event
-app.get('/events/:id', (req,res) => {
+userRoutes.get('/u/events/:id', (req,res) => {
     res.send('COT Mental Health Awareness');
     res.send('Register Button');
 });
+
 //Registration and Attendance of an event
-app.get('/events/:id/reg&att', (req,res) => {
+userRoutes.get('/u/events/:id/reg&att', (req,res) => {
     res.send('Attendance');
 });
+
 //Calendar with Google Calendar API
-app.get('/calendar', (req,res) => {
+userRoutes.get('/u/calendar', (req,res) => {
     res.send('Calendar Page');
 });
+
 //User Profile Page
-app.get('/profile', (req,res) => {
+userRoutes.get('/u/profile', (req,res) => {
     res.send('Profile Page')
 });
+
 //User Certificates Page
-app.get('/certificate', (req,res) => {
+userRoutes.get('/u/certificate', (req,res) => {
     res.send('certificates')
 });
-app.get('/certificate/:certificateID', (req, res) => {
+userRoutes.get('/u/certificate/:certificateID', (req, res) => {
 
 });
 //history page
-app.get('/history', (req, res) =>{
+userRoutes.get('/u/history', (req, res) =>{
 
 });
-app.get('/history/:eventID', (req, res) =>{
+userRoutes.get('/u/history/:eventID', (req, res) =>{
 
 });
+
 //Notification
-app.get('/notification', (req, res) => {
+userRoutes.get('/u/notification', (req, res) => {
 
 });
 
-app.listen(3000);
+//Events
+
+
+module.exports = userRoutes;
