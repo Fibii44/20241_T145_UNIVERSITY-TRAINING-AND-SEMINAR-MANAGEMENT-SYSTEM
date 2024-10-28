@@ -1,0 +1,439 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Nunito Sans', sans-serif;
+}
+
+body,
+html,
+#root {
+  height: 100%;
+}
+
+.dashboard-container {
+  display: flex;
+  height: 100vh;
+  /* Full height of the viewport */
+  width: 100vw;
+}
+
+/*Sidebar*/
+.sidebar {
+  width: 260px;
+  height: auto;
+  background-color: #000353;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  transition: width 0.3s ease;
+}
+
+.sidebar-title {
+  display: flex;
+  font-size: 16px;
+  gap: 5px;
+}
+
+.buksu {
+  color: white;
+}
+
+.engage {
+  color: #ffc107;
+}
+
+
+
+/* Sidebar Collapsed */
+.sidebar.collapsed {
+  width: 70px;
+  transition: width 0.3s ease;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 20px;
+  transition: none;
+}
+
+.menu-toggle {
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 10px 1px;
+  display: flex;
+}
+
+.menu-toggle:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+
+.sidebar .menu-items a {
+  color: #fff; /* Specific to sidebar links */
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  list-style: none;
+  text-decoration: none; /* Remove underline from links */
+}
+
+.sidebar ul li .icon {
+  margin-right: 24px;
+  display: flex;
+  align-items: center;
+  height: 24px;
+  width: 24px;
+}
+
+.sidebar ul li.active {
+  background-color: #ffc107; 
+  color: #15225a; 
+  font-weight: bold; 
+  border-radius: 10px; 
+  margin: 3px 1px; 
+}
+
+.sidebar ul li.active a {
+  color: #15225a; 
+  text-decoration: none; 
+}
+
+.sidebar ul li:hover {
+  background-color: #1e316b;
+}
+
+/*Sidebar-footer*/
+
+.sidebar-footer {
+  margin-top: auto;
+}
+
+.sidebar-footer-item a{
+  padding: 15px 20px;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  text-decoration: none; /* Remove underline from links */
+}
+
+.sidebar-footer-item.active {
+  background-color: #ffc107;
+  color: #15225a;
+  font-weight: bold;
+  border-radius: 10px;
+  margin: 3px 1px;
+}
+
+.sidebar-footer-item:hover {
+  background-color: #1e316b;
+}
+
+.sidebar.collapsed ul li .icon {
+  display: block;
+}
+
+.sidebar.collapsed ul li span {
+  display: none;
+}
+
+/*Dasboard Contents*/
+.content {
+  flex: 1;
+  padding: 0;
+  background-color: #F5F6FA;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: #000353;
+  color: #fff;
+  width: 100%;
+  margin: 0;
+  position: relative;
+}
+
+.topbar .search {
+  width: 100%;
+  max-width: 400px;
+}
+
+.topbar .search input {
+  width: 100%;
+  padding: 8px;
+  border: none;
+  background-color: #f4f6f8;
+  color: black;
+  border-radius: 20px;
+}
+
+.dashboard {
+  display: flex;
+  gap: 15px;
+  margin: 20px 20px;
+}
+
+.card {
+  flex: 1;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  color: rgb(100, 85, 85);
+}
+
+.card h3 {
+  margin-bottom: 10px;
+  font-weight: normal;
+  color: #888;
+}
+
+.card p {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.chart {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  margin: 20px 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  color: #000;
+  margin-bottom: 20px;
+  /* Adjusts spacing below the chart */
+}
+
+.chart-header {
+  display: flex;
+  margin-top: 10px;
+  justify-content: center;
+
+}
+
+.header-item {
+  margin: 0 15px;
+  display: flex;
+  align-items: center;
+}
+
+.color-box {
+  width: 10px;
+  height: 10px;
+  margin-right: 5px;
+  border-radius: 10px;
+}
+
+.table-container {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+table th,
+table td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  color: black;
+}
+
+table th {
+  background-color: #f8f9fa;
+  color: black;
+}
+
+.table-striped {
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.dashboard-heading {
+  color: black;
+  margin-left: 20px;
+  margin-top: 10px;
+  font-size: 28px;
+}
+
+.userstat-heading {
+  color: black;
+  padding: 5px;
+  font-size: 28px;
+}
+
+.users-heading {
+  color: black;
+  padding: 5px;
+  font-size: 28px;
+}
+
+/* Top bar Profile */
+.profile {
+  display: flex;
+  align-items: center;
+  margin-right: 15px;
+}
+
+.profile img {
+  height: 40px;
+  width: auto;
+  margin-right: 8px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-left: 5px;
+  margin-right: 40px;
+}
+
+.name {
+  font-size: 18px;
+  color: #ffffff;
+  margin: 0;
+}
+
+.role {
+  font-size: 14px;
+  color: #ffc107;
+  margin: 0;
+}
+
+.dropdown-toggle {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #fff;
+  color: #000;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 150px;
+  z-index: 10;
+}
+
+.dropdown-toggle:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.dropdown-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.dropdown-menu ul li {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.dropdown-menu ul li:hover {
+  background-color: #f0f0f0;
+}
+
+.events-list {
+  display: flex;
+  flex-direction: column; /* Stack cards vertically */
+  gap: 20px; /* Space between event cards */
+  margin: 20px; /* Add margin for overall spacing */
+}
+
+.event-card {
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px; /* Add padding for content spacing */
+  display: flex;
+  flex-direction: column; /* Stack content vertically */
+}
+
+.event-image {
+  width: 100%; /* Make the image responsive */
+  height: auto; /* Maintain aspect ratio */
+  border-radius: 10px; /* Rounded corners for images */
+}
+
+.event-title {
+  font-size: 24px; /* Increased font size for titles */
+  color: #333; /* Darker color for better readability */
+  margin: 10px 0; /* Space around the title */
+}
+
+.event-description {
+  font-size: 16px; /* Description font size */
+  color: #666; /* Lighter color for descriptions */
+  margin-bottom: 10px; /* Space below the description */
+}
+
+.event-info {
+  display: flex; /* Flexbox for aligning icons and text */
+  gap: 15px; /* Space between the info items */
+  color: #555; /* Color for event info */
+}
+
+.event-actions {
+  display: flex; /* Use flex for button layout */
+  gap: 10px; /* Space between buttons */
+  margin-top: 10px; /* Space above actions */
+}
+
+.edit-button, .delete-button {
+  padding: 10px 15px; /* Padding for buttons */
+  border: none; /* Remove default border */
+  border-radius: 5px; /* Rounded corners */
+  cursor: pointer; /* Pointer cursor on hover */
+}
+
+.edit-button {
+  background-color: #ffc107; /* Edit button color */
+  color: #fff; /* Text color for buttons */
+}
+
+.delete-button {
+  background-color: #dc3545; /* Delete button color */
+  color: #fff; /* Text color for buttons */
+}
+
+.edit-button:hover, .delete-button:hover {
+  opacity: 0.9; /* Slight opacity change on hover */
+}
