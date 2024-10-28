@@ -1,0 +1,65 @@
+.home-background { 
+    position: relative;
+    background-image: url('src/assets/homebg.jpg');
+    background-size: cover;   
+    background-position: center;
+    height: 100vh;            
+    width: 100%;             
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column; /* Stack children vertically */
+}
+
+.overlay {
+    position: absolute; 
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 139, 0.308); 
+    z-index: 1; 
+}
+
+h3 {
+    color: white; /* White color for 'BukSU' */
+    margin-bottom: 10px; /* Space between h3 and search bar */
+    z-index: 2; /* Ensure h3 is above the overlay */
+    text-align: center; /* Center the h3 text */
+    font-size: 70px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.highlight {
+    color: #FFB800; /* Yellow color for 'Engage' */
+}
+
+/* SEARCH BAR ======================================*/
+.search-container {
+    display: flex;
+    align-items: center;
+    z-index: 2; /* Ensure the search bar is above the overlay */
+    margin-top: 10px; /* Optional: add space above search bar */
+}
+
+.search-bar {
+    width: 300px;          
+    padding: 10px;         
+    border: none;          
+    border-radius: 5px 0px 0px 5px;     
+    font-size: 16px;        
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); 
+    z-index: 2;
+}
+  
+.search-button {
+    padding: 10px 20px;     /* Padding for the button */
+    border: none;           /* Remove border */
+    border-radius: 0px 5px 5px 0px;  
+    background-color: #FFB800; /* Button background color */
+    color: #fff;            /* Text color */
+    font-size: 16px;        /* Font size */
+    cursor: pointer;        /* Pointer cursor */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Shadow for button */
+    z-index: 2;
+}

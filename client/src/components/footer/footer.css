@@ -1,0 +1,99 @@
+/* Set up full-height layout */
+body, #root, .NavbarWithSidebar-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+}
+
+/* Main content expands to push footer to bottom */
+.main-content {
+    flex-grow: 1;
+}
+
+/* Footer styling */
+footer {
+    background-color: #ffffff;
+    padding: 20px;
+    text-align: center;
+}
+
+/* Container styling */
+.footer-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+/* Make footer-left-top full width and responsive */
+.footer-left-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+/* Logo styling */
+.footer-left-top img {
+    width: 86px;
+    height: auto;
+    margin-right: 15px;
+}
+
+/* Ensure location and info sections are spaced evenly */
+.location, .info {
+    flex: 1; /* Allow sections to take equal width */
+    min-width: 150px; /* Set minimum width for smaller screens */
+    margin: 10px; /* Add space around sections */
+}
+
+/* Align content within each section to the left */
+.footer-left-top .location,
+.footer-left-top .info {
+    text-align: left;
+}
+
+/* Header and content styling for info section */
+.footer-left-top h3 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: bold;
+    color: #000353;
+    margin: 0;
+    font-size: 20px;
+    transform: translateY(8px);
+}
+
+.footer-left-top p {
+    font-size: 16px;
+    font-family: 'Montserrat', sans-serif;
+    margin: 4px 0;
+}
+
+.footer-left-top .footer-header p {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.footer-left-top .footer-content p {
+    font-size: 14px;
+}
+
+/* LEFT BOTTOM FOOTER ======================================================== */
+.footer-left-bottom {
+    margin-top: 10px;
+    text-align: left;
+}
+
+.footer-left-bottom h3 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 18px;
+    font-weight: bold;
+    color: #000353;
+    margin: 0;
+}
+
+.footer-left-bottom p {
+    font-size: 14px;
+    font-family: 'Montserrat', sans-serif;
+}
