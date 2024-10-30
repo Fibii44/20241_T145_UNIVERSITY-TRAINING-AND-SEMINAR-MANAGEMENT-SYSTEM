@@ -1,0 +1,202 @@
+
+.announcement {
+    position: fixed;          /* Fix the announcement at the top */
+    top: 0;                  /* Align it to the top of the viewport */
+    left: 0;                 /* Align to the left */
+    right: 0;                /* Align to the right */
+    background-color: white; /* Background color for announcement */
+    color: rgb(114, 114, 114);            /* Text color */        /* Padding around the text */
+    text-align: center;      /* Center text */
+    font-size: 16px;         /* Font size */
+    font-weight: lighter;
+    font-family: Arial, Helvetica, sans-serif;       /* Bold text */
+    height: 30px;   
+    padding-left: 20px;         /* Set a specific height */
+    display: flex;           /* Use flexbox for alignment */
+    align-items: center;   
+    z-index: 31;  /* Center content vertically */
+}
+/* Topbar */
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #000353;
+    padding: 10px 20px;
+    position: fixed;
+    top: 30px;
+    left: 0;
+    right: 0;
+    z-index: 999;
+    height: 42px;
+}
+
+/* Breadcrumb Button */
+.breadcrumb-button {
+    background-color: #000353;
+    border: none;
+    color: #fff;
+    font-size: 24px; /* Increase font size */
+    padding: 10px 15px; /* Add padding for larger button size */
+    cursor: pointer;
+    border-radius: 5px; /* Optional: add some rounding */
+    width: 50px; /* Adjust width if needed */
+    height: 50px; /* Adjust height if needed */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-buttons {
+    display: flex;
+    justify-content: space-around; /* Evenly space buttons */
+    flex: 1; /* Center section takes up equal space */
+}
+/* Right-side Navigation Buttons */
+.nav-buttons button {
+    background-color: transparent;
+    border: none;
+    color: #A8A8A8;
+    margin-left: 15px;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 8px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    
+}
+
+.nav-buttons a {
+    text-decoration: none;
+    color: inherit; /* Inherit the color from the parent button */
+}
+.nav-buttons .home{
+    color: #FFB800;
+}
+.nav-buttons .home:hover{
+    background-color: #000353;
+}
+
+.nav-buttons button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+}
+
+.topbar-icons {
+    display: flex;
+    align-items: center;
+    gap: 50px;
+    margin-right: 20px;
+}
+
+.notification-button, .profile-icon {
+    background: none;
+    border: none;
+    color: #FFB800;
+    font-size: 25px; /* Adjust icon size */
+    cursor: pointer;
+}
+
+.notification-button:hover, .profile-icon:hover {
+    color: #ddd;
+}
+
+/* Sidebar ===================================================*/
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: -290px; /* Hidden off-screen */
+    width: 250px;
+    height: 100%;
+    background-color: #000353; /* Matches topbar background */
+    color: #A8A8A8; /* Matches nav button color */
+    padding: 20px;
+    transition: left 0.3s ease;
+    z-index: 1000;
+    font-family: Arial, Helvetica, sans-serif; /* Matches topbar font */
+    font-size: 16px; /* Matches topbar button font size */
+    font-weight: bold; /* Matches topbar button font weight */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+/*BUKSU ENGAGE===========================*/
+.sidebar h3 {
+    text-align: center;
+    margin-top: 20px; /* Adds some spacing from the top */
+    font-size: 24px; /* Adjusts font size */
+    color: #fff; /* Default color for 'BukSU' */
+}
+
+.sidebar .highlight {
+    color: #FFB800; /* Color for 'Engage' */
+    font-weight: bold;
+}
+
+/* Sidebar open state */
+.sidebar.open {
+    left: 0; /* Slide-in */
+}
+
+/* Close Button in Sidebar */
+.close-btn {
+    background-color: #000353;
+    color: #FFB800;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+/* Sidebar List and Items */
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar li {
+    padding: 10px 20px;
+    font-size: 16px;
+    height: 30px;
+    color: #A8A8A8;
+    width: 100%; /* Takes full width of sidebar */
+    display: flex;
+    align-items: center; /* Centers items vertically */
+    gap: 16px;
+}
+
+.sidebar li:hover {
+    background-color: rgba(255, 255, 255, 0.2); /* Adds same hover effect */
+    border-radius: 4px;
+    color: #fff; /* For hover text color */
+}
+
+.sidebar-bottom {
+    display: flex;
+    flex-direction: column;
+    padding-top: 20px;
+    margin-top: auto;
+    margin-bottom: 50px;
+}
+
+.sidebar-button {
+    background: none;
+    border: none;
+    color: #A8A8A8;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 10px 0;
+    text-align: left;
+    font-weight: bold;
+}
+
+.sidebar-button:hover {
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+}
