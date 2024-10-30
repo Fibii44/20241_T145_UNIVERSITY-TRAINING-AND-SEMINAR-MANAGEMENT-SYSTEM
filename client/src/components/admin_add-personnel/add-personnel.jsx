@@ -19,7 +19,6 @@ const AddUserForm = () => {
   const departments = [
     'College of Arts and Sciences',
     'College of Business',
-    'College of Engineering',
     'College of Education',
     'College of Nursing',
     'College of Computer Studies',

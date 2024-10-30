@@ -24,7 +24,7 @@ function NavbarWithSidebar() {
                 <div className="nav-buttons">
                     <button className="home"> <Link to="/" className="home">HOME</Link></button>
                     <button><Link to="/events">EVENTS</Link></button>
-                    <button><Link to="./calendar.jsx">CALENDAR</Link></button>
+                    <button><Link to="./calendar">CALENDAR</Link></button>
                 </div>
                 <div className="topbar-icons">
                     <button className="notification-button">
