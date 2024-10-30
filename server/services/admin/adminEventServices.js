@@ -1,4 +1,23 @@
-//replace this with dbconnection 
+const mongoose = require('mongoose');
+const Event = require('../../models/Event'); // Import the Event model
+
+// Database connection (ensure this is in the right place in your application)
+const connectDB = async () => {
+    try {
+        const uri = process.env.MONGODB_URI; // Use your MongoDB URI from environment variables
+        await mongoose.connect(uri, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        });
+        console.log('MongoDB connected successfully');
+    } catch (error) {
+        console.error('MongoDB connection error:', error);
+        process.exit(1); // Exit the process with failure
+    }
+};
+
+// Call the connectDB function to establish a connection to MongoDB when the service is loaded
+connectDB();
 
 const renderEventsPage = async (req, res) => {
     try {
@@ -35,5 +54,5 @@ const viewEventById = async (req, res) => {
 module.exports = {
     renderEventsPage,
     addEvent,
-    viewEventById
-}
+    viewEventById,
+};
