@@ -19,11 +19,7 @@ async (accessToken, refreshToken, profile, done) => {
                 googleId: profile.id,
                 name: profile.displayName,
                 email: profile.emails[0].value,
-<<<<<<< HEAD
-                profilePhoto: profile.photos[0].value,
-=======
                 profilePicture: profile.photos[0].value,
->>>>>>> QA
                 role: 'faculty_staff'
             });
             await user.save();
