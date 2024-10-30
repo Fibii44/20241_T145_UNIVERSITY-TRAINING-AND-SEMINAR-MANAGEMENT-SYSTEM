@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faCalendarCheck, faClock, faPlus, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
-import Sidebar from '../../component/adminbar/sidebar';
-import Topbar from '../../component/adminbar/topbar';
-import '../../component/adminbar/css/admin.css';
+import Sidebar from '../../components/adminbar/sidebar';
+import Topbar from '../../components/adminbar/topbar';
+import '../../components/adminbar/css/admin.css';
 
 const HistoryM = () => {
     const [isCollapsed, setIsCollapsed] = useState(false);

@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faCalendarCheck, faClock, faCog, faSignOutAlt, faBars, faUsers, faCalendar } from '@fortawesome/free-solid-svg-icons';
+import { faTachometerAlt, faCalendarCheck, faClock, faCog, faSignOutAlt, faBars, faUsers, faCalendar, faHistory  } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom'; // Import Link
 
 const Sidebar = ({ isCollapsed, toggleSidebar, activePage }) => (
@@ -18,7 +18,7 @@ const Sidebar = ({ isCollapsed, toggleSidebar, activePage }) => (
     <ul className="menu-items">
       <li className={activePage === 'dashboard' ? 'active' : ''}>
         <Link to="/dashboard"> {/* Add link to Dashboard */}
-          <span className="icon"><FontAwesomeIcon icon={faUser} size="lg" /></span>
+          <span className="icon"><FontAwesomeIcon icon={faTachometerAlt} size="lg" /></span>
           {!isCollapsed && <span>Dashboard</span>}
         </Link>
       </li>
@@ -38,6 +38,12 @@ const Sidebar = ({ isCollapsed, toggleSidebar, activePage }) => (
         <Link to="/users"> {/* Add link to Users Table */}
           <span className="icon"><FontAwesomeIcon icon={faUsers} size="lg" /></span>
           {!isCollapsed && <span>Users Table</span>}
+        </Link>
+      </li>
+      <li className={activePage === 'history' ? 'active' : ''}>
+        <Link to="/history"> {/* Add link to Users Table */}
+          <span className="icon"><FontAwesomeIcon icon={faHistory} size="lg" /></span>
+          {!isCollapsed && <span>History</span>}
         </Link>
       </li>
       <li className={activePage === 'events' ? 'active' : ''}>

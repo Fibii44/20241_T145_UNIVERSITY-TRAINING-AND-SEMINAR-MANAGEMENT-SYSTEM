@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faCalendarCheck, faClock } from '@fortawesome/free-solid-svg-icons';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import Sidebar from '../../component/adminbar/sidebar';
-import Topbar from '../../component/adminbar/topbar';
-import '../../component/adminbar/css/admin.css';
+import Sidebar from '../../components/adminbar/sidebar';
+import Topbar from '../../components/adminbar/topbar';
+import '../../components/adminbar/css/admin.css';
 
 
 

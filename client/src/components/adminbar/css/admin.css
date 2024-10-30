@@ -7,6 +7,22 @@
   font-family: 'Nunito Sans', sans-serif;
 }
 
+::-webkit-scrollbar {
+  width: 8px; /* Set the width of the scrollbar */
+}
+
+::-webkit-scrollbar-track {
+  background: transparent; /* Background of the scrollbar track */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #808080; /* Color of the scrollbar thumb */
+  border-radius: 20px; /* Round the corners of the scrollbar thumb */
+  
+}
+
+
+
 body,
 html,
 #root {
@@ -15,23 +31,20 @@ html,
 
 .dashboard-container {
   display: flex;
-  height: 100vh;
-  /* Full height of the viewport */
-  width: 100vw;
+  height: 100vh; /* Full height of the viewport */
+  overflow: hidden; /* Prevent overflow */
 }
 
-/*Sidebar*/
+/* Sidebar */
 .sidebar {
   width: 260px;
-  height: auto;
+  height: auto; /* Remove fixed height */
   background-color: #000353;
   color: #fff;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
-  transition: width 0.3s ease;
+  overflow-y: auto; /* Allow vertical scrolling if content overflows */
 }
-
 .sidebar-title {
   display: flex;
   font-size: 16px;
@@ -51,7 +64,8 @@ html,
 /* Sidebar Collapsed */
 .sidebar.collapsed {
   width: 70px;
-  transition: width 0.3s ease;
+  transition: none;
+  
 }
 
 .sidebar-header {
@@ -68,7 +82,7 @@ html,
   color: #fff;
   cursor: pointer;
   font-size: 1.2rem;
-  padding: 10px 1px;
+  padding: 10px 5px;
   display: flex;
 }
 
@@ -79,12 +93,12 @@ html,
 
 
 .sidebar .menu-items a {
-  color: #fff; /* Specific to sidebar links */
+  color: #fff; 
   padding: 20px;
   display: flex;
   align-items: center;
   list-style: none;
-  text-decoration: none; /* Remove underline from links */
+  text-decoration: none; 
 }
 
 .sidebar ul li .icon {
@@ -124,7 +138,7 @@ html,
   cursor: pointer;
   display: flex;
   align-items: center;
-  text-decoration: none; /* Remove underline from links */
+  text-decoration: none; 
 }
 
 .sidebar-footer-item.active {
@@ -149,11 +163,11 @@ html,
 
 /*Dasboard Contents*/
 .content {
-  flex: 1;
+  flex: 1; /* Allow this area to grow and fill available space */
   padding: 0;
   background-color: #F5F6FA;
+  overflow-y: auto; /* Allow scrolling if content overflows */
 }
-
 .topbar {
   display: flex;
   justify-content: space-between;
@@ -166,19 +180,26 @@ html,
   position: relative;
 }
 
-.topbar .search {
-  width: 100%;
-  max-width: 400px;
+.search-container {
+  position: relative; 
+  display: flex;
+  align-items: center;
 }
 
-.topbar .search input {
-  width: 100%;
-  padding: 8px;
-  border: none;
-  background-color: #f4f6f8;
-  color: black;
+.search-input {
+  padding: 8px 40px; 
+  border: 1px solid #ccc;
   border-radius: 20px;
+  font-size: 16px;
+  width: 400px; 
 }
+
+.search-icon {
+  position: absolute; 
+  left: 10px; 
+  color: #888; 
+}
+
 
 .dashboard {
   display: flex;
@@ -217,7 +238,7 @@ html,
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   color: #000;
   margin-bottom: 20px;
-  /* Adjusts spacing below the chart */
+
 }
 
 .chart-header {
@@ -371,69 +392,300 @@ table th {
   background-color: #f0f0f0;
 }
 
+/*EvenetM*/
+
+.dashboard-inline{
+  display: flex;
+  padding: 8px;
+}
+
+.dashboard-button {
+  padding: 10px 40px;
+  background-color: #ffc107;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-left: auto;
+
+}
+
+.dashboard-button:hover {
+  background-color: #c79202;
+
+}
+
+
+.context-card {
+  background-color: #f9f9f9; 
+  padding: 20px ; 
+  border-radius: 10px; 
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); 
+  max-width: 100%; 
+  margin-left: 40px;
+  border: 1px solid #c2c2c2;
+ 
+} 
+
 .events-list {
   display: flex;
-  flex-direction: column; /* Stack cards vertically */
-  gap: 20px; /* Space between event cards */
-  margin: 20px; /* Add margin for overall spacing */
+  flex-direction: column; 
+  gap: 20px; 
+  margin: 20px; 
 }
 
 .event-card {
   background-color: #ffffff;
   border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 20px; /* Add padding for content spacing */
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px; 
   display: flex;
-  flex-direction: column; /* Stack content vertically */
+  flex-direction: column; 
+  border: 1px solid #ddd;
+  cursor: pointer;
 }
 
 .event-image {
-  width: 100%; /* Make the image responsive */
-  height: auto; /* Maintain aspect ratio */
-  border-radius: 10px; /* Rounded corners for images */
+  width: 100%; 
+  height: auto; 
+  border-radius: 10px; 
 }
 
 .event-title {
-  font-size: 24px; /* Increased font size for titles */
-  color: #333; /* Darker color for better readability */
-  margin: 10px 0; /* Space around the title */
+  font-size: 24px; 
+  color: #333; 
+  margin: 10px 0; 
 }
 
 .event-description {
-  font-size: 16px; /* Description font size */
-  color: #666; /* Lighter color for descriptions */
-  margin-bottom: 10px; /* Space below the description */
+  font-size: 16px; 
+  color: #666; 
+  margin-bottom: 10px; 
 }
 
 .event-info {
-  display: flex; /* Flexbox for aligning icons and text */
-  gap: 15px; /* Space between the info items */
-  color: #555; /* Color for event info */
+  display: flex; 
+  gap: 15px; 
+  color: #555; 
 }
 
 .event-actions {
-  display: flex; /* Use flex for button layout */
-  gap: 10px; /* Space between buttons */
-  margin-top: 10px; /* Space above actions */
+  display: flex; 
+  gap: 10px; 
+  margin-left: auto;
+ 
 }
 
 .edit-button, .delete-button {
-  padding: 10px 15px; /* Padding for buttons */
-  border: none; /* Remove default border */
-  border-radius: 5px; /* Rounded corners */
-  cursor: pointer; /* Pointer cursor on hover */
+  padding: 10px 15px; 
+  border: none; 
+  border-radius: 5px; 
+  cursor: pointer; 
 }
 
 .edit-button {
-  background-color: #ffc107; /* Edit button color */
-  color: #fff; /* Text color for buttons */
+  background-color: #ffc107; 
+  color: #fff; 
+  padding: 10px 30px;
+  
 }
 
 .delete-button {
-  background-color: #dc3545; /* Delete button color */
-  color: #fff; /* Text color for buttons */
+  background-color: #dc3545; 
+  color: #fff; 
+  padding: 10px 30px;
 }
 
 .edit-button:hover, .delete-button:hover {
-  opacity: 0.9; /* Slight opacity change on hover */
+  opacity: 0.9; 
+}
+
+/*Modal for Add events*/
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  width: 500px;
+  max-height: 90%; /* Set a maximum height */
+  overflow-y: auto; /* Enable vertical scrolling */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+.upload-photo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.camera-icon {
+  font-size: 40px;
+  color: #ccc;
+  cursor: pointer;
+  padding: 20px 20px;
+  border: 1px solid;
+  border-radius: 90px;
+  
+}
+
+.event-form input,
+.event-form textarea {
+  width: 100%;
+  padding: 10px;
+  margin: 5px 0;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.event-form textarea {
+  resize: none;
+}
+
+.event-form label {
+  display: block; 
+  text-align: left; 
+}
+
+
+.reminder-section {
+  text-align: left;
+  margin: 10px 0;
+
+}
+
+.reminder-options {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 5px;
+  gap: 5px;
+ 
+}
+
+.reminder-options button {
+  padding: 5px 20px;
+  border: 1px solid #ddd;
+  background-color: rgb(230, 230, 230);
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.location-input {
+  position: relative;
+
+}
+
+.location-icon {
+  position: absolute;
+  right: 10px; 
+  top: 50%;
+  transform: translateY(-50%); 
+  color: #aaa; 
+}
+
+
+.additional-options button {
+  display: block;
+  width: 100%;
+  margin: 10px 0;
+  padding: 10px;
+  border: 1px solid #ddd;
+  background-color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.close-button {
+  background-color: #d9534f;
+  color: white;
+  border: none;
+  padding: 10px 30px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.save-button {
+  background-color: #f0ad4e;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+
+/*Event Details*/
+
+/* Container for the entire event section */
+.event-container {
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  margin: 20px;
+}
+
+.card-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.image-thumbnail {
+  width: 100%;
+  height: auto;
+}
+
+.details-section {
+  padding: 15px;
+  background-color: #fff;
+}
+
+.title-heading {
+  font-size: 1.5em;
+  margin: 0 0 10px;
+  color: #333;
+}
+
+.description-text {
+  font-size: 1em;
+  color: #666;
+  margin-bottom: 15px;
+}
+
+.info-container {
+  display: flex;
+  gap: 15px;
+  font-size: 0.9em;
+  color: #555;
+}
+
+.info-container span {
+  display: flex;
+  align-items: center;
+}
+
+.info-container span svg {
+  margin-right: 5px;
+  color: #aaa;
 }
