@@ -4,7 +4,7 @@ const cors = require('cors');
 const app = express();
 const dbConnection = require('./config/dbcon');
 const passport = require('./config/passport');
-
+const bodyParser = require('body-parser');
 require('dotenv').config();
 
 
@@ -15,6 +15,7 @@ const adminEventRoutes = require('./routes/admin/adminEventRoutes')
 const adminUserRoutes = require('./routes/admin/adminUserRoutes')
 const adminReportRoutes = require('./routes/admin/adminReportRoutes')
 
+
 //user routes
 const userPageRoutes = require('./routes/user/userPageRoutes')
 const userEventRoutes = require('./routes/user/userEventRoutes')
@@ -23,11 +24,19 @@ const userProfileRoutes = require('./routes/user/userProfileRoutes')
 //Auth Routes
 const authRoutes = require('./routes/authRoutes')
 
-app.use(cors({
-    origin: 'http://localhost:5000',
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+//Event Routes
+const calendarRoutes = require('./routes/admin/adminCalendarRoutes');
+
+const corsOptions = {
+    origin: 'http://localhost:3000', 
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], 
     credentials: true, 
-  }));
+};
+
+app.use(bodyParser.json());
+
+
+app.use(cors(corsOptions)); 
 
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
@@ -54,6 +63,7 @@ app.use("/", userProfileRoutes)
 
 app.use("/", authRoutes)
 
+app.use('/api', calendarRoutes);
 
 const PORT = process.env.PORT
 
