@@ -23,7 +23,4 @@ eventRoutes.put('/a/events/:id', adminService.updateEvent);
 // Delete an event by ID (optional)
 eventRoutes.delete('/a/events/:id', adminService.deleteEvent);
 
-// Error handling middleware should be added after all routes
-eventRoutes.use(errorHandler);
-
 module.exports = eventRoutes;

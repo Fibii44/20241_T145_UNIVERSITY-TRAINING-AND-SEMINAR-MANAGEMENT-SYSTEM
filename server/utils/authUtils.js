@@ -13,7 +13,7 @@ const generateToken = (user) => {
     profilePicture: user.profilePicture
   };
 
-  // Token expiration time (e.g., 1 hour)
+  // Token expiration time 
   const options = { expiresIn: '1h' };
 
   // Generate token

@@ -1,19 +1,11 @@
-<<<<<<< HEAD
-const isAuthenticated = (req, res, next) => {
-    if (req.isAuthenticated()) {
-        return next();
-    }
-    res.redirect('/login');
-};
-
-module.exports = isAuthenticated;
-=======
 const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET;
 
 const authenticateJWT = (req, res, next) => {
-  const token = req.headers.authorization?.split(' ')[1];
-
+  const authHeader = req.headers.authorization;
+  console.log("Authorization Header:", authHeader);
+  const token = authHeader && authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : null;
+  console.log(token);
   if (!token) {
     return res.status(401).json({ message: 'Access denied. No token provided.' });
   }
@@ -28,4 +20,3 @@ const authenticateJWT = (req, res, next) => {
 };
 
 module.exports = authenticateJWT;
->>>>>>> QA
