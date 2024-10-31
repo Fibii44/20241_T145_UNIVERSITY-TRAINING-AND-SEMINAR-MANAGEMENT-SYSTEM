@@ -1,54 +1,54 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const Calendar = () => {
-    const [summary, setSummary] = useState('');
-    const [date, setDate] = useState('');
-    const [startTime, setStartTime] = useState('');
-    const [endTime, setEndTime] = useState('');
+    const [events, setEvents] = useState([]);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-    const createEvent = async () => {
-        console.log('Create event function called'); // Debugging line
-        try {
-            const response = await axios.post('http://localhost:3000/api/events', {
-                summary,
-                date,
-                startTime,
-                endTime,
-            });
-            alert(response.data);
-        } catch (error) {
-            console.error('Error creating event:', error); // Log the entire error object
-            alert('Error creating event: ' + (error.response ? error.response.data : error.message));
+    useEffect(() => {
+        const fetchEvents = async () => {
+            try {
+                const token = localStorage.getItem('authToken');
+                if (!token) throw new Error("No authentication token found");
+
+                const response = await axios.get('http://localhost:3000/auth/calendar/events', {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                setEvents(response.data.items);
+            } catch (error) {
+                console.error("Error fetching events:", error);
+            }
+        };
+
+        if (isAuthenticated) {
+            fetchEvents();
         }
+    }, [isAuthenticated]);
+
+    const handleGoogleLogin = () => {
+        window.location.href = 'http://localhost:3000/auth/google';
     };
-    
+
     return (
-        <div style={{ padding: '20px' }}>
-            <h1>Create Event</h1>
-            <input
-                type="text"
-                placeholder="Event Summary"
-                value={summary}
-                onChange={(e) => setSummary(e.target.value)}
-            />
-            <input
-                type="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-            />
-            <input
-                type="time"
-                value={startTime}
-                onChange={(e) => setStartTime(e.target.value)}
-            />
-            <input
-                type="time"
-                value={endTime}
-                onChange={(e) => setEndTime(e.target.value)}
-            />
-            <button onClick={createEvent}>Create Event</button>
-            <a href="http://localhost:3000/auth/google">Authenticate with Google</a>
+        <div className="calendar">
+            {!isAuthenticated ? (
+                <button onClick={handleGoogleLogin}>Sign in with Google</button>
+            ) : (
+                <div>
+                    <h2>Your Google Calendar Events</h2>
+                    <ul>
+                        {events.map((event) => (
+                            <li key={event.id}>
+                                <strong>{event.summary}</strong>
+                                <p>{new Date(event.start.dateTime || event.start.date).toLocaleString()}</p>
+                                <p>{event.location}</p>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
         </div>
     );
 };
