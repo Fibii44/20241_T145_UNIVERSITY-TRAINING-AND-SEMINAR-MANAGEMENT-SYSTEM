@@ -34,7 +34,7 @@ const StatCard = ({ title, count, icon, color }) => (
           <h3>{title}</h3>
           <p>{count}</p>
         </div>
-        <div className="icon" style={{ color }}>
+        <div className="stat-icon" style={{ color }}>
           {icon}
         </div>
       </div>
@@ -130,11 +130,12 @@ const Dashboard = () => {
         <h2 className="dashboard-heading">Dashboard</h2>
 
         <div className="dashboard">
-          <StatCard title="Total User" count="5,609" icon={<FontAwesomeIcon icon={faUser} size="2x" />} color="#4a90e2" />
+          <StatCard title="Total User" count="5,609" icon={<FontAwesomeIcon icon={faUser} size="2x" />} color="#4a90e2"/>
           <StatCard title="Upcoming Events" count="20" icon={<FontAwesomeIcon icon={faCalendarCheck} size="2x" />} color="#9b51e0" />
           <StatCard title="Successful Events" count="20" icon={<FontAwesomeIcon icon={faCalendarCheck} size="2x" />} color="#34c759" />
           <StatCard title="Canceled Events" count="20" icon={<FontAwesomeIcon icon={faClock} size="2x" />} color="#ff3b30" />
         </div>
+        
         <Chart />
         <UsersTable />
       </div>

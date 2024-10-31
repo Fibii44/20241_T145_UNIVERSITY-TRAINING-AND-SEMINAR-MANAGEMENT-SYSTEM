@@ -49,7 +49,7 @@
 
   /* Sidebar Collapsed */
   .sidebar.collapsed {
-    width: 80px; /* Reduced width */
+    width: 90px; /* Reduced width */
     
   }
 
@@ -113,6 +113,9 @@
     display: flex;
   }
 
+  .sidebar.collapsed .menu-toggle{
+    transform: translateX(-10px);
+  }
   .menu-toggle:focus {
     outline: none;
     box-shadow: none;

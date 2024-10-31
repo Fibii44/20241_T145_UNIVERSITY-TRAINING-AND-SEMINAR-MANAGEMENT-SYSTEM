@@ -4,9 +4,9 @@ import Sidebar from '../../components/admin/adminbar/sidebar';
 import Topbar from '../../components/admin/adminbar/topbar';
 import '../../components/admin/adminbar/css/admin.css';
 
-import AddUserForm from '../../components/admin/admin_add-personnel/add-personnel';
 
-const AddUser = () => {
+
+const Table = () => {
 
     const [isCollapsed, setIsCollapsed] = useState(false);
 
@@ -16,15 +16,14 @@ const AddUser = () => {
 
     return (
         <div className="dashboard-container">
-            <Sidebar isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} activePage="personnel" />
+            <Sidebar isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} activePage="users" />
             <div className="content">
                 <Topbar />
                 <div className="context-card">
-                    <AddUserForm />
                 </div>
             </div>
         </div>
     );
 };
 
-export default AddUser;
+export default Table;

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './css/admin.css';
-
+import Profile from "../../../assets/adminProfile.png"; // Imported Profile image
 
 const Topbar = () => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -11,18 +11,18 @@ const Topbar = () => {
 
     return (
         <div className="topbar">
-             <div className="search-admin">
-        <i class="fa fa-search search-icon"></i>
-        <input type="text" placeholder="Search..." />
-    </div>
+            <div className="search-admin">
+                <i className="fa fa-search search-icon"></i>
+                <input type="text" placeholder="Search..." />
+            </div>
             <div className="user-info">
                 <div className="profile">
-                    <img src="path/to/your/image.png" />
+                    {/* Use the imported Profile variable as the src */}
+                    <img src={Profile} alt="Admin Profile" />
                 </div>
                 <div className="user-details">
-                    {/* Move the onClick to the name span */}
                     <span className="name" onClick={toggleDropdown} style={{ cursor: 'pointer' }}>
-                        Si Feby
+                        Osama Been Laggin'
                     </span>
                     <span className="role">Admin</span>
                 </div>
