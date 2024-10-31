@@ -10,7 +10,7 @@ const Calendar = () => {
     const createEvent = async () => {
         console.log('Create event function called'); // Debugging line
         try {
-            const response = await axios.post('http://localhost:5000/api/events', {
+            const response = await axios.post('http://localhost:3000/api/events', {
                 summary,
                 date,
                 startTime,
@@ -48,7 +48,7 @@ const Calendar = () => {
                 onChange={(e) => setEndTime(e.target.value)}
             />
             <button onClick={createEvent}>Create Event</button>
-            <a href="http://localhost:5000/auth/google">Authenticate with Google</a>
+            <a href="http://localhost:3000/auth/google">Authenticate with Google</a>
         </div>
     );
 };

@@ -18,7 +18,7 @@ const EventModal = ({ isOpen, onClose, onSave }) => {
 
   const createEvent = async () => {
     try {
-      const response = await axios.post('http://localhost:5000/api/events', {
+      const response = await axios.post('http://localhost:3000/api/events', {
         summary,
         date,
         startTime,

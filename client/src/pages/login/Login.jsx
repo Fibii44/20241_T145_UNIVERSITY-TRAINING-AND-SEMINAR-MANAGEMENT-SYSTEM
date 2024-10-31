@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import {
   MDBContainer,
   MDBRow,
@@ -11,7 +11,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGoogle } from '@fortawesome/free-brands-svg-icons';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '../components/login.css'; 
+import './login.css'; 
 import { useNavigate } from 'react-router-dom';
 
 function Login() {
