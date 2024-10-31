@@ -26,4 +26,4 @@ eventRoutes.delete('/a/events/:id', adminService.deleteEvent);
 // Error handling middleware should be added after all routes
 eventRoutes.use(errorHandler);
 
-module.exports = eventRoutes;
+    module.exports = eventRoutes;

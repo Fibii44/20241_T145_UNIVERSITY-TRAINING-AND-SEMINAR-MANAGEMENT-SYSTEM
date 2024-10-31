@@ -1,8 +1,8 @@
-import Footer from '../components/footer/footer.jsx';
+import Footer from '../../components/user/footer/footer.jsx';
 import { useState } from 'react';
-import NavbarWithSidebar from '../components/sidebar/sidebar.jsx';
-import HomeContent from '../components/homecontent/home-content.jsx'
-import Events from '../components/events-grid/events-grid.jsx'; 
+import NavbarWithSidebar from '../../components/user/sidebar/sidebar.jsx';
+import HomeContent from '../../components/user/homecontent/home-content.jsx'
+import Events from '../../components/user/events-grid/events-grid.jsx'; 
 
 import '@fortawesome/fontawesome-free/css/all.min.css';
 

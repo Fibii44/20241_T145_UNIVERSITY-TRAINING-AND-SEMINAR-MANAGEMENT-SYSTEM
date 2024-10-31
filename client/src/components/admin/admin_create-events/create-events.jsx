@@ -1,23 +1,43 @@
-// EventModal.jsx
 import React, { useState } from 'react';
+import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCamera, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
-import '../../components/adminbar/css/admin.css';
+import '../adminbar/css/admin.css';
 
 const EventModal = ({ isOpen, onClose, onSave }) => {
+  const [summary, setSummary] = useState('');
+  const [date, setDate] = useState('');
+  const [startTime, setStartTime] = useState('');
+  const [endTime, setEndTime] = useState('');
   const [location, setLocation] = useState('');
   const [newEvent, setNewEvent] = useState({
     name: '',
     hostname: '',
-    date: '',
-    time: '',
     description: '',
   });
 
+  const createEvent = async () => {
+    try {
+      const response = await axios.post('http://localhost:5000/api/events', {
+        summary,
+        date,
+        startTime,
+        endTime,
+        location,
+      });
+      alert(response.data);
+    } catch (error) {
+      console.error('Error creating event:', error);
+      alert('Error creating event: ' + (error.response ? error.response.data : error.message));
+    }
+  };
+
   const handleSaveDetails = (e) => {
     e.preventDefault();
-    onSave({ ...newEvent, location });
-    onClose();
+    // Save the event details and close the modal
+    onSave({ ...newEvent, date, startTime, endTime, location });
+    createEvent(); // Call the create event function to send the event data to the server
+    onClose(); // Close the modal
   };
 
   if (!isOpen) return null;
@@ -30,11 +50,12 @@ const EventModal = ({ isOpen, onClose, onSave }) => {
           <p>Upload Photo</p>
         </div>
         <form className="event-form" onSubmit={handleSaveDetails}>
-          <label>Enter Event Name</label>
+          <label>Enter Event Summary</label>
           <input
             type="text"
-            placeholder="Enter event name"
-            onChange={(e) => setNewEvent({ ...newEvent, name: e.target.value })}
+            placeholder="Event Summary"
+            value={summary}
+            onChange={(e) => setSummary(e.target.value)}
           />
 
           <label>Enter Hostname</label>
@@ -47,13 +68,22 @@ const EventModal = ({ isOpen, onClose, onSave }) => {
           <label>Event Date</label>
           <input
             type="date"
-            onChange={(e) => setNewEvent({ ...newEvent, date: e.target.value })}
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
           />
 
-          <label>Event Time</label>
+          <label>Start Time</label>
           <input
             type="time"
-            onChange={(e) => setNewEvent({ ...newEvent, time: e.target.value })}
+            value={startTime}
+            onChange={(e) => setStartTime(e.target.value)}
+          />
+
+          <label>End Time</label>
+          <input
+            type="time"
+            value={endTime}
+            onChange={(e) => setEndTime(e.target.value)}
           />
 
           <label>Event Description</label>

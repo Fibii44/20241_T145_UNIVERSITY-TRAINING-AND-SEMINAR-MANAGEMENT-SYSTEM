@@ -2,10 +2,10 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faCalendarCheck, faClock, faPlus, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
-import Sidebar from '../../components/adminbar/sidebar';
-import Topbar from '../../components/adminbar/topbar';
-import EventModal from '../../components/admin_create-events/create-events'; 
-import '../../components/adminbar/css/admin.css';
+import Sidebar from '../../components/admin/adminbar/sidebar';
+import Topbar from '../../components/admin/adminbar/topbar';
+import EventModal from '../../components/admin/admin_create-events/create-events'; 
+import '../../components/admin/adminbar/css/admin.css';
 
 const EventM = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
