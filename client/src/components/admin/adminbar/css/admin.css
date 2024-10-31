@@ -21,8 +21,8 @@
 
   /* Sidebar */
   .sidebar {
-    width: 260px;
-    background-color: #000353;
+    width: 208px;
+    background-color: #011c39;
     color: #fff;
     display: flex;
     flex-direction: column;
@@ -33,6 +33,7 @@
     display: flex;
     gap: 5px;
     padding-top: 10px;
+    padding-right: 20px;
   }
 
   .buksu {
@@ -41,7 +42,7 @@
   }
 
   .engage {
-    color: #ffc107;
+    color: #FFB800;
     font-size: 30px;
   }
 
@@ -62,20 +63,45 @@
     
   }
 
+  .sidebar-header h2 {
+    font-size: 20px;
+    font-weight: bold;
+  }
+
   .menu-items li {
     position: relative;
-    padding-left: 10px;
+    padding-left: 20px;
     border-radius: 8px;
     transition: background 0.3s ease;
+    height: 1px;
+    align-items: center;
+    padding-bottom: 60px;
+    padding-top: -10px;
   }
+  .sidebar.collapsed .menu-items {
+    transform: translateX(-2px);
+    width: 5.5rem;
+  }
+  .sidebar.collapsed .menu-items li a{
+    transform: translateX(4px);
+  }
+  .menu-items {
+    transform: translateX(-10px);
+    gap: 0;
+  }
+  .menu-items li a{
+    font-size: 14px;
 
+  }
   .menu-items li.active a {
-    padding-left: 15px; /* Aligns text close to the line */
+    padding-left: 15px; 
   }
-
+  .menu-items li.active{
+    width: 100%;
+  }
   .menu-items li.active::before {
     content: "";
-    transform: translateX(-20px);
+    transform: translateX(-10px);
     position: absolute;
     left: -10px;
     top: 0;
@@ -91,7 +117,7 @@
     content: "";
     transform: translateX(-20px);
     position: absolute;
-    left: -3px;
+    left: 0px;
     top: 0;
     height: 100%;
     width: 5px;                 /* Width of the vertical line */
@@ -125,6 +151,7 @@
     list-style-type: none; /* Remove bullets from unordered lists */
     padding: 0; /* Remove padding */
     margin: 0; /* Remove margin */
+    gap: 0;
   }
 
   ol {
@@ -142,10 +169,10 @@
   }
 
   .sidebar ul li {
-    margin: 20px 0px;
+    margin: 0px;
   }
   .sidebar ul li.active{
-    margin: 20px;
+    margin: 0px;
 
   }
 
@@ -229,15 +256,9 @@
     align-items: center;
     text-decoration: none; 
   }
-
-  .sidebar-footer-item.active {
-    background-color: #ffc107;
-    color: #15225a;
-    font-weight: bold;
-    border-radius: 10px;
-    margin: 3px 1px;
+  .sidebar-footer-item span {
+    font-size: 14px;
   }
-
   .sidebar-footer-item:hover {
     background-color: #1e316b;
     border-radius: 10px;
@@ -260,11 +281,12 @@
     justify-content: space-between;
     align-items: center;
     padding: 10px;
-    background-color: #000353;
+    background-color: #011c39;
     color: #fff;
     width: 100%;
     margin: 0;
     position: relative;
+    height: 4rem;
   }
 
   .search-admin {
@@ -285,10 +307,34 @@
   .search-admin input[type="text"] {
     width: 100%;
     padding: 8px 8px 8px 30px; /* Extra padding for icon space */
-    font-size: 16px;
+    font-size: 14px;
     border: 1px solid #ccc;
     border-radius: 20px;
+    height: 30px;
   }
+/* Topbar =========================================================================================================================== */
+.profile {
+  width: 50px; /* Set width for the container */
+  height: 50px; /* Set height for the container */
+  overflow: hidden; /* Hide overflow to maintain the circular shape */
+  border-radius: 200%; /* Make it a circle */
+}
 
-
+.profile img {
+  width: 100%; /* Make the image fill the container */
+  height: 100%; /* Keep aspect ratio */
+  object-fit: cover; /* Ensure the image fits within the circle */
+}
+.notification {
+  margin-right: 30px; /* Adjust as necessary */
+  cursor: pointer;
+  color: #FFB800; /* Choose a color that suits your design */
+}
+.user-info {
+  display: flex;
+  align-items: center;
+}
+.user-info .user-details span {
+  font-size: 14px;
+}
   

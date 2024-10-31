@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import './css/admin.css';
 import Profile from "../../../assets/adminProfile.png"; // Imported Profile image
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBell } from '@fortawesome/free-solid-svg-icons';
 
 const Topbar = () => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -16,8 +18,10 @@ const Topbar = () => {
                 <input type="text" placeholder="Search..." />
             </div>
             <div className="user-info">
+                <div className="notification">
+                    <FontAwesomeIcon icon={faBell} size="lg" />
+                </div>
                 <div className="profile">
-                    {/* Use the imported Profile variable as the src */}
                     <img src={Profile} alt="Admin Profile" />
                 </div>
                 <div className="user-details">
