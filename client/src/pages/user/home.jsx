@@ -1,6 +1,7 @@
 import Footer from '../../components/user/footer/footer.jsx';
 import { useState } from 'react';
-import NavbarWithSidebar from '../../components/user/sidebar/sidebar.jsx';
+import Sidebar from '../../components/user/sidebar/sidebar.jsx';
+import Topbar from '../../components/user/sidebar/topbar.jsx';
 import HomeContent from '../../components/user/homecontent/home-content.jsx'
 import Events from '../../components/user/events-grid/events-grid.jsx'; 
 
@@ -17,8 +18,9 @@ const HomePage = () => {
   return (
 
       <div className="dashboard-container">
-        <NavbarWithSidebar isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} activePage="home"/>
+        <Sidebar isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} activePage="home"/>
         <div className="content">
+          <Topbar />
           <HomeContent />
           <Events />
           <Footer />

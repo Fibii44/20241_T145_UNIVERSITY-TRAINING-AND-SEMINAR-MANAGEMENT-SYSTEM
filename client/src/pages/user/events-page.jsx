@@ -1,36 +1,32 @@
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-
-import Footer from '../../components/footer/footer.jsx';
-import NavbarWithSidebar from '../../components/sidebar/sidebar.jsx';
-import Home from '../../components/homecontent/home-content.jsx'
-
-import Events from '../../components/events-grid/events-grid.jsx';
+import Footer from '../../components/user/footer/footer.jsx';
+import { useState } from 'react';
+import Sidebar from '../../components/user/sidebar/sidebar.jsx';
+import Topbar from '../../components/user/sidebar/topbar.jsx';
+import HomeContent from '../../components/user/homecontent/home-content.jsx'
+import Events from '../../components/user/events-grid/events-grid.jsx'; 
 
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <BrowserRouter>
-      <div className="NavbarWithSidebar-container">
-        <NavbarWithSidebar />
-        <div className="main-content">
-          <Routes>
-            <Route 
-              path="/event" 
-              element={
-                <>
-                  <Events />
-                </>
-              } 
-            />
-            <Route path="/events" element={<Events />} />
-            <Route path="/calendar" element={<Events />} />
-          </Routes>
+const HomePage = () => {
+
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+    // Function to toggle sidebar collapse state
+    const toggleSidebar = () => {
+        setIsCollapsed(!isCollapsed);
+    };
+  return (
+
+      <div className="dashboard-container">
+        <Sidebar isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} activePage="home"/>
+        <div className="content">
+          <Topbar />
+          <Events />
+          <Footer />
         </div>
-        <Footer />
       </div>
-    </BrowserRouter>
-  </StrictMode>
-);
+
+  )
+};
+
+export default HomePage;

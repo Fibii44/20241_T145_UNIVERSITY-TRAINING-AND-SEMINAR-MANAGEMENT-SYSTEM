@@ -7,6 +7,9 @@
     font-family: 'Nunito Sans', sans-serif;
   }
 
+
+
+
   body,
   html,
   #root {
@@ -27,7 +30,7 @@
     display: flex;
     flex-direction: column;
     overflow-y: auto;
-    transition: width 0.3s ease, height 0.3s ease;
+    transition: width 0.5s ease, height 0.1s ease;
   }
   .sidebar-title {
     display: flex;
@@ -72,7 +75,7 @@
     position: relative;
     padding-left: 20px;
     border-radius: 8px;
-    transition: background 0.3s ease;
+    transition: background 1s ease;
     height: 1px;
     align-items: center;
     padding-bottom: 60px;
@@ -274,7 +277,7 @@
   }
 
 
-  /*Topbar*/
+  /*Topbar=================================================================*/
 
   .topbar {
     display: flex;

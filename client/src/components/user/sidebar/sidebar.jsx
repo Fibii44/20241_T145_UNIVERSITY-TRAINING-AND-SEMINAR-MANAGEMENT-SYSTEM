@@ -1,9 +1,9 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTachometerAlt, faCalendarCheck, faClock, faCog, faSignOutAlt, faBars, faUsers, faCalendar, faHistory  } from '@fortawesome/free-solid-svg-icons';
+import { faCertificate, faRectangleList, faClock, faCog, faSignOutAlt, faBars, faUsers, faCalendar, faHistory  } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom'; // Import Link
-import './sidebar.css'
+import './sidebar.css';
 
-// eslint-disable-next-line react/prop-types
+
 const Sidebar = ({ isCollapsed, toggleSidebar, activePage }) => (
   <div className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
     <div className="sidebar-header">
@@ -18,28 +18,10 @@ const Sidebar = ({ isCollapsed, toggleSidebar, activePage }) => (
     </div>
     
     <ul className="menu-items">
-      <li className={activePage === 'home' ? 'active' : ''}>
-        <Link to="/home"> {/* Add link to Dashboard */}
-          <span className="icon"><FontAwesomeIcon icon={faTachometerAlt} size="lg" /></span>
-          {!isCollapsed && <span>Home</span>}
-        </Link>
-      </li>
-      <li className={activePage === 'calendar' ? 'active' : ''}>
-        <Link to="/calendar"> {/* Add link to Calendar */}
-          <span className="icon"><FontAwesomeIcon icon={faCalendarCheck} size="lg" /></span>
-          {!isCollapsed && <span>Calendar</span>}
-        </Link>
-      </li>
-      <li className={activePage === 'personnel' ? 'active' : ''}>
-        <Link to="/personnel"> {/* Add link to Personnel */}
-          <span className="icon"><FontAwesomeIcon icon={faClock} size="lg" /></span>
-          {!isCollapsed && <span>Personnel</span>}
-        </Link>
-      </li>
-      <li className={activePage === 'users' ? 'active' : ''}>
-        <Link to="/users"> {/* Add link to Users Table */}
-          <span className="icon"><FontAwesomeIcon icon={faUsers} size="lg" /></span>
-          {!isCollapsed && <span>Users Table</span>}
+      <li className={activePage === 'dashboard' ? 'active' : ''}>
+        <Link to="/certificates"> {/* Add link to Dashboard */}
+          <span className="icon"><FontAwesomeIcon icon={faCertificate} size="lg" /></span>
+          {!isCollapsed && <span>Certificates</span>}
         </Link>
       </li>
       <li className={activePage === 'history' ? 'active' : ''}>

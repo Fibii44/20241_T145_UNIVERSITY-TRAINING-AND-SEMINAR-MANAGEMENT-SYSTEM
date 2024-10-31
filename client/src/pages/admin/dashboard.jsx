@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faCalendarCheck, faClock } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faCalendarCheck, faBan} from '@fortawesome/free-solid-svg-icons';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import Sidebar from '../../components/admin/adminbar/sidebar';
 import Topbar from '../../components/admin/adminbar/topbar';
@@ -134,7 +134,7 @@ const Dashboard = () => {
           <StatCard title="Total Events" count="64" icon={<FontAwesomeIcon icon={faCalendarCheck} size="2x" />} color="#ffe600"/>
           <StatCard title="Upcoming Events" count="20" icon={<FontAwesomeIcon icon={faCalendarCheck} size="2x" />} color="#9b51e0" />
           <StatCard title="Successful Events" count="20" icon={<FontAwesomeIcon icon={faCalendarCheck} size="2x" />} color="#34c759" />
-          <StatCard title="Canceled Events" count="20" icon={<FontAwesomeIcon icon={faClock} size="2x" />} color="#ff3b30" />
+          <StatCard title="Canceled Events" count="20" icon={<FontAwesomeIcon icon={faBan} size="2x" />} color="#ff3b30" />
         </div>
         
         <Chart />

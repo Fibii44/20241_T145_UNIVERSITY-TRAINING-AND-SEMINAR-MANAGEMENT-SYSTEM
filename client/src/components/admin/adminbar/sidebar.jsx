@@ -39,7 +39,7 @@ const Sidebar = ({ isCollapsed, toggleSidebar, activePage }) => (
       <li className={activePage === 'users' ? 'active' : ''}>
         <Link to="/users"> {/* Add link to Users Table */}
           <span className="icon"><FontAwesomeIcon icon={faUsers} size="lg" /></span>
-          {!isCollapsed && <span>Users Table</span>}
+          {!isCollapsed && <span>Users</span>}
         </Link>
       </li>
       <li className={activePage === 'history' ? 'active' : ''}>
