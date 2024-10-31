@@ -1,0 +1,210 @@
+::-webkit-scrollbar {
+    width: 8px; 
+}
+
+::-webkit-scrollbar-track {
+    background: transparent; 
+}
+
+::-webkit-scrollbar-thumb {
+    background: #808080; 
+    border-radius: 20px; 
+}
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1050;
+}
+
+.modal {
+    background: white;
+    border-radius: 10px;
+    width: 500px; 
+    max-height: 90%; 
+    overflow-y: auto; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: relative; 
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-body {
+    padding: 20px; /* Add padding to the body */
+}
+
+  .upload-photo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .camera-icon {
+    font-size: 40px;
+    color: #ccc;
+    cursor: pointer;
+    padding: 20px 20px;
+    border: 1px solid;
+    border-radius: 90px;
+    
+  }
+  
+  .event-form input,
+  .event-form textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+  .event-form textarea {
+    resize: none;
+  }
+  
+  .event-form label {
+    display: block; 
+    text-align: left; 
+  }
+  
+  
+  .reminder-section {
+    text-align: left;
+    margin: 10px 0;
+  
+  }
+  
+  .reminder-options {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+    gap: 5px;
+   
+  }
+  
+  .reminder-options button {
+    padding: 5px 20px;
+    border: 1px solid #ddd;
+    background-color: rgb(230, 230, 230);
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+  }
+  
+  .location-input {
+    position: relative;
+  
+  }
+  
+  .location-icon {
+    position: absolute;
+    right: 10px; 
+    top: 50%;
+    transform: translateY(-50%); 
+    color: #aaa; 
+  }
+  
+  .cert-template-btn {
+    background-color: rgb(255, 255, 255);
+    border: none;
+    color: #141414;
+    text-decoration: none;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 8px 16px;
+    transition: color 0.3s;
+    text-align: left;
+    border: 1px solid #ddd;
+    margin-bottom: 10px;
+}
+
+.cert-template-btn:hover {
+    color: #000000;
+    background-color: #808080;
+}
+
+.invite-participants-btn {
+    background-color: rgb(255, 255, 255);
+    border: none;
+    color: #000000; 
+    text-decoration: none;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 8px 16px;
+    transition: color 0.3s;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+.invite-participants-btn:hover {
+    color: #080808; 
+    background-color: #808080;
+}
+
+
+  .modal-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+
+  }
+  
+  .close {
+    background-color: transparent; 
+    border: none; 
+    color: #dc3545; 
+    font-size: 20px; 
+    cursor: pointer; 
+    padding: 8px 16px; 
+    transition: color 0.3s; 
+  }
+
+  .close:hover {
+    color: #c82333; 
+}
+  
+.modal-buttons {
+    display: flex; 
+    justify-content: flex-end; 
+    gap: 10px; 
+    padding: 10px; 
+}
+
+.close-button {
+    background-color: #d9534f; 
+    color: white;
+    border: none;
+    padding: 10px 20px; 
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s; 
+}
+
+.close-button:hover {
+    background-color: #c9302c; 
+}
+
+.save-button {
+    background-color: #f0ad4e; 
+    color: white;
+    border: none;
+    padding: 10px 20px; 
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s; 
+}
+
+.save-button:hover {
+    background-color: #ec971f; 
+}

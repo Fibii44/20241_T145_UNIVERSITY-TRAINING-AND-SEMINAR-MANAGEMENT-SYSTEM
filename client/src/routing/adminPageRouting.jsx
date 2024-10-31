@@ -6,8 +6,8 @@ import HistoryM from '../pages/admin/history';
 import EventDetails from '../pages/admin/eventDetails'; 
 import AddUser from '../pages/admin/add-personnel-page'; 
 import Calendar from '../pages/admin/calendar'
-import Login from '../pages/login/Login'
-import LoginSuccess from '../pages/login/LoginSuccess';
+// import Login from '../pages/login/Login'
+// import LoginSuccess from '../pages/login/LoginSuccess';
 // import CalendarA from '../../pages/adminpages/calendarA'; 
 
 function Admin() {

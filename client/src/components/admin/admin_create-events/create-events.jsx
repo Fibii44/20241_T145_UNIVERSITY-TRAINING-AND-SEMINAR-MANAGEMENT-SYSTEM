@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCamera, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
-import '../adminbar/css/admin.css';
+import 'bootstrap/dist/css/bootstrap.min.css'; // Ensure Bootstrap CSS is imported
+import './create-event.css';
 
 const EventModal = ({ isOpen, onClose, onSave }) => {
   const [summary, setSummary] = useState('');
@@ -43,89 +44,103 @@ const EventModal = ({ isOpen, onClose, onSave }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay">
-      <div className="modal">
-        <div className="upload-photo">
-          <FontAwesomeIcon icon={faCamera} className="camera-icon" />
-          <p>Upload Photo</p>
-        </div>
-        <form className="event-form" onSubmit={handleSaveDetails}>
-          <label>Enter Event Summary</label>
-          <input
-            type="text"
-            placeholder="Event Summary"
-            value={summary}
-            onChange={(e) => setSummary(e.target.value)}
-          />
-
-          <label>Enter Hostname</label>
-          <input
-            type="text"
-            placeholder="Enter Hostname"
-            onChange={(e) => setNewEvent({ ...newEvent, hostname: e.target.value })}
-          />
-
-          <label>Event Date</label>
-          <input
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-          />
-
-          <label>Start Time</label>
-          <input
-            type="time"
-            value={startTime}
-            onChange={(e) => setStartTime(e.target.value)}
-          />
-
-          <label>End Time</label>
-          <input
-            type="time"
-            value={endTime}
-            onChange={(e) => setEndTime(e.target.value)}
-          />
-
-          <label>Event Description</label>
-          <textarea
-            placeholder="Enter event description"
-            onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })}
-          ></textarea>
-
-          <div className="reminder-section">
-            <label>Set Reminder</label>
-            <div className="reminder-options">
-              <button type="button">None</button>
-              <button type="button">1 hour before</button>
-              <button type="button">1 day before</button>
-              <button type="button">1 week before</button>
-            </div>
+    <div className={`modal-overlay ${isOpen ? 'show' : ''}`} onClick={onClose}>
+      <div className={`modal ${isOpen ? 'show' : ''}`} style={{ display: isOpen ? 'block' : 'none' }}>
+        <div className="modal-content">
+          <div className="modal-header">
+            <h5 className="modal-title">Event Details</h5>
+            <button type="button" className="close" onClick={onClose}>
+              <span>&times;</span>
+            </button>
           </div>
-          <div className="additional-options">
-            <div className="location-input">
+          <div className="modal-body">
+            <div className="upload-photo">
+              <FontAwesomeIcon icon={faCamera} className="camera-icon" />
+              <p>Upload Photo</p>
+            </div>
+            <form className="event-form" onSubmit={handleSaveDetails}>
+              <label>Enter Event Summary</label>
               <input
                 type="text"
-                placeholder="Enter location"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
+                placeholder="Event Summary"
+                value={summary}
+                onChange={(e) => setSummary(e.target.value)}
+                className="form-control mb-3"
               />
-              <FontAwesomeIcon icon={faMapMarkerAlt} className="location-icon" />
-            </div>
-            <button type="button">Insert Certificate Template</button>
-            <button type="button">+ Invite Participants</button>
-          </div>
 
-          <div className="modal-buttons">
-            <button
-              type="button"
-              className="close-button"
-              onClick={onClose}
-            >
-              Close
-            </button>
-            <button type="submit" className="save-button">Save Details</button>
+              <label>Enter Hostname</label>
+              <input
+                type="text"
+                placeholder="Enter Hostname"
+                onChange={(e) => setNewEvent({ ...newEvent, hostname: e.target.value })}
+                className="form-control mb-3"
+              />
+
+              <label>Event Date</label>
+              <input
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                className="form-control mb-3"
+              />
+
+              <label>Start Time</label>
+              <input
+                type="time"
+                value={startTime}
+                onChange={(e) => setStartTime(e.target.value)}
+                className="form-control mb-3"
+              />
+
+              <label>End Time</label>
+              <input
+                type="time"
+                value={endTime}
+                onChange={(e) => setEndTime(e.target.value)}
+                className="form-control mb-3"
+              />
+
+              <label>Event Description</label>
+              <textarea
+                placeholder="Enter event description"
+                onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })}
+                className="form-control mb-3"
+              ></textarea>
+
+              <div className="reminder-section mb-3">
+                <label>Set Reminder</label>
+                <div className="reminder-options">
+                  <button type="button" className="btn btn-outline-secondary btn-sm">None</button>
+                  <button type="button" className="btn btn-outline-secondary btn-sm">1 hour before</button>
+                  <button type="button" className="btn btn-outline-secondary btn-sm">1 day before</button>
+                  <button type="button" className="btn btn-outline-secondary btn-sm">1 week before</button>
+                </div>
+              </div>
+
+              <div className="additional-options mb-3">
+                <div className="location-input">
+                  <input
+                    type="text"
+                    placeholder="Enter location"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    className="form-control"
+                  />
+                  <FontAwesomeIcon icon={faMapMarkerAlt} className="location-icon" />
+                </div >
+
+                <button type="button" class="cert-template-btn">Insert Certificate Template</button>
+                <button type="button" class="invite-participants-btn">+ Invite Participants</button>
+
+              </div>
+
+              <div class="modal-buttons">
+                <button type="button" class="close-button" onClick={onClose}>Close</button>
+                <button type="submit" class="save-button">Save Details</button>
+              </div>
+            </form>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );

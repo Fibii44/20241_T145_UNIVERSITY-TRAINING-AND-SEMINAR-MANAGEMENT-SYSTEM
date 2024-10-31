@@ -1,0 +1,54 @@
+/*Event Details*/
+
+/* Container for the entire event section */
+.event-container {
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    margin: 20px;
+  }
+  
+  .card-wrapper {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .image-thumbnail {
+    width: 100%;
+    height: auto;
+  }
+  
+  .details-section {
+    padding: 15px;
+    background-color: #fff;
+  }
+  
+  .title-heading {
+    font-size: 1.5em;
+    margin: 0 0 10px;
+    color: #333;
+  }
+  
+  .description-text {
+    font-size: 1em;
+    color: #666;
+    margin-bottom: 15px;
+  }
+  
+  .info-container {
+    display: flex;
+    gap: 15px;
+    font-size: 0.9em;
+    color: #555;
+  }
+  
+  .info-container span {
+    display: flex;
+    align-items: center;
+  }
+  
+  .info-container span svg {
+    margin-right: 5px;
+    color: #aaa;
+  }

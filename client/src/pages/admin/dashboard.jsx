@@ -4,7 +4,8 @@ import { faUser, faCalendarCheck, faClock } from '@fortawesome/free-solid-svg-ic
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import Sidebar from '../../components/admin/adminbar/sidebar';
 import Topbar from '../../components/admin/adminbar/topbar';
-import '../../components/admin/adminbar/css/admin.css';
+import './css/dashboard.css';
+
 
 
 
@@ -26,14 +27,21 @@ const users = [
 ];
 
 const StatCard = ({ title, count, icon, color }) => (
-  <div className="card">
+  <div className="dashboard__card"> {/* Updated class name for specificity */}
     <div className="card-content">
-      <h3>{title}</h3>
-      <p>{count}</p>
+      <div className="stat-content">
+        <div className="text-content">
+          <h3>{title}</h3>
+          <p>{count}</p>
+        </div>
+        <div className="icon" style={{ color }}>
+          {icon}
+        </div>
+      </div>
     </div>
-    <div className="icon" style={{ color }}>{icon}</div>
   </div>
 );
+
 
 const Chart = () => (
   <div className="chart">

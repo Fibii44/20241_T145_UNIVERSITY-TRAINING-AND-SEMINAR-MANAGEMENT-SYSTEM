@@ -1,11 +1,12 @@
 // EventM.jsx
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faCalendarCheck, faClock, faPlus, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
+import { faCalendarCheck, faClock, faPlus, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
+import './css/eventM.css';
 import Sidebar from '../../components/admin/adminbar/sidebar';
 import Topbar from '../../components/admin/adminbar/topbar';
 import EventModal from '../../components/admin/admin_create-events/create-events'; 
-import '../../components/admin/adminbar/css/admin.css';
+
 
 const EventM = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -17,7 +18,9 @@ const EventM = () => {
 
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
+  
   };
+
 
   const handleSaveEventDetails = (eventDetails) => {
     console.log('Event details saved:', eventDetails);
@@ -65,14 +68,12 @@ const EventM = () => {
             <FontAwesomeIcon icon={faPlus} />
           </button>
         </div>
-
-        {/* Use the EventModal component */}
-        <EventModal 
+       {/* Use the EventModal component */}
+          <EventModal 
           isOpen={isModalOpen} 
           onClose={toggleModal} 
           onSave={handleSaveEventDetails} 
         />
-
         <div className="context-card">
           <div className="events-list">
             {events.map((event) => (

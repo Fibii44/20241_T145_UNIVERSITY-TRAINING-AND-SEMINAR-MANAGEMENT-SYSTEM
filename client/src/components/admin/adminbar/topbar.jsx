@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './css/admin.css';
 
 
 const Topbar = () => {
@@ -10,10 +11,10 @@ const Topbar = () => {
 
     return (
         <div className="topbar">
-            <div className="search">
-                <input type="text" placeholder="Search..." />
-            </div>
-
+             <div className="search-admin">
+        <i class="fa fa-search search-icon"></i>
+        <input type="text" placeholder="Search..." />
+    </div>
             <div className="user-info">
                 <div className="profile">
                     <img src="path/to/your/image.png" />

@@ -5,7 +5,7 @@ import { faUsers, faCalendarCheck, faClock, faMapMarkerAlt } from '@fortawesome/
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import Sidebar from '../../components/admin/adminbar/sidebar';
 import Topbar from '../../components/admin/adminbar/topbar';
-import '../../components/admin/adminbar/css/admin.css';
+import './css/eventDetails.css';
 
 // Temporary data for statisfactory Chart
 const data = [
