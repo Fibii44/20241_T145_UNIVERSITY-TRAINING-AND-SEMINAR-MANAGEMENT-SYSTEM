@@ -45,7 +45,11 @@ const EventModal = ({ isOpen, onClose, onSave }) => {
 
   return (
     <div className={`modal-overlay ${isOpen ? 'show' : ''}`} onClick={onClose}>
-      <div className={`modal ${isOpen ? 'show' : ''}`} style={{ display: isOpen ? 'block' : 'none' }}>
+      <div
+        className={`modal ${isOpen ? 'show' : ''}`}
+        style={{ display: isOpen ? 'block' : 'none' }}
+        onClick={(e) => e.stopPropagation()} // Prevents overlay click from closing modal
+      >
         <div className="modal-content">
           <div className="modal-header">
             <h5 className="modal-title">Event Details</h5>
@@ -127,16 +131,15 @@ const EventModal = ({ isOpen, onClose, onSave }) => {
                     className="form-control"
                   />
                   <FontAwesomeIcon icon={faMapMarkerAlt} className="location-icon" />
-                </div >
+                </div>
 
-                <button type="button" class="cert-template-btn">Insert Certificate Template</button>
-                <button type="button" class="invite-participants-btn">+ Invite Participants</button>
-
+                <button type="button" className="cert-template-btn">Insert Certificate Template</button>
+                <button type="button" className="invite-participants-btn">+ Invite Participants</button>
               </div>
 
-              <div class="modal-buttons">
-                <button type="button" class="close-button" onClick={onClose}>Close</button>
-                <button type="submit" class="save-button">Save Details</button>
+              <div className="modal-buttons">
+                <button type="button" className="close-button" onClick={onClose}>Close</button>
+                <button type="submit" className="save-button">Save Details</button>
               </div>
             </form>
           </div>
