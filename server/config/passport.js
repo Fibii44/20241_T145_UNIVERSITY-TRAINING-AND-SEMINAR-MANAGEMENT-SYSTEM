@@ -20,9 +20,15 @@ async (accessToken, refreshToken, profile, done) => {
                 name: profile.displayName,
                 email: profile.emails[0].value,
                 profilePicture: profile.photos[0].value,
-                role: 'faculty_staff'
+                role: 'faculty_staff',
+                accessToken: accessToken,
+                refreshToken: refreshToken
             });
             await user.save();
+        }else{
+            user.accessToken = accessToken;
+            user.refreshToken = refreshToken;
+            await user.save();  
         }
         return done(null, user);
     }catch(error){

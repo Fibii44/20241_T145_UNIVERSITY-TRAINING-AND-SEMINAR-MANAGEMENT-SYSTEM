@@ -1,23 +1,6 @@
 const mongoose = require('mongoose');
-const Event = require('../../models/Event'); // Import the Event model
-
-// Database connection (ensure this is in the right place in your application)
-const connectDB = async () => {
-    try {
-        const uri = process.env.MONGODB_URI; // Use your MongoDB URI from environment variables
-        await mongoose.connect(uri, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        });
-        console.log('MongoDB connected successfully');
-    } catch (error) {
-        console.error('MongoDB connection error:', error);
-        process.exit(1); // Exit the process with failure
-    }
-};
-
-// Call the connectDB function to establish a connection to MongoDB when the service is loaded
-connectDB();
+const Event = require('../../models/event'); // Import the Event model
+require('../../config/dbcon');
 
 const renderEventsPage = async (req, res) => {
     try {
@@ -51,8 +34,55 @@ const viewEventById = async (req, res) => {
     }
 };
 
-module.exports = {
+
+const updateEvent = async (req, res) => {
+    try {
+      const eventId = req.params.id;
+      const updates = req.body; // Assuming you send update data in the request body
+  
+      const updatedEvent = await Event.findByIdAndUpdate(eventId, updates, {
+        new: true, // This option returns the updated document
+      });
+  
+      if (!updatedEvent) {
+        return res.status(404).json({ message: 'Event not found' });
+      }
+  
+      res.status(200).json({ 
+        message: 'Event updated successfully', 
+        event: updatedEvent 
+      });
+    } catch (error) {
+      res.status(400).json({   
+   message: error.message });
+    }
+  };
+  
+  const deleteEvent = async (req, res) => {
+    try {
+      const eventId = req.params.id;
+  
+      const deletedEvent = await Event.findByIdAndRemove(eventId);
+  
+      if (!deletedEvent) {
+        return res.status(404).json({   
+   message: 'Event not found' });
+      }
+  
+      res.status(200).json({ 
+        message: 'Event deleted successfully',   
+   
+        event: deletedEvent 
+      });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  };
+  
+  module.exports = {
     renderEventsPage,
     addEvent,
     viewEventById,
-};
+    updateEvent, // Add this
+    deleteEvent, // Add this
+  };

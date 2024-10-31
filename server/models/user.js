@@ -36,6 +36,12 @@ const UserSchema = new mongoose.Schema({
         enum: ['active', 'inactive'],
         default: 'active'
     },
+    accessToken: {
+        type: String
+    },
+    refreshToken: {
+        type: String
+    },
     createdAt: {
         type: Date,
         default: Date.now
@@ -48,11 +54,13 @@ const UserSchema = new mongoose.Schema({
 
 // Pre-save hook to hash the password if it is new or modified
 UserSchema.pre('save', async function (next) {
-    if (this.isModified('password')) {
+    // Check if password is modified and not already hashed
+    if (this.isModified('password') && !this.password.startsWith('$2b$')) {
         this.password = await bcrypt.hash(this.password, 10);
     }
     next();
 });
+
 
 // Method to compare password
 UserSchema.methods.isValidPassword = async function (password) {

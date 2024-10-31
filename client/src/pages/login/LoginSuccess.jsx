@@ -20,8 +20,8 @@ function LoginSuccess() {
       // Redirect based on role
       if (userRole === 'faculty_staff') {
         navigate('/home');
-      } else if (userRole === 'admin') {
-        navigate('/admin-dashboard');
+      } else if (userRole === 'general_admin') {
+        navigate('/admin');
       } else {
         navigate('/dashboard');
       }
