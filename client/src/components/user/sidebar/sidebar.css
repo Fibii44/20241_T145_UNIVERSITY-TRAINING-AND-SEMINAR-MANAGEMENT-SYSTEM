@@ -6,10 +6,32 @@
     box-sizing: border-box;
     font-family: 'Nunito Sans', sans-serif;
   }
+  /* Sidebar for Smaller Screens */
 
-
-
-
+  @media (max-width: 768px) {
+    .sidebar {
+      height: 200px;
+      width: 100%;
+    }
+  }
+  .menu-toggle-mobile {
+    display: none;
+    background: none;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    font-size: 1.5rem;
+  }
+  
+  @media (max-width: 768px) {
+    .menu-toggle-mobile {
+      display: flex;
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      z-index: 1000;
+    }
+  }
   body,
   html,
   #root {
@@ -28,8 +50,8 @@
     color: #fff;
     display: flex;
     flex-direction: column;
-    overflow-y: auto;
-    transition: width 0.5s ease, height 0.1s ease;
+    overflow-x: hidden;
+    transition: width 0.5s ease;
   }
   .sidebar-title {
     display: flex;
@@ -51,17 +73,20 @@
 
 
   .sidebar.collapsed {
-    width: 90px; /* Reduced width */
+    width: 70px; /* Reduced width */
     
   }
-
+  
   .sidebar-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 15px 20px;
     transition: none;
-    
+  }
+
+  .sidebar.collapsed .sidebar-header {
+    transform: translateX(-18px);
   }
 
   .sidebar-header h2 {
@@ -69,47 +94,56 @@
     font-weight: bold;
   }
   .menu-items li {
-    position: relative;
-    padding-left: 20px;
-    border-radius: 8px;
-    transition: background 1s ease;
-    height: 1px;
+    display: flex;
     align-items: center;
-    padding-bottom: 60px;
-    padding-top: -10px;
+    padding-left: 20px;
+    padding-right: 20px;
+    height: 50px; /* Fixed height to keep alignment consistent */
+    width: 100%;
+    border-radius: 8px;
+    transition: background 0.3s ease;
   }
   .sidebar.collapsed .menu-items {
-    transform: translateX(-2px);
-    width: 5.5rem;
-  }
-  .sidebar.collapsed .menu-items li a{
-    transform: translateX(4px);
+    transform: translateX(20px);
+    width: 50%;
   }
   .menu-items {
-    transform: translateX(-10px);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Fix alignment in both states */
     gap: 0;
+    width: 100%;
+    padding-left: 12px;
   }
-  .menu-items li a{
+  .sidebar.collapsed .menu-items li a {
+    justify-content: center;
+    transform: translateY(33px);
+  }
+  .menu-items li a {
+    display: flex;
+    align-items: center;
     font-size: 14px;
-
+    color: #fff;
+    text-decoration: none;
+    transform: translateY(30px);
   }
-  .menu-items li.active a {
-    padding-left: 15px; 
+  .menu-items li.active {
+    background-color: #FFB800;
+    color: #15225a;
+    font-weight: bold;
+    border-radius: 10px;
   }
   .menu-items li.active{
     width: 100%;
   }
   .menu-items li.active::before {
     content: "";
-    transform: translateX(-10px);
     position: absolute;
-    left: -10px;
-    top: 0;
+    left: 0;
     height: 100%;
-    width: 5px;                 /* Width of the vertical line */
-    background-color: #FFB800;  /* Same color as active background */
-    border-radius: 0px 8px 8px 0px; /* Rounded corners on the line */
-    
+    width: 5px;
+    background-color: #FFB800;
+    border-radius: 0px 8px 8px 0px;
   }
 
 
@@ -203,7 +237,7 @@
 
   }
 
-  .sidebar.sidebar.collapsed ul li.active {
+.sidebar.collapsed ul li.active {
     background-color: #FFB800; 
     color: #15225a; 
     font-weight: bold; 
@@ -227,16 +261,19 @@
     background-color: #1e316b;
   }
 
-  .sidebar.sidebar.collapsed ul li:hover {
+ .sidebar.collapsed ul li:hover {
     background-color: transparent; 
 }
 
   
-  .sidebar.collapsed .menu-items li {
-    padding-left: 2px; /* Align icons when collapsed */
-  }
-
-
+.sidebar.collapsed .menu-items li {
+  justify-content: center; /* Center items in collapsed state */
+  padding-left: 0;
+  padding-right: 0;
+}
+.sidebar.collapsed .menu-items li span {
+  display: none; /* Hide text in collapsed view */
+}
 
   /*Sidebar-footer*/
   .sidebar.collapsed ul li.active {
@@ -246,6 +283,17 @@
   }
   .sidebar-footer {
     margin-top: auto;
+    transform: translateX(20px);
+    width: 10rem;
+    overflow-y: hidden;
+  }
+
+  .sidebar.collapsed .sidebar-footer{
+    width: 50%;
+  }
+  .sidebar.collapsed .sidebar-footer li{
+    width: 50%;
+    transform: translateX(12px);
   }
 
   .sidebar-footer-item a{

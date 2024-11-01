@@ -15,7 +15,7 @@ function Home() {
       <h3>
         <span>BukSU</span> <span className="highlight">Engage</span>
       </h3>
-      <div className="search-container">
+      {/* <div className="search-container">
         <input 
           type="text" 
           className="search-bar" 
@@ -26,7 +26,7 @@ function Home() {
         <button className="search-button" onClick={handleSearch}>
           Search
         </button>
-      </div>
+      </div> */}
     </div>
   );
 }

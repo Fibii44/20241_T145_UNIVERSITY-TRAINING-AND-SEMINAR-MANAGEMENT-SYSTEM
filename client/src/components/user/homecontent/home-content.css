@@ -1,6 +1,6 @@
 .home-background { 
     position: relative;
-    background-image: url('src/assets/homebg.jpg');
+    background-image: url('../../../assets/homebg.jpg');
     background-size: cover;   
     background-position: center;
     height: 100vh;            
