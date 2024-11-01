@@ -7,8 +7,6 @@ import Topbar from '../../components/admin/adminbar/topbar';
 import './css/dashboard.css';
 
 
-
-
 //Temporary Data, I connect ra ang data sa database kung naa na
 const data = [
   { name: 'Jan', TotalUsers: 4000, ActiveUsers: 2400 },

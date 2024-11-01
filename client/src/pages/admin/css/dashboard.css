@@ -34,7 +34,8 @@
 .stat-content {
     display: flex;
     justify-content:space-between;
-    width: 100%;       
+    width: 100%;    
+    overflow: hidden;   
 }
 .stat-text {
     flex-grow: 1;
@@ -44,10 +45,13 @@
     margin-left: auto;
     display: flex;
     align-items: center;
+    right: 0;
+    padding-right: 10px;
   }
 .text-content {
     flex-grow: 1;
     padding-right: 5rem;
+    justify-content: space-between;
 }
 
 
@@ -63,11 +67,14 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   color: rgb(100, 85, 85);
 }
-
+.card-content{
+    width: 100%;
+}
 .card-content h3 {
   margin-bottom: 5px; 
   font-weight: normal;
   color: #888;
+
 }
 
 .card-content p {
@@ -145,6 +152,84 @@ table th {
     border-radius: 20px;
     overflow: hidden;
 }
+
+
+
+
+  .dashboard {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  
+  .dashboard__card {
+    flex: 1 1 150px; /* Allow the cards to shrink and grow */
+    min-width: 150px;
+    padding: 15px;
+    box-sizing: border-box;
+  }
+  
+  /* Chart styling */
+  .chart {
+    margin-top: 20px;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  
+  .chart-header {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .table-container {
+    margin-top: 20px;
+    max-width: 100%;
+    overflow-x: auto; /* Allows horizontal scrolling on small screens */
+  }
+  
+  .table-responsive {
+    display: block;
+    width: 100%;
+  }
+  
+  .table th,
+  .table td {
+    white-space: nowrap; /* Prevents text wrapping */
+  }
+  
+  /* Responsive adjustments for smaller screens */
+  @media (max-width: 768px) {
+    .dashboard__card {
+      flex: 1 1 100%;
+    }
+  
+    .table th,
+    .table td {
+      font-size: 0.9rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .dashboard__card h3 {
+      font-size: 1rem;
+    }
+  
+    .dashboard__card p {
+      font-size: 0.8rem;
+    }
+  
+    .userstat-heading,
+    .users-heading,
+    .dashboard-heading {
+      font-size: 1.2rem;
+    }
+  }
+
+
+
+
 
 .dashboard-heading {
     color: black;
