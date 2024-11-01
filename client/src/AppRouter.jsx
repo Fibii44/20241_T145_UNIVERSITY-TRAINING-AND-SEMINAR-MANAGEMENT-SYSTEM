@@ -10,10 +10,9 @@ import PrivateRoute from './PrivateRoute';
 
 createRoot(document.getElementById("root")).render(
     <StrictMode>
-      <GoogleReCaptchaProvider reCaptchaKey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}>
         <BrowserRouter> 
           <Routes>
-            <Route path="/" element={<Login />}> </Route>
+            <Route path="/" element={<GoogleReCaptchaProvider reCaptchaKey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}> <Login /></GoogleReCaptchaProvider>}> </Route>
             <Route path="/login/success" element={<LoginSuccess />}> </Route>
             <Route
               path="/a/*"
@@ -33,6 +32,5 @@ createRoot(document.getElementById("root")).render(
             />
           </Routes>
         </BrowserRouter>
-      </GoogleReCaptchaProvider>
     </StrictMode>
 );

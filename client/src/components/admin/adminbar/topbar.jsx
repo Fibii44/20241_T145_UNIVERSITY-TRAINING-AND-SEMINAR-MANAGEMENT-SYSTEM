@@ -1,15 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './css/admin.css';
 import Profile from "../../../assets/adminProfile.png"; // Imported Profile image
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBell } from '@fortawesome/free-solid-svg-icons';
+import { jwtDecode } from 'jwt-decode';
 
 const Topbar = () => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [user, setUser] = useState({ name: '', profilePicture: '', role: '' });
 
     const toggleDropdown = () => {
         setIsDropdownOpen(!isDropdownOpen);
     };
+
+    useEffect(() => {
+        const token = localStorage.getItem('authToken');
+        if(token){
+            const decoded = jwtDecode(token);
+            console.log('Decoded Profile Picture:', decoded.profilePicture);
+            setUser({
+                name: decoded.name,
+                email: decoded.email,
+                profilePicture: decoded.profilePicture,
+                role: decoded.role
+            })
+        }
+    }, []);
 
     return (
         <div className="topbar">
@@ -22,11 +38,11 @@ const Topbar = () => {
                     <FontAwesomeIcon icon={faBell} size="lg" />
                 </div>
                 <div className="profile">
-                    <img src={Profile} alt="Admin Profile" />
+                    <img src={user.profilePicture} alt="Admin Profile" />
                 </div>
                 <div className="user-details">
                     <span className="name" onClick={toggleDropdown} style={{ cursor: 'pointer' }}>
-                        Osama Been Laggin'
+                       {user.name}
                     </span>
                     <span className="role">Admin</span>
                 </div>

@@ -1,28 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faCalendarCheck, faBan} from '@fortawesome/free-solid-svg-icons';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import Sidebar from '../../components/admin/adminbar/sidebar';
 import Topbar from '../../components/admin/adminbar/topbar';
 import "./css/dashboard.css";
-
-//Temporary Data, I connect ra ang data sa database kung naa na
-const data = [
-  { name: 'Jan', TotalUsers: 4000, ActiveUsers: 2400 },
-  { name: 'Feb', TotalUsers: 3000, ActiveUsers: 1398 },
-  { name: 'Mar', TotalUsers: 2000, ActiveUsers: 9800 },
-  { name: 'Apr', TotalUsers: 2780, ActiveUsers: 3908 },
-  { name: 'May', TotalUsers: 1890, ActiveUsers: 4800 },
-  { name: 'Jun', TotalUsers: 2390, ActiveUsers: 3800 },
-  { name: 'Jul', TotalUsers: 3490, ActiveUsers: 4300 },
-];
-const users = [
-  { id: '00001', name: 'Christine Brooks', email: 'christine@domain.com', phone: '0946-245-6797', position: 'Finance Cashier', gender: 'Female' },
-  { id: '00002', name: 'John Doe', email: 'john@domain.com', phone: '0912-345-6789', position: 'IT Specialist', gender: 'Male' },
-  { id: '00003', name: 'Jane Smith', email: 'jane@domain.com', phone: '0923-456-7890', position: 'Manager', gender: 'Female' }
- 
-];
-
 
 const StatCard = ({ title, count, icon, color }) => (
   <div className="dashboard__card"> {/* Updated class name for specificity */}
@@ -35,13 +18,13 @@ const StatCard = ({ title, count, icon, color }) => (
         <div className="stat-icon" style={{ color }}>
           {icon}
         </div>
-      </div>
+      </div>  
     </div>
   </div>
 );
 
 
-const Chart = () => (
+const Chart = ({ data }) => (
   <div className="chart">
     <h2 className="userstat-heading">User Statistics</h2>
     <ResponsiveContainer width="100%" height={200}>
@@ -80,30 +63,28 @@ const Chart = () => (
 
 
 
-const UsersTable = () => (
+const UsersTable = ({ users }) => (
   <div className="table-container">
     <h2 className="users-heading">Users</h2>
-    <div className="table-responsive"> {/* Add this div for responsiveness */}
+    <div className="table-responsive">
       <table className="table table-striped">
         <thead className="thead-dark">
           <tr>
             <th>ID</th>
             <th>Name</th>
             <th>Email</th>
-            <th>Phone Number</th>
-            <th>Position</th>
-            <th>Gender</th>
+            <th>Role</th>
+            <th>Status</th>
           </tr>
         </thead>
         <tbody>
-          {users.map(user => (
-            <tr key={user.id}>
-              <td>{user.id}</td>
+          {users.map((user, index) => (
+            <tr key={user._id || index}>
+              <td>{user._id}</td>
               <td>{user.name}</td>
               <td>{user.email}</td>
-              <td>{user.phone}</td>
-              <td>{user.position}</td>
-              <td>{user.gender}</td>
+              <td>{user.role}</td>
+              <td>{user.status}</td>
             </tr>
           ))}
         </tbody>
@@ -113,12 +94,44 @@ const UsersTable = () => (
 );
 
 
+
 const Dashboard = () => {
   
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [stats, setStats] = useState({
+    totalUsers: 0,
+    totalEvents: 0,
+    upcomingEvents: 0,
+    successfulEvents: 0,
+    canceledEvents: 0,
+    users: [],
+    monthlyUserData: []
+  });
 
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
+  };
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await axios.get('http://localhost:3000/a/dashboard');
+        setStats(response.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchStats();
+  }, []);
+  
+  const formatMonthYearShort = (monthYear) => {
+    const [month, year] = monthYear.split("-");
+    const monthNamesShort = [
+        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    ];
+    const monthIndex = parseInt(month) - 1; // Convert string month to zero-based index
+    return `${monthNamesShort[monthIndex]} ${year}`; // Format as "Month Year"
   };
 
   return (
@@ -129,15 +142,21 @@ const Dashboard = () => {
         <h2 className="dashboard-heading">Dashboard</h2>
 
         <div className="dashboard">
-          <StatCard title="Total User" count="5,609" icon={<FontAwesomeIcon icon={faUser} size="2x" />} color="#4a90e2"/>
-          <StatCard title="Total Events" count="64" icon={<FontAwesomeIcon icon={faCalendarCheck} size="2x" />} color="#ffe600"/>
-          <StatCard title="Upcoming Events" count="20" icon={<FontAwesomeIcon icon={faCalendarCheck} size="2x" />} color="#9b51e0" />
-          <StatCard title="Successful Events" count="20" icon={<FontAwesomeIcon icon={faCalendarCheck} size="2x" />} color="#34c759" />
-          <StatCard title="Canceled Events" count="20" icon={<FontAwesomeIcon icon={faBan} size="2x" />} color="#ff3b30" />
+          <StatCard title="Total User" count={stats.totalUsers} icon={<FontAwesomeIcon icon={faUser} size="2x" />} color="#4a90e2"/>
+          <StatCard title="Total Events" count={stats.totalEvents} icon={<FontAwesomeIcon icon={faCalendarCheck} size="2x" />} color="#ffe600"/>
+          <StatCard title="Upcoming Events" count={stats.upcomingEvents} icon={<FontAwesomeIcon icon={faCalendarCheck} size="2x" />} color="#9b51e0" />
+          <StatCard title="Successful Events" count={stats.successfulEvents} icon={<FontAwesomeIcon icon={faCalendarCheck} size="2x" />} color="#34c759" />
+          <StatCard title="Canceled Events" count={stats.canceledEvents} icon={<FontAwesomeIcon icon={faBan} size="2x" />} color="#ff3b30" />
         </div>
         
-        <Chart />
-        <UsersTable />
+        <Chart 
+          data={stats.monthlyUserData.map(({ month, totalUsers, activeUsers }) => ({
+              name: formatMonthYearShort(month), // Short format
+              TotalUsers: totalUsers,
+              ActiveUsers: activeUsers
+          }))} 
+        />
+        <UsersTable users={stats.users} />
       </div>
     </div>
   );
