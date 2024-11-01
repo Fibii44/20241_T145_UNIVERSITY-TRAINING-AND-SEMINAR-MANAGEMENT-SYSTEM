@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import './add-personnel.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCamera } from '@fortawesome/free-solid-svg-icons';
+import { faCamera, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 const AddUserForm = () => {
   const [formData, setFormData] = useState({
@@ -10,18 +10,23 @@ const AddUserForm = () => {
     phoneNumber: '',
     department: '',
     gender: '',
+    position: '',
     password: '',
     confirmPassword: '',
   });
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState({
+    password: false,
+    confirmPassword: false,
+  });
   const [error, setError] = useState('');
 
   const departments = [
+    'None',
     'College of Arts and Sciences',
     'College of Business',
     'College of Education',
     'College of Nursing',
-    'College of Computer Studies',
+    'College of Technologies',
   ];
 
   const handleChange = (e) => {
@@ -39,8 +44,25 @@ const AddUserForm = () => {
     });
   };
 
-  const handleTogglePassword = () => {
-    setShowPassword(!showPassword);
+  const handleTogglePassword = (field) => {
+    setShowPassword((prevState) => ({
+      ...prevState,
+      [field]: !prevState[field],
+    }));
+  };
+
+  const handleCancel = () => {
+    setFormData({
+      profilePicture: null,
+      name: '',
+      phoneNumber: '',
+      department: '',
+      gender: '',
+      position: '',
+      password: '',
+      confirmPassword: '',
+    });
+    setError('');
   };
 
   const handleSubmit = (e) => {
@@ -50,7 +72,6 @@ const AddUserForm = () => {
       return;
     }
     setError('');
-    // Handle form submission logic here
     console.log('Form Data:', formData);
   };
 
@@ -110,54 +131,59 @@ const AddUserForm = () => {
       </label>
 
       <label>
-        Gender:
-        <select
-          name="gender"
-          value={formData.gender}
+        Position:
+        <input
+          type="text"
+          name="position"
+          value={formData.position}
           onChange={handleChange}
           required
-        >
-          <option value="">Select Gender</option>
-          <option value="Male">Male</option>
-          <option value="Female">Female</option>
-          <option value="Other">Other</option>
-        </select>
+        />
       </label>
 
       <label>
         Password:
         <div className="password-container">
           <input
-            type={showPassword ? "text" : "password"}
+            type={showPassword.password ? "text" : "password"}
             name="password"
             value={formData.password}
             onChange={handleChange}
             required
           />
-          <button
-            type="button"
-            className="show-hide-btn"
-            onClick={handleTogglePassword}
-          >
-            {showPassword ? "Hide" : "Show"}
-          </button>
+          <FontAwesomeIcon
+            icon={showPassword.password ? faEyeSlash : faEye}
+            onClick={() => handleTogglePassword("password")}
+            className="eye-icon"
+          />
         </div>
       </label>
 
       <label>
         Re-enter Password:
-        <input
-          type={showPassword ? "text" : "password"}
-          name="confirmPassword"
-          value={formData.confirmPassword}
-          onChange={handleChange}
-          required
-        />
+        <div className="password-container">
+          <input
+            type={showPassword.confirmPassword ? "text" : "password"}
+            name="confirmPassword"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            required
+          />
+          <FontAwesomeIcon
+            icon={showPassword.confirmPassword ? faEyeSlash : faEye}
+            onClick={() => handleTogglePassword("confirmPassword")}
+            className="eye-icon"
+          />
+        </div>
       </label>
 
       {error && <p className="error-message">{error}</p>}
-
-      <button type="submit">Add User</button>
+      <div className='buttons'>
+        <button type="submit">Add User</button>
+        <button type="button" onClick={handleCancel} className="cancel-button">
+          Cancel
+        </button>
+      </div>
     </form>
   );
 };
