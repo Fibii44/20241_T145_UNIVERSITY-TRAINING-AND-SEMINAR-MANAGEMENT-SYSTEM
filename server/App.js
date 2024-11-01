@@ -28,7 +28,7 @@ const authRoutes = require('./routes/authRoutes')
 const calendarRoutes = require('./routes/admin/adminCalendarRoutes');
 
 const corsOptions = {
-    origin: 'http://localhost:3000', 
+    origin: 'http://localhost:5000', 
     methods: ['GET', 'POST', 'PUT', 'DELETE'], 
     credentials: true, 
 };

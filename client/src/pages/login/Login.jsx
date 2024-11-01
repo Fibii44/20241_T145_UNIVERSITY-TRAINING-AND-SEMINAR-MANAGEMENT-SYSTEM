@@ -10,9 +10,10 @@ import {
 } from 'mdb-react-ui-kit';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGoogle } from '@fortawesome/free-brands-svg-icons';
+import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './login.css'; 
-import { useNavigate } from 'react-router-dom';
+
 
 function Login() {
   const navigate = useNavigate();
@@ -79,7 +80,7 @@ function Login() {
           <MDBCard className="bg-white my-5 mx-auto" style={{ borderRadius: '1rem', maxWidth: '500px' }}>
             <MDBCardBody className="p-4 w-100 d-flex flex-column align-items-center">
               <div className="image-container mb-4">
-                <img src="../Images/Logo.png" className="card-img-top small-image" alt="Buksu Logo" />
+                <img src="../../assets/buksu-logo.png" alt="BukSU Logo" />
               </div>
 
               <p className="text-white-50 mb-4 text-center">Please enter your login and password!</p>

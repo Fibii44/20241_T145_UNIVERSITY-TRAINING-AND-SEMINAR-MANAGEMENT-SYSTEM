@@ -1,5 +1,5 @@
 
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { Route, Routes, Navigate} from 'react-router-dom';
 import Dashboard from '../pages/admin/dashboard';
 import EventM from '../pages/admin/eventM';
 import HistoryM from '../pages/admin/history';
@@ -13,21 +13,19 @@ import Table from '../pages/admin/usersTable';
 
 function Admin() {
   return (
-    <Router>
       <div className="App">
         <Routes>
-          <Route path="/" element={<Navigate to="/dashboard" />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/events" element={<EventM />} />
-          <Route path="/calendar" element={<Calendar />} />
-          <Route path="/users" element={<Table />} />
-          <Route path="/history" element={<HistoryM />} />
-          <Route path="/history/:id" element={<EventDetails />} /> 
-          <Route path="/personnel" element={<AddUser />} /> 
+          <Route path="/" element={<Navigate to="/a/dashboard" />} />
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="calendar" element={<Calendar />} />
+          <Route path="users" element={<Table />} />
+          <Route path="history" element={<HistoryM />} />
+          <Route path="history/:id" element={<EventDetails />} /> 
+          <Route path="personnel" element={<AddUser />} /> 
+          <Route path="events" element={<EventM />} />
           {/* <Route path="/calendar" element={<CalendarA />} />  */}
         </Routes>
       </div>
-    </Router>
   );
 }
 

@@ -1,32 +1,37 @@
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import {jwtDecode} from 'jwt-decode';
+import React, { useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
 function LoginSuccess() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
-    const queryParams = new URLSearchParams(window.location.search);
-    const token = queryParams.get('token');
+    const token = searchParams.get("token");
 
     if (token) {
-      // Save token to localStorage
-      localStorage.setItem('authToken', token);
+      localStorage.setItem("authToken", token);
 
-      // Decode token to get user role
       const decoded = jwtDecode(token);
       const userRole = decoded.role;
+      console.log(token);
 
-      // Redirect based on role
-      if (userRole === 'faculty_staff') {
-        navigate('/home');
-      } else if (userRole === 'general_admin') {
-        navigate('/admin');
+      if (userRole === "faculty_staff") {
+        navigate("/u"); 
+      } else if (
+        userRole === "general_admin" ||
+        userRole === "departmental_admin"
+      ) {
+        navigate("/a"); 
       } else {
-        navigate('/dashboard');
+        console.error("Unknown user role:", userRole);
+        navigate("/"); // Redirect to login for unknown roles
       }
+    } else {
+      console.error("Token not found in query parameters");
+      navigate("/login"); // Redirect to login if no token
     }
-  }, [navigate]);
+  }, [navigate, searchParams]);
 
   return <div>Redirecting...</div>;
 }

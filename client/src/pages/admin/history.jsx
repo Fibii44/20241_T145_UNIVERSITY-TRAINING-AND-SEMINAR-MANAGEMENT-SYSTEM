@@ -43,7 +43,7 @@ const HistoryM = () => {
 
     const handleCardClick = (id) => {
         // Navigate to a different page based on the event ID
-        navigate(`/history/${id}`); // Adjust the path as needed
+        navigate(`/a/history/${id}`); // Adjust the path as needed
     };
 
     return (

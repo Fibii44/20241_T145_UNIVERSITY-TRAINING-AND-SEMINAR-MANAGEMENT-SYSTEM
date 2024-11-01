@@ -4,8 +4,7 @@ import { faUser, faCalendarCheck, faBan} from '@fortawesome/free-solid-svg-icons
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import Sidebar from '../../components/admin/adminbar/sidebar';
 import Topbar from '../../components/admin/adminbar/topbar';
-import './css/dashboard.css';
-
+import "./css/dashboard.css";
 
 //Temporary Data, I connect ra ang data sa database kung naa na
 const data = [
@@ -23,6 +22,7 @@ const users = [
   { id: '00003', name: 'Jane Smith', email: 'jane@domain.com', phone: '0923-456-7890', position: 'Manager', gender: 'Female' }
  
 ];
+
 
 const StatCard = ({ title, count, icon, color }) => (
   <div className="dashboard__card"> {/* Updated class name for specificity */}
@@ -114,6 +114,7 @@ const UsersTable = () => (
 
 
 const Dashboard = () => {
+  
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const toggleSidebar = () => {

@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap');
 
 body {
-  background-image: url("../Images/BukSU.png");
+  background-image: url("../../assets/homebg.jpg");
   background-size: cover; 
   background-repeat: no-repeat; 
   background-position: center;
@@ -9,7 +9,12 @@ body {
   height: 100%;
   font-family: 'Nunito Sans', sans-serif;
 }
-
+.row { 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 85vh; 
+}
 h1 {
     color: #f5f5f5;
     font-size: 3rem;
