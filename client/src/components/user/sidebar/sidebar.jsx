@@ -19,19 +19,19 @@ const Sidebar = ({ isCollapsed, toggleSidebar, activePage }) => (
     
     <ul className="menu-items">
       <li className={activePage === 'dashboard' ? 'active' : ''}>
-        <Link to="/certificates"> {/* Add link to Dashboard */}
+        <Link to="/u/certificates"> {/* Add link to Dashboard */}
           <span className="icon"><FontAwesomeIcon icon={faCertificate} size="lg" /></span>
           {!isCollapsed && <span>Certificates</span>}
         </Link>
       </li>
       <li className={activePage === 'history' ? 'active' : ''}>
-        <Link to="/history"> {/* Add link to Users Table */}
+        <Link to="/u/history"> {/* Add link to Users Table */}
           <span className="icon"><FontAwesomeIcon icon={faHistory} size="lg" /></span>
           {!isCollapsed && <span>History</span>}
         </Link>
       </li>
       <li className={activePage === 'events' ? 'active' : ''}>
-        <Link to="/events"> {/* Add link to Events */}
+        <Link to="/u/events"> {/* Add link to Events */}
           <span className="icon"><FontAwesomeIcon icon={faCalendar} size="lg" /></span>
           {!isCollapsed && <span>Events</span>}
         </Link>

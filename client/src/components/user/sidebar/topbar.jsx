@@ -17,14 +17,14 @@ const Topbar = () => {
             <div className="topnavbar">
                 <ul>
                     <li>
-                    <Link to="/home">
+                    <Link to="/u/home">
                         <div className="nav-icons">
                             <FontAwesomeIcon icon={faHome} size="lg" />
                         </div>
                     </Link>
                     </li>
                     <li>
-                    <Link to="/events">   
+                    <Link to="/u/events">   
                         <div className="nav-icons">
                             <FontAwesomeIcon icon={faCalendarCheck} size="lg" />
                         </div>
