@@ -162,3 +162,33 @@
     text-overflow: ellipsis;
     cursor: pointer;
 }
+.day-view {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+.hour-block {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+    padding: 10px 0;
+}
+.hour-label {
+    width: 50px;
+    text-align: right;
+    font-weight: bold;
+    margin-right: 10px;
+}
+.events {
+    flex: 1;
+}
+.event {
+    background-color: #ff9aa2;
+    padding: 5px 10px;
+    border-radius: 3px;
+    color: white;
+    margin-bottom: 5px;
+}
+.no-events {
+    color: #888;
+}

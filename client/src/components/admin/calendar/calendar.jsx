@@ -73,16 +73,15 @@ const Calendar = () => {
     ]);
 
     const [currentView, setCurrentView] = useState('month');
-    const [currentDate, setCurrentDate] = useState(new Date()); // Set to today's date
+    const [currentDate, setCurrentDate] = useState(new Date());
     const today = new Date();
     const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-    const getEventsForDay = (date) => {
-        return events.filter(event => event.date === date);
-    };
+    const getEventsForDay = (date) => events.filter(event => event.date === date);
 
     const renderViewButtons = () => (
         <div style={{ display: 'flex' }}>
+            <button className={`button ${currentView === 'day' ? 'active' : ''}`} onClick={() => setCurrentView('day')}>Day</button>
             <button className={`button ${currentView === 'week' ? 'active' : ''}`} onClick={() => setCurrentView('week')}>Week</button>
             <button className={`button ${currentView === 'month' ? 'active' : ''}`} onClick={() => setCurrentView('month')}>Month</button>
             <button className={`button ${currentView === 'year' ? 'active' : ''}`} onClick={() => setCurrentView('year')}>Year</button>
@@ -194,7 +193,7 @@ const Calendar = () => {
     };
 
   // Year View
-const renderYearView = () => {
+    const renderYearView = () => {
     const months = Array.from({ length: 12 }, (_, i) => new Date(currentDate.getFullYear(), i, 1));
     const weeksInMonth = months.map(month => {
         const weeks = [];
@@ -234,7 +233,6 @@ const renderYearView = () => {
         
         return weeks;
     });
-
     return (
         <>
             <div className="calendar-header">
@@ -276,11 +274,43 @@ const renderYearView = () => {
             </div>
         </>
     );
-};
+    };
+// Day View =========================================================================================================================================================================
+const renderDayView = () => {
+    const formattedDate = currentDate.toISOString().split('T')[0];
+    const eventsForDay = getEventsForDay(formattedDate);
 
+    return (
+        <>
+            <div className="calendar-header">
+                <h2>{currentDate.toLocaleDateString()}</h2>
+                {renderViewButtons()}
+            </div>
+            <div className="day-view">
+                {Array.from({ length: 24 }, (_, hour) => {
+                    const eventsAtHour = eventsForDay.filter(event => new Date(event.date).getHours() === hour);
+                    return (
+                        <div key={hour} className="hour-block">
+                            <div className="hour-label">{hour}:00</div>
+                            <div className="events">
+                                {eventsAtHour.length > 0 ? eventsAtHour.map(event => (
+                                    <div key={event.id} className="event" style={{ backgroundColor: event.color }}>
+                                        {event.name}
+                                    </div>
+                                )) : <div className="no-events"></div>}
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+        </>
+    );
+};
 
     const renderCalendar = () => {
         switch (currentView) {
+            case 'day' :
+                return renderDayView();
             case 'month':
                 return renderMonthView();
             case 'week':

@@ -1,210 +1,190 @@
-::-webkit-scrollbar {
-    width: 8px; 
-}
-
-::-webkit-scrollbar-track {
-    background: transparent; 
-}
-
-::-webkit-scrollbar-thumb {
-    background: #808080; 
-    border-radius: 20px; 
-}
+/* General Modal Overlay and Modal Container */
 .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1050;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1050;
 }
 
 .modal {
-    background: white;
-    border-radius: 10px;
-    width: 500px; 
-    max-height: 90%; 
-    overflow-y: auto; 
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    position: relative; 
+  background: white;
+  border-radius: 8px;
+  width: 500px;
+  max-height: 90%;
+  overflow-y: auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  position: relative;
+  padding: 20px;
 }
 
+/* Header Styling */
 .modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
 }
 
-.modal-body {
-    padding: 20px; /* Add padding to the body */
+.modal-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
 }
 
-  .upload-photo {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-  
-  .camera-icon {
-    font-size: 40px;
-    color: #ccc;
-    cursor: pointer;
-    padding: 20px 20px;
-    border: 1px solid;
-    border-radius: 90px;
-    
-  }
-  
-  .event-form input,
-  .event-form textarea {
-    width: 100%;
-    padding: 10px;
-    margin: 5px 0;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-  }
-  
-  .event-form textarea {
-    resize: none;
-  }
-  
-  .event-form label {
-    display: block; 
-    text-align: left; 
-  }
-  
-  
-  .reminder-section {
-    text-align: left;
-    margin: 10px 0;
-  
-  }
-  
-  .reminder-options {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 5px;
-    gap: 5px;
-   
-  }
-  
-  .reminder-options button {
-    padding: 5px 20px;
-    border: 1px solid #ddd;
-    background-color: rgb(230, 230, 230);
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 12px;
-  }
-  
-  .location-input {
-    position: relative;
-  
-  }
-  
-  .location-icon {
-    position: absolute;
-    right: 10px; 
-    top: 50%;
-    transform: translateY(-50%); 
-    color: #aaa; 
-  }
-  
-  .cert-template-btn {
-    background-color: rgb(255, 255, 255);
-    border: none;
-    color: #141414;
-    text-decoration: none;
-    font-size: 16px;
-    cursor: pointer;
-    padding: 8px 16px;
-    transition: color 0.3s;
-    text-align: left;
-    border: 1px solid #ddd;
-    margin-bottom: 10px;
+.close {
+  background: transparent;
+  border: none;
+  color: #dc3545;
+  font-size: 24px;
+  cursor: pointer;
 }
 
-.cert-template-btn:hover {
-    color: #000000;
-    background-color: #808080;
+.close:hover {
+  color: #b02a2a;
 }
 
-.invite-participants-btn {
-    background-color: rgb(255, 255, 255);
-    border: none;
-    color: #000000; 
-    text-decoration: none;
-    font-size: 16px;
-    cursor: pointer;
-    padding: 8px 16px;
-    transition: color 0.3s;
-    text-align: left;
-    border: 1px solid #ddd;
+/* Form Elements Styling */
+.event-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
-.invite-participants-btn:hover {
-    color: #080808; 
-    background-color: #808080;
+.event-form label {
+  font-weight: 500;
+  color: #444;
 }
 
-
-  .modal-buttons {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-
-  }
-  
-  .close {
-    background-color: transparent; 
-    border: none; 
-    color: #dc3545; 
-    font-size: 20px; 
-    cursor: pointer; 
-    padding: 8px 16px; 
-    transition: color 0.3s; 
-  }
-
-  .close:hover {
-    color: #c82333; 
+.event-form input,
+.event-form textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-sizing: border-box;
 }
-  
+
+.event-form textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* Aligning Location Input with Icon */
+.location-input {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.location-input input {
+  padding-right: 30px; /* Space for the icon */
+}
+
+.location-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #aaa;
+}
+
+/* Button Styling */
 .modal-buttons {
-    display: flex; 
-    justify-content: flex-end; 
-    gap: 10px; 
-    padding: 10px; 
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.close-button,
+.save-button {
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s;
 }
 
 .close-button {
-    background-color: #d9534f; 
-    color: white;
-    border: none;
-    padding: 10px 20px; 
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s; 
+  background-color: #d9534f;
+  color: #fff;
 }
 
 .close-button:hover {
-    background-color: #c9302c; 
+  background-color: #c9302c;
 }
 
 .save-button {
-    background-color: #f0ad4e; 
-    color: white;
-    border: none;
-    padding: 10px 20px; 
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s; 
+  background-color: #5cb85c;
+  color: #fff;
 }
 
 .save-button:hover {
-    background-color: #ec971f; 
+  background-color: #449d44;
+}
+
+/* Custom Reminder and Location Options */
+.reminder-options {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.reminder-options button {
+  padding: 5px 12px;
+  background-color: #f5f5f5;
+  color: #333;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 12px;
+  transition: background-color 0.2s;
+}
+
+.reminder-options button:hover {
+  background-color: #ddd;
+}
+
+/* Certificate and Invite Buttons */
+.cert-template-btn,
+.invite-participants-btn {
+  background-color: #fff;
+  color: #141414;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 8px 16px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  transition: background-color 0.2s, color 0.2s;
+  width: 100%;
+  text-align: center;
+}
+
+.cert-template-btn:hover,
+.invite-participants-btn:hover {
+  color: #000;
+  background-color: #f0f0f0;
+}
+
+/* Upload Photo Section */
+.upload-photo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.camera-icon {
+  font-size: 40px;
+  color: #999;
+  cursor: pointer;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 50%;
+  margin-bottom: 10px;
 }
