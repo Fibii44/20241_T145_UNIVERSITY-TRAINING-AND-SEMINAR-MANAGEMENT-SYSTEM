@@ -1,0 +1,164 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap');
+
+.calendar-container {
+    width: 100%;
+    height: 100vh;
+    padding: 10px 20px;
+    font-family: 'Nunito Sans', sans-serif;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.button {
+    padding: 10px 15px;
+    margin-left: 5px;
+    border: none;
+    border-radius: 5px;
+    color: rgb(14, 14, 14);
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #F5F6FA;
+}
+
+.button:hover {
+    background-color: #FF2323;
+    border-radius: 20px;
+    color: #ffffff;
+}
+
+.button:active {
+    transform: scale(0.95);
+}
+
+.button.active {
+    background-color: #FF2323;
+    color: #ffffff;
+    border-radius: 20px;
+}
+
+.calendar-header h2 {
+    font-size: 1.5em;
+    color: #333;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    border-top: 1px solid #ddd;
+    border-left: 1px solid #ddd;
+}
+
+.calendar-day,
+.calendar-day-header {
+    height: 145px;
+    min-width: 145px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-right: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    padding: 5px;
+    box-sizing: border-box;
+}
+
+.date-number {
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.event {
+    width: 90%;
+    background-color: #ff9aa2;
+    color: #fff;
+    padding: 2px 5px;
+    font-size: 0.8em;
+    margin-bottom: 3px;
+    border-radius: 3px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    text-align: center;
+}
+
+.calendar-day-header {
+    font-size: 0.9em;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    background-color: #cccccc;
+    color: #000000;
+}
+
+.calendar-year-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 80px;
+    padding: 40px;
+    font-size: 0.9em;
+}
+
+.calendar-month-year {
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.month-name {
+    font-weight: bold;
+    text-align: center;
+    padding: 5px;
+}
+
+.week-headers-year {
+    display: flex;
+    justify-content: space-between;
+    background-color: #e0e0e0;
+    padding: 5px 30px;
+    border-bottom: 1px solid #ccc;
+}
+
+.week-year {
+    display: flex;
+    justify-content: space-between;
+}
+
+.calendar-day-year {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    min-height: 40px;
+    position: relative;
+    background-color: #fff;
+    border: #d3d3d3 1px solid;
+}
+
+.date-number-year {
+    font-size: 1.1em;
+    margin-bottom: 5px;
+}
+
+.event-year {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 30px;
+    font-size: 0.75em;
+    padding: 1px 2px;
+    border-radius: 3px;
+    color: #fff;
+    margin-top: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+}
