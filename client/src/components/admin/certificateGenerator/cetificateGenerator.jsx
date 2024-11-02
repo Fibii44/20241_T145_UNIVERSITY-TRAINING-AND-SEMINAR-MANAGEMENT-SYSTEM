@@ -51,12 +51,7 @@ const CertificateGenerator = () => {
         <input type="file" accept="image/*" onChange={handleTemplateUpload} />
       </div>
       <div>
-        <label>Enter User's Name:</label>
-        <input
-          type="text"
-          value={userName}
-          onChange={(e) => setUserName(e.target.value)}
-        />
+       
       </div>
       <div>
         {template && (
@@ -67,7 +62,7 @@ const CertificateGenerator = () => {
             style={{ display: "none" }}
           />
         )}
-        <button onClick={handlePrint}>Print Certificate</button>
+       
       </div>
     </div>
   );
