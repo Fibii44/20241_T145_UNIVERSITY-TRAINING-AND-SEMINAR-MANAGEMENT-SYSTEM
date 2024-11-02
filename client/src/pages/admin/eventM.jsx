@@ -1,16 +1,16 @@
-// EventM.jsx
 import React, { useState } from 'react';
+import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarCheck, faClock, faPlus, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import './css/eventM.css';
 import Sidebar from '../../components/admin/adminbar/sidebar';
 import Topbar from '../../components/admin/adminbar/topbar';
-import EventModal from '../../components/admin/admin_create-events/create-events'; 
-
+import EventModal from '../../components/admin/admin_create-events/create-events';
 
 const EventM = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [events, setEvents] = useState([]);
 
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
@@ -18,44 +18,17 @@ const EventM = () => {
 
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
-  
   };
 
-
-  const handleSaveEventDetails = (eventDetails) => {
-    console.log('Event details saved:', eventDetails);
-    // Here you can handle saving the event details
+  const handleSaveEventDetails = async (eventDetails) => {
+    try {
+      const response = await axios.post('http://localhost:3000/api/events/create', eventDetails);
+      alert(response.data.message);
+      setEvents([...events, eventDetails]); // Update local state with new event
+    } catch (error) {
+      console.error('Error creating event:', error);
+    }
   };
-
-  const events = [
-    {
-      id: 1,
-      title: 'GAD SEMINAR',
-      description: 'Gender and Development 21st Certificate Course in Industrial Relations and Human Resource Management',
-      date: 'October 16, 2024',
-      time: '5:30 am',
-      location: 'BukSU Mini Theater',
-      image: 'path/to/image1.png'
-    },
-    {
-      id: 2,
-      title: 'IALU LEADERS TRAINING',
-      description: 'Hansen Leadership Institute 2025 in USA (Fully Funded) 3 Weeks Summer Exchange Program at the San Diego, California.',
-      date: 'March 10, 2025',
-      time: '11:30 am',
-      location: 'BukSU Research Center',
-      image: 'path/to/image2.png'
-    },
-    {
-      id: 3,
-      title: 'MENTAL HEALTH SEMINAR',
-      description: 'COT Mental Health Awareness Seminar',
-      date: 'March 10, 2025',
-      time: '11:30 am',
-      location: 'BukSU Research Center',
-      image: 'path/to/image3.png'
-    },
-  ];
 
   return (
     <div className="dashboard-container">
@@ -68,17 +41,11 @@ const EventM = () => {
             <FontAwesomeIcon icon={faPlus} />
           </button>
         </div>
-       {/* Use the EventModal component */}
-          <EventModal 
-          isOpen={isModalOpen} 
-          onClose={toggleModal} 
-          onSave={handleSaveEventDetails} 
-        />
+        <EventModal isOpen={isModalOpen} onClose={toggleModal} onSave={handleSaveEventDetails} />
         <div className="context-card">
           <div className="events-list">
-            {events.map((event) => (
-              <div className="event-card" key={event.id}>
-                <img src={event.image} alt={event.title} className="event-image" />
+            {events.map((event, index) => (
+              <div className="event-card" key={index}>
                 <div className="event-details">
                   <h3 className="event-title">{event.title}</h3>
                   <p className="event-description">{event.description}</p>
@@ -92,10 +59,6 @@ const EventM = () => {
                     <span>
                       <FontAwesomeIcon icon={faMapMarkerAlt} /> {event.location}
                     </span>
-                    <div className="event-actions">
-                      <button className="edit-button">Edit</button>
-                      <button className="delete-button">Delete</button>
-                    </div>
                   </div>
                 </div>
               </div>
