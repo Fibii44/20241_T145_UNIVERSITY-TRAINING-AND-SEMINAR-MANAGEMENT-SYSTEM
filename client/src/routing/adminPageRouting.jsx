@@ -1,10 +1,10 @@
 
 import { Route, Routes, Navigate} from 'react-router-dom';
 import Dashboard from '../pages/admin/dashboard';
-import EventM from '../pages/admin/eventM';
+import EventM from '../pages/admin/eventManagement';
 import HistoryM from '../pages/admin/history';
 import EventDetails from '../pages/admin/eventDetails'; 
-import AddUser from '../pages/admin/add-personnel-page'; 
+import AddUser from '../pages/admin/addPersonnel-page'; 
 import Calendar from '../pages/admin/calendar'
 import Table from '../pages/admin/usersTable';
 // import Login from '../pages/login/Login'

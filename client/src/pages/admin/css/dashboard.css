@@ -51,7 +51,14 @@
 .text-content {
     flex-grow: 1;
     padding-right: 5rem;
-    justify-content: space-between;
+    justify-content: left;
+    overflow-x: hidden;
+}
+.text-content h3{
+  font-size: 12px;
+  font-weight: bold;
+  width: 7rem;
+  text-align: left;
 }
 
 

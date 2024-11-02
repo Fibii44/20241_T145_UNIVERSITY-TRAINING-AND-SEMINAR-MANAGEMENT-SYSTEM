@@ -145,7 +145,7 @@ const Dashboard = () => {
           <StatCard title="Total User" count={stats.totalUsers} icon={<FontAwesomeIcon icon={faUser} size="2x" />} color="#4a90e2"/>
           <StatCard title="Total Events" count={stats.totalEvents} icon={<FontAwesomeIcon icon={faCalendarCheck} size="2x" />} color="#ffe600"/>
           <StatCard title="Upcoming Events" count={stats.upcomingEvents} icon={<FontAwesomeIcon icon={faCalendarCheck} size="2x" />} color="#9b51e0" />
-          <StatCard title="Successful Events" count={stats.successfulEvents} icon={<FontAwesomeIcon icon={faCalendarCheck} size="2x" />} color="#34c759" />
+          <StatCard title="Successful Events" count={stats.successfulEvents || 0} icon={<FontAwesomeIcon icon={faCalendarCheck} size="2x" />} color="#34c759" />
           <StatCard title="Canceled Events" count={stats.canceledEvents} icon={<FontAwesomeIcon icon={faBan} size="2x" />} color="#ff3b30" />
         </div>
         

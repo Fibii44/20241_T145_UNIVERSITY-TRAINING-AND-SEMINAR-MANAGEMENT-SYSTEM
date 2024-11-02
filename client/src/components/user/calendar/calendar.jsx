@@ -58,18 +58,19 @@
 //Ayaw i delete ang comment na codess
 
 
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import React, { useState } from 'react';
 import './calendar.css';
 
 const Calendar = () => {
     const [events, setEvents] = useState([
-        { id: 1, date: '2024-10-02', name: 'General Assembly', color: '#ff9aa2' },
-        { id: 2, date: '2024-10-11', name: 'Figma UI Training', color: '#a2c8ff' },
-        { id: 3, date: '2024-10-11', name: 'Gender and Development', color: '#a3f7a7' },
-        { id: 4, date: '2024-10-14', name: 'COT Faculty Team Building', color: '#ffbf80' },
-        { id: 5, date: '2024-10-15', name: 'Mentoring Program', color: '#ff99ff' },
-        { id: 6, date: '2024-10-28', name: 'Staff Training', color: '#a2c8ff' },
+        { id: 1, date: '2024-11-02', name: 'General Assembly', color: '#ff9aa2' },
+        { id: 2, date: '2024-11-11', name: 'Figma UI Training', color: '#a2c8ff' },
+        { id: 3, date: '2024-11-11', name: 'Gender and Development', color: '#a3f7a7' },
+        { id: 4, date: '2024-11-14', name: 'COT Faculty Team Building', color: '#ffbf80' },
+        { id: 5, date: '2024-11-15', name: 'Mentoring Program', color: '#ff99ff' },
+        { id: 6, date: '2024-11-28', name: 'Staff Training', color: '#a2c8ff' },
     ]);
 
     const [currentView, setCurrentView] = useState('month');
@@ -88,31 +89,72 @@ const Calendar = () => {
         </div>
     );
 
+    const goToPrevious = () => {
+        switch (currentView) {
+            case 'day':
+                setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - 1));
+                break;
+            case 'week':
+                setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - 7));
+                break;
+            case 'month':
+                setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
+                break;
+            case 'year':
+                setCurrentDate(new Date(currentDate.getFullYear() - 1, currentDate.getMonth(), 1));
+                break;
+            default:
+                break;
+        }
+    };
+
+    const goToNext = () => {
+        switch (currentView) {
+            case 'day':
+                setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 1));
+                break;
+            case 'week':
+                setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 7));
+                break;
+            case 'month':
+                setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
+                break;
+            case 'year':
+                setCurrentDate(new Date(currentDate.getFullYear() + 1, currentDate.getMonth(), 1));
+                break;
+            default:
+                break;
+        }
+    };
+    
     // Month View
     const renderMonthView = () => {
         const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
         const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
         const daysInMonth = endOfMonth.getDate();
         const firstDayOfWeek = startOfMonth.getDay();
-
+    
         const daysFromPrevMonth = Array.from(
             { length: firstDayOfWeek },
             (_, i) => new Date(startOfMonth.getFullYear(), startOfMonth.getMonth(), -(firstDayOfWeek - i))
         );
-
+    
         const daysThisMonth = Array.from({ length: daysInMonth }, (_, i) => new Date(startOfMonth.getFullYear(), startOfMonth.getMonth(), i + 1));
-
+        const totalDaysInCalendar = daysFromPrevMonth.length + daysThisMonth.length;
+        const daysFromNextMonthCount = totalDaysInCalendar < 42 ? 42 - totalDaysInCalendar : 0;
         const daysFromNextMonth = Array.from(
-            { length: (7 - (daysInMonth + firstDayOfWeek) % 7) % 7 },
+            { length: daysFromNextMonthCount },
             (_, i) => new Date(startOfMonth.getFullYear(), startOfMonth.getMonth() + 1, i + 1)
         );
-
+    
         const allDays = [...daysFromPrevMonth, ...daysThisMonth, ...daysFromNextMonth];
-
+    
         return (
             <>
                 <div className="calendar-header">
+                    <button className="prev-next" onClick={goToPrevious}><FontAwesomeIcon icon={faChevronLeft} /></button>
                     <h2>{startOfMonth.toLocaleString('default', { month: 'long' })} {startOfMonth.getFullYear()}</h2>
+                    <button className="prev-next" onClick={goToNext}><FontAwesomeIcon icon={faChevronRight} /></button>
                     {renderViewButtons()}
                 </div>
                 <div className="calendar-grid">
@@ -124,7 +166,7 @@ const Calendar = () => {
                         const dayNumber = date.getDate();
                         const eventsForDay = getEventsForDay(formattedDate);
                         const isToday = date.toDateString() === today.toDateString();
-
+    
                         return (
                             <div key={index} className="calendar-day" style={isToday ? { border: '2px solid blue' } : {}}>
                                 <div className="date-number" style={{ opacity: date.getMonth() !== currentDate.getMonth() ? 0.5 : 1 }}>
@@ -142,24 +184,26 @@ const Calendar = () => {
             </>
         );
     };
-
+    
     // Week View
     const renderWeekView = () => {
         const startOfWeek = new Date(currentDate);
         const dayOfWeek = startOfWeek.getDay();
-        startOfWeek.setDate(startOfWeek.getDate() - dayOfWeek); // Adjust to the previous Sunday
-
+        startOfWeek.setDate(startOfWeek.getDate() - dayOfWeek);
+    
         const endOfWeek = new Date(startOfWeek);
-        endOfWeek.setDate(startOfWeek.getDate() + 6); // Add 6 days to get to Saturday
-
+        endOfWeek.setDate(startOfWeek.getDate() + 6);
+    
         const weekHeader = startOfWeek.getMonth() === endOfWeek.getMonth() 
             ? `Week of ${startOfWeek.toLocaleString('default', { month: 'long' })} ${startOfWeek.getDate()}, ${startOfWeek.getFullYear()}` 
             : `Week of ${startOfWeek.toLocaleString('default', { month: 'long' })} ${startOfWeek.getDate()} - ${endOfWeek.toLocaleString('default', { month: 'long' })} ${endOfWeek.getDate()}, ${startOfWeek.getFullYear()}`;
-
+    
         return (
             <>
                 <div className="calendar-header">
+                    <button className="prev-next" onClick={goToPrevious}><FontAwesomeIcon icon={faChevronLeft} /></button>
                     <h2>{weekHeader}</h2>
+                    <button className="prev-next" onClick={goToNext}><FontAwesomeIcon icon={faChevronRight} /></button>
                     {renderViewButtons()}
                 </div>
                 <div className="calendar-grid">
@@ -173,12 +217,10 @@ const Calendar = () => {
                         const dayNumber = date.getDate();
                         const eventsForDay = getEventsForDay(formattedDate);
                         const isToday = date.toDateString() === today.toDateString();
-
+    
                         return (
-                            <div key={index} className={`calendar-day ${isToday ? 'highlight' : ''}`}>
-                                <div className="date-number" style={{ opacity: date.getMonth() !== currentDate.getMonth() ? 0.5 : 1 }}>
-                                    {dayNumber}
-                                </div>
+                            <div key={index} className={`calendar-day ${isToday ? 'today' : ''}`}>
+                                <div className="date-number">{dayNumber}</div>
                                 {eventsForDay.map(event => (
                                     <div key={event.id} className="event" style={{ backgroundColor: event.color }}>
                                         {event.name}
@@ -280,6 +322,13 @@ const renderDayView = () => {
     const formattedDate = currentDate.toISOString().split('T')[0];
     const eventsForDay = getEventsForDay(formattedDate);
 
+    // Helper function to format hour in 12-hour format with AM/PM
+    const formatHour = (hour) => {
+        const period = hour >= 12 ? 'PM' : 'AM';
+        const formattedHour = hour % 12 === 0 ? 12 : hour % 12;
+        return `${formattedHour}:00 ${period}`;
+    };
+
     return (
         <>
             <div className="calendar-header">
@@ -291,7 +340,7 @@ const renderDayView = () => {
                     const eventsAtHour = eventsForDay.filter(event => new Date(event.date).getHours() === hour);
                     return (
                         <div key={hour} className="hour-block">
-                            <div className="hour-label">{hour}:00</div>
+                            <div className="hour-label">{formatHour(hour)}</div>
                             <div className="events">
                                 {eventsAtHour.length > 0 ? eventsAtHour.map(event => (
                                     <div key={event.id} className="event" style={{ backgroundColor: event.color }}>
@@ -322,11 +371,31 @@ const renderDayView = () => {
         }
     };
 
+     // Event List Component
+
     return (
         <div className="calendar-container">
-            {renderCalendar()}
+            {/* Calendar Section */}
+            <div className="calendar-section">
+                {renderCalendar()}
+            </div>
+
+            {/* Event List Sidebar */}
+            <div className="event-list">
+                <h3>Upcoming Events</h3>
+                <ul>
+                    {events.map(event => (
+                        <li key={event.id} style={{ borderLeft: `5px solid ${event.color}`, paddingLeft: '8px', marginBottom: '10px' }}>
+                            <strong>{event.name}</strong>
+                            <br />
+                            <small>{new Date(event.date).toLocaleDateString()}</small>
+                        </li>
+                    ))}
+                </ul>
+            </div>
         </div>
     );
+
 };
 
 export default Calendar;

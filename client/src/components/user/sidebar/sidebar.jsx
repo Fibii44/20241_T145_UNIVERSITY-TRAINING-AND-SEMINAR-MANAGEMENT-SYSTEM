@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCertificate, faHistory, faCalendar, faCog, faSignOutAlt, faBars, faBell, faHome, faCalendarCheck} from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
-import './sidebar.css';
+import '../../../components/admin/adminbar/css/admin.css';
 
 const Sidebar = ({ isCollapsed, toggleSidebar, activePage }) => (
   <div className={`sidebar ${isCollapsed ? 'collapsed' : ''} d-none d-md-flex`}>

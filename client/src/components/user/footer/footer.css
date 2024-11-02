@@ -16,6 +16,8 @@ footer {
     background-color: #ffffff;
     padding: 20px;
     text-align: center;
+    position: relative;
+    width: 100%;
 }
 
 /* Container styling */

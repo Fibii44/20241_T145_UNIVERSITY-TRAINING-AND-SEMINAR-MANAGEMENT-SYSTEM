@@ -5,6 +5,12 @@
     height: 100vh;
     padding: 10px 20px;
     font-family: 'Nunito Sans', sans-serif;
+    display: flex;
+}
+
+.calendar-section {
+    flex: 3;
+    margin-right: 20px;
 }
 
 .calendar-header {
@@ -13,7 +19,35 @@
     align-items: center;
     margin-bottom: 20px;
 }
+.calendar-header .prev-next  {
+    background-color: #011c39; /* Blue background */
+    color: white; /* White text */
+    border: none; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    padding: 10px 15px; /* Padding for a better click area */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s ease; /* Smooth background color transition */
+}
 
+.calendar-header .prev-next:hover {
+    background-color: #011c39;
+    color: #feb800; 
+    transition: 0.3s ease;/* Darker blue on hover */
+}
+
+.calendar-header .prev-next:disabled {
+    background-color: #ccc; /* Grey background for disabled state */
+    cursor: not-allowed; /* Not-allowed cursor for disabled state */
+}
+
+.calendar-header .prev-next.active {
+    background-color: #28a745; /* Green background for active view button */
+    color: white; /* White text for active view button */
+}
+
+.calendar-header .prev-next.active:hover {
+    background-color: #218838; /* Darker green on hover for active view button */
+}
 .button {
     padding: 10px 15px;
     margin-left: 5px;
@@ -44,20 +78,22 @@
 .calendar-header h2 {
     font-size: 1.5em;
     color: #333;
+    margin: 0 20px;
 }
 
 .calendar-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 5px;
+    gap: 1px;
     border-top: 1px solid #ddd;
     border-left: 1px solid #ddd;
 }
 
 .calendar-day,
 .calendar-day-header {
-    height: 145px;
-    min-width: 145px;
+    height: 140px;
+    min-width: 180px;
+    width: 50px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -166,6 +202,16 @@
     display: flex;
     flex-direction: column;
     padding: 20px;
+    overflow-y: auto;
+    max-height: 52rem;
+    
+    /* Hide scrollbar for Chrome, Safari, and Edge */
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
+.day-view::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, and Opera */
 }
 .hour-block {
     display: flex;
@@ -178,6 +224,7 @@
     text-align: right;
     font-weight: bold;
     margin-right: 10px;
+    font-size: 14px;
 }
 .events {
     flex: 1;
@@ -191,4 +238,28 @@
 }
 .no-events {
     color: #888;
+}
+
+/* Event List ===================================================== */
+.event-list {
+    flex: 1;
+    padding: 15px;
+    border-left: 1px solid #ddd;
+    background-color: #f9f9f9;
+}
+
+.event-list h3 {
+    margin-bottom: 40px;
+    font-size: 20px;
+    color: #000000;
+    text-align: left;
+}
+
+.event-list ul {
+    list-style: none;
+    padding: 0;
+}
+
+.event-list li {
+    margin-bottom: 10px;
 }

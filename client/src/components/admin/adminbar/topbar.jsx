@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import './css/admin.css';
-import Profile from "../../../assets/adminProfile.png"; // Imported Profile image
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBell } from '@fortawesome/free-solid-svg-icons';
 import { jwtDecode } from 'jwt-decode';
@@ -29,6 +28,10 @@ const Topbar = () => {
 
     return (
         <div className="topbar">
+            <div className="sidebar-title">
+                    <h2 className="buksu"></h2>
+                    <h2 className="engage"></h2>
+                </div>
             <div className="search-admin">
                 <i className="fa fa-search search-icon"></i>
                 <input type="text" placeholder="Search..." />
