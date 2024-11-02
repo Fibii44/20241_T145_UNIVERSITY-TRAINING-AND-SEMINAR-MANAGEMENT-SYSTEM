@@ -5,9 +5,11 @@
     padding: 20px;
     background-color: rgb(253, 253, 253);
     margin: 2rem 8rem; /* Margin top/bottom and left/right */
+    
 }
 
 .event-item {
+    cursor: pointer;
     text-align: center;
     background-color: white;
     padding: 20px; /* Increased padding for better spacing */
@@ -17,7 +19,7 @@
 
 .event-item img {
     width: 15rem; /* Increased image size */
-    height: auto;
+    max-height: 15rem;
     border-radius: 8px;
 }
 
@@ -25,4 +27,5 @@
     margin-top: 12px; /* Increased margin-top */
     font-size: 1.25rem; /* Increased font size */
     color: #333;
+    text-decoration: none;
 }

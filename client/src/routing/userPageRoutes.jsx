@@ -5,6 +5,7 @@ import Events  from  '../pages/user/eventsPage';
 import Calendar from '../pages/user/calendarPage'
 import Certificates from '../pages/user/certificates'
 import History from '../pages/user/history'
+import EventDetails from '../pages/admin/eventDetails';
 
 
 function User() {
@@ -14,6 +15,7 @@ function User() {
           <Route path="/" element={<Navigate to="/u/home" />} />
           <Route path="home" element={<Home />} />
           <Route path="events" element={<Events />} />
+          <Route path="events/:id" element={<EventDetails />} />
           <Route path="calendar" element={<Calendar />} />
           <Route path="certificates" element={<Certificates />} />
           <Route path="history" element={<History />} />

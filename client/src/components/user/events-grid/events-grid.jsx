@@ -1,32 +1,31 @@
-import React, { useState } from "react";
-import '@fortawesome/fontawesome-free/css/all.min.css';
+import React from 'react';
+import { useParams } from 'react-router-dom';
 import './events-grid.css';
 
-function Events() {
-    // Sample data for demonstration
-    const events = [
-        { id: 1, title: "Event 1", imgSrc: "https://via.placeholder.com/150" },
-        { id: 2, title: "Event 2", imgSrc: "https://via.placeholder.com/150" },
-        { id: 3, title: "Event 3", imgSrc: "https://via.placeholder.com/150" },
-        { id: 4, title: "Event 4", imgSrc: "https://via.placeholder.com/150" },
-        { id: 5, title: "Event 5", imgSrc: "https://via.placeholder.com/150" },
-        { id: 6, title: "Event 6", imgSrc: "https://via.placeholder.com/150" },
-        { id: 7, title: "Event 7", imgSrc: "https://via.placeholder.com/150" },
-        { id: 8, title: "Event 8", imgSrc: "https://via.placeholder.com/150" },
-        { id: 9, title: "Event 9", imgSrc: "https://via.placeholder.com/150" },
-        { id: 10, title: "Event 10", imgSrc: "https://via.placeholder.com/150" }
-    ];
+// Sample data; this could be replaced with data fetched from an API
+const events = [
+    { id: 1, title: "Event 1", description: "Seminar", imgSrc: require('../../../assets/eventImg.jpg'), date: "2024-11-15", location: "Admin Building" },
+    { id: 2, title: "Event 2", description: "Alumni", imgSrc: require('../../../assets/eventImg.jpg'), date: "2024-12-01", location: "Auditorium" },
+    
+];
+
+function EventDetails() {
+    const { id } = useParams(); // Get the event ID from the URL
+    const event = events.find(event => event.id === parseInt(id)); // Find the event by ID
+
+    if (!event) {
+        return <p>Event not found.</p>;
+    }
 
     return (
-        <div className="events-grid">
-            {events.map(event => (
-                <div key={event.id} className="event-item">
-                    <img src={event.imgSrc} alt={event.title} />
-                    <p>{event.title}</p>
-                </div>
-            ))}
+        <div className="event-details">
+            <h2>{event.title}</h2>
+            <img src={event.imgSrc} alt={event.title} className="event-image" />
+            <p><strong>Date:</strong> {event.date}</p>
+            <p><strong>Location:</strong> {event.location}</p>
+            <p><strong>Description:</strong> {event.description}</p>
         </div>
     );
 }
 
-export default Events;
+export default EventDetails;
