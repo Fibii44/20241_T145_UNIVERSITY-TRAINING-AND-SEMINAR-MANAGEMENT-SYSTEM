@@ -14,7 +14,7 @@ const adminPageRoutes = require('./routes/admin/adminPageRoutes')
 const adminEventRoutes = require('./routes/admin/adminEventRoutes')
 const adminUserRoutes = require('./routes/admin/adminUserRoutes')
 const adminReportRoutes = require('./routes/admin/adminReportRoutes')
-
+const templateRoutes = require("./routes/admin/templateRoutes");
 
 //user routes
 const userPageRoutes = require('./routes/user/userPageRoutes')
@@ -56,6 +56,7 @@ app.use("/", adminPageRoutes)
 app.use("/", adminEventRoutes)
 app.use("/", adminUserRoutes)
 app.use("/", adminReportRoutes)
+app.use("/", templateRoutes);
 
 app.use("/", userPageRoutes)
 app.use("/", userEventRoutes)

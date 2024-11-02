@@ -16,7 +16,19 @@ const Topbar = () => {
     const handleSearch = () => {
         console.log(searchTerm); // Handle the search logic here
     };
-
+    useEffect(() => {
+        const token = localStorage.getItem('authToken');
+        if(token){
+            const decoded = jwtDecode(token);
+            console.log('Decoded Profile Picture:', decoded.profilePicture);
+            setUser({
+                name: decoded.name,
+                email: decoded.email,
+                profilePicture: decoded.profilePicture,
+                role: decoded.role
+            })
+        }
+    }, []);
     return (
         <div className="topbar">
             <div className="topnavbar">
@@ -64,7 +76,7 @@ const Topbar = () => {
                         </div>
 
                 <div className="profile">
-                    <img src={Profile} alt="Admin Profile" />
+                    <img src={user.profilePicture} alt="User Profile" />
                 </div>
                 <div className="user-details">
                     <span className="name" onClick={toggleDropdown} style={{ cursor: 'pointer' }}>

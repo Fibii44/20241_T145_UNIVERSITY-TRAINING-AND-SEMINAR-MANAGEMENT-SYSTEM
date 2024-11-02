@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCamera, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
-import 'bootstrap/dist/css/bootstrap.min.css'; // Ensure Bootstrap CSS is imported
+import 'bootstrap/dist/css/bootstrap.min.css';
 import './create-event.css';
+import CertificateGenerator from '../certificateGenerator/cetificateGenerator'; // Corrected file path
 
 const EventModal = ({ isOpen, onClose, onSave }) => {
   const [summary, setSummary] = useState('');
@@ -35,10 +36,9 @@ const EventModal = ({ isOpen, onClose, onSave }) => {
 
   const handleSaveDetails = (e) => {
     e.preventDefault();
-    // Save the event details and close the modal
     onSave({ ...newEvent, date, startTime, endTime, location });
-    createEvent(); // Call the create event function to send the event data to the server
-    onClose(); // Close the modal
+    createEvent();
+    onClose();
   };
 
   if (!isOpen) return null;
@@ -48,7 +48,7 @@ const EventModal = ({ isOpen, onClose, onSave }) => {
       <div
         className={`modal ${isOpen ? 'show' : ''}`}
         style={{ display: isOpen ? 'block' : 'none' }}
-        onClick={(e) => e.stopPropagation()} // Prevents overlay click from closing modal
+        onClick={(e) => e.stopPropagation()}
       >
         <div className="modal-content">
           <div className="modal-header">
@@ -133,11 +133,15 @@ const EventModal = ({ isOpen, onClose, onSave }) => {
                   <FontAwesomeIcon icon={faMapMarkerAlt} className="location-icon" />
                 </div>
 
-                <button type="button" className="cert-template-btn">Insert Certificate Template</button>
                 <button type="button" className="invite-participants-btn">+ Invite Participants</button>
               </div>
 
-              <div className="modal-buttons">
+              {/* Certificate Generator Section */}
+              <div className="certificate-section mt-3">
+                <CertificateGenerator />
+              </div>
+
+              <div className="modal-buttons mt-3">
                 <button type="button" className="close-button" onClick={onClose}>Close</button>
                 <button type="submit" className="save-button">Save Details</button>
               </div>
