@@ -44,7 +44,9 @@ const Topbar = () => {
                     <span className="name" onClick={toggleDropdown} style={{ cursor: 'pointer' }}>
                        {user.name}
                     </span>
-                    <span className="role">Admin</span>
+                    <span className="role">
+                        {user.role}
+                    </span>
                 </div>
                 {isDropdownOpen && (
                     <div className="dropdown-menu">

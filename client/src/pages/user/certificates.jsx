@@ -2,10 +2,11 @@ import Footer from '../../components/user/footer/footer.jsx';
 import { useState } from 'react';
 import Sidebar from '../../components/user/sidebar/sidebar.jsx';
 import Topbar from '../../components/user/sidebar/topbar.jsx';
+import Certificate from '../../components/user/certificates/certificate.jsx';
 
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
-const HomePage = () => {
+const Certificates = ({ userId, eventId }) => {
 
   const [isCollapsed, setIsCollapsed] = useState(false);
 
@@ -19,6 +20,7 @@ const HomePage = () => {
         <Sidebar isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} activePage="certificates"/>
         <div className="content">
           <Topbar />
+          
           <Footer />
         </div>
       </div>
@@ -26,4 +28,4 @@ const HomePage = () => {
   )
 };
 
-export default HomePage;
+export default Certificates;
