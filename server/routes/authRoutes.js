@@ -1,7 +1,6 @@
 const express = require('express');
 const passport = require('passport');
 const authRoutes = express.Router();
-const authenticateJWT = require('../middleware/auth');
 const authService = require('../services/authServices');
 
 //Google Login

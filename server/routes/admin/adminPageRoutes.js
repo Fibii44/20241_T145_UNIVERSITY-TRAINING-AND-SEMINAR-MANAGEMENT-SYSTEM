@@ -1,10 +1,7 @@
-// routes/adminPageRoutes.js
 const express = require('express');
 const pageRoutes = express.Router();
 const adminService = require('../../services/admin/adminPageServices'); 
 
-// Login Page
-pageRoutes.get('/a/login', adminService.renderLoginPage);
 
 // Dashboard
 pageRoutes.get('/a/dashboard', adminService.renderDashboard);

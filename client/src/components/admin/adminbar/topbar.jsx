@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './css/admin.css';
+import Profile from "../../../assets/adminProfile.png"; // Imported Profile image
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBell } from '@fortawesome/free-solid-svg-icons';
 import { jwtDecode } from 'jwt-decode';
@@ -13,7 +14,7 @@ const Topbar = () => {
     };
 
     useEffect(() => {
-        const token = localStorage.getItem('authToken');
+        const token = sessionStorage.getItem('authToken');
         if(token){
             const decoded = jwtDecode(token);
             console.log('Decoded Profile Picture:', decoded.profilePicture);
@@ -28,10 +29,6 @@ const Topbar = () => {
 
     return (
         <div className="topbar">
-            <div className="sidebar-title">
-                    <h2 className="buksu"></h2>
-                    <h2 className="engage"></h2>
-                </div>
             <div className="search-admin">
                 <i className="fa fa-search search-icon"></i>
                 <input type="text" placeholder="Search..." />
@@ -47,9 +44,7 @@ const Topbar = () => {
                     <span className="name" onClick={toggleDropdown} style={{ cursor: 'pointer' }}>
                        {user.name}
                     </span>
-                    <span className="role">
-                        {user.role}
-                    </span>
+                    <span className="role">Admin</span>
                 </div>
                 {isDropdownOpen && (
                     <div className="dropdown-menu">

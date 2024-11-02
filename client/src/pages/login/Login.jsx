@@ -55,7 +55,7 @@ function Login() {
 
       const data = await response.json();
       if (data.success) {
-        localStorage.setItem('authToken', data.token);
+        sessionStorage.setItem('authToken', data.token);
         console.log("Token:", data.token);
         navigate(`/login/success?token=${data.token}`); // Redirect to success 
       } else {

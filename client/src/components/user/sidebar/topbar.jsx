@@ -15,7 +15,7 @@ const Topbar = () => {
     };
 
     useEffect(() => {
-        const token = localStorage.getItem('authToken');
+        const token = sessionStorage.getItem('authToken');
         if(token){
             const decoded = jwtDecode(token);
             console.log('Decoded Profile Picture:', decoded.profilePicture);

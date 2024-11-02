@@ -25,10 +25,16 @@ const UserSchema = new mongoose.Schema({
         enum: ['general_admin', 'departmental_admin', 'faculty_staff'],
         required: true
     },
+    position: {
+        type: String
+    },
     department: {
         type: String // Optional field for departmental admins and staff
     },
     profilePicture: {
+        type: String
+    },
+    phoneNumber: {
         type: String
     },
     status: {

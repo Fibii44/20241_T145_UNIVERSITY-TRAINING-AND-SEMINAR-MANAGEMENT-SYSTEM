@@ -1,45 +1,77 @@
-// services/adminUserService.js
-//authentication
+const bcrypt = require('bcrypt');
+const User = require('../../models/user');
+const multer = require('multer');
+
+// Multer configuration for file uploads
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/profilePictures/');
+  },
+  filename: function (req, file, cb) {
+    cb(null, `${Date.now()}_${file.originalname}`);
+  }
+});
+
+const upload = multer({
+  storage,
+  fileFilter: (req, file, cb) => {
+    if (!file.mimetype.startsWith('image/')) {
+      return cb(new Error('Only images are allowed'), false);
+    }
+    cb(null, true);
+  }
+});
 
 const renderPersonnelPage = async (req, res) => {
-    try {
-        // Logic for rendering the personnel page
-        res.send('adminPersonnelPage');
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
+  try {
+    res.send('adminPersonnelPage');
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
- const addPersonnelAccount = async (req, res) => {
-    try {
-        const { name, email, password, role } = req.body;
-        const existingUser = await User.findOne({ email });
+const addPersonnelAccount = async (req, res) => {
+  try {
+    const { name, email, password, role, phoneNumber, department, position } = req.body;
+    const profilePicture = req.file ? req.file.filename : null;
 
-        if (existingUser) {
-            throw new Error('User already exists');
-        }
+    const existingUser = await User.findOne({ email });
 
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = new User({ name, email, password: hashedPassword, role });
-        await newUser.save();
-
-        res.status(201).json({ message: 'Personnel account created', newUser });
-    } catch (error) {
-        res.status(400).json({ message: error.message });
+    if (existingUser) {
+      throw new Error('User already exists');
     }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new User({
+      name,
+      email,
+      password: hashedPassword,
+      role,
+      phoneNumber,
+      department,
+      position,
+      profilePicture
+    });
+
+    await newUser.save();
+    res.status(201).json({ message: 'Personnel account created', newUser });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
 };
 
 const renderUserTable = async (req, res) => {
-    try {
-        const users = await User.find().select('-password'); // Exclude password field
-        res.send('adminUserTable', { users });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
+  try {
+    const users = await User.find().select('-password'); // Exclude password field
+    res.send('adminUserTable', { users });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
 module.exports = {
-    renderPersonnelPage,
-    addPersonnelAccount,
-    renderUserTable
-}
+  renderPersonnelPage,
+  addPersonnelAccount,
+  renderUserTable,
+  upload
+};

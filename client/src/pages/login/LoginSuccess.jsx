@@ -10,7 +10,7 @@ function LoginSuccess() {
     const token = searchParams.get("token");
 
     if (token) {
-      localStorage.setItem("authToken", token);
+      sessionStorage.setItem("authToken", token);
 
       const decoded = jwtDecode(token);
       const userRole = decoded.role;

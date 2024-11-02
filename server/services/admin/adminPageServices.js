@@ -1,15 +1,6 @@
 const User =   require('../../models/user');
 const Events = require('../../models/event')
 
-const renderLoginPage = async (req, res) => {
-    try {
-        // Logic for rendering the login page
-        res.send('Admin Login');
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
-
 const renderDashboard = async (req, res) => {
     try {
         // Logic for fetching data to display on the dashboard
@@ -73,7 +64,6 @@ const renderCalendarPage = async (req, res) => {
 
 
 module.exports = {
-    renderLoginPage,
     renderDashboard,
     renderCalendarPage,
 }

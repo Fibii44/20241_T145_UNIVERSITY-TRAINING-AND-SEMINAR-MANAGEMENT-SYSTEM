@@ -1,15 +1,11 @@
-// routes/adminUserRoutes.js
 const express = require('express');
 const userRoutes = express.Router();
-const adminService = require('../../services/admin/adminUserServices'); 
+const adminService = require('../../services/admin/adminUserServices');
+const { verifyGeneralAdmin, concurrencyControl } = require('../../middleware/generalAdminMiddleware');
+const authenticateJWT = require('../../middleware/auth');
 
-// Add Personnel Account Page
-userRoutes.get('/a/personnel', adminService.renderPersonnelPage);
-
-// Add Personnel Account
-userRoutes.post('/a/personnel', adminService.addPersonnelAccount);
-
-// User Table
-userRoutes.get('/a/users', adminService.renderUserTable);
+userRoutes.get('/a/personnel', authenticateJWT, verifyGeneralAdmin, adminService.renderPersonnelPage);
+userRoutes.post('/a/personnel', authenticateJWT, verifyGeneralAdmin, concurrencyControl, adminService.upload.single('profilePicture'), adminService.addPersonnelAccount);
+userRoutes.get('/a/users', verifyGeneralAdmin, adminService.renderUserTable);
 
 module.exports = userRoutes;

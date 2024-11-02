@@ -7,7 +7,7 @@ const PrivateRoute = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem("authToken");
+    const token = sessionStorage.getItem("authToken");
     console.log(token);
     setIsAuthenticated(!!token);
     setIsChecking(false);  // Indicate that the check is complete

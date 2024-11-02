@@ -2,12 +2,6 @@ const express = require('express');
 const eventRoutes = express.Router();
 const adminService = require('../../services/admin/adminEventServices');
 
-// Middleware for error handling
-const errorHandler = (err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).json({ message: 'Something went wrong!' });
-};
-
 // Events Page - Render all events
 eventRoutes.get('/a/events', adminService.renderEventsPage);
 

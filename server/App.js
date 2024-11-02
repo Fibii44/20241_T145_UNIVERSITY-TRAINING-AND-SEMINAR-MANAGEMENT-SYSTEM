@@ -22,7 +22,6 @@ const userProfileRoutes = require('./routes/user/userProfileRoutes');
 const authRoutes = require('./routes/authRoutes');
 
 // Event Routes
-const calendarRoutes = require('./routes/admin/adminCalendarRoutes');
 
 const corsOptions = {
   origin: 'http://localhost:5000', 
@@ -49,15 +48,15 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Route handlers
+app.use("/", authRoutes);
 app.use("/", adminPageRoutes);
-app.use("/api/events", adminEventRoutes);
+app.use("/", adminEventRoutes);
 app.use("/", adminUserRoutes);
 app.use("/", adminReportRoutes);
 app.use("/", userPageRoutes);
 app.use("/", userEventRoutes);
 app.use("/", userProfileRoutes);
-app.use("/", authRoutes);
-app.use('/api', calendarRoutes);
+
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {

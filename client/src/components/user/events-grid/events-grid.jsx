@@ -4,8 +4,8 @@ import './events-grid.css';
 
 // Sample data; this could be replaced with data fetched from an API
 const events = [
-    { id: 1, title: "Event 1", description: "Seminar", imgSrc: require('../../../assets/eventImg.jpg'), date: "2024-11-15", location: "Admin Building" },
-    { id: 2, title: "Event 2", description: "Alumni", imgSrc: require('../../../assets/eventImg.jpg'), date: "2024-12-01", location: "Auditorium" },
+    { id: 1, title: "Event 1", description: "Seminar", imgSrc: '../../../assets/eventImg.jpg', date: "2024-11-15", location: "Admin Building" },
+    { id: 2, title: "Event 2", description: "Alumni", imgSrc: '../../../assets/eventImg.jpg', date: "2024-12-01", location: "Auditorium" },
     
 ];
 
