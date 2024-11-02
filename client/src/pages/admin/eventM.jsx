@@ -22,11 +22,11 @@ const EventM = () => {
 
   const handleSaveEventDetails = async (eventDetails) => {
     try {
-      const response = await axios.post('http://localhost:3000/api/events/create', eventDetails);
-      alert(response.data.message);
-      setEvents([...events, eventDetails]); // Update local state with new event
+      const response = await axios.post('http://localhost:3000/api/events', eventDetails);
+      alert(response.data.message || 'Event created successfully');
+      setEvents([...events, response.data]); // Update local state with the newly created event
     } catch (error) {
-      console.error('Error creating event:', error);
+      alert('Error creating event: ' + (error.response?.data?.error || error.message));
     }
   };
 
@@ -47,18 +47,12 @@ const EventM = () => {
             {events.map((event, index) => (
               <div className="event-card" key={index}>
                 <div className="event-details">
-                  <h3 className="event-title">{event.title}</h3>
+                  <h3 className="event-title">{event.summary}</h3>
                   <p className="event-description">{event.description}</p>
                   <div className="event-info">
-                    <span>
-                      <FontAwesomeIcon icon={faCalendarCheck} /> {event.date}
-                    </span>
-                    <span>
-                      <FontAwesomeIcon icon={faClock} /> {event.time}
-                    </span>
-                    <span>
-                      <FontAwesomeIcon icon={faMapMarkerAlt} /> {event.location}
-                    </span>
+                    <span><FontAwesomeIcon icon={faCalendarCheck} /> {event.date}</span>
+                    <span><FontAwesomeIcon icon={faClock} /> {event.startTime} - {event.endTime}</span>
+                    <span><FontAwesomeIcon icon={faMapMarkerAlt} /> {event.location}</span>
                   </div>
                 </div>
               </div>

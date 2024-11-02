@@ -1,24 +1,26 @@
-// routes/eventRoutes.js
 const express = require('express');
-const { createEvent } = require('../../services/admin/adminCalendarServices');
-
+const { createEvent, setCredentials } = require('../../services/admin/adminCalendarServices');
 const router = express.Router();
 
 router.post('/events', async (req, res) => {
-    console.log('Received request to create event:', req.body); // Log the incoming request
-    const { summary, date, startTime, endTime } = req.body;
-    if (!summary || !date || !startTime || !endTime) {
-        return res.status(400).send('Summary, date, startTime, and endTime are required.');
-    }
-
     try {
-        await createEvent({ summary, date, startTime, endTime });
-        res.status(200).send('Event created!');
-    } catch (err) {
-        console.error('Error creating event:', err);
-        res.status(500).send('Required Authorization!');
+        let tokens = req.body.tokens;
+
+        if (!tokens) {
+            const authCode = req.body.authCode;
+            if (!authCode) {
+                return res.status(400).json({ error: 'Authorization code is required.' });
+            }
+
+            tokens = await setCredentials(authCode); // Use tokens from setCredentials
+        }
+
+        const eventResponse = await createEvent(req.body.eventDetails, tokens);
+        res.status(200).json({ message: 'Event created!', data: eventResponse });
+    } catch (error) {
+        console.error('Error creating event:', error.message);
+        res.status(500).json({ error: 'Failed to create event. Check authentication tokens.' });
     }
 });
-
 
 module.exports = router;

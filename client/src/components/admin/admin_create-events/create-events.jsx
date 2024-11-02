@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -18,21 +19,31 @@ const EventModal = ({ isOpen, onClose, onSave }) => {
     description: '',
   });
 
-  const createEvent = async () => {
+  const getAuthCode = async () => {
+    const response = await axios.get('http://localhost:3000/auth/authcode'); // endpoint to get the auth code
+    return response.data.authCode;
+};
+
+const createEvent = async () => {
     try {
-      const response = await axios.post('http://localhost:3000/api/events', {
-        summary,
-        date,
-        startTime,
-        endTime,
-        location,
-      });
-      alert(response.data);
+        const authCode = await getAuthCode(); // Retrieve the auth code here
+        const response = await axios.post('http://localhost:3000/a/events', {
+            summary,
+            date,
+            startTime,
+            endTime,
+            location,
+            name: newEvent.name,
+            hostname: newEvent.hostname,
+            description: newEvent.description,
+            authCode
+        });
+        alert(response.data.message || 'Event created successfully!');
     } catch (error) {
-      console.error('Error creating event:', error);
-      alert('Error creating event: ' + (error.response ? error.response.data : error.message));
+        console.error('Error creating event:', error.response?.data || error.message);
+        alert('Error creating event: ' + (error.response ? error.response.data.error : error.message));
     }
-  };
+};
 
   const handleSaveDetails = (e) => {
     e.preventDefault();

@@ -3,14 +3,18 @@ const mongoose = require('mongoose');
 const EventSchema = new mongoose.Schema({
     title: {
         type: String,
-        required: true
+        required: true,
+        trim: true
     },
     description: {
         type: String,
-        required: true
+        required: true,
+        trim: true
     },
     department: {
-        type: String // Optional: Department associated with the event
+        type: String,
+        enum: ['Engineering', 'Business', 'IT', 'HR'], // Example enum
+        required: false
     },
     eventType: {
         type: String,
@@ -27,30 +31,26 @@ const EventSchema = new mongoose.Schema({
     },
     location: {
         type: String,
-        required: true
+        required: true,
+        trim: true
     },
     organizer: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User', // Reference to the User model
+        ref: 'User',
         required: true
     },
     capacity: {
         type: Number,
-        required: true
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now
-    },
-    updatedAt: {
-        type: Date,
-        default: Date.now
+        required: true,
+        min: 1 // Ensure capacity is a positive number
     },
     status: {
         type: String,
         enum: ['active', 'canceled', 'completed'],
         default: 'active'
     }
+}, {
+    timestamps: true // Adds `createdAt` and `updatedAt` fields
 });
 
 module.exports = mongoose.model('Event', EventSchema);
