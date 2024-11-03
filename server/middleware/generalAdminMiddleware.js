@@ -7,6 +7,13 @@ const verifyGeneralAdmin = (req, res, next) => {
   next();
 };
 
+const verifyAdmins = (req, res, next) => {
+  if (req.user.role !== 'general_admin' && req.user.role !== 'departmental_admin') {
+    return res.status(403).json({ message: 'Access denied. Only general admins and departmental admins can access these resources.' });
+  }
+  next();
+};
+
 const concurrencyControl = (req, res, next) => {
   if (isAccountCreationLocked) {
     return res.status(423).json({ message: "Account creation is currently locked by another general admin." });
@@ -22,5 +29,6 @@ const concurrencyControl = (req, res, next) => {
 
 module.exports = {
   verifyGeneralAdmin,
-  concurrencyControl,
+  verifyAdmins,
+  concurrencyControl
 };
