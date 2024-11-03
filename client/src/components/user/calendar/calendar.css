@@ -91,7 +91,7 @@
 
 .calendar-day,
 .calendar-day-header {
-    height: 140px;
+    height: 120px;
     min-width: 180px;
     width: 50px;
     display: flex;

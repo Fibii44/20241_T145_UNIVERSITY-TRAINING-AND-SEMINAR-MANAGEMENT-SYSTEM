@@ -21,8 +21,6 @@ const HomePage = () => {
         <div className="content">
           <Topbar />
           <Calendar />
-          
-          <Footer />
         </div>
       </div>
 

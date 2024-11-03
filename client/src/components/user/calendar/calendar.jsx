@@ -57,28 +57,69 @@
 
 //Ayaw i delete ang comment na codess
 
-
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import React, { useState } from 'react';
+import EventModal from '../eventModal/modal'; // Import the EventModal component
 import './calendar.css';
 
 const Calendar = () => {
-    const [events, setEvents] = useState([
-        { id: 1, date: '2024-11-02', name: 'General Assembly', color: '#ff9aa2' },
-        { id: 2, date: '2024-11-11', name: 'Figma UI Training', color: '#a2c8ff' },
-        { id: 3, date: '2024-11-11', name: 'Gender and Development', color: '#a3f7a7' },
-        { id: 4, date: '2024-11-14', name: 'COT Faculty Team Building', color: '#ffbf80' },
-        { id: 5, date: '2024-11-15', name: 'Mentoring Program', color: '#ff99ff' },
-        { id: 6, date: '2024-11-28', name: 'Staff Training', color: '#a2c8ff' },
-    ]);
-
+    const [events, setEvents] = useState([]);
     const [currentView, setCurrentView] = useState('month');
     const [currentDate, setCurrentDate] = useState(new Date());
+    const [selectedEvent, setSelectedEvent] = useState(null); // Add state for selected event
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const today = new Date();
+
+    useEffect(() => {
+        const fetchEvents = async () => {
+            try {
+                const response = await axios.get('http://localhost:3000/a/events');
+                setEvents(response.data);
+            } catch (error) {
+                console.error('Error fetching events:', error);
+            }
+        };
+        fetchEvents();
+    }, []);
+
+    const upcomingEvents = events
+        .filter(event => new Date(event.date) >= today)
+        .sort((a, b) => new Date(a.date) - new Date(b.date))
+        .slice(0, 5); // Display the next 5 upcoming events
+
+     const renderUpcomingEvents = () => (
+        <div className="upcoming-events">
+            <h3>Upcoming Events</h3>
+                <ul>
+                {upcomingEvents.map(event => (
+                    <li key={event.id} style={{ borderLeft: `5px solid ${event.color}`, paddingLeft: '8px', marginBottom: '10px' }}>
+                        <strong>{event.summary}</strong>
+                        <br />
+                        <small>{new Date(event.date).toLocaleDateString()} | {event.startTime} - {event.endTime}</small>
+                    </li>
+                ))}
+            </ul>
+        </div>
+    );
     const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-    const getEventsForDay = (date) => events.filter(event => event.date === date);
+    const getEventsForDay = (date) => {
+        return events.filter(event => {
+            const eventDate = new Date(event.date).toISOString().split('T')[0];
+            return eventDate === date;
+        });
+    };
+    const handleEventClick = (event) => {
+        setSelectedEvent(event);
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setSelectedEvent(null);
+    };
 
     const renderViewButtons = () => (
         <div style={{ display: 'flex' }}>
@@ -173,8 +214,13 @@ const Calendar = () => {
                                     {dayNumber}
                                 </div>
                                 {eventsForDay.map(event => (
-                                    <div key={event.id} className="event" style={{ backgroundColor: event.color }}>
-                                        {event.name}
+                                    <div
+                                        key={event.id}
+                                        className="event"
+                                        style={{ backgroundColor: event.color }}
+                                        onClick={() => handleEventClick(event)} // Set event on click
+                                    >
+                                        {event.summary}
                                     </div>
                                 ))}
                             </div>
@@ -326,7 +372,7 @@ const renderDayView = () => {
     const formatHour = (hour) => {
         const period = hour >= 12 ? 'PM' : 'AM';
         const formattedHour = hour % 12 === 0 ? 12 : hour % 12;
-        return `${formattedHour}:00 ${period}`;
+        return `${formattedHour} ${period}`;
     };
 
     return (
@@ -356,20 +402,20 @@ const renderDayView = () => {
     );
 };
 
-    const renderCalendar = () => {
-        switch (currentView) {
-            case 'day' :
-                return renderDayView();
-            case 'month':
-                return renderMonthView();
-            case 'week':
-                return renderWeekView();
-            case 'year':
-                return renderYearView();
-            default:
-                return renderMonthView();
-        }
-    };
+const renderCalendar = () => {
+    switch (currentView) {
+        case 'day':
+            return renderDayView();
+        case 'week':
+            return renderWeekView();
+        case 'month':
+            return renderMonthView();
+        case 'year':
+            return renderYearView();
+        default:
+            return renderMonthView();
+    }
+};
 
      // Event List Component
 
@@ -378,27 +424,24 @@ const renderDayView = () => {
             {/* Calendar Section */}
             <div className="calendar-section">
                 {renderCalendar()}
+                {isModalOpen && selectedEvent && (
+                <EventModal
+                    isOpen={isModalOpen}
+                    onClose={closeModal}
+                    event={selectedEvent}
+                />
+            )}
             </div>
 
             {/* Event List Sidebar */}
             <div className="event-list">
-                <h3>Upcoming Events</h3>
-                <ul>
-                    {events.map(event => (
-                        <li key={event.id} style={{ borderLeft: `5px solid ${event.color}`, paddingLeft: '8px', marginBottom: '10px' }}>
-                            <strong>{event.name}</strong>
-                            <br />
-                            <small>{new Date(event.date).toLocaleDateString()}</small>
-                        </li>
-                    ))}
-                </ul>
+            {renderUpcomingEvents()}
             </div>
         </div>
     );
-
+    
 };
 
 export default Calendar;
-
 
 
