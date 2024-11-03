@@ -62,7 +62,7 @@
 .event-form textarea,
 .event-form select,
 .custom-form-control {
-  width: 100%;
+
   padding: 8px;
   border: 1px solid #ddd;
   border-radius: 5px;
@@ -115,12 +115,11 @@
   cursor: pointer;
   font-weight: bold;
   transition: background-color 0.3s;
- 
 }
 
 .close-button {
   background-color: #d9534f;
-  color: #fff;  
+  color: #fff;
 }
 
 .close-button:hover {
@@ -200,22 +199,26 @@
   margin-bottom: 10px;
 }
 
+
+
+/*FILTER CSS*/
+
 .card-filter {
   background-color: #f9f9f9;
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   padding: 16px;
- 
+
 }
 
 .participant-filter-custom {
   display: flex;
   flex-direction: column;
- 
+
 }
 
 .filter-section-custom {
-  margin-bottom: 12px;
+  gap: 10px;
 }
 
 .row-custom {
@@ -234,20 +237,34 @@
 }
 
 
+.card-list {
+  border: 1px solid #ddd;
+  padding: 10px;
+  background-color: #ffffff;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
 .participant-list-group {
   list-style-type: none;
-  padding: 0;
-  margin: 0;
-}
+  font-size: 12px;
 
-.participant-list-item {
+}
+.participant-item {
   padding: 8px;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  margin-bottom: 6px;
-  transition: background-color 0.3s;
+  border-bottom: 1px solid #eaeaea;
 }
 
-.participant-list-item:hover {
-  background-color: #f1f1f1;
+.participant-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.participant-label span {
+  flex: 1;
+}
+
+.participant-label input[type="checkbox"] {
+  margin-left: 50px;
 }

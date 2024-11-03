@@ -19,31 +19,55 @@ const EventModal = ({ isOpen, onClose, onSave }) => {
   });
   const [reminders, setReminders] = useState('None');
   const [activeReminder, setActiveReminder] = useState('None');
-
-  // New state for managing participants and filtering options
   const [participants, setParticipants] = useState([]);
   const [participantInput, setParticipantInput] = useState('');
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   const [selectedCollege, setSelectedCollege] = useState('');
   const [selectedDepartment, setSelectedDepartment] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedParticipants, setSelectedParticipants] = useState([]);
+
+
 
   // Sample data for colleges and departments
   const colleges = ['College of Arts and Sciences', 'College of Business', 'College of Education', 'College of Law', 'College of Nursing', 'College of Technology'];
   const departments = {
     'College of Arts and Sciences': ['Social Sciences', 'Sociology', 'Philosophy', 'Biology or Biological Sciences', 'Environmental Science or Environmental Studies', 'Mathematics', 'English', 'Economics', 'Communication', 'Social Work'],
     'College of Business': ['Accountancy', ' Business Administration', 'Hospitality Management', 'Management'],
-    'College of Education': ['Secondary Education', 'Early Childhood Education', 'Elementary Education', 'Physical Education ', 'English Language and Literature' ],
+    'College of Education': ['Secondary Education', 'Early Childhood Education', 'Elementary Education', 'Physical Education ', 'English Language and Literature'],
     'College of Law': ['Juris Doctor'],
     'College of Nursing': [''],
     'College of Technology': ['Information Technology', 'Electronics Technology', 'Automotive Technology', 'Food Science and Technology', 'Electronics and Communications Engineering'],
-
-
   };
 
-  const handleSaveDetails = (e) => {
-    e.preventDefault();
-    onSave({ ...newEvent, date, startTime, endTime, location, participants });
-    onClose();
+  //Temporary Data
+  const tempParticipants = [
+    {  email: 'alice.smith@example.com', college: 'College of Arts and Sciences', department: 'Mathematics' },
+    {  email: 'bob.johnson@example.com', college: 'College of Business', department: 'Business Administration' },
+    { email: 'cathy.brown@example.com', college: 'College of Education', department: 'Secondary Education' },
+   
+  ];
+
+
+  const toggleFilterVisibility = () => {
+    setIsFilterVisible((prev) => !prev);
+  };
+
+  const toggleParticipantSelection = (participant) => {
+    if (selectedParticipants.includes(participant.email)) {
+      setSelectedParticipants(selectedParticipants.filter(email => email !== participant.email));
+    } else {
+      setSelectedParticipants([...selectedParticipants, participant.email]);
+    }
+  };
+  
+  const filteredParticipants = () => {
+    return tempParticipants.filter(participant => {
+      const collegeMatch = selectedCollege ? participant.college === selectedCollege : true;
+      const departmentMatch = selectedDepartment ? participant.department === selectedDepartment : true;
+      const searchMatch = participant.email.toLowerCase().includes(searchTerm.toLowerCase()); // New search condition
+      return collegeMatch && departmentMatch && searchMatch; // Combine conditions
+    });
   };
 
   const handleReminderClick = (reminder) => {
@@ -55,25 +79,12 @@ const EventModal = ({ isOpen, onClose, onSave }) => {
     setParticipantInput(e.target.value);
   };
 
-  const addParticipant = () => {
-    if (participantInput.trim() !== '') {
-      setParticipants((prevParticipants) => [...prevParticipants, participantInput]);
-      setParticipantInput(''); // Clear the input after adding
-    }
+  const handleSaveDetails = (e) => {
+    e.preventDefault();
+    onSave({ ...newEvent, date, startTime, endTime, location, participants });
+    onClose();
   };
 
-  const toggleFilterVisibility = () => {
-    setIsFilterVisible((prev) => !prev);
-  };
-
-  const filteredParticipants = () => {
-    // Logic to filter participants based on selected college and department
-    return participants.filter(participant => {
-      const collegeMatch = selectedCollege ? participant.includes(selectedCollege) : true;
-      const departmentMatch = selectedDepartment ? participant.includes(selectedDepartment) : true;
-      return collegeMatch && departmentMatch;
-    });
-  };
 
   if (!isOpen) return null;
 
@@ -119,8 +130,6 @@ const EventModal = ({ isOpen, onClose, onSave }) => {
                   + Invite Participants
                 </button>
 
-
-                {/* Participant Filter Section */}
                 {/* Participant Filter Section */}
                 {isFilterVisible && (
                   <div className="card-filter">
@@ -156,19 +165,30 @@ const EventModal = ({ isOpen, onClose, onSave }) => {
 
                       <input
                         type="text"
-                        placeholder="Add participant"
-                        value={participantInput}
-                        onChange={handleParticipantInputChange}
+                        placeholder="Add participants"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
                         className="custom-form-control mb-1"
                       />
 
-                      <ul className="participant-list-group mt-1">
-                        {filteredParticipants().map((participant, index) => (
-                          <li key={index} className="participant-list-item">
-                            {participant}
-                          </li>
-                        ))}
-                      </ul>
+                      <div className="card-list">
+                        <ul className="participant-list-group mt-1">
+                          {filteredParticipants().map((participant, index) => (
+                            <li key={index} className="participant-item">
+                              <label className="participant-label">
+                                <span>
+                                   {participant.email}
+                                </span>
+                                <input
+                                  type="checkbox"
+                                  checked={selectedParticipants.includes(participant.email)}
+                                  onChange={() => toggleParticipantSelection(participant)}
+                                />
+                              </label>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -178,6 +198,7 @@ const EventModal = ({ isOpen, onClose, onSave }) => {
               <div className="certificate-section mt-3">
                 <CertificateGenerator />
               </div>
+
 
               <div className="modal-buttons mt-3">
                 <button type="button" className="close-button" onClick={onClose}>Close</button>
