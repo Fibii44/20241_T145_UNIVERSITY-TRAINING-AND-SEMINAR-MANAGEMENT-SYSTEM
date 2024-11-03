@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const User = require('../../models/user');
+const DeletedUser = require('../../models/deletedUser');
 const multer = require('multer');
 
 // Multer configuration for file uploads
@@ -69,9 +70,64 @@ const renderUserTable = async (req, res) => {
   }
 };
 
+
+// Function to edit user details
+const editUser = async (req, res) => {
+  const userId = req.params.id; 
+  const updatedData = req.body; 
+
+  try {
+      const updatedUser = await User.findByIdAndUpdate(userId, updatedData, { new: true, runValidators: true });
+      if (!updatedUser) {
+          return res.status(404).json({ message: 'User not found' });
+      }
+      res.json(updatedUser);
+  } catch (error) {
+      res.status(500).json({ message: error.message });
+  }
+};
+
+// Function to delete user and transfer the deleted data to a new deleted user collection 
+const deleteUser = async (req, res) => {
+    const userId = req.params.id;
+    const deletedBy = req.body.deletedBy; 
+
+    try {
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Create a new DeletedUser document
+        const deletedUser = new DeletedUser({
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            position: user.position,
+            department: user.department,
+            phoneNumber: user.phoneNumber,
+            deletedBy: deletedBy, 
+            deletedAt: new Date() 
+        });
+
+        await deletedUser.save(); 
+        await User.findByIdAndDelete(userId); // Delete the user from users collection
+
+        res.status(200).json({ message: 'User deleted successfully', deletedUser });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+
 module.exports = {
   renderPersonnelPage,
   addPersonnelAccount,
+  editUser,
   renderUserTable,
+  deleteUser,
   upload
 };
+
+
+

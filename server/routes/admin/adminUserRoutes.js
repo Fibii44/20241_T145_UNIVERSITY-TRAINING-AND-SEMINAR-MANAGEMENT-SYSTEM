@@ -7,5 +7,8 @@ const authenticateJWT = require('../../middleware/auth');
 userRoutes.get('/a/personnel', authenticateJWT, verifyGeneralAdmin, adminService.renderPersonnelPage);
 userRoutes.post('/a/personnel', authenticateJWT, verifyGeneralAdmin, concurrencyControl, adminService.upload.single('profilePicture'), adminService.addPersonnelAccount);
 userRoutes.get('/a/users', verifyGeneralAdmin, adminService.renderUserTable);
+userRoutes.put('/a/users/:id', adminService.editUser);
+userRoutes.delete('/a/users/:id', adminService.deleteUser);
+
 
 module.exports = userRoutes;
