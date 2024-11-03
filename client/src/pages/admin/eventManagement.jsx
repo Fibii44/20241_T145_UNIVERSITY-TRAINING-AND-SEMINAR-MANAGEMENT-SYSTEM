@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarCheck, faClock, faPlus, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
@@ -22,13 +22,27 @@ const EventM = () => {
 
   const handleSaveEventDetails = async (eventDetails) => {
     try {
-      const response = await axios.post('http://localhost:3000/api/events', eventDetails);
+      const response = await axios.post('http://localhost:3000/a/events', eventDetails);
       alert(response.data.message || 'Event created successfully');
-      setEvents([...events, response.data]); // Update local state with the newly created event
+      setEvents([...events, response.data.newEvent]); // Update local state with the newly created event
     } catch (error) {
       alert('Error creating event: ' + (error.response?.data?.error || error.message));
     }
   };
+
+  // Fetch events from the backend when the component mounts
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const response = await axios.get('http://localhost:3000/a/events');
+        setEvents(response.data); // Assuming response.data is an array of events
+      } catch (error) {
+        console.error('Error fetching events:', error);
+      }
+    };
+
+    fetchEvents();
+  }, []);
 
   return (
     <div className="dashboard-container">
@@ -55,7 +69,7 @@ const EventM = () => {
                     <span><FontAwesomeIcon icon={faMapMarkerAlt} /> {event.location}</span>
                   </div>
                 </div>
-              </div>
+              </div> 
             ))}
           </div>
         </div>

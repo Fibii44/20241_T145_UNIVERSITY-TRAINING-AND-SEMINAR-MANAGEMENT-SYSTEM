@@ -1,11 +1,12 @@
 const mongoose = require('mongoose');
-const Event = require('../../models/event'); // Import the Event model
+const Event = require('../../models/event'); 
+
 require('../../config/dbcon');
 
 const renderEventsPage = async (req, res) => {
     try {
         const events = await Event.find();
-        res.render('adminEventsPage', { events });
+        res.json(events);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -13,16 +14,16 @@ const renderEventsPage = async (req, res) => {
 
 const addEvent = async (req, res) => {
   try {
-    const { summary, date, startTime, endTime, location, name, hostname, description } = req.body;
+    const { summary, date, startTime, endTime, location, hostname, description, color } = req.body;
     const newEvent = new Event({
       summary,
       date,
       startTime,
       endTime,
       location,
-      name,
       hostname,
       description,
+      color
     });
     await newEvent.save();
     res.status(201).json({ message: 'Event added successfully', newEvent });

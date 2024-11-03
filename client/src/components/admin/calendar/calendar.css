@@ -74,14 +74,14 @@
 }
 
 .event {
-    width: 90%;
-    background-color: #ff9aa2;
+    width: 100%;
+    background-color: #61fc83;
     color: #fff;
-    padding: 2px 5px;
     font-size: 0.8em;
+    height: 40px;
     margin-bottom: 3px;
     border-radius: 3px;
-    overflow: hidden;
+    overflow: auto;
     white-space: nowrap;
     text-overflow: ellipsis;
     text-align: center;
@@ -182,13 +182,23 @@
 .events {
     flex: 1;
 }
-.event {
-    background-color: #ff9aa2;
-    padding: 5px 10px;
-    border-radius: 3px;
-    color: white;
-    margin-bottom: 5px;
-}
+
 .no-events {
     color: #888;
+}
+.upcoming-events {
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.upcoming-event {
+    padding: 5px 0;
+    font-size: 14px;
+}
+.upcoming-event strong {
+    font-size: 14px;
+    padding-bottom: 4px;
 }

@@ -30,7 +30,7 @@
     display: flex;
     flex-direction: column;
     overflow-x: hidden;
-    transition: width 0.5s ease-in;
+    transition: width 0.3s ease-in;
   }
   .sidebar-title {
     display: flex;
@@ -54,7 +54,7 @@
 
   /* Sidebar Collapsed */
   .sidebar.collapsed {
-    width: 90px; /* Reduced width */
+    width: 80px; /* Reduced width */
     
   }
 
@@ -100,7 +100,7 @@
     background-color: #FFB800; /* Active background color */
     color: #15225a; 
     width: 11rem;
-    transition: width 0.5s ease;/* Active text color */
+    transition: width 0.3s ease;/* Active text color */
 }
 
 .menu-items li.active::before {
@@ -133,12 +133,12 @@
     font-size: 1.2rem;
     padding: 12px 6px;
     display: flex;
-    transition: 0.5s ease;
+    transition: 0.3s ease;
   }
 
   .sidebar.collapsed .menu-toggle{
     transform: translateX(-18px);
-    transition: 0.5s ease;
+    transition: 0.3s ease;
   }
   .menu-toggle:focus {
     outline: none;
@@ -247,11 +247,11 @@
     margin-top: auto;
   }
   .sidebar-footer .icon{
-    transition: 0.5s ease;
+    transition: 0.3s ease;
   }
   .sidebar.collapsed .sidebar-footer .icon{
     padding-left: 16px;
-    transition: 0.5s ease;
+    transition: 0.3s ease;
   }
   .sidebar-footer-item a{
     padding: 20px 2px;

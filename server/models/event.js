@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const EventSchema = new mongoose.Schema({
-    title: {
+    summary: {
         type: String,
         required: true,
         trim: true
@@ -11,22 +11,16 @@ const EventSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
-    department: {
-        type: String,
-        enum: ['Engineering', 'Business', 'IT', 'HR'], // Example enum
-        required: false
-    },
-    eventType: {
-        type: String,
-        enum: ['training', 'seminar', 'workshop'],
+    date: {
+        type: Date,
         required: true
     },
     startTime: {
-        type: Date,
+        type: String,
         required: true
     },
     endTime: {
-        type: Date,
+        type: String,
         required: true
     },
     location: {
@@ -34,23 +28,39 @@ const EventSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
-    organizer: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
-    },
-    capacity: {
-        type: Number,
-        required: true,
-        min: 1 // Ensure capacity is a positive number
-    },
-    status: {
+    hostname: {
         type: String,
-        enum: ['active', 'canceled', 'completed'],
-        default: 'active'
+        required: true,
+        trim: true
+    },
+    color: {
+        type: String,
+        trim: true,
+        default: '#000000',
+        validate: {
+            validator: function(v) {
+                return /^#([0-9A-F]{3}){1,2}$/i.test(v); // Validates hex color code
+            },
+            message: props => `${props.value} is not a valid hex color code!`
+        }
     }
+    // name: {
+    //     type: String,
+    //     required: true,
+    //     trim: true
+    // },
+    // hostname: {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'User',
+    //     required: true
+    // }
+    // status: {
+    //     type: String,
+    //     enum: ['active', 'canceled', 'completed'],
+    //     default: 'active'
+    // }
 }, {
-    timestamps: true // Adds `createdAt` and `updatedAt` fields
+    timestamps: true
 });
 
 module.exports = mongoose.model('Event', EventSchema);
