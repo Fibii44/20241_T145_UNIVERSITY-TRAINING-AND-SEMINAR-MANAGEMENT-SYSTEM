@@ -7,7 +7,7 @@ const EventModal = ({ isOpen, onClose, event }) => {
     return (
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                <h2>{event.summary}</h2>
+                <h2>{event.title}</h2>
                 <p><strong>Date:</strong> {new Date(event.date).toLocaleDateString()}</p>
                 <p><strong>Time:</strong> {event.startTime} - {event.endTime}</p>
                 <p><strong>Location:</strong> {event.location}</p>

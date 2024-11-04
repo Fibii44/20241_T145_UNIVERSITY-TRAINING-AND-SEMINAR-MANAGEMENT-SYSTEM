@@ -85,8 +85,8 @@ const Calendar = () => {
     }, []);
 
     const upcomingEvents = events
-        .filter(event => new Date(event.date) >= today)
-        .sort((a, b) => new Date(a.date) - new Date(b.date))
+        .filter(event => new Date(event.eventDate) >= today)
+        .sort((a, b) => new Date(a.eventDate) - new Date(b.eventDate))
         .slice(0, 5); // Display the next 5 upcoming events
 
      const renderUpcomingEvents = () => (
@@ -94,10 +94,10 @@ const Calendar = () => {
             <h3>Upcoming Events</h3>
                 <ul>
                 {upcomingEvents.map(event => (
-                    <li key={event.id} style={{ borderLeft: `5px solid ${event.color}`, paddingLeft: '8px', marginBottom: '10px' }}>
-                        <strong>{event.summary}</strong>
+                    <li key={event.id} style={{ borderLeft: `5px solid #61b6fc`, paddingLeft: '8px', marginBottom: '10px' }}>
+                        <strong>{event.title}</strong>
                         <br />
-                        <small>{new Date(event.date).toLocaleDateString()} | {event.startTime} - {event.endTime}</small>
+                        <small>{new Date(event.eventDate).toLocaleDateString()} | {event.startTime} - {event.endTime}</small>
                     </li>
                 ))}
             </ul>
@@ -107,7 +107,7 @@ const Calendar = () => {
 
     const getEventsForDay = (date) => {
         return events.filter(event => {
-            const eventDate = new Date(event.date).toISOString().split('T')[0];
+            const eventDate = new Date(event.eventDate).toISOString().split('T')[0];
             return eventDate === date;
         });
     };
@@ -217,10 +217,10 @@ const Calendar = () => {
                                     <div
                                         key={event.id}
                                         className="event"
-                                        style={{ backgroundColor: event.color }}
+                                        style={{ backgroundColor: "61b6fc" }}
                                         onClick={() => handleEventClick(event)} // Set event on click
                                     >
-                                        {event.summary}
+                                        {event.title}
                                     </div>
                                 ))}
                             </div>
@@ -268,8 +268,8 @@ const Calendar = () => {
                             <div key={index} className={`calendar-day ${isToday ? 'today' : ''}`}>
                                 <div className="date-number">{dayNumber}</div>
                                 {eventsForDay.map(event => (
-                                    <div key={event.id} className="event" style={{ backgroundColor: event.color }}>
-                                        {event.name}
+                                    <div key={event.id} className="event" style={{ backgroundColor: "#61b6fc" }}>
+                                        {event.title}
                                     </div>
                                 ))}
                             </div>
@@ -348,8 +348,8 @@ const Calendar = () => {
                                                 {date ? date.getDate() : ''}
                                             </div>
                                             {eventsForDay.map(event => (
-                                                <div key={event.id} className="event-year" style={{ backgroundColor: event.color }}>
-                                                    {event.name}
+                                                <div key={event.id} className="event-year" style={{ backgroundColor: "#61b6fc" }}>
+                                                    {event.title}
                                                 </div>
                                             ))}
                                         </div>
@@ -383,14 +383,14 @@ const renderDayView = () => {
             </div>
             <div className="day-view">
                 {Array.from({ length: 24 }, (_, hour) => {
-                    const eventsAtHour = eventsForDay.filter(event => new Date(event.date).getHours() === hour);
+                    const eventsAtHour = eventsForDay.filter(event => new Date(event.eventDate).getHours() === hour);
                     return (
                         <div key={hour} className="hour-block">
                             <div className="hour-label">{formatHour(hour)}</div>
                             <div className="events">
                                 {eventsAtHour.length > 0 ? eventsAtHour.map(event => (
-                                    <div key={event.id} className="event" style={{ backgroundColor: event.color }}>
-                                        {event.name}
+                                    <div key={event.id} className="event" style={{ backgroundColor: "#61b6fc" }}>
+                                        {event.title}
                                     </div>
                                 )) : <div className="no-events"></div>}
                             </div>
