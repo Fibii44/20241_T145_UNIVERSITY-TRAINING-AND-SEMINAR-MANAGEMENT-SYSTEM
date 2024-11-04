@@ -80,7 +80,7 @@ const EventM = ({ userRole, userCollege }) => {
       eventDate: formattedEventDate,
       startTime,
       endTime,
-      participantGroup: {
+      participantGroup: customParticipants.length > 0 ? null : {
         college: participants.college || "All",
         department: participants.department || "All"
       },
