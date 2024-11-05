@@ -11,7 +11,7 @@ const renderEventsPage = async (req, res) => {
 
 const addEvent = async (req, res) => {
   try {
-    const { eventPicture, title, eventDate, startTime, endTime, location, name, hostname, description, participantGroup, customParticipants } = req.body;
+    const { eventPicture, title, eventDate, startTime, endTime, location, name, hostname, description, participantGroup, color, customParticipants } = req.body;
     const user = req.user;
     const newEvent = new Event({
       title,
@@ -23,6 +23,7 @@ const addEvent = async (req, res) => {
       hostname,
       description,
       participantGroup,
+      color,
       customParticipants,
       createdBy: user.id,
       isLocked: false,

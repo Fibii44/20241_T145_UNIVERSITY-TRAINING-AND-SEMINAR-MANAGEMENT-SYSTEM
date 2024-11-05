@@ -48,6 +48,11 @@ const EventSchema = new mongoose.Schema({
             trim: true
         }
     },
+    color: {
+        type: String,
+        trim: true
+
+    },
     customParticipants: [{
         type: String,
         trim: true,

@@ -17,6 +17,7 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
   const [reminders, setReminders] = useState('None');
   const [image, setImage] = useState(null);
   const [activeReminder, setActiveReminder] = useState('None');
+  const [color, setColor] = useState('#65a8ff'); 
   const [participants, setParticipants] = useState({
     college: '',
     department: ''
@@ -25,7 +26,7 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
   const [selectedParticipants, setSelectedParticipants] = useState(initialEventData?.customParticipants || []);
   const [isFilterVisible, setIsFilterVisible] = useState(false); // Track filter visibility state
   const [searchTerm, setSearchTerm] = useState('');
-
+  
   // Sample data for colleges and departments
   const colleges = ['College of Arts and Sciences', 'College of Business', 'College of Education', 'College of Law', 'College of Nursing', 'College of Technology'];
   const departments = {
@@ -145,16 +146,42 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
       setLocation(initialEventData.location || '');
       setDescription(initialEventData.description || '');
       setReminders(initialEventData.reminders || 'None');
+      setColor(initialEventData.color || '');
       setSelectedParticipants(initialEventData.customParticipants || []);
       setParticipants({
         college: initialEventData.participantGroup?.college || '',
         department: initialEventData.participantGroup?.department || ''
       });
+      
     }
   }, [isOpen, initialEventData]);
 
   const handleSaveDetails = (e) => {
     e.preventDefault();
+
+    let eventColor;
+    switch (participants.college) {
+      case 'College of Arts and Sciences':
+        eventColor = '#00FF00'; // Green
+        break;
+      case 'College of Business':
+        eventColor = '#FFFF00'; // Yellow
+        break;
+      case 'College of Education':
+        eventColor = '#ADFF2F'; // Lighter Green
+        break;
+      case 'College of Law':
+        eventColor = '#800080'; // Purple
+        break;
+      case 'College of Nursing':
+        eventColor = '#FFC0CB'; // Pink
+        break;
+      case 'College of Technology':
+        eventColor = '#FF0000'; // Red
+        break;
+      default:
+        eventColor = '#65a8ff'; // Default Blue
+    }
 
     const cleanedParticipants = selectedParticipants
     .map((participant) => participant.email.trim()) // Remove extra spaces
@@ -169,7 +196,8 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
       description,
       reminders,
       participants,
-      customParticipants: cleanedParticipants // Include selected participants in the saved event
+      customParticipants: cleanedParticipants, // Include selected participants in the saved event
+      color: eventColor,
     });
     onClose();
   };
@@ -291,6 +319,8 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
                   </div>
                 )}
               </div>
+
+
 
               <button type="submit" className="btn btn-primary">Save Event</button>
             </form>

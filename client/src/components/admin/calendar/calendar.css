@@ -131,7 +131,9 @@
     display: flex;
     justify-content: space-between;
 }
-
+.calendar-day {
+    color: #f272eb;
+}
 .calendar-day-year {
     flex: 1;
     text-align: center;

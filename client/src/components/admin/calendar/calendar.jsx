@@ -8,6 +8,7 @@ const Calendar = () => {
     const [events, setEvents] = useState([]);
     const [currentView, setCurrentView] = useState('month');
     const [currentDate, setCurrentDate] = useState(new Date());
+
     const today = new Date();
 
     useEffect(() => {
@@ -34,7 +35,7 @@ const Calendar = () => {
             <h3>Upcoming Events</h3>
                 <ul>
                 {upcomingEvents.map(event => (
-                    <li key={event.id} style={{ borderLeft: `5px solid #61b6fc`, paddingLeft: '8px', marginBottom: '10px' }}>
+                    <li key={event.id} style={{ borderLeft: `5px solid ${event.color}`, paddingLeft: '8px', marginBottom: '10px' }}>
                         <strong>{event.title}</strong>
                         <br />
                         <small>{new Date(event.eventDate).toLocaleDateString()} | {event.startTime} - {event.endTime}</small>
@@ -138,14 +139,14 @@ const Calendar = () => {
                         const dayNumber = date.getDate();
                         const eventsForDay = getEventsForDay(formattedDate);
                         const isToday = date.toDateString() === today.toDateString();
-    
+                        
                         return (
-                            <div key={index} className="calendar-day" style={isToday ? { border: '2px solid blue' } : {}}>
+                            <div key={index} className="calendar-day" style={isToday ? { border: '2px solid' } : {}}>
                                 <div className="date-number" style={{ opacity: date.getMonth() !== currentDate.getMonth() ? 0.5 : 1 }}>
                                     {dayNumber}
                                 </div>
                                 {eventsForDay.map(event => (
-                                    <div key={event.id} className="event" style={{ backgroundColor: "#61b6fc" }}>
+                                    <div key={event.id} className="event" style={{ backgroundColor: event.color }}>
                                         {event.title}
                                     </div>
                                 ))}
@@ -194,7 +195,7 @@ const Calendar = () => {
                             <div key={index} className={`calendar-day ${isToday ? 'today' : ''}`}>
                                 <div className="date-number">{dayNumber}</div>
                                 {eventsForDay.map(event => (
-                                    <div key={event.id} className="event" style={{ backgroundColor: "#61b6fc" }}>
+                                    <div key={event.id} className="event"style={{ backgroundColor: event.color }}>
                                         {event.title}
                                     </div>
                                 ))}
@@ -274,7 +275,7 @@ const Calendar = () => {
                                                 {date ? date.getDate() : ''}
                                             </div>
                                             {eventsForDay.map(event => (
-                                                <div key={event.id} className="event-year" style={{ backgroundColor: "#61b6fc" }}>
+                                                <div key={event.id} className="event-year" style={{ backgroundColor: event.color }}>
                                                     {event.title}
                                                 </div>
                                             ))}
@@ -294,37 +295,21 @@ const renderDayView = () => {
     const formattedDate = currentDate.toISOString().split('T')[0];
     const eventsForDay = getEventsForDay(formattedDate);
 
-    // Helper function to format hour in 12-hour format with AM/PM
-    const formatHour = (hour) => {
-        const period = hour >= 12 ? 'PM' : 'AM';
-        const formattedHour = hour % 12 === 0 ? 12 : hour % 12;
-        return `${formattedHour} ${period}`;
-    };
-
     return (
-        <>
-            <div className="calendar-header">
-                <h2>{currentDate.toLocaleDateString()}</h2>
-                {renderViewButtons()}
-            </div>
-            <div className="day-view">
-                {Array.from({ length: 24 }, (_, hour) => {
-                    const eventsAtHour = eventsForDay.filter(event => new Date(event.eventDate).getHours() === hour);
-                    return (
-                        <div key={hour} className="hour-block">
-                            <div className="hour-label">{formatHour(hour)}</div>
-                            <div className="events">
-                                {eventsAtHour.length > 0 ? eventsAtHour.map(event => (
-                                    <div key={event.id} className="event" style={{ backgroundColor: "#61b6fc" }}>
-                                        {event.title}
-                                    </div>
-                                )) : <div className="no-events"></div>}
-                            </div>
-                        </div>
-                    );
-                })}
-            </div>
-        </>
+        <div className="day-view">
+            <h2>{currentDate.toLocaleDateString()}</h2>
+            {eventsForDay.length > 0 ? (
+                eventsForDay.map(event => (
+                    <div key={event.id} className="day-event" style={(event.id)}>
+                        <strong>{event.title}</strong>
+                        <br />
+                        <small>{event.startTime} - {event.endTime}</small>
+                    </div>
+                ))
+            ) : (
+                <p>No events for this day.</p>
+            )}
+        </div>
     );
 };
 
