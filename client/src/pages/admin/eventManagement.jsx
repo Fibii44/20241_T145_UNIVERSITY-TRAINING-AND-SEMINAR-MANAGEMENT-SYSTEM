@@ -1,5 +1,4 @@
 // eventManagement.jsx
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -17,24 +16,21 @@ const EventM = ({ userRole, userCollege }) => {
   const [loading, setLoading] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
 
-  const toggleSidebar = () => {
-    setIsCollapsed(!isCollapsed);
-  };
+  const toggleSidebar = () => setIsCollapsed(!isCollapsed);
 
   const fetchEvents = async () => {
     try {
+      setLoading(true);
       const response = await axios.get('http://localhost:3000/a/events');
       setEvents(response.data);
     } catch (error) {
       alert('Error fetching events: ' + error.message);
+    } finally {
+      setLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetchEvents();
-  }, []);
-
-  const toggleModal = (event = null) => {
+ 
+  const handleEdit = (event) => {
     setSelectedEvent(event);
     setIsModalOpen(true);
   };
@@ -58,23 +54,22 @@ const EventM = ({ userRole, userCollege }) => {
   const handleSaveEventDetails = async (eventDetails) => {
     const { date, startTime, endTime, participants, customParticipants = [], ...rest } = eventDetails;
     const formattedEventDate = date ? new Date(date).toISOString() : undefined;
-
+  
     const token = sessionStorage.getItem('authToken');
     if (!token) {
       alert('User is not authenticated. Please log in.');
       return;
     }
-
+  
     let userId;
     try {
       const decodedToken = jwtDecode(token);
       userId = decodedToken.id;
-      if (!userId) throw new Error('User ID not found in token');
     } catch (error) {
       alert('Invalid or expired token. Please log in again.');
       return;
     }
-
+  
     const payload = {
       ...rest,
       eventDate: formattedEventDate,
@@ -84,44 +79,42 @@ const EventM = ({ userRole, userCollege }) => {
         college: participants.college || "All",
         department: participants.department || "All"
       },
-      customParticipants: customParticipants.map(email => email.trim()).filter(email => email.includes('@')), // Cleaned and validated emails
-      createdBy: userId,
+      customParticipants: customParticipants.map(email => email.trim()).filter(email => email.includes('@')),
     };
-
+  
+    // Only add `createdBy` for new events
+    if (!selectedEvent) {
+      payload.createdBy = userId;
+    }
+  
+    // Always update `editedBy` if it's an edit
+    if (selectedEvent) {
+      payload.editedBy = userId;
+    }
+  
     try {
       if (selectedEvent) {
-        await axios.put(`http://localhost:3000/a/events/${selectedEvent._id}`, payload, {
+        const response = await axios.put(`http://localhost:3000/a/events/${selectedEvent._id}`, payload, {
           headers: { Authorization: `Bearer ${token}` }
         });
         alert('Event updated successfully');
-        setEvents(events.map(event => (event._id === selectedEvent._id ? { ...event, ...eventDetails } : event)));
+        setEvents(events.map(event => (event._id === selectedEvent._id ? { ...event, ...response.data.event } : event)));
       } else {
         const response = await axios.post('http://localhost:3000/a/events', payload, {
           headers: { Authorization: `Bearer ${token}` }
         });
         alert(response.data.message || 'Event created successfully');
-        setEvents([...events, response.data]);
+        setEvents(prevEvents => [...prevEvents, response.data]);
       }
     } catch (error) {
       alert('Error saving event: ' + (error.response?.data?.message || error.message));
     } finally {
-      fetchEvents();
       setIsModalOpen(false);
-      setSelectedEvent(null);
+      setSelectedEvent(null); // Reset selected event after saving
     }
   };
 
-  // Fetch events from the backend when the component mounts
   useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const response = await axios.get('http://localhost:3000/a/events');
-        setEvents(response.data); // Assuming response.data is an array of events
-      } catch (error) {
-        console.error('Error fetching events:', error);
-      }
-    };
-
     fetchEvents();
   }, []);
 
@@ -132,10 +125,11 @@ const EventM = ({ userRole, userCollege }) => {
         <Topbar />
         <div className="dashboard-inline">
           <h2 className="dashboard-heading">Events</h2>
-          <button className="dashboard-button" onClick={() => toggleModal()} disabled={loading}>
+          <button className="dashboard-button" onClick={() => setIsModalOpen(true)} disabled={loading}>
             <FontAwesomeIcon icon={faPlus} />
           </button>
         </div>
+
         <EventModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
@@ -144,8 +138,9 @@ const EventM = ({ userRole, userCollege }) => {
           userCollege={userCollege}
           initialEventData={selectedEvent}
         />
+
         <div className="context-card">
-        <div className="events-list">
+          <div className="events-list">
             {events.map((event) => (
               <div className="event-card" key={event._id || event.id}>
                 <div className="event-details">
@@ -155,6 +150,7 @@ const EventM = ({ userRole, userCollege }) => {
                     <span><FontAwesomeIcon icon={faCalendarCheck} /> {event.date}</span>
                     <span><FontAwesomeIcon icon={faClock} /> {event.startTime} - {event.endTime}</span>
                     <span><FontAwesomeIcon icon={faMapMarkerAlt} /> {event.location}</span>
+                   
                   </div>
                 </div>
                 <div className="event-actions">

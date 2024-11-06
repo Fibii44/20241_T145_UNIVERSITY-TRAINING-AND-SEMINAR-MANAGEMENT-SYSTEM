@@ -63,6 +63,17 @@ const EventSchema = new mongoose.Schema({
         ref: 'User',
         required: [true, 'Event creator is required']
     },
+
+    editedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        default: null // Initially set to null
+      },
+      editedAt: {
+        type: Date,
+        default: null
+      },
+      
     status: {
         type: String,
         enum: ['active', 'canceled', 'completed'],

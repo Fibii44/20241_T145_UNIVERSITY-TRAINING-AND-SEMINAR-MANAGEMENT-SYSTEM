@@ -1,4 +1,5 @@
 const Event = require('../../models/event');
+const DeletedEvent = require('../../models/deletedEvents');
 
 const renderEventsPage = async (req, res) => {
   try {
@@ -41,16 +42,14 @@ const updateEvent = async (req, res) => {
     const eventId = req.params.id;
     const userId = req.user.id;
     const updates = req.body;
-    
-    console.log(eventId);
-    console.log(userId);
-    console.log(updates);
-    
-    console.log("Event lock status:", event.isLocked, "Locked by:", event.lockedBy);
-    console.log("Current user trying to edit:", userId);
 
-    // Check if the event is locked by another user
+    // Fetch the event from the database
     const event = await Event.findById(eventId);
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+
+    // If the event is locked by another user, prevent editing
     if (event.isLocked && event.lockedBy.toString() !== userId) {
       return res.status(403).json({ message: 'Event is currently being edited by another admin.' });
     }
@@ -58,7 +57,19 @@ const updateEvent = async (req, res) => {
     // Lock the event for the current user
     await Event.findByIdAndUpdate(eventId, { isLocked: true, lockedBy: userId });
 
-    // Update the event
+    // Ensure the 'createdBy' field is not modified
+    // If it's not already set, set it to the current user
+    if (!event.createdBy) {
+      event.createdBy = userId;
+    }
+
+    // Allow 'editedBy' to be updated
+    updates.editedBy = userId; // Set the editedBy to the current user
+
+    // Remove 'createdBy' from updates to prevent it from being overwritten
+    delete updates.createdBy;
+
+    // Update the event, with 'createdBy' fixed and 'editedBy' updated
     const updatedEvent = await Event.findByIdAndUpdate(eventId, updates, { new: true });
     if (!updatedEvent) {
       return res.status(404).json({ message: 'Event not found' });
@@ -73,31 +84,33 @@ const updateEvent = async (req, res) => {
   }
 };
 
+
 const deleteEvent = async (req, res) => {
   try {
-    const eventId = req.params._id;
-    const userId = req.user.id;
+    const eventId = req.params.id;
+    const { name, role } = req.user; 
 
-    // Check if the event is locked by another user
+    // Find the event to be deleted
     const event = await Event.findById(eventId);
-    if (event.isLocked && event.lockedBy.toString() !== userId) {
-      return res.status(403).json({ message: 'Event is currently being edited by another admin.' });
-    }
-
-    // Lock the event for the current user
-    await Event.findByIdAndUpdate(eventId, { isLocked: true, lockedBy: userId });
-
-    // Delete the event
-    const deletedEvent = await Event.findByIdAndRemove(eventId);
-
-    if (!deletedEvent) {
+    if (!event) {
       return res.status(404).json({ message: 'Event not found' });
     }
 
-    // Unlock the event after deleting
-    await Event.updateOne({ _id: eventId }, { isLocked: false, lockedBy: null });
+    // Prepare the data to be stored in the deletedEvents collection
+    const deletedEventData = {
+      ...event.toObject(), 
+      deletedByName: name, 
+      deletedByRole: role, 
+      deletedAt: new Date(), 
+    };
 
-    res.status(200).json({ message: 'Event deleted successfully', event: deletedEvent });
+    // Save the event in the deletedEvents collection
+    await DeletedEvent.create(deletedEventData);
+
+    // Delete the original event
+    await Event.findByIdAndDelete(eventId);
+
+    res.status(200).json({ message: 'Event deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

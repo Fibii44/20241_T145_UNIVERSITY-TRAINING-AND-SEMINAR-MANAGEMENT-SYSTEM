@@ -17,18 +17,17 @@ const UsersTable = ({ users, onDelete, onUpdate }) => (
             <th>Role</th>
             <th>Position</th>
             <th>Department</th>
-            <th>Phone Number</th>
+            <th>Status</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           {users.map((user, index) => (
-            <UserRow 
-              key={user._id || index} 
-              user={user} 
-             
+            <UserRow
+              key={user._id || index}
+              user={user}
               onDelete={onDelete}
-              onUpdate={onUpdate} 
+              onUpdate={onUpdate}
             />
           ))}
         </tbody>
@@ -48,13 +47,21 @@ const UserRow = ({ user, onDelete, onUpdate }) => {
       role: user.role,
       position: user.position,
       department: user.department,
-      phoneNumber: user.phoneNumber,
+      status: user.status,
     });
   }, [user]);
 
   const handleSave = () => {
-    onUpdate(user._id, formData);
-    setIsEditing(false);
+    if (window.confirm("Are you sure you want to save these changes?")) {
+      onUpdate(user._id, formData);
+      setIsEditing(false);
+    }
+  };
+
+  const handleDelete = () => {
+    if (window.confirm("Are you sure you want to delete this user?")) {
+      onDelete(user._id);
+    }
   };
 
   return (
@@ -62,12 +69,44 @@ const UserRow = ({ user, onDelete, onUpdate }) => {
       <td>{user._id}</td>
       {isEditing ? (
         <>
+
           <td><input type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} /></td>
           <td><input type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} /></td>
-          <td><input type="text" value={formData.role} onChange={(e) => setFormData({ ...formData, role: e.target.value })} /></td>
+
+          <td>
+            <select
+              value={formData.role}
+              onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+            >
+              <option value="faculty_staff">Faculty Staff</option>
+              <option value="departmental_admin">Departmental Admin</option>
+              <option value="general_admin">General Admin</option>
+            </select>
+          </td>
           <td><input type="text" value={formData.position} onChange={(e) => setFormData({ ...formData, position: e.target.value })} /></td>
-          <td><input type="text" value={formData.department} onChange={(e) => setFormData({ ...formData, department: e.target.value })} /></td>
-          <td><input type="text" value={formData.phoneNumber} onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })} /></td>
+          <td>
+            <select
+              value={formData.department}
+              onChange={(e) => setFormData({ ...formData, department: e.target.value })}
+            >
+              <option value="none">None</option>
+              <option value="College of Arts and Sciences">College of Arts and Sciences</option>
+              <option value="College of Business">College of Business</option>
+              <option value="College of Education">College of Education</option>
+              <option value="College of Law">College of Law</option>
+              <option value="College of Nursing">College of Nursing</option>
+              <option value="College of Technologies">College of Technologies</option>
+            </select>
+          </td>
+          <td>
+            <select
+              value={formData.status}
+              onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+            >
+              <option value="inactive">active</option>
+              <option value="active">active</option>
+            </select>
+          </td>
         </>
       ) : (
         <>
@@ -76,7 +115,7 @@ const UserRow = ({ user, onDelete, onUpdate }) => {
           <td>{user.role}</td>
           <td>{user.position}</td>
           <td>{user.department}</td>
-          <td>{user.phoneNumber}</td>
+          <td>{user.status}</td>
         </>
       )}
       <td>
@@ -88,13 +127,14 @@ const UserRow = ({ user, onDelete, onUpdate }) => {
         ) : (
           <>
             <button className="table_edit" onClick={() => setIsEditing(true)}>Edit</button>
-            <button className="table_delete" onClick={() => onDelete(user._id)}>Delete</button>
+            <button className="table_delete" onClick={handleDelete}>Delete</button>
           </>
         )}
       </td>
     </tr>
   );
 };
+
 
 const Table = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -134,10 +174,10 @@ const Table = () => {
   useEffect(() => {
     const token = sessionStorage.getItem('authToken');
     if (token) {
-        const decoded = jwtDecode(token);
-        setCurrentUser(decoded.name); 
+      const decoded = jwtDecode(token);
+      setCurrentUser(decoded.name);
     }
-}, []);
+  }, []);
 
   //Upddate Data
   const handleUpdate = async (userId, formData) => {
@@ -152,13 +192,13 @@ const Table = () => {
   //Delete Data
   const handleDelete = async (userId) => {
     try {
-        const deletedBy = currentUser; // Use the current user's name
-        await axios.delete(`http://localhost:3000/a/users/${userId}`, { data: { deletedBy } });
-        setFilteredUsers(filteredUsers.filter(user => user._id !== userId));
+      const deletedBy = currentUser; // Use the current user's name
+      await axios.delete(`http://localhost:3000/a/users/${userId}`, { data: { deletedBy } });
+      setFilteredUsers(filteredUsers.filter(user => user._id !== userId));
     } catch (err) {
-        console.log(err);
+      console.log(err);
     }
-};
+  };
 
 
   return (
@@ -204,10 +244,10 @@ const Table = () => {
           </div>
         </div>
 
-        <UsersTable 
-          users={filteredUsers} 
-          onDelete={handleDelete} 
-          onUpdate={handleUpdate} 
+        <UsersTable
+          users={filteredUsers}
+          onDelete={handleDelete}
+          onUpdate={handleUpdate}
         />
       </div>
     </div>

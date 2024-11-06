@@ -28,7 +28,7 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
   const [searchTerm, setSearchTerm] = useState('');
   
   // Sample data for colleges and departments
-  const colleges = ['College of Arts and Sciences', 'College of Business', 'College of Education', 'College of Law', 'College of Nursing', 'College of Technology'];
+  const colleges = ['College of Arts and Sciences', 'College of Business', 'College of Education', 'College of Law', 'College of Nursing', 'College of Technologies'];
   const departments = {
     'College of Arts and Sciences': ['Social Sciences', 'Sociology', 'Philosophy', 'Biology', 'Environmental Science', 'Mathematics', 'English', 'Economics', 'Communication', 'Social Work'],
     'College of Business': ['Accountancy', 'Business Administration', 'Hospitality Management', 'Management'],
@@ -176,7 +176,7 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
       case 'College of Nursing':
         eventColor = '#FFC0CB'; // Pink
         break;
-      case 'College of Technology':
+      case 'College of Technologies':
         eventColor = '#FF0000'; // Red
         break;
       default:
@@ -203,6 +203,7 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
   };
 
   if (!isOpen) return null;
+
 
   return (
     <div className={`modal-overlay ${isOpen ? 'show' : ''}`} onClick={onClose}>

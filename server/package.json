@@ -1,13 +1,9 @@
 {
   "name": "server",
   "version": "1.0.0",
-<<<<<<< HEAD
   "main": "App.js",
   "scripts": {
-=======
-  "main": "index.js",
-  "scripts": { 
->>>>>>> d82edcadf08d17a427e9c4cd2abe8e4c8aa8e714
+
     "start": "nodemon App.js"
   },
   "keywords": [],

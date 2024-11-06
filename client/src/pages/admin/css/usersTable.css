@@ -67,11 +67,16 @@
 
 .table-container {
     margin: 20px;
+    max-width: 100%;
+    overflow-x: auto; /* Enable horizontal scroll on smaller screens */
 }
 
 .custom-table {
     width: 100%;
     border-collapse: collapse;
+   
+    max-height: 500px; /* Fixed height for the table */
+    overflow-y: auto; /* Vertical scroll if content exceeds max height */
 }
 
 .custom-table input {
@@ -85,16 +90,11 @@
     padding: 12px;
     text-align: left;
     height: 50px;
-    width: 150px;
     vertical-align: middle;
     overflow: hidden;
     position: relative;
     box-sizing: border-box;
-}
-
-.custom-table input:focus {
-    outline: none;
-    background-color: #f0f8ff;
+    width: 150px;
 }
 
 .custom-table th {
@@ -110,6 +110,61 @@
     background-color: #e9ecef;
 }
 
+
+.custom-table select {
+    font-size: 14px; /* Same font size as the rest of the elements */
+    padding: 8px 2px;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    transition: border-color 0.3s;
+    width: 150px;
+    margin: 0;
+}
+
+
+.custom-table select:focus {
+    border-color: #80bdff;
+    outline: none;
+}
+
+
+.custom-table select:hover {
+    border-color: #80bdff;
+}
+
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .header-container {
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+    }
+
+    .filter-header {
+        justify-content: flex-start;
+        width: 100%;
+        padding-right: 20px;
+    }
+
+    .filter select {
+        width: 100%; /* Make select elements full-width on smaller screens */
+    }
+
+    .custom-table th, .custom-table td {
+        font-size: 10px; /* Smaller font size for mobile */
+       
+    }
+
+    .custom-table {
+        width: auto; /* Allow table to overflow horizontally */
+        max-width: 100%;
+    }
+}
+
+
+/* For action buttons and table controls */
 .table_edit,
 .table_delete,
 .table_save,
@@ -148,22 +203,4 @@
 
 .table_save:hover {
     background-color: rgb(39, 143, 94);
-}
-
-@media (max-width: 768px) {
-    .header-container {
-        flex-direction: column;
-        gap: 10px;
-        align-items: flex-start;
-    }
-
-    .filter-header {
-        justify-content: flex-start;
-        width: 100%;
-        padding-right: 20px;
-    }
-
-    .filter select {
-        width: 100%;
-    }
 }
