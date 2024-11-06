@@ -1,31 +1,47 @@
-import React from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios'; // Ensure axios is installed and imported
 import './events-grid.css';
 
-// Sample data; this could be replaced with data fetched from an API
-const events = [
-    { id: 1, title: "Event 1", description: "Seminar", imgSrc: '../../../assets/eventImg.jpg', date: "2024-11-15", location: "Admin Building" },
-    { id: 2, title: "Event 2", description: "Alumni", imgSrc: '../../../assets/eventImg.jpg', date: "2024-12-01", location: "Auditorium" },
-    
-];
+function EventGrid() {
+    const [events, setEvents] = useState([]); // State to store the list of events
+    const [loading, setLoading] = useState(true); // State to handle loading state
+    const [error, setError] = useState(null); // State to handle errors
 
-function EventDetails() {
-    const { id } = useParams(); // Get the event ID from the URL
-    const event = events.find(event => event.id === parseInt(id)); // Find the event by ID
+    useEffect(() => {
+        // Function to fetch all events
+        const fetchEvents = async () => {
+            try {
+                const response = await axios.get(`http://localhost:3000/a/events`);
+                setEvents(response.data); // Assuming response data is an array of events
+                setLoading(false);
+            } catch (err) {
+                setError("Failed to fetch events");
+                setLoading(false);
+            }
+        };
 
-    if (!event) {
-        return <p>Event not found.</p>;
-    }
+        fetchEvents();
+    }, []);
+
+    // Show loading message while fetching data
+    if (loading) return <p>Loading events...</p>;
+
+    // Show error message if fetching data fails
+    if (error) return <p>{error}</p>;
 
     return (
-        <div className="event-details">
-            <h2>{event.title}</h2>
-            <img src={event.imgSrc} alt={event.title} className="event-image" />
-            <p><strong>Date:</strong> {event.date}</p>
-            <p><strong>Location:</strong> {event.location}</p>
-            <p><strong>Description:</strong> {event.description}</p>
+        <div className="events-grid">
+            {events.map((event) => (
+                <div key={event.id} className="event-card">
+                    <h3>{event.title}</h3>
+                    <img src={event.imgSrc || '../../../assets/adminProfile.png'} alt={event.title} className="event-image"  />
+                    <p><strong>Date:</strong> {event.date}</p>
+                    <p><strong>Location:</strong> {event.location}</p>
+                    <p><strong>Description:</strong> {event.description}</p>
+                </div>
+            ))}
         </div>
     );
 }
 
-export default EventDetails;
+export default EventGrid;
