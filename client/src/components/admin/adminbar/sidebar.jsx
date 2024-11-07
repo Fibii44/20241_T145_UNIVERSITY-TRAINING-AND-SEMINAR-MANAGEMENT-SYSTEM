@@ -7,14 +7,15 @@ import './css/sidebar.css';
 const Sidebar = ({ isCollapsed, toggleSidebar, activePage }) => (
   <div className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
     <div className="sidebar-header">
+      <button className="menu-toggle" onClick={toggleSidebar}>
+        <FontAwesomeIcon icon={faBars} />
+      </button>
       <div className="sidebar-title">
         <h2 className="buksu">{!isCollapsed && 'BukSU'}</h2>
         <h2 className="engage">{!isCollapsed && 'Engage'}</h2>
       </div>
       
-      <button className="menu-toggle" onClick={toggleSidebar}>
-        <FontAwesomeIcon icon={faBars} />
-      </button>
+      
     </div>
     
     <ul className="menu-items">

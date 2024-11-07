@@ -82,7 +82,7 @@
     position: relative;
     border-radius: 8px;
     width: 11rem;
-    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition for background and color */
+    transition: background-color 0.3s ease-in, color 0.3s ease; /* Smooth transition for background and color */
 }
   
   .menu-items {
@@ -100,7 +100,7 @@
     background-color: #FFB800; /* Active background color */
     color: #15225a; 
     width: 11rem;
-    transition: width 0.3s ease;/* Active text color */
+    transition: width 0.3s ease-in;/* Active text color */
 }
 
 .menu-items li.active::before {
@@ -112,7 +112,7 @@
   width: 5px; /* Width of the vertical line */
   background-color: #FFB800; /* Same color as active background */
   border-radius: 0px 8px 8px 0px; /* Rounded corners on the line */
-  transition: transform 0.3s ease; /* Smooth transition for the line */
+  transition: transform 0.3s ease-in; /* Smooth transition for the line */
 }
 .menu-items li:not(.active):hover {
   background-color: rgba(255, 184, 0, 0.2); /* Light hover effect */
@@ -131,14 +131,14 @@
     color: #fff;
     cursor: pointer;
     font-size: 1.2rem;
-    padding: 12px 6px;
+    padding: 12px 12px;
     display: flex;
-    transition: 0.3s ease;
+    transition: 0.3s ease-in;
   }
 
   .sidebar.collapsed .menu-toggle{
-    transform: translateX(-18px);
-    transition: 0.3s ease;
+    transform: translateX(0px);
+    transition: 0.3s ease-in;
   }
   .menu-toggle:focus {
     outline: none;
@@ -218,7 +218,7 @@
 .menu-items li a span,
 .sidebar-footer-item span {
     opacity: 1;
-    transition: opacity 0.5s ease, transform 0.5s ease; /* Added transform transition */
+    transition: opacity 0.3s ease, transform 0.3s ease; /* Added transform transition */
     transform: translateX(0); /* Initial position */
 }
 
@@ -247,11 +247,11 @@
     margin-top: auto;
   }
   .sidebar-footer .icon{
-    transition: 0.3s ease;
+    transition: 0.3s ease-in;
   }
   .sidebar.collapsed .sidebar-footer .icon{
     padding-left: 16px;
-    transition: 0.3s ease;
+    transition: 0.3s ease-in;
   }
   .sidebar-footer-item a{
     padding: 20px 2px;
