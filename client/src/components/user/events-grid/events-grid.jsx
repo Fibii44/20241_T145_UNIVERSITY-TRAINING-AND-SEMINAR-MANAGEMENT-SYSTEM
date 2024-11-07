@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios'; // Ensure axios is installed and imported
 import './events-grid.css';
+import { Link } from 'react-router-dom';
 
 function EventGrid() {
     const [events, setEvents] = useState([]); // State to store the list of events
@@ -30,6 +31,7 @@ function EventGrid() {
     if (error) return <p>{error}</p>;
 
     return (
+    <Link to={'/u/events/:id'}>
         <div className="events-grid">
             {events.map((event) => (
                 <div key={event.id} className="event-card">
@@ -41,6 +43,7 @@ function EventGrid() {
                 </div>
             ))}
         </div>
+    </Link>
     );
 }
 
