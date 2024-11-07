@@ -1,33 +1,81 @@
 .events-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Increased min width */
-    gap: 24px; /* Increased gap for spacing */
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 24px; /* Space between cards */
     padding: 20px;
-    background-color: rgb(253, 253, 253);
-    margin: 2rem 8rem; /* Margin top/bottom and left/right */
+    background-color: #f5f6fa;
+    margin: 2rem auto; /* Center grid horizontally */
+    max-width: 1200px; /* Set max width for the grid */
+}
+
+.event-card h3 {
+    padding-top: 12px;
+    font-size: 20px;
+    text-align: left;
+}
+
+.event-link {
+    text-decoration: none; /* Remove underline */
+}
+
+.event-card {
+    cursor: pointer;
+    width: 18rem;
+    text-align: left;
+    background-color: white;
+    padding: 20px;
+    border-radius: 18px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    height: 100%; /* Make each card take full height in its grid cell */
+}
+
+.event-card:hover {
+    transform: scale(1.05); /* Zoom in effect */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Slightly darker shadow on hover */
+}
+.event-image {
+    width: 100%;
+    max-height: 200px; /* Adjust to fit within the card */
+    border-radius: 8px;
+    object-fit: cover; /* Ensure the image fills the space without distortion */
+    margin-bottom: 12px;
+}
+.event-card p {
+    margin-top: 12px;
+    font-size: 1.25rem;
+    color: #011c39;
     
 }
-.event-card h3{
-    color: black;
+
+.event-card .date {
+    color: grey;
+    font-size: 16px;
+    margin-bottom: 12px;
+    text-align: left;
 }
-.event-item {
-    cursor: pointer;
-    text-align: center;
+
+.event-card button {
     background-color: white;
-    padding: 20px; /* Increased padding for better spacing */
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional shadow for better look */
+    color: #011c39;
+    border: 1px solid grey;
+    border-radius: 18px;
+    height: 2.5rem;
+    padding: 0 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    margin-top: auto; /* Push button to bottom of card */
 }
 
-.event-item img {
-    width: 15rem; /* Increased image size */
-    max-height: 15rem;
-    border-radius: 8px;
+.event-card:hover button {
+    background-color: #feb800; /* Change button color to yellow */
+    color: #333; /* Optional: Change text color when button is hovered */
 }
-
-.event-item p {
-    margin-top: 12px; /* Increased margin-top */
-    font-size: 1.25rem; /* Increased font size */
-    color: #333;
-    text-decoration: none;
+.event-card .event-description {
+    height: 16rem;
+    margin-bottom: 20px;
+    overflow: hidden;
 }

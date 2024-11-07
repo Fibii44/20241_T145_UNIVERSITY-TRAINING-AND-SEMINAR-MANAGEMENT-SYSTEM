@@ -250,7 +250,7 @@
     transition: 0.3s ease-in;
   }
   .sidebar.collapsed .sidebar-footer .icon{
-    padding-left: 16px;
+    padding-left: 9px;
     transition: 0.3s ease-in;
   }
   .sidebar-footer-item a{
