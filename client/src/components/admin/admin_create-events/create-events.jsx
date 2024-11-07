@@ -28,12 +28,13 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
   const [searchTerm, setSearchTerm] = useState('');
   
   // Sample data for colleges and departments
-  const colleges = ['College of Arts and Sciences', 'College of Business', 'College of Education', 'College of Law', 'College of Nursing', 'College of Technologies'];
+  const colleges = ['College of Arts and Sciences', 'College of Business', 'College of Education', 'College of Law', 'College of Public Administration and Governance', 'College of Nursing', 'College of Technologies'];
   const departments = {
     'College of Arts and Sciences': ['Social Sciences', 'Sociology', 'Philosophy', 'Biology', 'Environmental Science', 'Mathematics', 'English', 'Economics', 'Communication', 'Social Work'],
     'College of Business': ['Accountancy', 'Business Administration', 'Hospitality Management', 'Management'],
     'College of Education': ['Secondary Education', 'Early Childhood Education', 'Elementary Education', 'Physical Education', 'English Language and Literature'],
     'College of Law': ['Juris Doctor'],
+    'College of Public Administration and Governance': [],
     'College of Nursing': [],
     'College of Technology': ['Information Technology', 'Electronics Technology', 'Automotive Technology', 'Food Science and Technology', 'Electronics and Communications Engineering'],
   };
@@ -162,22 +163,25 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
     let eventColor;
     switch (participants.college) {
       case 'College of Arts and Sciences':
-        eventColor = '#00FF00'; // Green
+        eventColor = '#72f7b0'; // Green
         break;
       case 'College of Business':
-        eventColor = '#FFFF00'; // Yellow
+        eventColor = '#f7f372'; // Yellow
         break;
       case 'College of Education':
-        eventColor = '#ADFF2F'; // Lighter Green
+        eventColor = '#727bf7'; // Blue
         break;
       case 'College of Law':
-        eventColor = '#800080'; // Purple
+        eventColor = '#ae72f7'; // Purple
         break;
       case 'College of Nursing':
-        eventColor = '#FFC0CB'; // Pink
+        eventColor = '#f772b0'; // Pink
+        break;
+      case 'College of Public Administration and Governance':
+        eventColor = '#442859';
         break;
       case 'College of Technologies':
-        eventColor = '#FF0000'; // Red
+        eventColor = '#f78f72'; // Orange
         break;
       default:
         eventColor = '#65a8ff'; // Default Blue

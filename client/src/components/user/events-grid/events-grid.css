@@ -1,11 +1,11 @@
 .events-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 24px; /* Space between cards */
     padding: 20px;
     background-color: #f5f6fa;
     margin: 2rem auto; /* Center grid horizontally */
-    max-width: 1200px; /* Set max width for the grid */
+    width: 98rem; /* Set max width for the grid */
 }
 
 .event-card h3 {
@@ -23,7 +23,7 @@
     width: 18rem;
     text-align: left;
     background-color: white;
-    padding: 20px;
+    padding: 30px;
     border-radius: 18px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -34,7 +34,7 @@
 }
 
 .event-card:hover {
-    transform: scale(1.05); /* Zoom in effect */
+    background-color: rgb(226, 241, 241);/* Zoom in effect */
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Slightly darker shadow on hover */
 }
 .event-image {
@@ -43,17 +43,18 @@
     border-radius: 8px;
     object-fit: cover; /* Ensure the image fills the space without distortion */
     margin-bottom: 12px;
+    transition: transform 0.3s ease
 }
 .event-card p {
-    margin-top: 12px;
-    font-size: 1.25rem;
+    margin-top: 6px;
+    font-size: 14px;
     color: #011c39;
     
 }
 
 .event-card .date {
     color: grey;
-    font-size: 16px;
+    font-size: 12px;
     margin-bottom: 12px;
     text-align: left;
 }
@@ -74,8 +75,39 @@
     background-color: #feb800; /* Change button color to yellow */
     color: #333; /* Optional: Change text color when button is hovered */
 }
+.event-card:hover .event-image {
+    transform: scale(1.05);
+}
 .event-card .event-description {
-    height: 16rem;
+    height: 12rem;
     margin-bottom: 20px;
     overflow: hidden;
+}
+
+
+.pagination-controls {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.pagination-controls button {
+    background-color: #011c39;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 0 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.pagination-controls button:disabled {
+    background-color: grey;
+    cursor: not-allowed;
+}
+
+.pagination-controls button:hover:not(:disabled) {
+    background-color: #feb800;
 }
