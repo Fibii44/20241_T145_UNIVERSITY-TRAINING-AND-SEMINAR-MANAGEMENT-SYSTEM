@@ -79,7 +79,7 @@
     transform: scale(1.05);
 }
 .event-card .event-description {
-    height: 12rem;
+    height: 15rem;
     margin-bottom: 20px;
     overflow: hidden;
 }
