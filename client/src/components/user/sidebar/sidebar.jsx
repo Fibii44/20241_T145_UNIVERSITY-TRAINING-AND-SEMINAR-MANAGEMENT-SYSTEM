@@ -69,15 +69,16 @@ const Sidebar = ({ activePage }) => {
                         {!isCollapsed && <span>History</span>}
                     </Link>
                 </li>
-                <li className={activePage === 'profile' ? 'active' : ''}>
+                
+            </ul>
+
+            <ul className="sidebar-footer">
+            <li className={`sidebar-footer-item ${activePage === 'profile' ? 'active' : ''}`}>
                     <Link to="/u/profile">
                         <span className="icon"><FontAwesomeIcon icon={faUser} size="lg" /></span>
                         {!isCollapsed && <span>Profile</span>}
                     </Link>
                 </li>
-            </ul>
-
-            <ul className="sidebar-footer">
                 <li className={`sidebar-footer-item ${activePage === 'settings' ? 'active' : ''}`}>
                     <Link to="/settings">
                         <span className="icon"><FontAwesomeIcon icon={faCog} size="lg" /></span>
