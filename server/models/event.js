@@ -8,6 +8,9 @@ const EventSchema = new mongoose.Schema({
         trim: true,
         maxlength: 100
     },
+    eventPicture: {
+        type: String
+    },
     eventDate: {
         type: Date,
         required: [true, 'Event date is required']

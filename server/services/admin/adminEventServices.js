@@ -1,5 +1,26 @@
 const Event = require('../../models/event');
 const DeletedEvent = require('../../models/deletedEvents');
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/eventPictures/');
+   },
+  filename: function (req, file, cb) {
+    cb(null, `${Date.now()}_${file.originalname}`);
+  }
+})
+
+const upload = multer({
+  storage,
+  fileFilter: (req, file, cb) => {
+    if (!file.mimetype.startsWith('image/')) {
+      return cb(new Error('Only images are allowed'), false);
+    }
+    cb(null, true);
+  }
+});
+
 
 const renderEventsPage = async (req, res) => {
   try {
@@ -12,7 +33,9 @@ const renderEventsPage = async (req, res) => {
 
 const addEvent = async (req, res) => {
   try {
-    const { eventPicture, title, eventDate, startTime, endTime, location, name, hostname, description, participantGroup, color, customParticipants } = req.body;
+    const {title, eventDate, startTime, endTime, location, name, hostname, description, participantGroup, color, customParticipants } = req.body;
+    console.log(req.file)
+    const eventPicture = req.file ? req.file.filename : null; // Set eventPicture 
     const user = req.user;
     const newEvent = new Event({
       title,
@@ -20,7 +43,7 @@ const addEvent = async (req, res) => {
       eventPicture,
       startTime,
       endTime,
-      location,
+      location, 
       hostname,
       description,
       participantGroup,
@@ -121,4 +144,5 @@ module.exports = {
   addEvent,
   updateEvent,
   deleteEvent,
+  upload
 };

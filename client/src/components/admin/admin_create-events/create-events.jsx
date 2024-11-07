@@ -15,7 +15,7 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
   const [location, setLocation] = useState('');
   const [description, setDescription] = useState('');
   const [reminders, setReminders] = useState('None');
-  const [image, setImage] = useState(null);
+  const [eventPicture, setEventPicture] = useState(null);
   const [activeReminder, setActiveReminder] = useState('None');
   const [color, setColor] = useState('#65a8ff'); 
   const [participants, setParticipants] = useState({
@@ -157,6 +157,12 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
     }
   }, [isOpen, initialEventData]);
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if(file){
+      setEventPicture(file);
+    }
+  };
   const handleSaveDetails = (e) => {
     e.preventDefault();
 
@@ -190,11 +196,14 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
     const cleanedParticipants = selectedParticipants
     .map((participant) => participant.email.trim()) // Remove extra spaces
     .filter((email) => email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)); // Validate email format
+      
+    console.log("Event Picture before save:", eventPicture);
 
     onSave({
       title,
       date,
       startTime,
+      eventPicture,
       endTime,
       location,
       description,
@@ -223,6 +232,8 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
             <div className="upload-photo">
               <FontAwesomeIcon icon={faCamera} className="camera-icon" />
               <p>Upload Photo</p>
+              <input type="file" accept="image/*" name="eventPicture" onChange={handleImageChange} />
+              {eventPicture && <p>Image Selected: {eventPicture.name}</p>}
             </div>
             <form className="event-form" onSubmit={handleSaveDetails}>
               <input type="text" placeholder="Event Title" value={title} onChange={(e) => setTitle(e.target.value)} className="form-control mb-3" />
