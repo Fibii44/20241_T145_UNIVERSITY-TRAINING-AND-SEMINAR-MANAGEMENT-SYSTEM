@@ -1,3 +1,4 @@
+const Event = require('../../models/event')
 
 // Replace with model
 

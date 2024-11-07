@@ -36,8 +36,8 @@ function Event() {
     return (
         <div className="event-details">
             <h3>{event.title}</h3>
-            <img src={event.imgSrc || '../../../assets/adminProfile.png'} alt={event.title} className="event-image" />
-            <p><strong>Date:</strong> {event.date}</p>
+            {/* <img src={event.imgSrc || '../../../assets/adminProfile.png'} alt={event.title} className="event-image" /> */}
+            <p><strong>Date:</strong> {event.eventDate}</p>
             <p><strong>Location:</strong> {event.location}</p>
             <p><strong>Description:</strong> {event.description}</p>
         </div>

@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios'; // Ensure axios is installed and imported
-import './events-grid.css';
+import axios from 'axios';
 import { Link } from 'react-router-dom';
+import './events-grid.css';
 
 function EventGrid() {
-    const [events, setEvents] = useState([]); // State to store the list of events
-    const [loading, setLoading] = useState(true); // State to handle loading state
-    const [error, setError] = useState(null); // State to handle errors
+    const [events, setEvents] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
-        // Function to fetch all events
         const fetchEvents = async () => {
             try {
-                const response = await axios.get(`http://localhost:3000/a/events`);
-                setEvents(response.data); // Assuming response data is an array of events
+                const response = await axios.get(`http://localhost:3000/u/events`);
+                setEvents(response.data);
                 setLoading(false);
             } catch (err) {
                 setError("Failed to fetch events");
@@ -24,26 +23,23 @@ function EventGrid() {
         fetchEvents();
     }, []);
 
-    // Show loading message while fetching data
     if (loading) return <p>Loading events...</p>;
-
-    // Show error message if fetching data fails
     if (error) return <p>{error}</p>;
 
     return (
-    <Link to={'/u/events/:id'}>
         <div className="events-grid">
             {events.map((event) => (
-                <div key={event.id} className="event-card">
-                    <h3>{event.title}</h3>
-                    <img src={event.imgSrc || '../../../assets/adminProfile.png'} alt={event.title} className="event-image"  />
-                    <p><strong>Date:</strong> {event.date}</p>
-                    <p><strong>Location:</strong> {event.location}</p>
-                    <p><strong>Description:</strong> {event.description}</p>
-                </div>
+                <Link to={`/u/events/${event._id}`} key={event._id} className="event-link">
+                    <div className="event-card">
+                        <h3>{event.title}</h3>
+                        <img src={event.imgSrc || '../../../assets/adminProfile.png'} alt={event.title} className="event-image" />
+                        <p><strong>Date:</strong> {event.eventDate}</p>
+                        <p><strong>Location:</strong> {event.location}</p>
+                        <p><strong>Description:</strong> {event.description}</p>
+                    </div>
+                </Link>
             ))}
         </div>
-    </Link>
     );
 }
 
