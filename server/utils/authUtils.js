@@ -10,7 +10,7 @@ const generateToken = (user) => {
     role: user.role,
     name: user.name,
     email: user.email,
-    profilePicture: user.profilePicture
+    profilePicture: user.profilePicture,
   };
 
   // Token expiration time 

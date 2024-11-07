@@ -23,6 +23,8 @@ const googleOAuthCallback = (req, res, next) => {
         role: user.role,
         name: user.name,
         email: user.email,
+        position: user.position,
+        department: user.department,
         profilePicture: user.profilePicture
       },
       JWT_SECRET,
@@ -68,6 +70,8 @@ const manualLogin = async (req, res) => {
         role: user.role,   
         name: user.name, 
         email: user.email, 
+        position: user.position,
+        department: user.department,
         profilePicture: user.profilePicture 
       }, 
       JWT_SECRET, 

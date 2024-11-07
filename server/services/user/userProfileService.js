@@ -1,3 +1,4 @@
+const User = require('../../models/user');
 // db connection
 // Render user profile page
 const renderProfilePage = async (req, res) => {
@@ -14,39 +15,28 @@ const renderProfilePage = async (req, res) => {
 // Update user profile
 const updateUserProfile = async (req, res) => {
     try {
-        console.log('Authenticated user ID:', req.user?.id); // Log to verify req.user is set correctly
-        const userId = req.user.id;
         const { phoneNumber, department, position } = req.body;
 
-        console.log('Received update data:', { phoneNumber, department, position }); // Log received data
-        
-        const updatedUser = await User.findByIdAndUpdate(
-            userId,
-            {
-                phoneNumber,
-                department,
-                position,
-                updatedAt: Date.now()
-            },
-            { new: true, runValidators: true }
-        );
+      
 
-        if (!updatedUser) {
-            console.log('User not found in the database');
-            return res.status(404).json({ message: 'User not found' });
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).send('User not found');
         }
 
-        console.log('Updated user profile:', updatedUser);
-        res.status(200).json({ message: 'Profile updated successfully', user: updatedUser });
+        // Update user data
+        user.phoneNumber = phoneNumber;
+        user.department = department;
+        user.position = position;
+
+        const updatedUser = await user.save();
+
+        res.json(updatedUser);  // Return the updated user data to the client without sensitive details in the logs
     } catch (error) {
-        console.error('Server error during profile update:', error);
-        res.status(500).json({
-            message: 'Server error occurred while updating profile',
-            error: error.message || 'Unknown server error'
-        });
+        console.error('Error updating profile:', error);  // Log error but avoid logging sensitive info
+        res.status(500).send(`Error updating profile: ${error.message}`);
     }
 };
-
 // List all certificates for the user
 const listCertificates = async (req, res) => {
     try {

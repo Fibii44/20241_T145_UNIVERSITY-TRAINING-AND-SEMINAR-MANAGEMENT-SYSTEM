@@ -103,7 +103,7 @@ const UserRow = ({ user, onDelete, onUpdate }) => {
               value={formData.status}
               onChange={(e) => setFormData({ ...formData, status: e.target.value })}
             >
-              <option value="inactive">active</option>
+              <option value="inactive">inactive</option>
               <option value="active">active</option>
             </select>
           </td>
