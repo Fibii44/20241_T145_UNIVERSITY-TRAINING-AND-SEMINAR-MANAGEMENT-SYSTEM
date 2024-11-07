@@ -52,7 +52,7 @@ const EventM = ({ userRole, userCollege }) => {
   };
 
   const handleSaveEventDetails = async (eventDetails) => {
-    const { date, startTime, endTime, participants, customParticipants = [], ...rest } = eventDetails;
+    const { date, startTime, endTime, participants, customParticipants = [], eventPicture, ...rest } = eventDetails;
     const formattedEventDate = date ? new Date(date).toISOString() : undefined;
   
     const token = sessionStorage.getItem('authToken');
@@ -69,39 +69,47 @@ const EventM = ({ userRole, userCollege }) => {
       alert('Invalid or expired token. Please log in again.');
       return;
     }
-  
-    const payload = {
-      ...rest,
-      eventDate: formattedEventDate,
-      startTime,
-      endTime,
-      participantGroup: customParticipants.length > 0 ? null : {
-        college: participants.college || "All",
-        department: participants.department || "All"
-      },
-      customParticipants: customParticipants.map(email => email.trim()).filter(email => email.includes('@')),
-    };
-  
-    // Only add `createdBy` for new events
+
+    console.log(eventPicture)
+
+    const formData = new FormData();
+    formData.append('title', rest.title);
+    formData.append('eventDate', formattedEventDate);
+    formData.append('startTime', startTime);
+    formData.append('endTime', endTime);
+    formData.append('location', rest.location);
+    formData.append('hostname', rest.hostname || '');
+    formData.append('description', rest.description || '');
+    formData.append('color', rest.color || '#65a8ff');
+    if (eventPicture) {
+      formData.append('eventPicture', eventPicture); // Add the event picture to the form data
+    }
+    if (participants) {
+      formData.append('participantGroup[college]', participants.college || "All");
+      formData.append('participantGroup[department]', participants.department || "All");
+    }
+    customParticipants.forEach((email, index) => formData.append(`customParticipants[${index}]`, email.trim()));
+
+    // Only add createdBy for new events
     if (!selectedEvent) {
-      payload.createdBy = userId;
+      formData.append('createdBy', userId);
     }
-  
-    // Always update `editedBy` if it's an edit
+
+    // Always update editedBy if it's an edit
     if (selectedEvent) {
-      payload.editedBy = userId;
+      formData.append('editedBy', userId);
     }
-  
+
     try {
       if (selectedEvent) {
-        const response = await axios.put(`http://localhost:3000/a/events/${selectedEvent._id}`, payload, {
-          headers: { Authorization: `Bearer ${token}` }
+        const response = await axios.put(`http://localhost:3000/a/events/${selectedEvent._id}`, formData, {
+          headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' }
         });
         alert('Event updated successfully');
         setEvents(events.map(event => (event._id === selectedEvent._id ? { ...event, ...response.data.event } : event)));
       } else {
-        const response = await axios.post('http://localhost:3000/a/events', payload, {
-          headers: { Authorization: `Bearer ${token}` }
+        const response = await axios.post('http://localhost:3000/a/events', formData, {
+          headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' }
         });
         alert(response.data.message || 'Event created successfully');
         setEvents(prevEvents => [...prevEvents, response.data]);
