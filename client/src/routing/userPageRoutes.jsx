@@ -5,6 +5,7 @@ import Events  from  '../pages/user/eventsPage';
 import Calendar from '../pages/user/calendarPage'
 import Certificates from '../pages/user/certificates'
 import History from '../pages/user/history'
+import Profile from '../pages/user/profile'
 import EventPage from '../pages/user/eventOpened';
 
 
@@ -19,6 +20,7 @@ function User() {
           <Route path="calendar" element={<Calendar />} />
           <Route path="certificates" element={<Certificates />} />
           <Route path="history" element={<History />} />
+          <Route path="profile" element={<Profile />} />
         </Routes>
       </div>
   );

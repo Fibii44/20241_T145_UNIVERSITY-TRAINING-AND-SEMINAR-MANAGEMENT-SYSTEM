@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCertificate, faHistory, faCalendar, faCog, faSignOutAlt, faBars, faBell, faHome, faCalendarCheck} from '@fortawesome/free-solid-svg-icons';
+import { faCertificate, faHistory, faCalendar, faCog, faSignOutAlt, faBars, faBell, faHome, faCalendarCheck, faUser} from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 import '../../../components/admin/adminbar/css/admin.css';
 
@@ -54,7 +54,16 @@ const Sidebar = ({ isCollapsed, toggleSidebar, activePage }) => (
           {!isCollapsed && <span>History</span>}
         </Link>
       </li>
+{/* ============================================================================================ */}
+      <li className={activePage === 'profile' ? 'active' : ''}>
+        <Link to="/u/profile">
+          <span className="icon"><FontAwesomeIcon icon={faUser} size="lg" /></span>
+          {!isCollapsed && <span>Profile</span>}
+        </Link>
+      </li>       
     </ul>
+
+    
     <ul className="sidebar-footer">
       <li className={`sidebar-footer-item ${activePage === 'settings' ? 'active' : ''}`}>
         <Link to="/settings">

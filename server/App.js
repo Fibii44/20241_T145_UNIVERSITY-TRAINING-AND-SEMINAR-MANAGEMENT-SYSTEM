@@ -25,7 +25,7 @@ const authRoutes = require('./routes/authRoutes');
 
 const corsOptions = {
   origin: 'http://localhost:5000', 
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], 
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], 
   credentials: true, 
 };
 
