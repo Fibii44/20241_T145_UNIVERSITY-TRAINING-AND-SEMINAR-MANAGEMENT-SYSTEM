@@ -14,6 +14,9 @@ function LoginSuccess() {
 
       const decoded = jwtDecode(token);
       const userRole = decoded.role;
+
+      sessionStorage.setItem("userRole", userRole);
+
       console.log(token);
 
       if (userRole === "faculty_staff") {

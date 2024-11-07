@@ -5,13 +5,12 @@ import { Link } from 'react-router-dom';
 import './css/sidebar.css';
 
 const Sidebar = ({ activePage }) => {
-  // Retrieve the initial state from localStorage or set default to true (collapsed)
   const [isCollapsed, setIsCollapsed] = useState(() => {
     return localStorage.getItem('isSidebarCollapsed') === 'true';
   });
+  const [role, setRole] = useState(sessionStorage.getItem('userRole') || ''); // Retrieve role from localStorage
 
   const toggleSidebar = () => {
-    // Toggle the state and store the updated state in localStorage
     setIsCollapsed((prevState) => {
       const newState = !prevState;
       localStorage.setItem('isSidebarCollapsed', newState);
@@ -20,7 +19,6 @@ const Sidebar = ({ activePage }) => {
   };
 
   useEffect(() => {
-    // Update the collapsed state when the component mounts
     const savedState = localStorage.getItem('isSidebarCollapsed') === 'true';
     setIsCollapsed(savedState);
   }, []);
@@ -50,18 +48,25 @@ const Sidebar = ({ activePage }) => {
             {!isCollapsed && <span className='list-name'>Calendar</span>}
           </Link>
         </li>
-        <li className={activePage === 'personnel' ? 'active' : ''}>
-          <Link to="/a/personnel">
-            <span className="icon"><FontAwesomeIcon icon={faClock} size="lg" /></span>
-            {!isCollapsed && <span className='list-name'>Personnel</span>}
-          </Link>
-        </li>
-        <li className={activePage === 'users' ? 'active' : ''}>
-          <Link to="/a/users">
-            <span className="icon"><FontAwesomeIcon icon={faUsers} size="lg" /></span>
-            {!isCollapsed && <span className='list-name'>Users</span>}
-          </Link>
-        </li>
+        
+        {/* Conditionally render Personnel and Users menu items for general_admin */}
+        {role === 'general_admin' && (
+          <>
+            <li className={activePage === 'personnel' ? 'active' : ''}>
+              <Link to="/a/personnel">
+                <span className="icon"><FontAwesomeIcon icon={faClock} size="lg" /></span>
+                {!isCollapsed && <span className='list-name'>Personnel</span>}
+              </Link>
+            </li>
+            <li className={activePage === 'users' ? 'active' : ''}>
+              <Link to="/a/users">
+                <span className="icon"><FontAwesomeIcon icon={faUsers} size="lg" /></span>
+                {!isCollapsed && <span className='list-name'>Users</span>}
+              </Link>
+            </li>
+          </>
+        )}
+        
         <li className={activePage === 'history' ? 'active' : ''}>
           <Link to="/a/history">
             <span className="icon"><FontAwesomeIcon icon={faHistory} size="lg" /></span>
