@@ -226,7 +226,7 @@
 .sidebar.collapsed .menu-items li a span,
 .sidebar.collapsed .sidebar-footer-item span {
     opacity: 0;
-    transform: translateX(-10px); /* Slightly move text to the left on collapse */
+    transform: translateX(- 10px); /* Slightly move text to the left on collapse */
 }
 
 /* Optional: Ensure icons remain visible in collapsed mode */
