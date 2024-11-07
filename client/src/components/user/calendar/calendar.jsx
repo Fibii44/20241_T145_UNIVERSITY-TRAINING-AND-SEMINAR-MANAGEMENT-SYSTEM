@@ -61,7 +61,7 @@ import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons
 import React, { useState, useEffect } from 'react';
 import './calendar.css';
 import axios from 'axios';
-
+import { Link } from 'react-router-dom';
 const Calendar = () => {
     const [events, setEvents] = useState([]);
     const [currentView, setCurrentView] = useState('month');
@@ -156,8 +156,7 @@ const Calendar = () => {
             default:
                 break;
         }
-    };
-    
+    }; 
     // Month View
     const renderMonthView = () => {
         const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
@@ -197,25 +196,59 @@ const Calendar = () => {
                         const dayNumber = date.getDate();
                         const eventsForDay = getEventsForDay(formattedDate);
                         const isToday = date.toDateString() === today.toDateString();
-                        
+                       
+                       
+                       
+                        function hexToRgb(hex) {
+                            hex = hex.replace('#', '');
+                            
+                            // Parse hex color to rgb
+                            let r = parseInt(hex.substring(0, 2), 16);
+                            let g = parseInt(hex.substring(2, 4), 16);
+                            let b = parseInt(hex.substring(4, 6), 16);
+                            
+                            return `${r}, ${g}, ${b}`;
+                        }
+
+
+
                         return (
                             <div key={index} className="calendar-day" style={isToday ? { border: '2px solid' } : {}}>
                                 <div className="date-number" style={{ opacity: date.getMonth() !== currentDate.getMonth() ? 0.5 : 1 }}>
                                     {dayNumber}
                                 </div>
+                                
                                 {eventsForDay.map(event => (
-                                    <div key={event.id} className="event" style={{ backgroundColor: event.color }}>
-                                        {event.title}
+                                    <Link to={`/u/events/${event._id}`} key={event._id} className="event-link">
+                                    <div 
+                                        key={event._id} 
+                                        className="event" 
+                                        style={{ 
+                                            backgroundColor: `rgba(${hexToRgb(event.color)}, 0.25)`,
+                                            borderLeft: `5px solid ${event.color}`,
+                                            
+                                        }}
+                                    >
+                                        <span 
+                                            style={{ 
+                                                color: event.color,    // Keep title color fully opaque
+                                                fontWeight: 'bold', 
+                                                fontSize: '14px'
+                                            }}
+                                        >
+                                            {event.title}
+                                        </span>
                                     </div>
+                                    </Link>
                                 ))}
+
                             </div>
                         );
                     })}
                 </div>
             </>
         );
-    };
-    
+    };  
     // Week View
     const renderWeekView = () => {
         const startOfWeek = new Date(currentDate);
@@ -264,112 +297,78 @@ const Calendar = () => {
             </>
         );
     };
-
   // Year View
-    const renderYearView = () => {
+  const renderYearView = () => {
     const months = Array.from({ length: 12 }, (_, i) => new Date(currentDate.getFullYear(), i, 1));
-    const weeksInMonth = months.map(month => {
-        const weeks = [];
-        const startOfMonth = new Date(month);
-        const endOfMonth = new Date(month.getFullYear(), month.getMonth() + 1, 0); 
-        let week = [];
 
-       
-        for (let i = 0; i < startOfMonth.getDay(); i++) {
-            const prevMonthDate = new Date(month.getFullYear(), month.getMonth(), -(startOfMonth.getDay() - i));
-            week.push(prevMonthDate); 
-        }
-
-       
-        for (let day = 1; day <= endOfMonth.getDate(); day++) {
-            const date = new Date(month.getFullYear(), month.getMonth(), day);
-            week.push(date);
-
-      
-            if (date.getDay() === 6) {
-                weeks.push(week);
-                week = [];
-            }
-        }
-
-       
-        const nextMonthStartDay = (7 - endOfMonth.getDay() - 1);
-        for (let i = 1; i <= nextMonthStartDay; i++) {
-            const nextMonthDate = new Date(month.getFullYear(), month.getMonth() + 1, i);
-            week.push(nextMonthDate); 
-        }
-
-        
-        if (week.length > 0) {
-            weeks.push(week);
-        }
-        
-        return weeks;
-    });
     return (
         <>
             <div className="calendar-header">
+                <button className="prev-next" onClick={() => setCurrentDate(new Date(currentDate.getFullYear() - 1, currentDate.getMonth(), 1))}>
+                    <FontAwesomeIcon icon={faChevronLeft} />
+                </button>
                 <h2>{currentDate.getFullYear()}</h2>
+                <button className="prev-next" onClick={() => setCurrentDate(new Date(currentDate.getFullYear() + 1, currentDate.getMonth(), 1))}>
+                    <FontAwesomeIcon icon={faChevronRight} />
+                </button>
                 {renderViewButtons()}
             </div>
-            <div className="calendar-year-grid">
-                {months.map((month, index) => (
-                    <div key={index} className="calendar-month-year">
-                        <div className="month-name">{month.toLocaleString('default', { month: 'long' })}</div>
-                        <div className="week-headers-year">
+            <div className="year-view">
+                {months.map((month, monthIndex) => (
+                    <div key={monthIndex} className="month">
+                        <h3>{month.toLocaleString('default', { month: 'long' })}</h3>
+                        <div className="month-grid">
                             {daysOfWeek.map(day => (
-                                <div key={day} className="calendar-day-header-year">{day.charAt(0)}</div>
+                                <div key={day} className="calendar-day-header">{day}</div>
                             ))}
-                        </div>
-                        {weeksInMonth[index].map((week, weekIndex) => (
-                            <div key={weekIndex} className="week-year">
-                                {week.map((date, dateIndex) => {
-                                    const formattedDate = date ? date.toISOString().split('T')[0] : null;
-                                    const eventsForDay = date ? getEventsForDay(formattedDate) : [];
-                                    
-                                    return (
-                                        <div key={dateIndex} className="calendar-day-year">
-                                            <div className="date-number-year" style={{ opacity: date && date.getMonth() !== month.getMonth() ? 0.5 : 1 }}>
-                                                {date ? date.getDate() : ''}
-                                            </div>
-                                            {eventsForDay.map(event => (
-                                                <div key={event.id} className="event-year" style={{ backgroundColor: event.color }}>
-                                                    {event.title}
-                                                </div>
-                                            ))}
+                            {Array.from({ length: 42 }, (_, dayIndex) => {
+                                const date = new Date(month.getFullYear(), month.getMonth(), dayIndex - month.getDay() + 1);
+                                const formattedDate = date.toISOString().split('T')[0];
+                                const eventsForDay = getEventsForDay(formattedDate);
+                                const isToday = date.toDateString() === today.toDateString();
+
+                                return (
+                                    <div key={dayIndex} className="calendar-day" style={isToday ? { border: '2px solid' } : {}}>
+                                        <div className="date-number" style={{ opacity: date.getMonth() === month.getMonth() ? 1 : 0.3 }}>
+                                            {date.getDate()}
                                         </div>
-                                    );
-                                })}
-                            </div>
-                        ))}
+                                        {date.getMonth() === month.getMonth() && eventsForDay.map(event => (
+                                            <div key={event._id} className="event" style={{ backgroundColor: event.color }}>
+                                                {event.title}
+                                            </div>
+                                        ))}
+                                    </div>
+                                );
+                            })}
+                        </div>
                     </div>
                 ))}
             </div>
         </>
     );
-    };
-// Day View =========================================================================================================================================================================
-const renderDayView = () => {
-    const formattedDate = currentDate.toISOString().split('T')[0];
-    const eventsForDay = getEventsForDay(formattedDate);
-
-    return (
-        <div className="day-view">
-            <h2>{currentDate.toLocaleDateString()}</h2>
-            {eventsForDay.length > 0 ? (
-                eventsForDay.map(event => (
-                    <div key={event.id} className="day-event" style={(event.id)}>
-                        <strong>{event.title}</strong>
-                        <br />
-                        <small>{event.startTime} - {event.endTime}</small>
-                    </div>
-                ))
-            ) : (
-                <p>No events for this day.</p>
-            )}
-        </div>
-    );
 };
+// Day View =========================================================================================================================================================================
+    const renderDayView = () => {
+        const formattedDate = currentDate.toISOString().split('T')[0];
+        const eventsForDay = getEventsForDay(formattedDate);
+
+        return (
+            <div className="day-view">
+                <h2>{currentDate.toLocaleDateString()}</h2>
+                {eventsForDay.length > 0 ? (
+                    eventsForDay.map(event => (
+                        <div key={event._id} className="day-event" style={(event.id)}>
+                            <strong>{event.title}</strong>
+                            <br />
+                            <small>{event.startTime} - {event.endTime}</small>
+                        </div>
+                    ))
+                ) : (
+                    <p>No events for this day.</p>
+                )}
+            </div>
+        );
+    };
 
 const renderCalendar = () => {
     switch (currentView) {

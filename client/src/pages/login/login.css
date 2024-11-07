@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap');
 
 body {
-  background-image: url("../../assets/homebg.jpg");
+  background-image: url("../../assets/loginbg.jpg");
   background-size: cover; 
   background-repeat: no-repeat; 
   background-position: center;
@@ -31,7 +31,10 @@ h1 {
   justify-content: center;
   margin-top: 20px; 
 }
-
+.image-container img {
+  height: 8rem;
+  width: auto;
+}
 .small-image {
   width: 80px; 
   height: auto;
