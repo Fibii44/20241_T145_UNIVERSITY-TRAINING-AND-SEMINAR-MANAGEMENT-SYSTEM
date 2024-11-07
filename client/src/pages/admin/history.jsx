@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faCalendarCheck, faClock, faPlus, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import Sidebar from '../../components/admin/adminbar/sidebar';
 import Topbar from '../../components/admin/adminbar/topbar';
-import '../../components/admin/adminbar/css/admin.css';
+import '../../components/admin/adminbar/css/topbar.css';
 
 const HistoryM = () => {
     const [isCollapsed, setIsCollapsed] = useState(false);

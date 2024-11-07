@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCertificate, faHistory, faCalendar, faCog, faSignOutAlt, faBars, faHome, faCalendarCheck, faUser } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
-import '../../../components/admin/adminbar/css/admin.css';
+
 
 const Sidebar = ({ activePage }) => {
   // Retrieve the initial state from localStorage or set default to true (collapsed)
