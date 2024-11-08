@@ -151,21 +151,27 @@ const EventM = ({ userRole, userCollege }) => {
           <div className="events-list">
             {events.map((event) => (
               <div className="event-card" key={event._id || event.id}>
-                <div className="event-details">
-                  <h3 className="event-title">{event.title}</h3>
-                  <p className="event-description">{event.description}</p>
-                  <div className="event-info">
-                    <span><FontAwesomeIcon icon={faCalendarCheck} /> {event.date}</span>
-                    <span><FontAwesomeIcon icon={faClock} /> {event.startTime} - {event.endTime}</span>
-                    <span><FontAwesomeIcon icon={faMapMarkerAlt} /> {event.location}</span>
-                   
-                  </div>
-                </div>
-                <div className="event-actions">
-                  <button className="btn-edit edit-button" onClick={() => handleEdit(event)}>Edit</button>
-                  <button className="btn-delete delete-button" onClick={() => handleDelete(event._id)}>Delete</button>
+              <div className="event-image">
+                <img
+                  src={`http://localhost:3000/eventPictures/${event.eventPicture}`}
+                  alt={`${event.title} image`}
+                  className="event-img"
+                />
+              </div>
+              <div className="event-details">
+                <h3 className="event-title">{event.title}</h3>
+                <p className="event-description">{event.description}</p>
+                <div className="event-info">
+                  <span><FontAwesomeIcon icon={faCalendarCheck} /> {event.date}</span>
+                  <span><FontAwesomeIcon icon={faClock} /> {event.startTime} - {event.endTime}</span>
+                  <span><FontAwesomeIcon icon={faMapMarkerAlt} /> {event.location}</span>
                 </div>
               </div>
+              <div className="event-actions">
+                <button className="btn-edit edit-button" onClick={() => handleEdit(event)}>Edit</button>
+                <button className="btn-delete delete-button" onClick={() => handleDelete(event._id)}>Delete</button>
+              </div>
+            </div>
             ))}
           </div>
         </div>

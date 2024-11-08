@@ -110,3 +110,15 @@
   .btn-delete:hover {
     background-color: #c82333; /* Slightly darker red on hover */
   }
+
+  .event-image {
+    width: 100%;
+    max-height: 200px;
+    overflow: hidden;
+  }
+  
+  .event-img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }

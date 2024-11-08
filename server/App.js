@@ -5,6 +5,7 @@ const app = express();
 const dbConnection = require('./config/dbcon'); // Handles mongoose connection
 const passport = require('./config/passport');
 const bodyParser = require('body-parser');
+const path = require('path');
 require('dotenv').config();
 
 // admin routes
@@ -39,6 +40,9 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
 }));
+
+// Serve images in the 'eventPictures' folder
+app.use('/eventPictures', express.static(path.join(__dirname, 'uploads', 'eventPictures')));
 
 // Initialize database connection (handled by dbConnection)
 dbConnection(); 
