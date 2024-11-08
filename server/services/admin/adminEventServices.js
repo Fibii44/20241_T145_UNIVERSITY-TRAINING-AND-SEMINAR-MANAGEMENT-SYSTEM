@@ -1,6 +1,8 @@
 const Event = require('../../models/event');
 const DeletedEvent = require('../../models/deletedEvents');
 const multer = require('multer');
+const fs = require('fs');
+const path = require('path');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -60,6 +62,7 @@ const addEvent = async (req, res) => {
   }
 };
 
+
 const updateEvent = async (req, res) => {
   try {
     const eventId = req.params.id;
@@ -81,13 +84,23 @@ const updateEvent = async (req, res) => {
     await Event.findByIdAndUpdate(eventId, { isLocked: true, lockedBy: userId });
 
     // Ensure the 'createdBy' field is not modified
-    // If it's not already set, set it to the current user
     if (!event.createdBy) {
       event.createdBy = userId;
     }
 
     // Allow 'editedBy' to be updated
-    updates.editedBy = userId; // Set the editedBy to the current user
+    updates.editedBy = userId;
+
+    // Handle image update logic
+    if (req.file) {
+      // Delete the old image file if it exists
+      const oldImagePath = path.join(__dirname, `../../uploads/eventPictures/${event.eventPicture}`);
+      if (event.eventPicture && fs.existsSync(oldImagePath)) {
+        fs.unlinkSync(oldImagePath); // Delete the old image
+      }
+
+      updates.eventPicture = req.file.filename; // Set the new image filename
+    }
 
     // Remove 'createdBy' from updates to prevent it from being overwritten
     delete updates.createdBy;
@@ -106,7 +119,6 @@ const updateEvent = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
-
 
 const deleteEvent = async (req, res) => {
   try {

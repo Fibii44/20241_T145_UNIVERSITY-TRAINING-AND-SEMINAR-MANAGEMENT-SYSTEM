@@ -14,7 +14,7 @@ eventRoutes.get('/a/events', adminService.renderEventsPage);
 eventRoutes.post('/a/events', authenticateJWT, concurrencyLock, adminService.upload.single('eventPicture'), adminService.addEvent, clearConcurrencyLock);
     
 // Update an existing event by ID (optional)
-eventRoutes.put('/a/events/:id', authenticateJWT, concurrencyLock, adminService.updateEvent, clearConcurrencyLock);
+eventRoutes.put('/a/events/:id', authenticateJWT, concurrencyLock, adminService.upload.single('eventPicture'), adminService.updateEvent, clearConcurrencyLock);
 
 // Delete an event by ID (optional)
 eventRoutes.delete('/a/events/:id', authenticateJWT, concurrencyLock, adminService.deleteEvent, clearConcurrencyLock);
