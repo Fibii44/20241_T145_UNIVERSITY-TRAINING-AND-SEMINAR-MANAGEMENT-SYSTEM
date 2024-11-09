@@ -117,7 +117,9 @@
 .menu-items li:not(.active):hover {
   background-color: rgba(255, 184, 0, 0.2); /* Light hover effect */
 }
-
+.sidebar.collapsed .menu-items li:hover {
+  width: 55px;
+}
   .sidebar.collapsed .menu-items li.active {
     width: 3.5rem;
   }

@@ -172,7 +172,7 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
         eventColor = '#72f7b0'; // Green
         break;
       case 'College of Business':
-        eventColor = '#c9be3a'; // Yellow
+        eventColor = '#e6e200'; // Yellow
         break;
       case 'College of Education':
         eventColor = '#727bf7'; // Blue

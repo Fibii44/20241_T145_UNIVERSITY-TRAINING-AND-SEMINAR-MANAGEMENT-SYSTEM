@@ -83,8 +83,6 @@ function Login() {
                 <img src={Logo} alt="BukSU Logo" />
               </div>
 
-              <p className="text-white-50 mb-4 text-center">Please enter your login and password!</p>
-
               <MDBInput 
                 wrapperClass="mb-4 w-100" 
                 placeholder="Email address" 
