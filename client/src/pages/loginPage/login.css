@@ -98,3 +98,18 @@ h1 {
     padding: 10px;
   }
 }
+
+
+.login-form-check{
+  display: flex;
+  align-self: start;
+  margin-bottom: 12px;
+}
+
+.login-form-check .form-check-label{
+  margin-left: 5px;
+}
+
+.login-container{
+  margin-top: -40px;
+}

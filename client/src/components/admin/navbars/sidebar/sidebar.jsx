@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTachometerAlt, faCalendarCheck, faClock, faCog, faSignOutAlt, faBars, faUsers, faCalendar, faHistory } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom'; 
 import './sidebar.css';
+import LogoutModal from '../../../user/logoutModal/logoutModal';
 
 const Sidebar = ({ activePage }) => {
   const [isCollapsed, setIsCollapsed] = useState(() => {
@@ -22,6 +23,11 @@ const Sidebar = ({ activePage }) => {
     const savedState = localStorage.getItem('isSidebarCollapsed') === 'true';
     setIsCollapsed(savedState);
   }, []);
+
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  
+  const openLogoutModal = () => setShowLogoutModal(true);
+  const closeLogoutModal = () => setShowLogoutModal(false);
 
   return (
     <div className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
@@ -88,13 +94,21 @@ const Sidebar = ({ activePage }) => {
             {!isCollapsed && <span className='list-name'>Settings</span>}
           </Link>
         </li>
-        <li className={`sidebar-footer-item ${activePage === 'logout' ? 'active' : ''}`}>
-          <Link to="/logout">
-            <span className="icon"><FontAwesomeIcon icon={faSignOutAlt} size="lg" /></span>
-            {!isCollapsed && <span className='list-name'>Logout</span>}
-          </Link>
-        </li>
-      </ul>
+        <li className="sidebar-footer-item">
+                    <a href="#" onClick={openLogoutModal} className="logout-link">
+                        <span className="icon"><FontAwesomeIcon icon={faSignOutAlt} size="lg" /></span>
+                        {/* Assuming isCollapsed is defined in your component */}
+                        {!isCollapsed && <span>Logout</span>}
+                    </a>
+                </li>
+            </ul>
+
+            {showLogoutModal && (
+                <LogoutModal show={showLogoutModal} onClose={closeLogoutModal} onLogout={() => {
+                console.log("User logged out");
+                closeLogoutModal();
+                }} />
+            )}
     </div>
   );
 };
