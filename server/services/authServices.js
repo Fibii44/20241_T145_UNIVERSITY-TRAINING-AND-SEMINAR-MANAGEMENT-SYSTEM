@@ -25,6 +25,7 @@ const googleOAuthCallback = (req, res, next) => {
         email: user.email,
         position: user.position,
         department: user.department,
+        phoneNumber: user.phoneNumber,
         profilePicture: user.profilePicture
       },
       JWT_SECRET,
@@ -72,6 +73,7 @@ const manualLogin = async (req, res) => {
         email: user.email, 
         position: user.position,
         department: user.department,
+        phoneNumber: user.phoneNumber,
         profilePicture: user.profilePicture 
       }, 
       JWT_SECRET, 

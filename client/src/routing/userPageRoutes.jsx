@@ -6,7 +6,8 @@ import Calendar from '../pages/user/calendarPage'
 import Certificates from '../pages/user/certificates'
 import History from '../pages/user/history'
 import Profile from '../pages/user/profile'
-import EventPage from '../pages/user/eventOpened';
+import EventDetails from '../pages/user/eventDetails';
+
 
 
 function User() {
@@ -16,7 +17,7 @@ function User() {
           <Route path="/" element={<Navigate to="/u/home" />} />
           <Route path="home" element={<Home />} />
           <Route path="events" element={<Events />} />
-          <Route path="events/:id" element={<EventPage />} />
+          <Route path="events/:id" element={<EventDetails />} />
           <Route path="calendar" element={<Calendar />} />
           <Route path="certificates" element={<Certificates />} />
           <Route path="history" element={<History />} />

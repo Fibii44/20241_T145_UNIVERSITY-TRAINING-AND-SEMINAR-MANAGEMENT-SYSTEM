@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCertificate, faHistory, faCalendar, faCog, faSignOutAlt, faBars, faHome, faCalendarCheck, faUser } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
+import LogoutModal from '../logoutModal/logoutModal.jsx';
 
 
 const Sidebar = ({ activePage }) => {
@@ -9,6 +10,7 @@ const Sidebar = ({ activePage }) => {
   const [isCollapsed, setIsCollapsed] = useState(() => {
     return localStorage.getItem('isSidebarCollapsed') === 'true';
   });
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const toggleSidebar = () => {
     // Toggle the state and store the updated state in localStorage
@@ -24,6 +26,9 @@ const Sidebar = ({ activePage }) => {
     const savedState = localStorage.getItem('isSidebarCollapsed') === 'true';
     setIsCollapsed(savedState);
   }, []);
+
+  const openLogoutModal = () => setShowLogoutModal(true);
+  const closeLogoutModal = () => setShowLogoutModal(false);
 
     return (
         <div className={`sidebar ${isCollapsed ? 'collapsed' : ''} d-none d-md-flex`}>
@@ -85,13 +90,21 @@ const Sidebar = ({ activePage }) => {
                         {!isCollapsed && <span>Settings</span>}
                     </Link>
                 </li>
-                <li className={`sidebar-footer-item ${activePage === 'logout' ? 'active' : ''}`}>
-                    <Link to="/logout">
+                <li className="sidebar-footer-item">
+                    <a href="#" onClick={openLogoutModal} className="logout-link">
                         <span className="icon"><FontAwesomeIcon icon={faSignOutAlt} size="lg" /></span>
+                        {/* Assuming isCollapsed is defined in your component */}
                         {!isCollapsed && <span>Logout</span>}
-                    </Link>
+                    </a>
                 </li>
             </ul>
+
+            {showLogoutModal && (
+                <LogoutModal show={showLogoutModal} onClose={closeLogoutModal} onLogout={() => {
+                console.log("User logged out");
+                closeLogoutModal();
+                }} />
+            )}
         </div>
     );
 };

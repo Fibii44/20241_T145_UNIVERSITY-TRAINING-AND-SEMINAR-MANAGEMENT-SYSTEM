@@ -3,7 +3,6 @@ import { useState } from 'react';
 import Sidebar from '../../components/user/navbars/sidebar.jsx';
 import Topbar from '../../components/user/navbars/topbar.jsx';
 import Events from '../../components/user/eventList/eventList.jsx'; 
-
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
 const HomePage = () => {
