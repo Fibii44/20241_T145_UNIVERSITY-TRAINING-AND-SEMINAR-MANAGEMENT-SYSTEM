@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import "./usersTable.css";
 import { jwtDecode } from 'jwt-decode';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -144,6 +145,7 @@ const UserRow = ({ user, onDelete, onUpdate }) => {
   );
 };
 const Table = () => {
+  const navigate = useNavigate();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [stats, setStats] = useState({ users: [] });
   const [departmentFilter, setDepartmentFilter] = useState('all');
@@ -158,6 +160,26 @@ const Table = () => {
   };
 
   useEffect(() => {
+
+    const token = sessionStorage.getItem("authToken");
+    const checkAccess = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/a/users', {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.status === 403) {
+          // Redirect to a different page if access is denied
+          navigate('/a/dashboard'); // Change this to your desired redirect path
+        }
+      } catch (error) {
+        console.error("Access check failed:", error);
+      }
+    }
+
     const fetchStats = async () => {
       try {
         const response = await axios.get('http://localhost:3000/a/dashboard');
@@ -167,6 +189,7 @@ const Table = () => {
         console.log(err);
       }
     };
+    checkAccess();
     fetchStats();
   }, []);
 

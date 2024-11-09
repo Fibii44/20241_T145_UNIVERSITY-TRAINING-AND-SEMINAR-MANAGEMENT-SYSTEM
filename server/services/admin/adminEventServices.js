@@ -15,7 +15,7 @@ const storage = multer.diskStorage({
     let uniqueFilename = `${shortUUID}-${timeStamp}${path.extname(file.originalname)}`;
 
     while(fs.existsSync(path.join(__dirname, `../../uploads/eventPictures/${uniqueFilename}`))) {
-      const newUUID = uuidv4.split('-')[0];
+      const newUUID = uuidv4().split('-')[0];
       uniqueFilename = `${newUUID}-${timeStamp}${path.extname(file.originalname)}`;
     }
 
@@ -133,7 +133,7 @@ const updateEvent = async (req, res) => {
 const deleteEvent = async (req, res) => {
   try {
     const eventId = req.params.id;
-    const { name, role } = req.user; 
+    const { name, role } = req.user;
 
     // Find the event to be deleted
     const event = await Event.findById(eventId);
@@ -143,20 +143,38 @@ const deleteEvent = async (req, res) => {
 
     // Prepare the data to be stored in the deletedEvents collection
     const deletedEventData = {
-      ...event.toObject(), 
-      deletedByName: name, 
-      deletedByRole: role, 
-      deletedAt: new Date(), 
+      ...event.toObject(),
+      deletedByName: name,
+      deletedByRole: role,
+      deletedAt: new Date(),
     };
 
+    delete deletedEventData._id;
+
     // Save the event in the deletedEvents collection
+    console.log(deletedEventData);
     await DeletedEvent.create(deletedEventData);
 
-    // Delete the original event
+    // Check if there is an associated picture and delete it
+    if (event.eventPicture) {
+      const imagePath = path.join(__dirname, '../../uploads/eventPictures', event.eventPicture);
+      try {
+        if (fs.existsSync(imagePath)) {
+          fs.unlinkSync(imagePath); // Delete the image file
+          console.log(`Deleted picture: ${imagePath}`);
+        }
+      } catch (error) {
+        console.error(`Failed to delete event picture: ${error.message}`);
+        // Log the error but continue with event deletion
+      }
+    }
+
+    // Delete the original event from the Event collection
     await Event.findByIdAndDelete(eventId);
 
-    res.status(200).json({ message: 'Event deleted successfully' });
+    res.status(200).json({ message: 'Event and associated picture deleted successfully' });
   } catch (error) {
+    console.error('Error deleting event:', error);
     res.status(500).json({ message: error.message });
   }
 };

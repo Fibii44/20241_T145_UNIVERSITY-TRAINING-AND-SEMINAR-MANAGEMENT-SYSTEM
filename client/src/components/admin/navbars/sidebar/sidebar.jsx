@@ -7,20 +7,20 @@ import LogoutModal from '../../../user/logoutModal/logoutModal';
 
 const Sidebar = ({ activePage }) => {
   const [isCollapsed, setIsCollapsed] = useState(() => {
-    return localStorage.getItem('isSidebarCollapsed') === 'true';
+    return sessionStorage.getItem('isSidebarCollapsed') === 'true';
   });
-  const [role, setRole] = useState(sessionStorage.getItem('userRole') || ''); // Retrieve role from localStorage
+  const [role, setRole] = useState(sessionStorage.getItem('userRole') || ''); // Retrieve role from session storage
 
   const toggleSidebar = () => {
     setIsCollapsed((prevState) => {
       const newState = !prevState;
-      localStorage.setItem('isSidebarCollapsed', newState);
+      sessionStorage.setItem('isSidebarCollapsed', newState);
       return newState;
     });
   };
 
   useEffect(() => {
-    const savedState = localStorage.getItem('isSidebarCollapsed') === 'true';
+    const savedState = sessionStorage.getItem('isSidebarCollapsed') === 'true';
     setIsCollapsed(savedState);
   }, []);
 
