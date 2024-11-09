@@ -166,6 +166,25 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
   const handleSaveDetails = (e) => {
     e.preventDefault();
 
+      // Get the user's timezone offset in minutes
+  const timezoneOffset = new Date().getTimezoneOffset();
+  const timezoneOffsetHours = Math.abs(Math.floor(timezoneOffset / 60));
+  const timezoneOffsetMinutes = Math.abs(timezoneOffset % 60);
+  
+  // Format the offset as "+HH:MM" or "-HH:MM"
+  const formattedOffset = 
+    (timezoneOffset > 0 ? "-" : "+") +
+    String(timezoneOffsetHours).padStart(2, "0") +
+    ":" +
+    String(timezoneOffsetMinutes).padStart(2, "0");
+
+  // Combine date and time inputs and append timezone offset
+  const combinedStart = new Date(`${date}T${startTime}:00${formattedOffset}`);
+  const combinedEnd = new Date(`${date}T${endTime}:00${formattedOffset}`);
+
+  const isoStartTime = combinedStart.toISOString();
+  const isoEndTime = combinedEnd.toISOString();
+
     let eventColor;
     switch (participants.college) {
       case 'College of Arts and Sciences':
@@ -202,9 +221,9 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
     onSave({
       title,
       date,
-      startTime,
       eventPicture,
-      endTime,
+      startTime: isoStartTime,
+      endTime: isoEndTime,
       location,
       description,
       reminders,
