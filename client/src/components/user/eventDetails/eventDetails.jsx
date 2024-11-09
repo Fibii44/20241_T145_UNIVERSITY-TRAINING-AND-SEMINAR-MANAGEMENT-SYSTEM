@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import '@fontsource/nunito-sans'; 
 import { useParams } from 'react-router-dom';
 import './eventDetails.css'
 
