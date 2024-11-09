@@ -3,11 +3,9 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarCheck, faClock, faPlus, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
-import './css/eventM.css';
+import './eventManagement.css';
 import { jwtDecode } from 'jwt-decode';
-import Sidebar from '../../components/admin/adminbar/sidebar';
-import Topbar from '../../components/admin/adminbar/topbar';
-import EventModal from '../../components/admin/admin_create-events/create-events';
+import EventModal from '../createEvents/createEvents';
 
 const EventM = ({ userRole, userCollege }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -128,9 +126,9 @@ const EventM = ({ userRole, userCollege }) => {
 
   return (
     <div className="dashboard-container">
-      <Sidebar isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} activePage="events" />
+    
       <div className="content">
-        <Topbar />
+
         <div className="dashboard-inline">
           <h2 className="dashboard-heading">Events</h2>
           <button className="dashboard-button" onClick={() => setIsModalOpen(true)} disabled={loading}>
@@ -159,7 +157,10 @@ const EventM = ({ userRole, userCollege }) => {
                 />
               </div>
               <div className="event-details">
-                <h3 className="event-title">{event.title}</h3>
+                <div className="event-title">
+                   <h3>{event.title}</h3>
+                </div>
+               
                 <p className="event-description">{event.description}</p>
                 <div className="event-info">
                   <span><FontAwesomeIcon icon={faCalendarCheck} /> {event.date}</span>

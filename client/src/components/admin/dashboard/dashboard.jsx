@@ -3,9 +3,8 @@ import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faCalendarCheck, faBan} from '@fortawesome/free-solid-svg-icons';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import Sidebar from '../../components/admin/adminbar/sidebar';
-import Topbar from '../../components/admin/adminbar/topbar';
-import "./css/dashboard.css";
+
+import "./dashboard.css";
 
 const StatCard = ({ title, count, icon, color }) => (
   <div className="dashboard__card"> {/* Updated class name for specificity */}
@@ -108,10 +107,6 @@ const Dashboard = () => {
     monthlyUserData: []
   });
 
-  const toggleSidebar = () => {
-    setIsCollapsed(!isCollapsed);
-  };
-
   useEffect(() => {
     const fetchStats = async () => {
       try {
@@ -136,11 +131,8 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard-container">
-      <Sidebar isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} activePage="dashboard" />
       <div className="content">
-        <Topbar />
         <h2 className="dashboard-heading">Dashboard</h2>
-
         <div className="dashboard">
           <StatCard title="Total User" count={stats.totalUsers} icon={<FontAwesomeIcon icon={faUser} size="2x" />} color="#4a90e2"/>
           <StatCard title="Total Events" count={stats.totalEvents} icon={<FontAwesomeIcon icon={faCalendarCheck} size="2x" />} color="#ffe600"/>

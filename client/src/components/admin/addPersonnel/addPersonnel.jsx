@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import './add-personnel.css';
+import './addPersonnel.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useNavigate } from 'react-router-dom';
 import { faCamera, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
@@ -251,7 +251,7 @@ const AddUserForm = () => {
             required
           />
           <FontAwesomeIcon
-            icon={showPassword.password ? faEyeSlash : faEye}
+            icon={showPassword.password ? faEye : faEyeSlash}
             onClick={() => handleTogglePassword("password")}
             className="eye-icon"
           />
@@ -269,7 +269,7 @@ const AddUserForm = () => {
             required
           />
           <FontAwesomeIcon
-            icon={showPassword.confirmPassword ? faEyeSlash : faEye}
+            icon={showPassword.confirmPassword ? faEye : faEyeSlash}
             onClick={() => handleTogglePassword("confirmPassword")}
             className="eye-icon"
           />

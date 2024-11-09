@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import './events-grid.css';
+import './eventList.css';
 import EventImage from '../../../assets/adminProfile.png';
 
 function EventGrid() {
@@ -46,7 +46,7 @@ function EventGrid() {
                 {currentEvents.map((event) => (
                     <Link to={`/u/events/${event._id}`} key={event._id} className="event-link">
                         <div className="event-card">
-                            <img src={EventImage} alt={event.title} className="event-image" />
+                            <img src={`http://localhost:3000/eventPictures/${event.eventPicture}`} alt={event.title} className="event-image" /> 
                             <h3 style={{ color: '#011c39' }}>{event.title}</h3>
                             <p className='date'>
                                 {new Date(event.eventDate).toLocaleDateString("en-US", {

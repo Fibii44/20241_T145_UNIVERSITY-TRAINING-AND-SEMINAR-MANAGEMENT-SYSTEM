@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTachometerAlt, faCalendarCheck, faClock, faCog, faSignOutAlt, faBars, faUsers, faCalendar, faHistory } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom'; 
-import './css/sidebar.css';
+import './sidebar.css';
 
 const Sidebar = ({ activePage }) => {
   const [isCollapsed, setIsCollapsed] = useState(() => {

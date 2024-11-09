@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 import Sidebar from '../../components/admin/navbars/sidebar/sidebar';
 import Topbar from '../../components/admin/navbars/topbar/topbar';
-import Calendar from '../../components/admin/calendar/calendar'
+import Dashboard from '../../components/admin/dashboard/dashboard';
 
+const dashboard = () => {
 
-const CalendarAdmin = () => {
     const [isCollapsed, setIsCollapsed] = useState(false);
 
     const toggleSidebar = () => {
@@ -13,16 +14,15 @@ const CalendarAdmin = () => {
 
     return (
         <div className="dashboard-container">
-            <Sidebar isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} activePage="calendar" />
+            <Sidebar isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} activePage="dashboard" />
             <div className="content">
                 <Topbar />
-                <div className="calendar-section">
-                    <Calendar /> {/* Calendar component integration */}
+                <div className="context-card">
+                  <Dashboard />
                 </div>
             </div>
         </div>
     );
 };
 
-export default CalendarAdmin;
-
+export default dashboard;

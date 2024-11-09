@@ -1,7 +1,7 @@
 import Footer from '../../components/user/footer/footer.jsx';
 import { useState } from 'react';
-import Sidebar from '../../components/user/sidebar/sidebar.jsx';
-import Topbar from '../../components/user/sidebar/topbar.jsx';
+import Sidebar from '../../components/user/navbars/sidebar.jsx';
+import Topbar from '../../components/user/navbars/topbar.jsx';
 import Calendar from '../../components/user/calendar/calendar.jsx'
 
 import '@fortawesome/fontawesome-free/css/all.min.css';

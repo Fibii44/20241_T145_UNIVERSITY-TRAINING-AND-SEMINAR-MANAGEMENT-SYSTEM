@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import '../../../components/admin/adminbar/css/topbar.css';
-import Profile from "../../../assets/userProfile.png";
+import './topbar.css';
+import Profile from "../../../../assets/adminProfile.png"; // Imported Profile image
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBell, faHome, faCalendar, faCalendarCheck } from '@fortawesome/free-solid-svg-icons';
-import { Link } from 'react-router-dom';
+import { faBell } from '@fortawesome/free-solid-svg-icons';
 import { jwtDecode } from 'jwt-decode';
 
 const Topbar = () => {
@@ -45,9 +44,7 @@ const Topbar = () => {
                     <span className="name" onClick={toggleDropdown} style={{ cursor: 'pointer' }}>
                        {user.name}
                     </span>
-                    <span className="role">
-                        {user.role}
-                    </span>
+                    <span className="role">Admin</span>
                 </div>
                 {isDropdownOpen && (
                     <div className="dropdown-menu">

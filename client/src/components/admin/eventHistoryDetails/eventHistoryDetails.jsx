@@ -3,9 +3,9 @@ import { useParams } from 'react-router-dom'; // Import useParams for route para
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUsers, faCalendarCheck, faClock, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import Sidebar from '../../components/admin/adminbar/sidebar';
-import Topbar from '../../components/admin/adminbar/topbar';
-import './css/eventDetails.css';
+import Sidebar from '../../../components/admin/navbars/sidebar/sidebar';
+import Topbar from '../../../components/admin/navbars/topbar/topbar';
+import './eventHistoryDetails.css';
 
 // Temporary data for statisfactory Chart
 const data = [
@@ -147,9 +147,7 @@ const EventDetails = () => {
 
     return (
         <div className="dashboard-container">
-            <Sidebar isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} activePage="history" />
             <div className="content">
-                <Topbar />
                 <h2 className="dashboard-heading">Event Report</h2>
 
                 <div className="event-container">

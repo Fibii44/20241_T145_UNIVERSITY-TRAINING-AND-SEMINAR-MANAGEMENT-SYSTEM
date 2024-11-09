@@ -1,10 +1,9 @@
 import Footer from '../../components/user/footer/footer.jsx';
 import { useState } from 'react';
-import Sidebar from '../../components/user/sidebar/sidebar.jsx';
-import Topbar from '../../components/user/sidebar/topbar.jsx';
+import Sidebar from '../../components/user/navbars/sidebar.jsx';
+import Topbar from '../../components/user/navbars/topbar.jsx';
 import HomeContent from '../../components/user/homecontent/home-content.jsx'
-import Events from '../../components/user/events-grid/events-grid.jsx'; 
-import './css/home.css'
+import Events from '../../components/user/eventList/eventList.jsx'; 
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
 const HomePage = () => {

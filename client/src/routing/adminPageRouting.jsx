@@ -1,10 +1,10 @@
 
 import { Route, Routes, Navigate} from 'react-router-dom';
-import Dashboard from '../pages/admin/dashboard';
-import EventM from '../pages/admin/eventManagement';
-import HistoryM from '../pages/admin/history';
-import EventDetails from '../pages/admin/eventDetails'; 
-import AddUser from '../pages/admin/addPersonnel-page'; 
+import Dashboard from '../pages/admin/dashboardPage';
+import Events from '../pages/admin/eventManagementPage';
+import History from '../pages/admin/history';
+import EventDetails from '../pages/admin/eventHistoryDetails'; 
+import AddUser from '../pages/admin/addPersonnelPage'; 
 import Calendar from '../pages/admin/calendar'
 import Table from '../pages/admin/usersTable';
 // import Login from '../pages/login/Login'
@@ -19,10 +19,10 @@ function Admin() {
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="calendar" element={<Calendar />} />
           <Route path="users" element={<Table />} />
-          <Route path="history" element={<HistoryM />} />
+          <Route path="history" element={<History />} />
           <Route path="history/:id" element={<EventDetails />} /> 
           <Route path="personnel" element={<AddUser />} /> 
-          <Route path="events" element={<EventM />} />
+          <Route path="events" element={<Events />} />
           {/* <Route path="/calendar" element={<CalendarA />} />  */}
         </Routes>
       </div>

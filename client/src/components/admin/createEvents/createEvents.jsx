@@ -3,7 +3,7 @@ import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCamera, faMapMarkerAlt, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './create-event.css';
+import './createEvent.css';
 import { jwtDecode } from 'jwt-decode';
 import CertificateGenerator from '../certificateGenerator/certificateGenerator';
 
@@ -36,7 +36,7 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
     'College of Law': ['Juris Doctor'],
     'College of Public Administration and Governance': [],
     'College of Nursing': [],
-    'College of Technology': ['Information Technology', 'Electronics Technology', 'Automotive Technology', 'Food Science and Technology', 'Electronics and Communications Engineering'],
+    'College of Technologies': ['Information Technology', 'Electronics Technology', 'Automotive Technology', 'Food Science and Technology', 'Electronics and Communications Engineering'],
   };
 
   const fetchParticipants = async () => {

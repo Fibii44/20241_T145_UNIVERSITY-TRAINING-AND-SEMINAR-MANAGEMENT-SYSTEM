@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import '@fortawesome/fontawesome-free/css/all.min.css';
-import Sidebar from '../../components/admin/adminbar/sidebar';
-import Topbar from '../../components/admin/adminbar/topbar';
-import '../../components/admin/adminbar/css/topbar.css';
+import Sidebar from '../../components/admin/navbars/sidebar/sidebar';
+import Topbar from '../../components/admin/navbars/topbar/topbar';
+import Dashboard from '../../components/admin/dashboard/dashboard';
 
-import AddUserForm from '../../components/admin/admin_add-personnel/add-personnel';
-
-const AddUser = () => {
+const dashboard = () => {
 
     const [isCollapsed, setIsCollapsed] = useState(false);
 
@@ -16,15 +14,15 @@ const AddUser = () => {
 
     return (
         <div className="dashboard-container">
-            <Sidebar isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} activePage="personnel" />
+            <Sidebar isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} activePage="dashboard" />
             <div className="content">
                 <Topbar />
                 <div className="context-card">
-                    <AddUserForm />
+                  <Dashboard />
                 </div>
             </div>
         </div>
     );
 };
 
-export default AddUser;
+export default dashboard;
