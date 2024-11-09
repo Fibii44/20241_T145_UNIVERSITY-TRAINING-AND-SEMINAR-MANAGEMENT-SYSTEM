@@ -104,4 +104,44 @@ const EventSchema = new mongoose.Schema({
 EventSchema.index({ createdBy: 1 });
 EventSchema.index({ status: 1 });
 
+
+EventSchema.methods.updateStatusIfComplete = async function () {
+    try {
+      const now = new Date();
+  
+      // If the event is past its eventDate or endTime, mark it as "completed"
+      if (this.status === 'active' && (this.eventDate < now || this.endTime < now)) {
+        this.status = 'completed';
+        await this.save();
+      }
+    } catch (error) {
+      console.error('Error updating status:', error);
+      throw error; // Propagate the error so it can be caught by the caller
+    }
+  };
+  
+  // Post-query middleware to update the status when events are accessed
+  EventSchema.post('find', async function (events, next) {
+    try {
+      await Promise.all(events.map(event => event.updateStatusIfComplete()));
+      next();
+    } catch (error) {
+      console.error('Error in post-find middleware:', error);
+      next(error); // Pass error to Mongoose to handle the 500 error correctly
+    }
+  });
+  
+  EventSchema.post('findOne', async function (event, next) {
+    try {
+      if (event) {
+        await event.updateStatusIfComplete();
+      }
+      next();
+    } catch (error) {
+      console.error('Error in post-findOne middleware:', error);
+      next(error); // Pass error to Mongoose to handle the 500 error correctly
+    }
+  });
+
+
 module.exports = mongoose.model('Event', EventSchema);
