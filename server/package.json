@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "main": "App.js",
   "scripts": {
-
     "start": "nodemon App.js"
   },
   "keywords": [],
@@ -25,7 +24,8 @@
     "multer": "^1.4.5-lts.1",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
-    "react-google-recaptcha-v3": "^1.10.1"
+    "react-google-recaptcha-v3": "^1.10.1",
+    "uuid": "^11.0.2"
   },
   "devDependencies": {
     "nodemon": "^3.1.7"

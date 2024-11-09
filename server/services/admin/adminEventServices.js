@@ -1,6 +1,7 @@
 const Event = require('../../models/event');
 const DeletedEvent = require('../../models/deletedEvents');
 const multer = require('multer');
+const { v4: uuidv4 } = require('uuid');
 const fs = require('fs');
 const path = require('path');
 
@@ -8,8 +9,17 @@ const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'uploads/eventPictures/');
    },
-  filename: function (req, file, cb) {
-    cb(null, `${Date.now()}_${file.originalname}`);
+   filename: (req, file, cb) => {
+    const shortUUID = uuidv4().split('-')[0];
+    const timeStamp = Date.now().toString().slice(-5);
+    let uniqueFilename = `${shortUUID}-${timeStamp}${path.extname(file.originalname)}`;
+
+    while(fs.existsSync(path.join(__dirname, `../../uploads/eventPictures/${uniqueFilename}`))) {
+      const newUUID = uuidv4.split('-')[0];
+      uniqueFilename = `${newUUID}-${timeStamp}${path.extname(file.originalname)}`;
+    }
+
+    cb(null, uniqueFilename);
   }
 })
 
