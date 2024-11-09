@@ -11,7 +11,7 @@ const renderDashboard = async (req, res) => {
             Events.find({ status: 'active' }).countDocuments(),
             Events.find({ status: 'completed' }).countDocuments(),
             DeletedEvents.countDocuments(),
-            User.find().sort({ createdAt: -1 }).limit(10),
+            User.find().sort({ createdAt: -1 }),
         ]);
 
         const monthlyUserData = await User.aggregate([
