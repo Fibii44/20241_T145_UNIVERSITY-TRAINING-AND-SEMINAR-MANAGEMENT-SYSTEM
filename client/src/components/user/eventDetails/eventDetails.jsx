@@ -106,9 +106,9 @@ function Event() {
     if (!event) return <p>Event not found.</p>;
 
     return (
-        <div className="card" style={{ maxWidthwidth: '1000px' }}>
+        <div className="card" style={{ maxWidthwidth: '1000px'}}>
             <div className="container eventDetail">
-                <div className="user-event-details" key={event._id || event.id}>
+                <div className="user-event-details" key={event._id || event.id} style={{contentAlign: 'center', margin: '0 auto'}}>
                     <img 
                         src={`http://localhost:3000/eventPictures/${event.eventPicture}`} 
                         alt={event.title} 
@@ -126,11 +126,11 @@ function Event() {
                         </div>
                     )}
 
-                    <h3>{event.title}</h3>
-                    <p className="event-date"><i className="fas fa-calendar-alt"></i> <strong>Date:</strong> {new Date(event.eventDate).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</p>
-                    <p className="event-time"><i className="fas fa-clock"></i> <strong>Time:</strong> {formatTime(event.startTime)} - {formatTime(event.endTime)}</p>
-                    <p className="event-location"><i className="fas fa-map-marker-alt"></i> <strong>Location:</strong> {event.location}</p>
-                    <p className="event-description"><i className="fas fa-info-circle"></i> <strong>Description:</strong> {event.description}</p>
+                    <h3><strong>{event.title}</strong></h3>
+                    <h6 className="event-date"><i className="fas fa-calendar-alt"></i> <strong>Date:</strong> <strong>{new Date(event.eventDate).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</strong></h6>
+                    <h6 className="event-time"><i className="fas fa-clock"></i> <strong>Time:</strong> <strong>{formatTime(event.startTime)} - {formatTime(event.endTime)}</strong></h6>
+                    <h6 className="event-location"><i className="fas fa-map-marker-alt"></i> <strong>Location:</strong> <strong>{event.location}</strong></h6>
+                    <h6 className="event-description"><i className="fas fa-info-circle"></i> <strong>Description:</strong> {event.description}</h6>
                     <div className="user-register-button" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                         <button className='register-button' onClick={isRegistered ? handleCancellation : handleRegistration}>
                             {registrationStatus}
