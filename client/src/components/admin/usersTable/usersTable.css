@@ -1,0 +1,222 @@
+.header-container {
+    margin-bottom: 20px;
+    margin-left: 20px;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+    flex-wrap: wrap;
+}
+
+.filter-header {
+    display: flex;
+    justify-content: flex-end;
+    flex-grow: 1;
+}
+
+.filter {
+    display: flex;
+    flex-direction: column;
+    margin-right: 20px;
+}
+
+.filter label {
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.filter select {
+    padding: 8px 2px;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    transition: border-color 0.3s;
+    width: 100px;
+    margin: 0;
+}
+
+.filter select:focus {
+    border-color: #80bdff;
+    outline: none;
+}
+
+.filter select:hover {
+    border-color: #80bdff;
+}
+
+
+.user-heading {
+    padding: 10px 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #dedede;
+    border-radius: 5px;
+}
+
+.table-container {
+    margin: 20px;
+    max-width: 100%;
+    overflow: hidden; /* Prevent the container from having its own scrollbar */
+}
+
+
+.custom-table {
+    width: 100%;
+    border-collapse: collapse;
+    
+}
+
+.custom-table input {
+    width: 100%;
+    border: 1px solid #ced4da;
+}
+
+.custom-table th,
+.custom-table td {
+    border: 1px solid #dee2e6;
+  
+}
+
+.custom-table th {
+    background-color: #e0e0e0;
+    color: rgb(27, 27, 27);
+}
+
+.custom-table tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.custom-table tbody tr:hover {
+    background-color: #e9ecef;
+}
+
+
+.custom-table select {
+    font-size: 14px; /* Same font size as the rest of the elements */
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    transition: border-color 0.3s;
+    min-width: none;;
+    margin: 0;
+}
+
+
+.custom-table select:focus {
+    border-color: #80bdff;
+    outline: none;
+}
+
+
+.custom-table select:hover {
+    border-color: #80bdff;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  .pagination button {
+    padding: 5px 10px;
+    margin: 0 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #011c39;
+    color: rgb(255, 255, 255);
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    
+  }
+
+  .pagination button:hover {
+    background-color: #feb800; /* Changes color on hover */
+    
+  }
+ 
+  
+  .pagination button:disabled {
+    background-color: grey;
+    cursor: not-allowed;
+  }
+  
+  .pagination span {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+
+  .row-selected {
+    background-color: #d1d1d1; /* Light cyan background for selected rows */
+  }
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .header-container {
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+    }
+
+    .filter-header {
+        justify-content: flex-start;
+        width: 100%;
+        padding-right: 20px;
+    }
+
+    .filter select {
+        width: 100%; /* Make select elements full-width on smaller screens */
+    }
+
+    .custom-table th, .custom-table td {
+        font-size: 10px; /* Smaller font size for mobile */
+       
+    }
+
+    .custom-table {
+        width: auto; /* Allow table to overflow horizontally */
+        max-width: 100%;
+    }
+}
+
+
+
+/* For action buttons and table controls */
+.table_edit,
+.table_delete,
+.table_save,
+.table_cancel {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 8px;
+    cursor: pointer;
+    margin: 0 5px;
+    transition: background-color 0.3s;
+    font-size: 12px;
+    height: 30px;
+    width: 30px;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.table_edit:hover {
+    background-color: #0056b3;
+}
+
+.table_delete,
+.table_cancel {
+    background-color: #dc3545;
+}
+
+.table_delete:hover {
+    background-color: #c82333;
+}
+
+.table_save {
+    background-color: #32b35d;
+}
+
+.table_save:hover {
+    background-color: rgb(39, 143, 94);
+}
+

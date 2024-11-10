@@ -1,0 +1,279 @@
+ @import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap');
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Nunito Sans', sans-serif;
+  }
+
+
+
+
+  body,
+  html,
+  #root {
+    height: 100%;
+  }
+
+  .dashboard-container {
+    display: flex;
+    height: 100vh; /* Full height of the viewport */
+    overflow: hidden; /* Prevent overflow */
+  }
+
+  /* Sidebar */
+  .sidebar {
+    width: 208px;
+    background-color: #011c39;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    transition: width 0.3s ease-in;
+  }
+  .sidebar-title {
+    display: flex;
+    gap: 5px;
+    padding-top: 10px;
+    padding-right: 20px;
+    z-index: 999;
+  }
+
+  .buksu {
+    color: white;
+    font-size: 30px;
+  }
+
+  .engage {
+    color: #FFB800;
+    font-size: 30px;
+  }
+
+  
+
+  /* Sidebar Collapsed */
+  .sidebar.collapsed {
+    width: 80px; /* Reduced width */
+    
+  }
+
+  .sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 20px;
+    transition: none;
+    
+  }
+
+  .sidebar-header h2 {
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  .menu-items li,
+  .menu-items li.active,
+  .sidebar-footer {
+    padding-left: 26px;
+  }
+
+  .menu-items li {
+    position: relative;
+    border-radius: 8px;
+    width: 11rem;
+    transition: background-color 0.3s ease-in, color 0.3s ease; /* Smooth transition for background and color */
+}
+  
+  .menu-items {
+    list-style: none; /* Remove default list style */
+    padding-left: 14px;
+    
+}
+  .menu-items li a,
+  .menu-items li.active a {
+    font-size: 14px;
+
+  }
+  
+  .menu-items li.active {
+    background-color: #FFB800; /* Active background color */
+    color: #15225a; 
+    width: 11rem;
+    transition: width 0.3s ease-in;/* Active text color */
+}
+
+.menu-items li.active::before {
+  content: "";
+  position: absolute;
+  left: -14px;
+  top: 0;
+  height: 100%;
+  width: 5px; /* Width of the vertical line */
+  background-color: #FFB800; /* Same color as active background */
+  border-radius: 0px 8px 8px 0px; /* Rounded corners on the line */
+  transition: transform 0.3s ease-in; /* Smooth transition for the line */
+}
+.menu-items li:not(.active):hover {
+  background-color: rgba(255, 184, 0, 0.2); /* Light hover effect */
+}
+.sidebar.collapsed .menu-items li:hover {
+  width: 55px;
+}
+  .sidebar.collapsed .menu-items li.active {
+    width: 3.5rem;
+  }
+
+
+
+
+  .menu-toggle {
+    background: none;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 12px 12px;
+    display: flex;
+    transition: 0.3s ease-in;
+  }
+
+  .sidebar.collapsed .menu-toggle{
+    transform: translateX(0px);
+    transition: 0.3s ease-in;
+  }
+  .menu-toggle:focus {
+    outline: none;
+    box-shadow: none;
+  }
+
+  ul {
+    list-style-type: none; /* Remove bullets from unordered lists */
+    padding: 0; /* Remove padding */
+    margin: 0; /* Remove margin */
+    gap: 0;
+  }
+
+  ol {
+    list-style-type: none; /* Remove bullets from ordered lists */
+    padding: 0; /* Remove padding */
+    margin: 0; /* Remove margin */
+  }
+  .sidebar .menu-items a {
+    color: #fff; 
+    padding: 20px 1px;
+    display: flex;
+    align-items: center;
+    list-style: none;
+    text-decoration: none; 
+  }
+
+  .sidebar ul li .icon {
+    margin-right: 24px;
+    display: flex;
+    align-items: center;
+    height: 24px;
+    width: 24px;
+  }
+
+  .sidebar ul li.active {
+    background-color: #FFB800; 
+    color: #15225a; 
+    font-weight: bold; 
+    border-radius: 10px; 
+    margin-right: 10px;
+
+  }
+  .sidebar ul li.active:hover {
+    background-color: #FFB800; 
+    color: #15225a; 
+    font-weight: bold; 
+    border-radius: 10px; 
+    margin-right: 10px;
+
+  }
+
+
+
+  .sidebar ul li.active a {
+    color: #15225a; 
+    text-decoration: none; 
+  }
+  .sidebar.collapsed ul li.active a {
+    color: #15225a; 
+    text-decoration: none; 
+
+  }
+  .sidebar ul li:hover {
+    background-color: #1e316b;
+  }
+
+
+
+  
+
+
+
+
+.menu-items li a span,
+.sidebar-footer-item span {
+    opacity: 1;
+    transition: opacity 0.3s ease, transform 0.3s ease; /* Added transform transition */
+    transform: translateX(0); /* Initial position */
+}
+
+/* When sidebar is collapsed */
+.sidebar.collapsed .menu-items li a span,
+.sidebar.collapsed .sidebar-footer-item span {
+    opacity: 0;
+    transform: translateX(-10px); /* Slightly move text to the left on collapse */
+}
+
+/* Optional: Ensure icons remain visible in collapsed mode */
+.sidebar.collapsed .menu-items li a .icon,
+.sidebar.collapsed .sidebar-footer-item .icon {
+    opacity: 1;
+}
+
+
+
+  /*Sidebar-footer*/
+  .sidebar.collapsed ul li.active {
+
+    background-color: #FFB800; 
+    border-radius: 10px;
+  }
+  .sidebar-footer {
+    margin-top: auto;
+  }
+  .sidebar-footer .icon{
+    transition: 0.3s ease-in;
+  }
+  .sidebar.collapsed .sidebar-footer .icon{
+    padding-left: 9px;
+    transition: 0.3s ease-in;
+  }
+  .sidebar-footer-item a{
+    padding: 20px 2px;
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    text-decoration: none; 
+  }
+  .sidebar-footer-item span {
+    font-size: 14px;
+  }
+  .sidebar-footer-item:hover {
+    background-color: #1e316b;
+    border-radius: 10px;
+  }
+
+  .sidebar.collapsed ul li .icon {
+    display: flex;
+     /* Center icon in collapsed view */
+
+  }
+  .sidebar.collapsed ul li span {
+    display: none;
+  }

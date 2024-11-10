@@ -1,7 +1,7 @@
 .home-background { 
     position: relative;
     background-image: url('../../../assets/homebg.jpg');
-    background-size: cover;   
+    background-size:cover ;   
     background-position: center;
     height: 100vh;            
     width: 100%;             
@@ -64,3 +64,25 @@ h3 {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Shadow for button */
     z-index: 2;
 }
+.scroll-down {
+    position: absolute;
+    bottom: 100px; /* Adjust the position from the bottom */
+    z-index: 999; /* Ensure it's on top of other elements */
+    animation: bounce 1.5s infinite;
+    color: #FFB800;
+  }
+  .scroll-down1 {
+    position: absolute;
+    bottom: 86px; /* Adjust the position from the bottom */
+    z-index: 999; /* Ensure it's on top of other elements */
+    animation: bounce 1.5s infinite;
+    color: #FFB800;
+  }
+  @keyframes bounce {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }

@@ -1,16 +1,17 @@
 const User =   require('../../models/user');
 const Events = require('../../models/event')
+const DeletedEvents = require('../../models/deletedEvents');
 
 const renderDashboard = async (req, res) => {
     try {
         // Logic for fetching data to display on the dashboard
-        const [totalUsers, totalEvents, upcomingEvents, succesfulEvents, canceledEvents, users] = await Promise.all([
+        const [totalUsers, totalEvents, upcomingEvents, successfulEvents, canceledEvents, users] = await Promise.all([
             User.countDocuments(),
             Events.countDocuments(),
-            Events.find({ status: 'Upcoming' }).countDocuments(),
-            Events.find({ status: 'Succesful' }).countDocuments(),
-            Events.find({ status: 'Canceled' }).countDocuments(),
-            User.find().sort({ createdAt: -1 }).limit(10),
+            Events.find({ status: 'active' }).countDocuments(),
+            Events.find({ status: 'completed' }).countDocuments(),
+            DeletedEvents.countDocuments(),
+            User.find().sort({ createdAt: -1 }),
         ]);
 
         const monthlyUserData = await User.aggregate([
@@ -39,7 +40,7 @@ const renderDashboard = async (req, res) => {
             totalUsers,
             totalEvents,
             upcomingEvents,
-            succesfulEvents,
+            successfulEvents,
             canceledEvents,
             users,
             monthlyUserData: formattedMonthlyData

@@ -11,10 +11,13 @@ const authenticateJWT = (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // Set req.user with decoded JWT payload
+    const decoded = jwt.verify(token, JWT_SECRET);
+    console.log("Decoded Token:", decoded); // Log the decoded token
+    req.user = decoded; // Attach decoded user information to req.user
+    console.log("User Information:", req.user); // Log the user information
     next();
   } catch (error) {
+    console.error("Error decoding token:", error); // Log any decoding errors
     res.status(403).json({ message: 'Invalid token' });
   }
 };

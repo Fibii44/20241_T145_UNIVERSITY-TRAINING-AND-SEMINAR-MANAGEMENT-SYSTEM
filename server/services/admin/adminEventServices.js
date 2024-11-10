@@ -1,4 +1,38 @@
 const Event = require('../../models/event');
+const DeletedEvent = require('../../models/deletedEvents');
+const multer = require('multer');
+const { v4: uuidv4 } = require('uuid');
+const fs = require('fs');
+const path = require('path');
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/eventPictures/');
+   },
+   filename: (req, file, cb) => {
+    const shortUUID = uuidv4().split('-')[0];
+    const timeStamp = Date.now().toString().slice(-5);
+    let uniqueFilename = `${shortUUID}-${timeStamp}${path.extname(file.originalname)}`;
+
+    while(fs.existsSync(path.join(__dirname, `../../uploads/eventPictures/${uniqueFilename}`))) {
+      const newUUID = uuidv4().split('-')[0];
+      uniqueFilename = `${newUUID}-${timeStamp}${path.extname(file.originalname)}`;
+    }
+
+    cb(null, uniqueFilename);
+  }
+})
+
+const upload = multer({
+  storage,
+  fileFilter: (req, file, cb) => {
+    if (!file.mimetype.startsWith('image/')) {
+      return cb(new Error('Only images are allowed'), false);
+    }
+    cb(null, true);
+  }
+});
+
 
 const renderEventsPage = async (req, res) => {
   try {
@@ -11,7 +45,9 @@ const renderEventsPage = async (req, res) => {
 
 const addEvent = async (req, res) => {
   try {
-    const { eventPicture, title, eventDate, startTime, endTime, location, name, hostname, description, participantGroup, customParticipants } = req.body;
+    const {title, eventDate, startTime, endTime, location, description, participantGroup, color, customParticipants, reminders } = req.body;
+    console.log(req.file)
+    const eventPicture = req.file ? req.file.filename : null; // Set eventPicture 
     const user = req.user;
     const newEvent = new Event({
       title,
@@ -19,15 +55,17 @@ const addEvent = async (req, res) => {
       eventPicture,
       startTime,
       endTime,
-      location,
-      hostname,
+      location, 
       description,
       participantGroup,
+      color,
       customParticipants,
+      reminders,
       createdBy: user.id,
       isLocked: false,
       lockedBy: null,
     });
+    console.log(newEvent);
     await newEvent.save();
     res.status(201).json({ message: 'Event added successfully', newEvent });
   } catch (error) {
@@ -35,21 +73,20 @@ const addEvent = async (req, res) => {
   }
 };
 
+
 const updateEvent = async (req, res) => {
   try {
     const eventId = req.params.id;
     const userId = req.user.id;
     const updates = req.body;
-    
-    console.log(eventId);
-    console.log(userId);
-    console.log(updates);
-    
-    console.log("Event lock status:", event.isLocked, "Locked by:", event.lockedBy);
-    console.log("Current user trying to edit:", userId);
 
-    // Check if the event is locked by another user
+    // Fetch the event from the database
     const event = await Event.findById(eventId);
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+
+    // If the event is locked by another user, prevent editing
     if (event.isLocked && event.lockedBy.toString() !== userId) {
       return res.status(403).json({ message: 'Event is currently being edited by another admin.' });
     }
@@ -57,7 +94,29 @@ const updateEvent = async (req, res) => {
     // Lock the event for the current user
     await Event.findByIdAndUpdate(eventId, { isLocked: true, lockedBy: userId });
 
-    // Update the event
+    // Ensure the 'createdBy' field is not modified
+    if (!event.createdBy) {
+      event.createdBy = userId;
+    }
+
+    // Allow 'editedBy' to be updated
+    updates.editedBy = userId;
+
+    // Handle image update logic
+    if (req.file) {
+      // Delete the old image file if it exists
+      const oldImagePath = path.join(__dirname, `../../uploads/eventPictures/${event.eventPicture}`);
+      if (event.eventPicture && fs.existsSync(oldImagePath)) {
+        fs.unlinkSync(oldImagePath); // Delete the old image
+      }
+
+      updates.eventPicture = req.file.filename; // Set the new image filename
+    }
+
+    // Remove 'createdBy' from updates to prevent it from being overwritten
+    delete updates.createdBy;
+
+    // Update the event, with 'createdBy' fixed and 'editedBy' updated
     const updatedEvent = await Event.findByIdAndUpdate(eventId, updates, { new: true });
     if (!updatedEvent) {
       return res.status(404).json({ message: 'Event not found' });
@@ -74,30 +133,49 @@ const updateEvent = async (req, res) => {
 
 const deleteEvent = async (req, res) => {
   try {
-    const eventId = req.params._id;
-    const userId = req.user.id;
+    const eventId = req.params.id;
+    const { name, role } = req.user;
 
-    // Check if the event is locked by another user
+    // Find the event to be deleted
     const event = await Event.findById(eventId);
-    if (event.isLocked && event.lockedBy.toString() !== userId) {
-      return res.status(403).json({ message: 'Event is currently being edited by another admin.' });
-    }
-
-    // Lock the event for the current user
-    await Event.findByIdAndUpdate(eventId, { isLocked: true, lockedBy: userId });
-
-    // Delete the event
-    const deletedEvent = await Event.findByIdAndRemove(eventId);
-
-    if (!deletedEvent) {
+    if (!event) {
       return res.status(404).json({ message: 'Event not found' });
     }
 
-    // Unlock the event after deleting
-    await Event.updateOne({ _id: eventId }, { isLocked: false, lockedBy: null });
+    // Prepare the data to be stored in the deletedEvents collection
+    const deletedEventData = {
+      ...event.toObject(),
+      deletedByName: name,
+      deletedByRole: role,
+      deletedAt: new Date(),
+    };
 
-    res.status(200).json({ message: 'Event deleted successfully', event: deletedEvent });
+    delete deletedEventData._id;
+
+    // Save the event in the deletedEvents collection
+    console.log(deletedEventData);
+    await DeletedEvent.create(deletedEventData);
+
+    // Check if there is an associated picture and delete it
+    if (event.eventPicture) {
+      const imagePath = path.join(__dirname, '../../uploads/eventPictures', event.eventPicture);
+      try {
+        if (fs.existsSync(imagePath)) {
+          fs.unlinkSync(imagePath); // Delete the image file
+          console.log(`Deleted picture: ${imagePath}`);
+        }
+      } catch (error) {
+        console.error(`Failed to delete event picture: ${error.message}`);
+        // Log the error but continue with event deletion
+      }
+    }
+
+    // Delete the original event from the Event collection
+    await Event.findByIdAndDelete(eventId);
+
+    res.status(200).json({ message: 'Event and associated picture deleted successfully' });
   } catch (error) {
+    console.error('Error deleting event:', error);
     res.status(500).json({ message: error.message });
   }
 };
@@ -107,4 +185,5 @@ module.exports = {
   addEvent,
   updateEvent,
   deleteEvent,
+  upload
 };

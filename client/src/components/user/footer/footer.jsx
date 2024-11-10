@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import BukSULogo from '/src/assets/buksu-logo.png'
+import BukSULogo from '/src/assets/buksu.png'
 import './footer.css'
 
 function Footer() {

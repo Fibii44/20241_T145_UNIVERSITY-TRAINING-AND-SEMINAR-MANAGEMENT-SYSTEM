@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import './home-content.css';
 
 function Home() {
@@ -15,18 +17,13 @@ function Home() {
       <h3>
         <span>BukSU</span> <span className="highlight">Engage</span>
       </h3>
-      {/* <div className="search-container">
-        <input 
-          type="text" 
-          className="search-bar" 
-          placeholder="Search..." 
-          value={searchTerm} 
-          onChange={(e) => setSearchTerm(e.target.value)} 
-        />
-        <button className="search-button" onClick={handleSearch}>
-          Search
-        </button>
-      </div> */}
+      {/* Scroll down icon */}
+      <div className="scroll-down">
+        <FontAwesomeIcon icon={faChevronDown} bounce size="3x" />
+      </div>
+      <div className="scroll-down1">
+        <FontAwesomeIcon icon={faChevronDown} bounce size="3x" />
+      </div>
     </div>
   );
 }

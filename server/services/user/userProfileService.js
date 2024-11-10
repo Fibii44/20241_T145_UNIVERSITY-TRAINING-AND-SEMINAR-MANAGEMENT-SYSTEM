@@ -1,3 +1,4 @@
+const User = require('../../models/user');
 // db connection
 // Render user profile page
 const renderProfilePage = async (req, res) => {
@@ -10,6 +11,32 @@ const renderProfilePage = async (req, res) => {
     }
 };
 
+
+// Update user profile
+const updateUserProfile = async (req, res) => {
+    try {
+        const { phoneNumber, department, position } = req.body;
+
+      
+
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).send('User not found');
+        }
+
+        // Update user data
+        user.phoneNumber = phoneNumber;
+        user.department = department;
+        user.position = position;
+
+        const updatedUser = await user.save();
+
+        res.json(updatedUser);  // Return the updated user data to the client without sensitive details in the logs
+    } catch (error) {
+        console.error('Error updating profile:', error);  // Log error but avoid logging sensitive info
+        res.status(500).send(`Error updating profile: ${error.message}`);
+    }
+};
 // List all certificates for the user
 const listCertificates = async (req, res) => {
     try {
@@ -66,5 +93,6 @@ module.exports = {
     viewCertificate,
     renderHistoryPage,
     viewEventHistory,
-    listProfileEvents
+    listProfileEvents,
+    updateUserProfile
 };

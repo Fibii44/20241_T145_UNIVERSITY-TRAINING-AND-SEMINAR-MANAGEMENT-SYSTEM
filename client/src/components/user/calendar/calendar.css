@@ -102,25 +102,19 @@
     padding: 5px;
     box-sizing: border-box;
 }
-
+.calendar-day:hover {
+    background-color: #d8d8d8;
+}
 .date-number {
     font-size: 0.9em;
     color: #666;
     margin-bottom: 5px;
 }
 
-.event {
-    width: 90%;
-    background-color: #ff9aa2;
-    color: #fff;
-    padding: 2px 5px;
-    font-size: 0.8em;
-    margin-bottom: 3px;
-    border-radius: 3px;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    text-align: center;
+
+
+.event:hover {
+    filter: brightness(1.3); /* Increase brightness */
 }
 
 .calendar-day-header {
@@ -230,16 +224,28 @@
     flex: 1;
 }
 .event {
-    background-color: #ff9aa2;
-    padding: 5px 10px;
-    border-radius: 3px;
-    color: white;
-    margin-bottom: 5px;
+    width: 10px;
+    height: 10px;
+    background-color: #61b6fc;
+    color: #fff;
+    font-size: 0.8em;
+    margin-bottom: 3px;
+    border-radius: 30px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    text-align: center;
 }
 .no-events {
     color: #888;
 }
-
+.events-for-day.grid-container {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* Limits to 5 items per row */
+    gap: 10px; /* Space between items */
+    padding: 10px;
+    overflow: auto; /* Optional: add scroll if there are more than 5 */
+}
 /* Event List ===================================================== */
 .event-list {
     flex: 1;
@@ -262,4 +268,69 @@
 
 .event-list li {
     margin-bottom: 10px;
+}
+.calendar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+.overlay-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 500px;
+    text-align: center;
+    height: 80%;
+    overflow: auto;
+}
+.overlay-content h2 {
+    color: #011c39;
+    font-size: 20px;
+}
+.overlay-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 50%;
+}
+.close-button {
+    background: #ff5c5c;
+    border: none;
+    padding: 8px 16px;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.events-list {
+    margin-top: 10px;
+}
+.event-detail {
+    background: #f0f0f0;
+    padding: 10px;
+    margin-bottom: 8px;
+    border-radius: 4px;
+}
+.legend {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 6px;
+    margin-right: 4px;
+}
+.legend small {
+    font-size: 12px;
+    padding: 4px;
+    border-radius: 6px;
 }
