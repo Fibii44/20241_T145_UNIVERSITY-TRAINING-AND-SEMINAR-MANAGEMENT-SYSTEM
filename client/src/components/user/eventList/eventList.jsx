@@ -42,7 +42,7 @@ function EventGrid() {
 
     return (
         <div>
-            <div className="events-grid">
+            <div className="events-grid" style={{contentAlign: 'center', margin: '0 auto'}}>
                 {currentEvents.map((event) => (
                     <Link to={`/u/events/${event._id}`} key={event._id} className="event-link">
                         <div className="event-card">
@@ -63,7 +63,7 @@ function EventGrid() {
                     </Link>
                 ))}
             </div>
-            <div className="pagination-controls">
+            <div className="pagination-controls mb-3" >
                 <button onClick={handlePrevPage} disabled={currentPage === 1}>❮ Prev</button>
                 <button onClick={handleNextPage} disabled={currentPage === Math.ceil(events.length / eventsPerPage)}>Next ❯</button>
             </div>

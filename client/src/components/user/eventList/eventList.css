@@ -1,11 +1,10 @@
 .events-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 24px; /* Space between cards */
     padding: 20px;
-    background-color: #f5f6fa;
-    margin: 2rem auto; /* Center grid horizontally */
-    width: 95rem; /* Set max width for the grid */
+    background-color: #f5f6fa; /* Center grid horizontally */
+    width: 80rem /* Set max width for the grid */
 }
 
 .event-card h3 {
