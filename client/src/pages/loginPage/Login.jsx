@@ -9,7 +9,7 @@ import {
   MDBInput,
 } from 'mdb-react-ui-kit';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGoogle } from '@fortawesome/free-brands-svg-icons';
+import { FcGoogle } from 'react-icons/fc';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './login.css'; 
@@ -133,8 +133,8 @@ function Login() {
               <hr className="my-4 w-100" />
 
               <div onClick={handleGoogleLogin} style={{ display: 'flex', alignItems: 'center', flexDirection: 'column', cursor: 'pointer' }}>
-                <FontAwesomeIcon icon={faGoogle} style={{ fontSize: 40, color: '#000353' }} />
-                <p>Sign in with Google</p>
+              <FcGoogle style={{ fontSize: 40 }}/>
+                <h5 class="mt-3">Continue with Google</h5>
               </div>
             </MDBCardBody>
           </MDBCard>
