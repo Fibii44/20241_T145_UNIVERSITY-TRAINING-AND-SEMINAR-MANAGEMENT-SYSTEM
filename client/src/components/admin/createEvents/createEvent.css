@@ -62,7 +62,6 @@
 .event-form textarea,
 .event-form select,
 .custom-form-control {
-
   padding: 8px;
   border: 1px solid #ddd;
   border-radius: 5px;
@@ -101,41 +100,44 @@
   color: #aaa;
 }
 
-.modal-buttons {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
+.event-buttons {
+  display: inline-flex;
+  justify-content: flex-start;
+  gap: 10px;
 }
 
-.close-button,
-.save-button {
+.event-close-button,
+.event-save-button {
   border: none;
   padding: 8px 20px;
   border-radius: 5px;
   cursor: pointer;
   font-weight: bold;
   transition: background-color 0.3s;
+  font-size: 14px;
+  min-width: 170px;
 }
 
-.close-button {
+.event-close-button {
   background-color: #d9534f;
   color: #fff;
 }
 
-.close-button:hover {
+.event-close-button:hover {
   background-color: #c9302c;
 }
 
-.save-button {
+.event-save-button {
   background-color: #5cb85c;
   color: #fff;
 }
 
-.save-button:hover {
+.event-save-button:hover {
   background-color: #449d44;
 }
 
 .reminder-options {
+  justify-content: center;
   display: flex;
   gap: 5px;
   flex-wrap: wrap;
@@ -156,9 +158,9 @@
 }
 
 .reminder-options button.active {
-  background-color: #8d8d8d;
+  background-color: #a7a7a7;
   color: white;
-  border-color: #333;
+  border-color: #a7a7a7;
 }
 
 .cert-template-btn,
@@ -199,22 +201,16 @@
   margin-bottom: 10px;
 }
 
-
-
-/*FILTER CSS*/
-
 .card-filter {
   background-color: #f9f9f9;
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   padding: 16px;
-
 }
 
 .participant-filter-custom {
   display: flex;
   flex-direction: column;
-
 }
 
 .filter-section-custom {
@@ -236,7 +232,6 @@
   margin-right: 0;
 }
 
-
 .card-list {
   border: 1px solid #ddd;
   padding: 10px;
@@ -245,26 +240,84 @@
   overflow-y: auto;
 }
 
-.participant-list-group {
-  list-style-type: none;
-  font-size: 12px;
 
+.participants-list {
+  list-style-type: none;
+  padding: 10px;
+  margin: 0;
+  font-size: 14px;
 }
-.participant-item {
+
+.participant-item-list {
+  list-style-type: none;
   padding: 8px;
   border-bottom: 1px solid #eaeaea;
-}
-
-.participant-label {
+  cursor: pointer;
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.participant-item-list:hover {
+  background-color: #f0f0f0;
+}
+
+
+.selected-participant {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  padding: 1px 5px;
+  font-size: 14px;
+}
+
+.participant-item {
+  list-style-type: none;
+  padding: 8px;
+  border-bottom: 1px solid #eaeaea;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
 }
 
-.participant-label span {
-  flex: 1;
+
+.select-label{
+  font-size: 25px;
 }
 
-.participant-label input[type="checkbox"] {
-  margin-left: 50px;
+.participant-info {
+  display: flex;
+  align-items: center;
+}
+
+.participant-img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 10px;
+}
+
+.participant-email {
+  margin-right: 10px;
+  flex-grow: 1;
+  word-wrap: break-word;
+}
+
+.participant-item .cancel-btn {
+  font-size: 20px;
+  color: #666;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  width: 15px;
+}
+
+.participant-item .cancel-btn:hover {
+  color: #d9534f;
 }

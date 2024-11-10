@@ -10,7 +10,6 @@ const Sidebar = ({ activePage }) => {
   const [isCollapsed, setIsCollapsed] = useState(() => {
     return localStorage.getItem('isSidebarCollapsed') === 'true';
   });
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const toggleSidebar = () => {
     // Toggle the state and store the updated state in localStorage
@@ -27,6 +26,8 @@ const Sidebar = ({ activePage }) => {
     setIsCollapsed(savedState);
   }, []);
 
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  
   const openLogoutModal = () => setShowLogoutModal(true);
   const closeLogoutModal = () => setShowLogoutModal(false);
 

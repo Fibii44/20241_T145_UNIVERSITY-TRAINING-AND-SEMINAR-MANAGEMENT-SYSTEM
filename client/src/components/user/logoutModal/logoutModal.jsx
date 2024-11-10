@@ -1,7 +1,5 @@
   import React from "react";
   import "./logoutmodal.css";
-  import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-  import { faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";   
   import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
   const LogoutModal = ({ show, onClose, onLogout }) => {

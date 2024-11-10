@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faCalendarCheck, faBan} from '@fortawesome/free-solid-svg-icons';
+import { faUser, faCalendarCheck, faBan, faChevronLeft, faChevronRight} from '@fortawesome/free-solid-svg-icons';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 import "./dashboard.css";
@@ -62,37 +62,81 @@ const Chart = ({ data }) => (
 
 
 
-const UsersTable = ({ users }) => (
-  <div className="table-container">
-    <h2 className="users-heading">Users</h2>
-    <div className="table-responsive">
-      <table className="table table-striped">
-        <thead className="thead-dark">
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((user, index) => (
-            <tr key={user._id || index}>
-              <td>{user._id}</td>
-              <td>{user.name}</td>
-              <td>{user.email}</td>
-              <td>{user.role}</td>
-              <td>{user.status}</td>
+const UsersTable = ({ users }) => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 10;
+
+  // Calculate the current page's users
+  const indexOfLastUser = currentPage * rowsPerPage;
+  const indexOfFirstUser = indexOfLastUser - rowsPerPage;
+  const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
+
+  // Handle "Next" and "Prev" button clicks
+  const handleNext = () => {
+    if (currentPage * rowsPerPage < users.length) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePrev = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  return (
+    <div className="table-container">
+      {/* Users Table Label and Pagination */}
+      <div className="table-header">
+        <h2 className="users-heading">Users Table</h2>
+
+        {/* Pagination Controls - Aligning with Label */}
+        <div className="dashboard-pagination">
+          <button
+            onClick={handlePrev}
+            disabled={currentPage === 1}
+            className="pagination-button"
+          >
+            <FontAwesomeIcon icon={faChevronLeft} />
+          </button>
+          <button
+            onClick={handleNext}
+            disabled={currentPage * rowsPerPage >= users.length}
+            className="pagination-button"
+          >
+            <FontAwesomeIcon icon={faChevronRight} />
+          </button>
+        </div>
+      </div>
+
+      {/* Users Table */}
+      <div className="table-responsive">
+        <table className="table table-striped">
+          <thead className="thead-dark">
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Status</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {currentUsers.map((user, index) => (
+              <tr key={user._id || index}>
+                <td>{user._id}</td>
+                <td>{user.name}</td>
+                <td>{user.email}</td>
+                <td>{user.role}</td>
+                <td>{user.status}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
-  </div>
-);
-
-
+  );
+};
 
 const Dashboard = () => {
   
@@ -130,7 +174,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="dashboard-container">
+    <div className="dashboards-container">
       <div className="content">
         <h2 className="dashboard-heading">Dashboard</h2>
         <div className="dashboard">

@@ -1,4 +1,3 @@
-// eventManagement.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -16,18 +15,30 @@ const EventM = ({ userRole, userCollege }) => {
 
   const toggleSidebar = () => setIsCollapsed(!isCollapsed);
 
+  // Function to format time for display in 12-hour format
+  const formatTime = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+  };
+
   const fetchEvents = async () => {
     try {
       setLoading(true);
       const response = await axios.get('http://localhost:3000/a/events');
-      setEvents(response.data);
+      // Convert `startTime` and `endTime` to Date objects in state
+      const formattedEvents = response.data.map(event => ({
+        ...event,
+        startTime: new Date(event.startTime),
+        endTime: new Date(event.endTime),
+      }));
+      setEvents(formattedEvents);
     } catch (error) {
       alert('Error fetching events: ' + error.message);
     } finally {
       setLoading(false);
     }
   };
- 
+
   const handleEdit = (event) => {
     setSelectedEvent(event);
     setIsModalOpen(true);
@@ -68,19 +79,17 @@ const EventM = ({ userRole, userCollege }) => {
       return;
     }
 
-    console.log(eventPicture)
-
     const formData = new FormData();
     formData.append('title', rest.title);
     formData.append('eventDate', formattedEventDate);
-    formData.append('startTime', startTime);
-    formData.append('endTime', endTime);
+    formData.append('startTime', startTime); // Send as string (will parse later)
+    formData.append('endTime', endTime); // Send as string (will parse later)
     formData.append('location', rest.location);
     formData.append('hostname', rest.hostname || '');
     formData.append('description', rest.description || '');
     formData.append('color', rest.color || '#65a8ff');
     if (eventPicture) {
-      formData.append('eventPicture', eventPicture); // Add the event picture to the form data
+      formData.append('eventPicture', eventPicture);
     }
     if (participants) {
       formData.append('participantGroup[college]', participants.college || "All");
@@ -88,35 +97,45 @@ const EventM = ({ userRole, userCollege }) => {
     }
     customParticipants.forEach((email, index) => formData.append(`customParticipants[${index}]`, email.trim()));
 
-    // Only add createdBy for new events
     if (!selectedEvent) {
       formData.append('createdBy', userId);
     }
 
-    // Always update editedBy if it's an edit
     if (selectedEvent) {
       formData.append('editedBy', userId);
     }
 
     try {
+      let response;
       if (selectedEvent) {
-        const response = await axios.put(`http://localhost:3000/a/events/${selectedEvent._id}`, formData, {
+        response = await axios.put(`http://localhost:3000/a/events/${selectedEvent._id}`, formData, {
           headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' }
         });
         alert('Event updated successfully');
-        setEvents(events.map(event => (event._id === selectedEvent._id ? { ...event, ...response.data.event } : event)));
       } else {
-        const response = await axios.post('http://localhost:3000/a/events', formData, {
+        response = await axios.post('http://localhost:3000/a/events', formData, {
           headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' }
         });
         alert(response.data.message || 'Event created successfully');
-        setEvents(prevEvents => [...prevEvents, response.data]);
+      }
+
+      // Parse `startTime` and `endTime` as Date objects after response
+      const updatedEvent = {
+        ...response.data,
+        startTime: new Date(response.data.startTime),
+        endTime: new Date(response.data.endTime),
+      };
+
+      if (selectedEvent) {
+        setEvents(events.map(event => (event._id === selectedEvent._id ? updatedEvent : event)));
+      } else {
+        setEvents(prevEvents => [...prevEvents, updatedEvent]);
       }
     } catch (error) {
       alert('Error saving event: ' + (error.response?.data?.message || error.message));
     } finally {
       setIsModalOpen(false);
-      setSelectedEvent(null); // Reset selected event after saving
+      setSelectedEvent(null);
     }
   };
 
@@ -126,9 +145,7 @@ const EventM = ({ userRole, userCollege }) => {
 
   return (
     <div className="dashboard-container">
-    
       <div className="content">
-
         <div className="dashboard-inline">
           <h2 className="dashboard-heading">Events</h2>
           <button className="dashboard-button" onClick={() => setIsModalOpen(true)} disabled={loading}>
@@ -148,6 +165,7 @@ const EventM = ({ userRole, userCollege }) => {
         <div className="context-card">
           <div className="admin-event-list">
             {events.map((event) => (
+<<<<<<< HEAD
               <div className="admin-event-card" key={event._id || event.id}>
               <div className="event-image">
                 <img
@@ -159,20 +177,33 @@ const EventM = ({ userRole, userCollege }) => {
               <div className="event-details">
                 <div className="event-title">
                    <h3>{event.title}</h3>
+=======
+              <div className="event-card" key={event._id || event.id}>
+                <div className="event-image">
+                  <img
+                    src={`http://localhost:3000/eventPictures/${event.eventPicture}`}
+                    alt={`${event.title || "No"} image`}
+                    className="event-img"
+                    onError={(e) => (e.target.src = '/path/to/default-image.png')}
+                  />
+>>>>>>> 501dc015662323f537e4d788963ae45ffee15dd3
                 </div>
-               
-                <p className="event-description">{event.description}</p>
-                <div className="event-info">
-                  <span><FontAwesomeIcon icon={faCalendarCheck} /> {event.date}</span>
-                  <span><FontAwesomeIcon icon={faClock} /> {event.startTime} - {event.endTime}</span>
-                  <span><FontAwesomeIcon icon={faMapMarkerAlt} /> {event.location}</span>
+                <div className="event-details">
+                  <div className="event-title">
+                    <h3>{event.title}</h3>
+                  </div>
+                  <p className="event-description">{event.description}</p>
+                  <div className="event-info">
+                    <span><FontAwesomeIcon icon={faCalendarCheck} /> {new Date(event.eventDate).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</span>
+                    <span><FontAwesomeIcon icon={faClock} /> {formatTime(event.startTime)} - {formatTime(event.endTime)}</span>
+                    <span><FontAwesomeIcon icon={faMapMarkerAlt} /> {event.location}</span>
+                  </div>
+                </div>
+                <div className="event-actions">
+                  <button className="btn-edit edit-button" onClick={() => handleEdit(event)}>Edit</button>
+                  <button className="btn-delete delete-button" onClick={() => handleDelete(event._id)}>Delete</button>
                 </div>
               </div>
-              <div className="event-actions">
-                <button className="btn-edit edit-button" onClick={() => handleEdit(event)}>Edit</button>
-                <button className="btn-delete delete-button" onClick={() => handleDelete(event._id)}>Delete</button>
-              </div>
-            </div>
             ))}
           </div>
         </div>

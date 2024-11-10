@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import "./usersTable.css";
 import { jwtDecode } from 'jwt-decode';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEdit, faTrash, faSave, faTimes } from '@fortawesome/free-solid-svg-icons';
+
+
+
 
 const UsersTable = ({ users, onDelete, onUpdate }) => (
   <div className="table-container">
@@ -67,10 +73,8 @@ const UserRow = ({ user, onDelete, onUpdate }) => {
       <td>{user._id}</td>
       {isEditing ? (
         <>
-
           <td><input type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} /></td>
           <td><input type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} /></td>
-
           <td>
             <select
               value={formData.role}
@@ -118,28 +122,37 @@ const UserRow = ({ user, onDelete, onUpdate }) => {
       )}
       <td>
         {isEditing ? (
-          <>
-            <button className="table_save" onClick={handleSave}>Save</button>
-            <button className="table_cancel" onClick={() => setIsEditing(false)}>Cancel</button>
+           <>
+            <button className="table_save" onClick={handleSave}>
+              <FontAwesomeIcon icon={faSave} /> 
+            </button>
+            <button className="table_cancel" onClick={() => setIsEditing(false)}>
+              <FontAwesomeIcon icon={faTimes} /> 
+            </button>
           </>
         ) : (
           <>
-            <button className="table_edit" onClick={() => setIsEditing(true)}>Edit</button>
-            <button className="table_delete" onClick={handleDelete}>Delete</button>
+            <button className="table_edit" onClick={() => setIsEditing(true)}>
+              <FontAwesomeIcon icon={faEdit} />
+            </button>
+            <button className="table_delete" onClick={handleDelete}>
+              <FontAwesomeIcon icon={faTrash} />
+            </button>
           </>
         )}
       </td>
     </tr>
   );
 };
-
-
 const Table = () => {
+  const navigate = useNavigate();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [stats, setStats] = useState({ users: [] });
   const [departmentFilter, setDepartmentFilter] = useState('all');
   const [roleFilter, setRoleFilter] = useState('all');
   const [filteredUsers, setFilteredUsers] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage] = useState(10);
   const [currentUser, setCurrentUser] = useState(null); // Step 1: Define state for current user
 
   const toggleSidebar = () => {
@@ -147,6 +160,26 @@ const Table = () => {
   };
 
   useEffect(() => {
+
+    const token = sessionStorage.getItem("authToken");
+    const checkAccess = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/a/users', {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.status === 403) {
+          // Redirect to a different page if access is denied
+          navigate('/a/dashboard'); // Change this to your desired redirect path
+        }
+      } catch (error) {
+        console.error("Access check failed:", error);
+      }
+    }
+
     const fetchStats = async () => {
       try {
         const response = await axios.get('http://localhost:3000/a/dashboard');
@@ -156,6 +189,7 @@ const Table = () => {
         console.log(err);
       }
     };
+    checkAccess();
     fetchStats();
   }, []);
 
@@ -168,7 +202,7 @@ const Table = () => {
     setFilteredUsers(filtered);
   }, [departmentFilter, roleFilter, stats.users]);
 
-  //Retrieve the name of the in session user
+  // Retrieve the name of the in session user
   useEffect(() => {
     const token = sessionStorage.getItem('authToken');
     if (token) {
@@ -177,7 +211,7 @@ const Table = () => {
     }
   }, []);
 
-  //Upddate Data
+  // Update Data
   const handleUpdate = async (userId, formData) => {
     try {
       await axios.put(`http://localhost:3000/a/users/${userId}`, formData);
@@ -187,7 +221,7 @@ const Table = () => {
     }
   };
 
-  //Delete Data
+  // Delete Data
   const handleDelete = async (userId) => {
     try {
       const deletedBy = currentUser; // Use the current user's name
@@ -198,12 +232,28 @@ const Table = () => {
     }
   };
 
+// Pagination logic
+const indexOfLastUser = currentPage * rowsPerPage;
+const indexOfFirstUser = indexOfLastUser - rowsPerPage;
+const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+
+// Next Page Handler
+const nextPage = () => {
+  if (currentPage < Math.ceil(filteredUsers.length / rowsPerPage)) {
+    setCurrentPage(prevPage => prevPage + 1);
+  }
+};
+
+// Prev Page Handler
+const prevPage = () => {
+  if (currentPage > 1) {
+    setCurrentPage(prevPage => prevPage - 1);
+  }
+};
 
   return (
-    <div className="dashboard-container">
-      
+    <div className="usertable-container">
       <div className="content">
-
         <div className="header-container">
           <h2>Users Table</h2>
           <div className="filter-header">
@@ -231,22 +281,25 @@ const Table = () => {
               <select
                 id="roleFilter"
                 value={roleFilter}
-                onChange={(e) => setRoleFilter(e.target.value)}
+                onChange={(e) => {
+                  setRoleFilter(e.target.value);
+                  setDepartmentFilter('all');
+                }}
               >
                 <option value="all">All</option>
-                <option value="departmental_admin">Departmental Admin</option>
                 <option value="faculty_staff">Faculty Staff</option>
+                <option value="departmental_admin">Departmental Admin</option>
                 <option value="general_admin">General Admin</option>
               </select>
             </div>
           </div>
         </div>
-
-        <UsersTable
-          users={filteredUsers}
-          onDelete={handleDelete}
-          onUpdate={handleUpdate}
-        />
+        <UsersTable users={currentUsers} onDelete={handleDelete} onUpdate={handleUpdate} />
+        <div className="pagination">
+    <button onClick={prevPage} disabled={currentPage === 1}>Prev</button>
+    <span>Page {currentPage} of {Math.ceil(filteredUsers.length / rowsPerPage)}</span>
+    <button onClick={nextPage} disabled={currentPage === Math.ceil(filteredUsers.length / rowsPerPage)}>Next</button>
+  </div>
       </div>
     </div>
   );

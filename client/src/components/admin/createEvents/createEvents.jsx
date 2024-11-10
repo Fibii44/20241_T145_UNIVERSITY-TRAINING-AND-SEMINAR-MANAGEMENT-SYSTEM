@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCamera, faMapMarkerAlt, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
+import { faCamera, faMapMarkerAlt, faTimes } from '@fortawesome/free-solid-svg-icons';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './createEvent.css';
 import { jwtDecode } from 'jwt-decode';
@@ -17,7 +17,7 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
   const [reminders, setReminders] = useState('None');
   const [eventPicture, setEventPicture] = useState(null);
   const [activeReminder, setActiveReminder] = useState('None');
-  const [color, setColor] = useState('#65a8ff'); 
+  const [color, setColor] = useState('#65a8ff');
   const [participants, setParticipants] = useState({
     college: '',
     department: ''
@@ -26,7 +26,7 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
   const [selectedParticipants, setSelectedParticipants] = useState(initialEventData?.customParticipants || []);
   const [isFilterVisible, setIsFilterVisible] = useState(false); // Track filter visibility state
   const [searchTerm, setSearchTerm] = useState('');
-  
+
   // Sample data for colleges and departments
   const colleges = ['College of Arts and Sciences', 'College of Business', 'College of Education', 'College of Law', 'College of Public Administration and Governance', 'College of Nursing', 'College of Technologies'];
   const departments = {
@@ -46,38 +46,38 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
         console.error('No auth token found');
         return;
       }
-  
+
       // Build the URL with query parameters
       const params = participants.college === "All" ? '' : `?college=${encodeURIComponent(participants.college)}`;
       const url = `http://localhost:3000/a/users${params}`;
-  
+
       console.log("Request URL:", url);
       console.log("Authorization Token:", token);
-  
+
       // Make the fetch request with authorization header
       const response = await fetch(url, {
         method: 'GET',
-        headers: { 
+        headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       });
-  
+
       // Check if the response is OK, else throw an error
       if (!response.ok) {
         throw new Error(`Request failed with status ${response.status}`);
       }
-  
+
       // Parse the response JSON
       const data = await response.json();
       setFetchedParticipants(Array.isArray(data) ? data : []); // Ensure fetchedParticipants is always an array
-  
+
     } catch (error) {
       console.error('Error fetching participants:', error);
       setFetchedParticipants([]); // Default to empty array on error
     }
   };
-  
+
   useEffect(() => {
     fetchParticipants();
   }, [participants.college, participants.department]);
@@ -89,12 +89,12 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
 
   const handleAddParticipant = (participant) => {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Simple email regex pattern
-  
+
     if (!emailPattern.test(participant.email)) {
       alert('Invalid email format');
       return;
     }
-  
+
     if (!selectedParticipants.find((p) => p.email === participant.email)) {
       setSelectedParticipants((prev) => [...prev, participant]);
     }
@@ -105,7 +105,7 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
   };
 
   const filteredParticipants = () => {
-    return (fetchedParticipants || []).filter(participant => 
+    return (fetchedParticipants || []).filter(participant =>
       participant.email.toLowerCase().includes(searchTerm) &&
       !selectedParticipants.some(p => p.email === participant.email)
     );
@@ -128,7 +128,7 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
       department: '' // Reset department when college changes
     }));
   };
-  
+
   const handleDepartmentChange = (e) => {
     const selectedDepartment = e.target.value;
     setParticipants(prev => ({
@@ -153,18 +153,37 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
         college: initialEventData.participantGroup?.college || '',
         department: initialEventData.participantGroup?.department || ''
       });
-      
+
     }
   }, [isOpen, initialEventData]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    if(file){
+    if (file) {
       setEventPicture(file);
     }
   };
   const handleSaveDetails = (e) => {
     e.preventDefault();
+
+      // Get the user's timezone offset in minutes
+  const timezoneOffset = new Date().getTimezoneOffset();
+  const timezoneOffsetHours = Math.abs(Math.floor(timezoneOffset / 60));
+  const timezoneOffsetMinutes = Math.abs(timezoneOffset % 60);
+  
+  // Format the offset as "+HH:MM" or "-HH:MM"
+  const formattedOffset = 
+    (timezoneOffset > 0 ? "-" : "+") +
+    String(timezoneOffsetHours).padStart(2, "0") +
+    ":" +
+    String(timezoneOffsetMinutes).padStart(2, "0");
+
+  // Combine date and time inputs and append timezone offset
+  const combinedStart = new Date(`${date}T${startTime}:00${formattedOffset}`);
+  const combinedEnd = new Date(`${date}T${endTime}:00${formattedOffset}`);
+
+  const isoStartTime = combinedStart.toISOString();
+  const isoEndTime = combinedEnd.toISOString();
 
     let eventColor;
     switch (participants.college) {
@@ -172,7 +191,7 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
         eventColor = '#72f7b0'; // Green
         break;
       case 'College of Business':
-        eventColor = '#e6e200'; // Yellow
+        eventColor = '#c9be3a'; // Yellow
         break;
       case 'College of Education':
         eventColor = '#727bf7'; // Blue
@@ -192,19 +211,20 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
       default:
         eventColor = '#65a8ff'; // Default Blue
     }
-
+  
     const cleanedParticipants = selectedParticipants
-    .map((participant) => participant.email.trim()) // Remove extra spaces
-    .filter((email) => email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)); // Validate email format
-      
+      .map((participant) => participant.email.trim()) // Remove extra spaces
+      .filter((email) => email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)); // Validate email format
+  
     console.log("Event Picture before save:", eventPicture);
-
+  
+    // Proceed with saving the event details
     onSave({
       title,
       date,
-      startTime,
       eventPicture,
-      endTime,
+      startTime: isoStartTime,
+      endTime: isoEndTime,
       location,
       description,
       reminders,
@@ -214,8 +234,9 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
     });
     onClose();
   };
-
   if (!isOpen) return null;
+
+
 
 
   return (
@@ -230,9 +251,18 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
           </div>
           <div className="modal-body">
             <div className="upload-photo">
-              <FontAwesomeIcon icon={faCamera} className="camera-icon" />
+              <label htmlFor="file-upload" className="camera-icon-label">
+                <FontAwesomeIcon icon={faCamera} className="camera-icon" />
+              </label>
+              <input
+                id="file-upload"
+                type="file"
+                accept="image/*"
+                name="eventPicture"
+                onChange={handleImageChange}
+                style={{ display: 'none' }} // Hide default input
+              />
               <p>Upload Photo</p>
-              <input type="file" accept="image/*" name="eventPicture" onChange={handleImageChange} />
               {eventPicture && <p>Image Selected: {eventPicture.name}</p>}
             </div>
             <form className="event-form" onSubmit={handleSaveDetails}>
@@ -281,17 +311,17 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
                             </select>
                           </div>
                           <div className="col-6-custom">
-                          <select
-                            value={participants.department}
-                            onChange={handleDepartmentChange}
-                            className="custom-form-control"
-                            disabled={!participants.college || participants.college === "All"} // Disable if "All" is selected
-                          >
-                            <option value="">All Departments</option>
-                            {(departments[participants.college] || []).map((department, index) => (
-                              <option key={index} value={department}>{department}</option>
-                            ))}
-                          </select>
+                            <select
+                              value={participants.department}
+                              onChange={handleDepartmentChange}
+                              className="custom-form-control"
+                              disabled={!participants.college || participants.college === "All"} // Disable if "All" is selected
+                            >
+                              <option value="">All Departments</option>
+                              {(departments[participants.college] || []).map((department, index) => (
+                                <option key={index} value={department}>{department}</option>
+                              ))}
+                            </select>
                           </div>
                         </div>
                       </div>
@@ -312,22 +342,32 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
                             <div
                               key={participant.email}
                               onClick={() => handleAddParticipant(participant)}
-                              className="participant-item"
+                              className="participant-item-list"
                             >
-                              <span>{participant.email}</span>
+                              <div className="participant-info">
+                                <img src={participant.profilePicture} alt="Profile" className="participant-img" />
+                                <span className="participant-email">{participant.email}</span>
+                              </div>
                             </div>
                           ))}
                         </div>
                       )}
 
                       <div className="selected-participants">
-                        <h4>Selected Participants</h4>
+                        <h4 class="select-label">Selected Participants</h4>
                         {selectedParticipants.map((participant) => (
                           <div key={participant.email} className="participant-item">
-                            <span>{participant.email}</span>
-                            <button onClick={() => handleRemoveParticipant(participant.email)}>
-                              <FontAwesomeIcon icon={faTimesCircle} />
-                            </button>
+                            
+                            <li className="selected-participant">
+                              <div className="participant-info">
+                                <img src={participant.profilePicture} alt="Profile" className="participant-img" />
+                                <span className="participant-email">{participant.email}</span>
+                              </div>
+                              <button className="cancel-btn" onClick={() => handleRemoveParticipant(participant.email)}>
+                                <FontAwesomeIcon icon={faTimes} />
+                              </button>
+
+                            </li>
                           </div>
                         ))}
                       </div>
@@ -336,9 +376,12 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
                 )}
               </div>
 
-
-
-              <button type="submit" className="btn btn-primary">Save Event</button>
+              <div className="event-buttons">
+                <button type="submit" className="btn btn-primary mr-2 event-save-button">Create Event</button>
+                <button type="button" className="btn btn-secondary event-close-button" onClick={onClose}>
+                  Cancel
+                </button>
+              </div>
             </form>
           </div>
         </div>

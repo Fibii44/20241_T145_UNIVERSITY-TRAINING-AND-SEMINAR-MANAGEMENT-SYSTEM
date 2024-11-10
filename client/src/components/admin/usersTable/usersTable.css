@@ -43,20 +43,6 @@
     border-color: #80bdff;
 }
 
-.filter-button {
-    margin: 0;
-    padding: 8px 12px;
-    border: none;
-    border-radius: 5px;
-    background-color: #007bff;
-    color: white;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.filter-button:hover {
-    background-color: #0056b3;
-}
 
 .user-heading {
     padding: 10px 20px;
@@ -68,8 +54,9 @@
 .table-container {
     margin: 20px;
     max-width: 100%;
-    overflow-x: auto; /* Enable horizontal scroll on smaller screens */
+    overflow: hidden; /* Prevent the container from having its own scrollbar */
 }
+
 
 .custom-table {
     width: 100%;
@@ -132,6 +119,40 @@
     border-color: #80bdff;
 }
 
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  .pagination button {
+    padding: 8px 16px;
+    margin: 0 5px;
+    border: none;
+    border-radius: 10px;
+    background-color: #FFB800;
+    color: rgb(0, 0, 0);
+    cursor: pointer;
+  }
+
+  .pagination button:hover {
+    background-color: #FFA500; /* Changes color on hover */
+    
+  }
+ 
+  
+  .pagination button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+  
+  .pagination span {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+
+
+
 
 
 /* Responsive Design */
@@ -164,6 +185,7 @@
 }
 
 
+
 /* For action buttons and table controls */
 .table_edit,
 .table_delete,
@@ -178,8 +200,8 @@
     margin: 0 5px;
     transition: background-color 0.3s;
     font-size: 12px;
-    height: 38px;
-    width: 55px;
+    height: 30px;
+    width: 30px;
     justify-content: center;
     flex-shrink: 0;
 }
@@ -204,3 +226,4 @@
 .table_save:hover {
     background-color: rgb(39, 143, 94);
 }
+

@@ -28,6 +28,12 @@ function Login() {
     });
   };
 
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      handleManualLogin();
+    }
+  };
+
   const handleGoogleLogin = () => {
     window.location.href = 'http://localhost:3000/auth/google';
   };
@@ -68,7 +74,7 @@ function Login() {
   };
 
   return (
-    <MDBContainer fluid className="p-5">
+    <MDBContainer fluid className="login-container p-5">
       <MDBRow>
         <MDBCol md="7" className="text-center text-md-start d-flex flex-column justify-content-center">
           <h1 className="not-clickable my-5 display-1 fw-bold ls-tight px-100">
@@ -92,6 +98,7 @@ function Login() {
                 floating="true" 
                 value={formData.email}
                 onChange={handleInputChange} 
+                onKeyDown={handleKeyDown}
               />
               <MDBInput 
                 wrapperClass="mb-4 w-100" 
@@ -102,7 +109,15 @@ function Login() {
                 floating="true" 
                 value={formData.password}
                 onChange={handleInputChange} 
+                onKeyDown={handleKeyDown}
               />
+
+              <div class="login-form-check">
+                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"/>
+                <label class="form-check-label" for="flexCheckDefault">
+                  Stay logged in
+                </label>
+              </div>
 
               <div className="d-grid gap-2 col-6 mx-auto mt-3">
                 <button
