@@ -7,7 +7,7 @@ import EventImage from '../../../assets/adminProfile.png';
 function EventGrid() {
     const [events, setEvents] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const eventsPerPage = 5;
+    const eventsPerPage = 4;
 
     useEffect(() => {
         const fetchEvents = async () => {

@@ -146,9 +146,9 @@ const EventM = ({ userRole, userCollege }) => {
         />
 
         <div className="context-card">
-          <div className="events-list">
+          <div className="admin-event-list">
             {events.map((event) => (
-              <div className="event-card" key={event._id || event.id}>
+              <div className="admin-event-card" key={event._id || event.id}>
               <div className="event-image">
                 <img
                   src={`http://localhost:3000/eventPictures/${event.eventPicture}`}

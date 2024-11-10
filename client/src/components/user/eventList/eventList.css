@@ -5,7 +5,7 @@
     padding: 20px;
     background-color: #f5f6fa;
     margin: 2rem auto; /* Center grid horizontally */
-    width: 98rem; /* Set max width for the grid */
+    width: 95rem; /* Set max width for the grid */
 }
 
 .event-card h3 {

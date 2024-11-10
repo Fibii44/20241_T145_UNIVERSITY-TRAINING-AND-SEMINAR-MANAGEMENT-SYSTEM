@@ -262,7 +262,7 @@ const Calendar = () => {
                         const dayNumber = date.getDate();
                         const eventsForDay = getEventsForDay(formattedDate);
                         const isToday = date.toDateString() === today.toDateString();
-    
+
                         return (
                             <div
                                 key={index}
@@ -327,7 +327,7 @@ const Calendar = () => {
                 )}
             </>
         );
-    };
+        };
     
     // Week View
     const renderWeekView = () => {

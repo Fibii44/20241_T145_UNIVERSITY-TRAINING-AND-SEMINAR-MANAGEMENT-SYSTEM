@@ -32,7 +32,7 @@
    
   } 
   
-  .events-grid {
+  .admin-event-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 24px; /* Space between cards */
@@ -42,7 +42,7 @@
     width: 98rem; /* Set max width for the grid */
 }
   
-  .event-card {
+  .admin-event-card {
     cursor: pointer;
     width: 20rem;
     text-align: left;
