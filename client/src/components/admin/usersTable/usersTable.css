@@ -61,9 +61,7 @@
 .custom-table {
     width: 100%;
     border-collapse: collapse;
-   
-    max-height: 500px; /* Fixed height for the table */
-    overflow-y: auto; /* Vertical scroll if content exceeds max height */
+    
 }
 
 .custom-table input {
@@ -74,14 +72,7 @@
 .custom-table th,
 .custom-table td {
     border: 1px solid #dee2e6;
-    padding: 12px;
-    text-align: left;
-    height: 50px;
-    vertical-align: middle;
-    overflow: hidden;
-    position: relative;
-    box-sizing: border-box;
-    width: 150px;
+  
 }
 
 .custom-table th {
@@ -100,11 +91,10 @@
 
 .custom-table select {
     font-size: 14px; /* Same font size as the rest of the elements */
-    padding: 8px 2px;
     border: 1px solid #ced4da;
     border-radius: 8px;
     transition: border-color 0.3s;
-    width: 150px;
+    min-width: none;;
     margin: 0;
 }
 
@@ -126,23 +116,25 @@
   }
   
   .pagination button {
-    padding: 8px 16px;
-    margin: 0 5px;
+    padding: 5px 10px;
+    margin: 0 10px;
     border: none;
-    border-radius: 10px;
-    background-color: #FFB800;
-    color: rgb(0, 0, 0);
+    border-radius: 5px;
+    background-color: #011c39;
+    color: rgb(255, 255, 255);
     cursor: pointer;
+    transition: background-color 0.3s ease;
+    
   }
 
   .pagination button:hover {
-    background-color: #FFA500; /* Changes color on hover */
+    background-color: #feb800; /* Changes color on hover */
     
   }
  
   
   .pagination button:disabled {
-    background-color: #ccc;
+    background-color: grey;
     cursor: not-allowed;
   }
   
@@ -151,8 +143,9 @@
     font-size: 14px;
   }
 
-
-
+  .row-selected {
+    background-color: #d1d1d1; /* Light cyan background for selected rows */
+  }
 
 
 /* Responsive Design */

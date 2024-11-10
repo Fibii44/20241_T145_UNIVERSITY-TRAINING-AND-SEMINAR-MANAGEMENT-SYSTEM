@@ -9,20 +9,27 @@ import { faEdit, faTrash, faSave, faTimes } from '@fortawesome/free-solid-svg-ic
 
 
 
-const UsersTable = ({ users, onDelete, onUpdate }) => (
+const UsersTable = ({ users, onDelete, onUpdate, selectAllChecked, onSelectAllChange }) => (
   <div className="table-container">
     <div className="table-responsive">
       <table className="custom-table">
         <thead className="thead-dark">
           <tr>
+          <th>
+              <input 
+                type="checkbox" 
+                checked={selectAllChecked} 
+                onChange={onSelectAllChange} 
+              /> {/* Select All Checkbox */}
+            </th>
             <th>ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Position</th>
-            <th>Department</th>
-            <th>Status</th>
-            <th>Actions</th>
+            <th>NAME</th>
+            <th>EMAIL</th>
+            <th>ROLE</th>
+            <th>POSITION</th>
+            <th>DEPARTMENT</th>
+            <th>STATUS</th>
+            <th>ACTIONS</th>
           </tr>
         </thead>
         <tbody>
@@ -32,6 +39,7 @@ const UsersTable = ({ users, onDelete, onUpdate }) => (
               user={user}
               onDelete={onDelete}
               onUpdate={onUpdate}
+              selectAllChecked={selectAllChecked}
             />
           ))}
         </tbody>
@@ -40,9 +48,11 @@ const UsersTable = ({ users, onDelete, onUpdate }) => (
   </div>
 );
 
-const UserRow = ({ user, onDelete, onUpdate }) => {
+const UserRow = ({ user, onDelete, onUpdate, selectAllChecked}) => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({});
+  const [isChecked, setIsChecked] = useState(selectAllChecked);
+  
 
   useEffect(() => {
     setFormData({
@@ -52,8 +62,15 @@ const UserRow = ({ user, onDelete, onUpdate }) => {
       position: user.position,
       department: user.department,
       status: user.status,
+      
     });
   }, [user]);
+
+  useEffect(() => {
+    setIsChecked(selectAllChecked); // Update checkbox state when Select All changes
+  }, [selectAllChecked]);
+
+  const handleCheckboxChange = () => setIsChecked(!isChecked);
 
   const handleSave = () => {
     if (window.confirm("Are you sure you want to save these changes?")) {
@@ -69,7 +86,10 @@ const UserRow = ({ user, onDelete, onUpdate }) => {
   };
 
   return (
-    <tr>
+    <tr className={isChecked ? "row-selected" : ""}>
+      <td>
+        <input type="checkbox" checked={isChecked} onChange={handleCheckboxChange} />
+      </td>
       <td>{user._id}</td>
       {isEditing ? (
         <>
@@ -154,7 +174,8 @@ const Table = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage] = useState(10);
   const [currentUser, setCurrentUser] = useState(null); // Step 1: Define state for current user
-
+  const [selectAllChecked, setSelectAllChecked] = useState(false);
+  
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
   };
@@ -251,6 +272,8 @@ const prevPage = () => {
   }
 };
 
+const onSelectAllChange = () => setSelectAllChecked(!selectAllChecked);
+
   return (
     <div className="usertable-container">
       <div className="content">
@@ -294,7 +317,8 @@ const prevPage = () => {
             </div>
           </div>
         </div>
-        <UsersTable users={currentUsers} onDelete={handleDelete} onUpdate={handleUpdate} />
+        <UsersTable users={currentUsers} onDelete={handleDelete} onUpdate={handleUpdate} selectAllChecked={selectAllChecked} 
+        onSelectAllChange={onSelectAllChange}/>
         <div className="pagination">
     <button onClick={prevPage} disabled={currentPage === 1}>Prev</button>
     <span>Page {currentPage} of {Math.ceil(filteredUsers.length / rowsPerPage)}</span>
