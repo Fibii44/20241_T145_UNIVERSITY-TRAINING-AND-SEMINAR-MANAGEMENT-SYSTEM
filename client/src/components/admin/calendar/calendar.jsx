@@ -327,7 +327,6 @@ const Calendar = () => {
                 )}
             </>
         );
-<<<<<<< HEAD
         };
     
     // Week View
@@ -502,8 +501,6 @@ const Calendar = () => {
                 )}
             </div>
         );
-=======
->>>>>>> 501dc015662323f537e4d788963ae45ffee15dd3
     };
 
     const renderCalendar = () => {

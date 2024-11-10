@@ -165,19 +165,6 @@ const EventM = ({ userRole, userCollege }) => {
         <div className="context-card">
           <div className="admin-event-list">
             {events.map((event) => (
-<<<<<<< HEAD
-              <div className="admin-event-card" key={event._id || event.id}>
-              <div className="event-image">
-                <img
-                  src={`http://localhost:3000/eventPictures/${event.eventPicture}`}
-                  alt={`${event.title} image`}
-                  className="event-img"
-                />
-              </div>
-              <div className="event-details">
-                <div className="event-title">
-                   <h3>{event.title}</h3>
-=======
               <div className="event-card" key={event._id || event.id}>
                 <div className="event-image">
                   <img
@@ -186,7 +173,6 @@ const EventM = ({ userRole, userCollege }) => {
                     className="event-img"
                     onError={(e) => (e.target.src = '/path/to/default-image.png')}
                   />
->>>>>>> 501dc015662323f537e4d788963ae45ffee15dd3
                 </div>
                 <div className="event-details">
                   <div className="event-title">
