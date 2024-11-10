@@ -3,8 +3,8 @@ import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarCheck, faClock, faPlus, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import './eventManagement.css';
-import { jwtDecode } from 'jwt-decode';
 import EventModal from '../createEvents/createEvents';
+import DeleteModal from '../../modals/deleteModal/deleteModal';
 
 const EventM = ({ userRole, userCollege }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
