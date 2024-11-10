@@ -45,7 +45,7 @@ const renderEventsPage = async (req, res) => {
 
 const addEvent = async (req, res) => {
   try {
-    const {title, eventDate, startTime, endTime, location, name, hostname, description, participantGroup, color, customParticipants } = req.body;
+    const {title, eventDate, startTime, endTime, location, description, participantGroup, color, customParticipants, reminders } = req.body;
     console.log(req.file)
     const eventPicture = req.file ? req.file.filename : null; // Set eventPicture 
     const user = req.user;
@@ -56,15 +56,16 @@ const addEvent = async (req, res) => {
       startTime,
       endTime,
       location, 
-      hostname,
       description,
       participantGroup,
       color,
       customParticipants,
+      reminders,
       createdBy: user.id,
       isLocked: false,
       lockedBy: null,
     });
+    console.log(newEvent);
     await newEvent.save();
     res.status(201).json({ message: 'Event added successfully', newEvent });
   } catch (error) {

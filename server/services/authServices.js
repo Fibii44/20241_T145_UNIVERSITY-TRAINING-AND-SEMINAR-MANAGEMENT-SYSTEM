@@ -26,7 +26,8 @@ const googleOAuthCallback = (req, res, next) => {
         position: user.position,
         department: user.department,
         phoneNumber: user.phoneNumber,
-        profilePicture: user.profilePicture
+        profilePicture: user.profilePicture,
+        accessToken: user.accessToken
       },
       JWT_SECRET,
       { expiresIn: JWT_EXPIRES_IN }
@@ -74,7 +75,8 @@ const manualLogin = async (req, res) => {
         position: user.position,
         department: user.department,
         phoneNumber: user.phoneNumber,
-        profilePicture: user.profilePicture 
+        profilePicture: user.profilePicture,
+        accessToken: user.accessToken
       }, 
       JWT_SECRET, 
       { expiresIn: JWT_EXPIRES_IN }

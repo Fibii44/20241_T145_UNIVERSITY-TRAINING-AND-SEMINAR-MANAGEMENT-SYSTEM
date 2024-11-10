@@ -61,7 +61,7 @@ const EventM = ({ userRole, userCollege }) => {
   };
 
   const handleSaveEventDetails = async (eventDetails) => {
-    const { date, startTime, endTime, participants, customParticipants = [], eventPicture, ...rest } = eventDetails;
+    const { date, startTime, endTime, participants, customParticipants = [], eventPicture, reminders, ...rest } = eventDetails;
     const formattedEventDate = date ? new Date(date).toISOString() : undefined;
   
     const token = sessionStorage.getItem('authToken');
@@ -85,7 +85,6 @@ const EventM = ({ userRole, userCollege }) => {
     formData.append('startTime', startTime); // Send as string (will parse later)
     formData.append('endTime', endTime); // Send as string (will parse later)
     formData.append('location', rest.location);
-    formData.append('hostname', rest.hostname || '');
     formData.append('description', rest.description || '');
     formData.append('color', rest.color || '#65a8ff');
     if (eventPicture) {
@@ -95,6 +94,13 @@ const EventM = ({ userRole, userCollege }) => {
       formData.append('participantGroup[college]', participants.college || "All");
       formData.append('participantGroup[department]', participants.department || "All");
     }
+    if (reminders && reminders.length > 0) {
+      reminders.forEach((reminder, index) => {
+        formData.append(`reminders[${index}][method]`, reminder.method);
+        formData.append(`reminders[${index}][minutesBefore]`, reminder.minutesBefore);
+      });
+    }
+
     customParticipants.forEach((email, index) => formData.append(`customParticipants[${index}]`, email.trim()));
 
     if (!selectedEvent) {
@@ -171,7 +177,7 @@ const EventM = ({ userRole, userCollege }) => {
                     src={`http://localhost:3000/eventPictures/${event.eventPicture}`}
                     alt={`${event.title || "No"} image`}
                     className="event-img"
-                    onError={(e) => (e.target.src = '/path/to/default-image.png')}
+                    onError={(e) => (e.target.src = '/src/assets/default-eventPicture.jpg')}
                   />
                 </div>
                 <div className="event-details">

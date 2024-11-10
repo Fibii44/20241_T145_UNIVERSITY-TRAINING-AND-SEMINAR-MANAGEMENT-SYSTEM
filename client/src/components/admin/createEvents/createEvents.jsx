@@ -14,7 +14,7 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
   const [endTime, setEndTime] = useState('');
   const [location, setLocation] = useState('');
   const [description, setDescription] = useState('');
-  const [reminders, setReminders] = useState('None');
+  const [reminders, setReminders] = useState([]);
   const [eventPicture, setEventPicture] = useState(null);
   const [activeReminder, setActiveReminder] = useState('None');
   const [color, setColor] = useState('#65a8ff');
@@ -116,8 +116,29 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
   };
 
   const handleReminderClick = (reminder) => {
-    setReminders(reminder);
-    setActiveReminder(reminder);
+    if (reminder === 'None') {
+      setReminders([]);
+      setActiveReminder('None');
+    } else {
+      const reminderTime = getReminderTimeInMinutes(reminder);
+      setReminders([{method: 'popup', minutesBefore: reminderTime}]);
+      setActiveReminder(reminder);
+    }
+  };
+
+  const getReminderTimeInMinutes = (reminder) => {
+    switch (reminder) {
+      case '1 hour before':
+        return 60;
+      case '1 day before':
+        return 1440;
+      case '1 week before':
+        return 10080;
+      case 'None':
+        return 0;  // None means zero minutes
+      default:
+        return 0;
+    }
   };
 
   const handleCollegeChange = (e) => {
@@ -146,7 +167,7 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
       setEndTime(initialEventData.endTime || '');
       setLocation(initialEventData.location || '');
       setDescription(initialEventData.description || '');
-      setReminders(initialEventData.reminders || 'None');
+      setReminders(initialEventData.reminders || []);
       setColor(initialEventData.color || '');
       setSelectedParticipants(initialEventData.customParticipants || []);
       setParticipants({

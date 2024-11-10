@@ -9,6 +9,10 @@ function Event() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [showImage, setShowImage] = useState(false); 
+    const [isRegistered, setIsRegistered] = useState(false);
+    const [registrationStatus, setRegistrationStatus] = useState("Register");
+    const [googleEventId, setGoogleEventId] = useState(null); // Store Google Calendar event ID
+    const [isLoading, setIsLoading] = useState(false); // Declare setIsLoading
 
     const formatTime = (date) => {
         return new Date(date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
@@ -16,6 +20,29 @@ function Event() {
 
 
     useEffect(() => {
+
+        const checkRegistration = async () => {
+            const token = sessionStorage.getItem('authToken');
+            console.log(token);
+            if (!token) {
+                setError("No token found, please log in.");
+                return;
+            }
+        
+            try {
+                console.log(`Checking registration status ${id}`);
+                const response = await axios.get(`http://localhost:3000/u/events/${id}/check-registration`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                setIsRegistered(response.data.isRegistered);
+                setRegistrationStatus(response.data.isRegistered ? "Cancel Registration" : "Register");
+                setGoogleEventId(response.data.googleEventId || null); // Store googleEventId from response
+            } catch (err) {
+                console.error("Error checking registration status", err);
+                setError("Failed to check registration status");
+            }
+        };
+        
         const fetchEvent = async () => {
             try {
                 const response = await axios.get(`http://localhost:3000/u/events/${id}`);
@@ -28,20 +55,64 @@ function Event() {
         };
 
         fetchEvent();
+        checkRegistration();
     }, [id]);
+
+
+    const handleRegistration = async () => {
+        const token = sessionStorage.getItem('authToken');
+        try {
+            const response = await axios.post('http://localhost:3000/u/events/', { eventId: id }, { headers: { Authorization: `Bearer ${token}` } });
+            setIsRegistered(true); // User is now registered
+            setRegistrationStatus("Cancel Registration"); // Change the button text to "Cancel Registration"
+            alert('Event added to your Google Calendar with reminders');
+        } catch (err) {
+            alert('Failed to register for the event');
+        }
+    };
+
+    const handleCancellation = async () => {
+        const token = sessionStorage.getItem('authToken');
+        
+        try {
+            if (!googleEventId) {
+                alert('No Google Calendar event found to cancel.');
+                return;
+            }
+            // Send delete request with the googleEventId
+            await axios.delete(
+                `http://localhost:3000/u/events/${id}/cancellation`,
+                { 
+                    headers: { Authorization: `Bearer ${token}` },
+                    data: { 
+                        googleEventId: googleEventId 
+                    }
+                }
+            );
+            
+            setIsRegistered(false);
+            setRegistrationStatus("Register");
+            alert('Registration and calendar event cancelled successfully');
+        } catch (error) {
+            console.error('Cancellation error:', error);
+            alert('Failed to cancel registration: ' + (error.response?.data?.message || error.message));
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     if (loading) return <p>Loading event...</p>;
     if (error) return <p>{error}</p>;
     if (!event) return <p>Event not found.</p>;
 
     return (
-        <div class="card" style={{ maxWidthwidth: '1000px' }}>
-            <div class="container" className="eventDetail">
-                <div class="user-event-details" key={event._id || event.id}>
+        <div className="card" style={{ maxWidthwidth: '1000px' }}>
+            <div className="container eventDetail">
+                <div className="user-event-details" key={event._id || event.id}>
                     <img 
                         src={`http://localhost:3000/eventPictures/${event.eventPicture}`} 
                         alt={event.title} 
-                        class="event-image" 
+                        className="event-image" 
                         onClick={() => setShowImage(true)} // Show overlay on click
                     />
 
@@ -50,18 +121,20 @@ function Event() {
                             <img 
                                 src={`http://localhost:3000/eventPictures/${event.eventPicture}`} 
                                 alt={event.title} 
-                                class="large-image" 
+                                className="large-image" 
                             />
                         </div>
                     )}
 
                     <h3>{event.title}</h3>
-                    <p className="event-date"><i class="fas fa-calendar-alt"></i> <strong>Date:</strong> {new Date(event.eventDate).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</p>
-                    <p className="event-time"><i class="fas fa-clock"></i> <strong>Time:</strong> {formatTime(event.startTime)} - {formatTime(event.endTime)}</p>
-                    <p className="event-location"><i class="fas fa-map-marker-alt"></i> <strong>Location:</strong> {event.location}</p>
-                    <p className="event-description"><i class="fas fa-info-circle"></i> <strong>Description:</strong> {event.description}</p>
+                    <p className="event-date"><i className="fas fa-calendar-alt"></i> <strong>Date:</strong> {new Date(event.eventDate).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</p>
+                    <p className="event-time"><i className="fas fa-clock"></i> <strong>Time:</strong> {formatTime(event.startTime)} - {formatTime(event.endTime)}</p>
+                    <p className="event-location"><i className="fas fa-map-marker-alt"></i> <strong>Location:</strong> {event.location}</p>
+                    <p className="event-description"><i className="fas fa-info-circle"></i> <strong>Description:</strong> {event.description}</p>
                     <div className="user-register-button" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                        <button className='register-button'>Register</button>
+                        <button className='register-button' onClick={isRegistered ? handleCancellation : handleRegistration}>
+                            {registrationStatus}
+                        </button>
                     </div>
                 </div> 
             </div>
