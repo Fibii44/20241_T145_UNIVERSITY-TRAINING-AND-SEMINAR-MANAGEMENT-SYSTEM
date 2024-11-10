@@ -39,11 +39,17 @@ const EventSchema = new mongoose.Schema({
         trim: true,
         maxlength: 500
     },
-    reminders: {
-        type: String,
-        enum: ['None', '1 hour before', '1 day before', '1 week before'],
-        default: 'None'
-    },
+    reminders: [{
+        method: {
+            type: String,
+            enum: ['email', 'popup'],
+            default: 'email'
+        },
+        minutesBefore: {
+            type: Number,
+            required: true
+        }
+    }],
     participantGroup: {
         college: {
             type: String,

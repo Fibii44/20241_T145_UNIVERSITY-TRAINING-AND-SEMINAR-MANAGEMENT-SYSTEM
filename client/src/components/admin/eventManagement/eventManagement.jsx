@@ -76,7 +76,7 @@ const confirmDelete = async () => {
 };
 
   const handleSaveEventDetails = async (eventDetails) => {
-    const { date, startTime, endTime, participants, customParticipants = [], eventPicture, ...rest } = eventDetails;
+    const { date, startTime, endTime, participants, customParticipants = [], eventPicture, reminders, ...rest } = eventDetails;
 
 
     // Ensure the date, startTime, and endTime are valid Date objects before calling toISOString
@@ -111,7 +111,6 @@ const confirmDelete = async () => {
     formData.append('startTime', formattedStartTime);
     formData.append('endTime', formattedEndTime);
     formData.append('location', rest.location);
-    formData.append('hostname', rest.hostname || '');
     formData.append('description', rest.description || '');
     formData.append('color', rest.color || '#65a8ff');
     if (eventPicture) formData.append('eventPicture', eventPicture);
@@ -119,6 +118,13 @@ const confirmDelete = async () => {
         formData.append('participantGroup[college]', participants.college || "All");
         formData.append('participantGroup[department]', participants.department || "All");
     }
+    if (reminders && reminders.length > 0) {
+      reminders.forEach((reminder, index) => {
+        formData.append(`reminders[${index}][method]`, reminder.method);
+        formData.append(`reminders[${index}][minutesBefore]`, reminder.minutesBefore);
+      });
+    }
+
     customParticipants.forEach((email, index) => formData.append(`customParticipants[${index}]`, email.trim()));
 
     if (!selectedEvent) {
@@ -195,7 +201,7 @@ const confirmDelete = async () => {
                     src={`http://localhost:3000/eventPictures/${event.eventPicture}`}
                     alt={`${event.title || "No"} image`}
                     className="event-img"
-                    onError={(e) => (e.target.src = '/path/to/default-image.png')}
+                    onError={(e) => (e.target.src = '/src/assets/default-eventPicture.jpg')}
                   />
                 </div>
                 <div className="event-details">
