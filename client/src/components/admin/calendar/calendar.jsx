@@ -1,3 +1,4 @@
+{
 // import React, { useState, useEffect } from 'react';
 // import axios from 'axios';
 
@@ -56,6 +57,7 @@
 // export default Calendar;
 
 //Ayaw i delete ang comment na codess
+}
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import React, { useState, useEffect } from 'react';
@@ -71,7 +73,11 @@ const Calendar = () => {
     const [selectedEvents, setSelectedEvents] = useState([]);
     const [selectedDate, setSelectedDate] = useState(null);
     const today = new Date();
-
+    const colleges = [
+  'College of Arts and Sciences', 'College of Business', 'College of Education',
+  'College of Law', 'College of Public Administration and Governance', 
+  'College of Nursing', 'College of Technologies'
+];
     // Function to open the overlay for a selected day
     const openOverlay = (date, events) => {
         setSelectedDate(date);
@@ -227,6 +233,8 @@ const Calendar = () => {
     };
 
     const renderMonthView = () => {
+        const [selectedCollege, setSelectedCollege] = useState('');
+
         const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
         const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
         const daysInMonth = endOfMonth.getDate();
@@ -246,7 +254,11 @@ const Calendar = () => {
         );
     
         const allDays = [...daysFromPrevMonth, ...daysThisMonth, ...daysFromNextMonth];
-    
+        const filterEventsByCollege = (events) => {
+            if (!selectedCollege) return events; // If no college is selected, show all events
+            return events.filter(event => event.participantGroup.college === selectedCollege);
+          };
+
         return (
             <>
                 <div className="calendar-header">
@@ -254,15 +266,26 @@ const Calendar = () => {
                     <h2>{startOfMonth.toLocaleString('default', { month: 'long' })} {startOfMonth.getFullYear()}</h2>
                     <button className="prev-next" onClick={goToNext}><FontAwesomeIcon icon={faChevronRight} /></button>
                     {renderViewButtons()}
+                    <select
+                        value={selectedCollege}
+                        onChange={(e) => setSelectedCollege(e.target.value)}
+                        className="college-filter-dropdown"
+                        >
+                        <option value="">All Colleges</option>
+                        {colleges.map(college => (
+                            <option key={college} value={college}>{college}</option>
+                        ))}
+                        </select>
                 </div>
                 <div className="calendar-grid">
                     {daysOfWeek.map(day => (
                         <div key={day} className="calendar-day-header">{day}</div>
                     ))}
                     {allDays.map((date, index) => {
-                        const formattedDate = date.toISOString().split('T')[0];
+                        // Convert to locale date to avoid timezone issues
+                        const formattedDate = date.toLocaleDateString('en-CA'); // Format as YYYY-MM-DD
                         const dayNumber = date.getDate();
-                        const eventsForDay = getEventsForDay(formattedDate);
+                        const eventsForDay = filterEventsByCollege(getEventsForDay(formattedDate));
                         const isToday = date.toDateString() === today.toDateString();
 
                         return (
@@ -331,6 +354,8 @@ const Calendar = () => {
     
     // Week View
     const renderWeekView = () => {
+        const [selectedCollege, setSelectedCollege] = useState('');
+
         const startOfWeek = new Date(currentDate);
         const dayOfWeek = startOfWeek.getDay();
         startOfWeek.setDate(startOfWeek.getDate() - dayOfWeek);
@@ -342,6 +367,12 @@ const Calendar = () => {
             ? `${startOfWeek.toLocaleString('default', { month: 'long' })} ${startOfWeek.getDate()}, ${startOfWeek.getFullYear()}` 
             : `${startOfWeek.toLocaleString('default', { month: 'long' })} ${startOfWeek.getDate()} - ${endOfWeek.toLocaleString('default', { month: 'long' })} ${endOfWeek.getDate()}, ${startOfWeek.getFullYear()}`;
             
+
+        const filterEventsByCollege = (events) => {
+            if (!selectedCollege) return events; // Show all events if no college is selected
+            return events.filter(event => event.participantGroup.college === selectedCollege);
+            };
+
         return (
             <>
                 <div className="calendar-header">
@@ -349,6 +380,16 @@ const Calendar = () => {
                     <h2>{weekHeader}</h2>
                     <button className="prev-next" onClick={goToNext}><FontAwesomeIcon icon={faChevronRight} /></button>
                     {renderViewButtons()}
+                    <select
+                        value={selectedCollege}
+                        onChange={(e) => setSelectedCollege(e.target.value)}
+                        className="college-filter-dropdown"
+                        >
+                        <option value="">All Colleges</option>
+                        {colleges.map(college => (
+                            <option key={college} value={college}>{college}</option>
+                        ))}
+                    </select>
                 </div>
                 <div className="calendar-grid">
                     {daysOfWeek.map(day => (
@@ -359,7 +400,7 @@ const Calendar = () => {
                         date.setDate(startOfWeek.getDate() + index);
                         const formattedDate = date.toISOString().split('T')[0];
                         const dayNumber = date.getDate();
-                        const eventsForDay = getEventsForDay(formattedDate);
+                        const eventsForDay = filterEventsByCollege(getEventsForDay(formattedDate));
                         const isToday = date.toDateString() === today.toDateString();
                         
                         return (

@@ -1,3 +1,4 @@
+{
 // import React, { useState, useEffect } from 'react';
 // import axios from 'axios';
 
@@ -56,6 +57,7 @@
 // export default Calendar;
 
 //Ayaw i delete ang comment na codess
+}
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import React, { useState, useEffect } from 'react';
@@ -173,11 +175,17 @@ const Calendar = () => {
     const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
     const getEventsForDay = (date) => {
-        return events.filter(event => {
-            const eventDate = new Date(event.eventDate).toISOString().split('T')[0];
-            return eventDate === date;
-        });
-    };
+    return events.filter(event => {
+        const eventDate = new Date(event.eventDate);
+        const calendarDate = new Date(date);
+
+        // Set both dates to midnight for accurate comparison
+        eventDate.setHours(0, 0, 0, 0);
+        calendarDate.setHours(0, 0, 0, 0);
+
+        return eventDate.getTime() === calendarDate.getTime();
+    });
+};
 
     const renderViewButtons = () => (
         <div style={{ display: 'flex' }}>
@@ -260,10 +268,14 @@ const Calendar = () => {
                         <div key={day} className="calendar-day-header">{day}</div>
                     ))}
                     {allDays.map((date, index) => {
-                        const formattedDate = date.toISOString().split('T')[0];
-                        const dayNumber = date.getDate();
-                        const eventsForDay = getEventsForDay(formattedDate);
-                        const isToday = date.toDateString() === today.toDateString();
+                    // Convert to locale date to avoid timezone issues
+                    const formattedDate = date.toLocaleDateString('en-CA'); // Format as YYYY-MM-DD
+                    const dayNumber = date.getDate();
+                    const eventsForDay = getEventsForDay(formattedDate);
+
+                    // Remove time component for isToday comparison
+                    const isToday = new Date(today.getFullYear(), today.getMonth(), today.getDate()).toDateString() === 
+                    new Date(date.getFullYear(), date.getMonth(), date.getDate()).toDateString();
 
                         return (
                             <div
@@ -379,9 +391,7 @@ const Calendar = () => {
                                                 className="event grid-item" 
                                                 style={{ backgroundColor: event.color }}
                                             >
-                                                <span style={{ color: event.color, fontWeight: 'bold', fontSize: '14px' }}>
-                                                    {event.title}
-                                                </span>
+                                                
                                             </div>
                                         </Link>
                                     ))}
