@@ -377,7 +377,7 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
               </div>
 
               <div className="event-buttons">
-                <button type="submit" className="btn btn-primary mr-2 event-save-button">Create Event</button>
+                <button type="submit" className="btn btn-primary mr-2 event-save-button">Save Event</button>
                 <button type="button" className="btn btn-secondary event-close-button" onClick={onClose}>
                   Cancel
                 </button>
