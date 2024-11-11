@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
 import './eventDetails.css'
 
 function Event() {
@@ -13,11 +14,37 @@ function Event() {
     const [registrationStatus, setRegistrationStatus] = useState("Register");
     const [googleEventId, setGoogleEventId] = useState(null); // Store Google Calendar event ID
     const [isLoading, setIsLoading] = useState(false); // Declare setIsLoading
+    const [currentUser, setCurrentUser] = useState(null);
+    const [canRegister, setCanRegister] = useState(false);
 
     const formatTime = (date) => {
         return new Date(date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
     };
 
+    useEffect(() => {
+        const checkUser = async () => {
+            const token = sessionStorage.getItem('authToken');
+            if(!token) { return false; }
+
+            try {
+                const decodedToken = jwtDecode(token);
+                setCurrentUser(decodedToken);
+
+                const isOpenToAll = !event?.participantGroup?.college || event.participantGroup.college === " " || event.participantGroup.college === "All";
+
+                const isPartOfCollege = isOpenToAll || event?.participantGroup?.college === decodedToken.department;
+
+                const isCustomParticipant = event?.customParticipants?.includes(decodedToken.email);
+
+                setCanRegister(isOpenToAll || isPartOfCollege || isCustomParticipant);
+            }catch(error) {
+                console.error("Error checking user access", error);
+                setCanRegister(false);
+            }
+
+        };
+        if(event) { checkUser(); }
+    }, [event]);
 
     useEffect(() => {
 
@@ -132,9 +159,13 @@ function Event() {
                     <h6 className="event-location"><i className="fas fa-map-marker-alt"></i> <strong>Location:</strong> <strong>{event.location}</strong></h6>
                     <h6 className="event-description"><i className="fas fa-info-circle"></i> <strong>Description:</strong> {event.description}</h6>
                     <div className="user-register-button" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                        {canRegister ? (
                         <button className='register-button' onClick={isRegistered ? handleCancellation : handleRegistration}>
                             {registrationStatus}
-                        </button>
+                            </button>
+                        ) : (
+                            <p>You are not part of this event.</p>
+                        )}
                     </div>
                 </div> 
             </div>
