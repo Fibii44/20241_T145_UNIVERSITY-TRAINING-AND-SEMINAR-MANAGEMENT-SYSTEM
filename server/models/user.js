@@ -15,6 +15,9 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: function() { return !this.googleId; } // Password is required only if googleId is not present
     },
+    salt: {
+        type: String,
+    },
     googleId: {
         type: String,
         unique: true,
@@ -47,6 +50,10 @@ const UserSchema = new mongoose.Schema({
     },
     refreshToken: {
         type: String
+    },
+    mustChangePassword: {
+        type: Boolean,
+        default: false
     },
     createdAt: {
         type: Date,

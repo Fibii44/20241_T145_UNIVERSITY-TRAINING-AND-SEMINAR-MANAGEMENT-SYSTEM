@@ -13,7 +13,18 @@ const authenticateJWT = (req, res, next) => {
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
     console.log("Decoded Token:", decoded); // Log the decoded token
-    req.user = decoded; // Attach decoded user information to req.user
+    req.user = {
+      id: decoded.id,
+      role: decoded.role,
+      name: decoded.name,        
+      email: decoded.email,       
+      department: decoded.department,
+      phoneNumber: decoded.phoneNumber,
+      accessToken: decoded.accessToken,
+      refreshToken: decoded.refreshToken,
+      iat: decoded.iat,
+      exp: decoded.exp
+    };
     console.log("User Information:", req.user); // Log the user information
     next();
   } catch (error) {

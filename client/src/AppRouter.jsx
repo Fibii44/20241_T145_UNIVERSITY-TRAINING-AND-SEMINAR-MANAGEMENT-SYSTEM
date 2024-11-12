@@ -7,6 +7,7 @@ import LoginSuccess from './pages/loginPage/LoginSuccess';
 import Admin from './routing/adminPageRouting.jsx'; 
 import User from './routing/userPageRoutes.jsx';
 import PrivateRoute from './PrivateRoute';
+import ChangePassword from './pages/setPassword/setPassword';
 
 createRoot(document.getElementById("root")).render(
     <StrictMode>
@@ -30,6 +31,7 @@ createRoot(document.getElementById("root")).render(
                 </PrivateRoute>
               }
             />
+            <Route path="/set-password" element={<ChangePassword />} />
           </Routes>
         </BrowserRouter>
     </StrictMode>

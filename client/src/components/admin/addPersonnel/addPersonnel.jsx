@@ -92,8 +92,6 @@ const AddUserForm = () => {
       department: '',
       gender: '',
       position: '',
-      password: '',
-      confirmPassword: '',
       role: '',
     });
     setError('');
@@ -102,10 +100,6 @@ const AddUserForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
 
     // Retrieve token from localStorage just before the request
     const token = sessionStorage.getItem("authToken");
@@ -122,7 +116,6 @@ const AddUserForm = () => {
     data.append("department", formData.department);
     data.append("gender", formData.gender);
     data.append("position", formData.position);
-    data.append("password", formData.password);
     data.append("role", formData.role);
 
     try {
@@ -238,42 +231,6 @@ const AddUserForm = () => {
             </option>
           ))}
         </select>
-      </label>
-
-      <label>
-        Password:
-        <div className="password-container">
-          <input
-            type={showPassword.password ? "text" : "password"}
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-          <FontAwesomeIcon
-            icon={showPassword.password ? faEye : faEyeSlash}
-            onClick={() => handleTogglePassword("password")}
-            className="eye-icon"
-          />
-        </div>
-      </label>
-
-      <label>
-        Re-enter Password:
-        <div className="password-container">
-          <input
-            type={showPassword.confirmPassword ? "text" : "password"}
-            name="confirmPassword"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            required
-          />
-          <FontAwesomeIcon
-            icon={showPassword.confirmPassword ? faEye : faEyeSlash}
-            onClick={() => handleTogglePassword("confirmPassword")}
-            className="eye-icon"
-          />
-        </div>
       </label>
 
       {error && <p className="error-message">{error}</p>}

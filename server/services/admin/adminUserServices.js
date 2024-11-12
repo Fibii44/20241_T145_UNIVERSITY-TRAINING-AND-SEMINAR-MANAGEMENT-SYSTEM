@@ -1,7 +1,9 @@
 const bcrypt = require('bcrypt');
 const User = require('../../models/user');
+const crypto = require('crypto');
 const DeletedUser = require('../../models/deletedUser');
 const multer = require('multer');
+const sendEmail = require('../../utils/sendEmail');
 
 // Multer configuration for file uploads
 const storage = multer.diskStorage({
@@ -42,29 +44,90 @@ const renderPersonnelPage = async (req, res) => {
 
 const addPersonnelAccount = async (req, res) => {
   try {
-    const { name, email, password, role, phoneNumber, department, position } = req.body;
+    const { name, email, role, phoneNumber, department, position } = req.body;
     const profilePicture = req.file ? req.file.filename : null;
 
     const existingUser = await User.findOne({ email });
-
     if (existingUser) {
       throw new Error('User already exists');
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const tempPassword = crypto.randomBytes(8).toString('hex'); 
+    console.log("Temporary password:", tempPassword);
+
+    const initialHash = await bcrypt.hash(tempPassword, 10);
+
+    const salt = await bcrypt.genSalt(10);
+    const saltedPassword = initialHash + salt;
+
+    const finalHashedPassword = await bcrypt.hash(saltedPassword, 10);
+    console.log(finalHashedPassword);
+
+
     const newUser = new User({
       name,
       email,
-      password: hashedPassword,
+      password: finalHashedPassword,
+      salt: salt,
       role,
       phoneNumber,
       department,
       position,
-      profilePicture
+      profilePicture,
+      mustChangePassword: true
     });
 
     await newUser.save();
-    res.status(201).json({ message: 'Personnel account created', newUser });
+    console.log(newUser);
+
+    // Extract access and refresh tokens from req.user, or handle if missing
+    const { accessToken, refreshToken } = req.user || {};
+    if (!accessToken || !refreshToken) {
+      throw new Error("Authentication tokens are missing");
+    }
+
+
+     // Send the temporary password email
+     const emailContent = `
+     Dear ${name},
+     
+     Welcome to BukSU Engage!
+     
+     Your account has been successfully created in the BukSU Training and Seminar Management System.
+     
+     Your Login Credentials:
+     Email: ${email}
+     Temporary Password: ${tempPassword}
+     
+     IMPORTANT SECURITY NOTICE:
+     * For security reasons, you will be required to change your password upon your first login.
+     * Please keep your credentials confidential.
+     * If you didn't request this account, please contact the administrator immediately.
+     
+     To access the system:
+     1. Visit the BukSU Engage Login page
+     2. Enter your email and temporary password
+     3. Follow the prompts to set your new password
+     
+     If you have any questions or need assistance, please contact our support team.
+     
+     Best regards,
+     BukSU Engage Admin Team
+     `;
+   
+   await sendEmail(newUser.email, 'Welcome to Your Account', emailContent, { accessToken: req.user.accessToken, refreshToken: req.user.refreshToken });
+
+   res.status(201).json({ 
+    message: 'Personnel account created successfully', 
+    user: {
+      name: newUser.name,
+      email: newUser.email,
+      role: newUser.role,
+      department: newUser.department,
+      position: newUser.position
+    }
+  });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }

@@ -5,10 +5,18 @@ const User = require('../models/user');
 
 dotenv.config();
 
+const scopes = [
+    'profile', 
+    'email', 
+    'https://www.googleapis.com/auth/calendar',
+    'https://www.googleapis.com/auth/gmail.send',
+]
+
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     callbackURL: 'http://localhost:3000/auth/google/callback',
+    scope: scopes,
 },
 async (accessToken, refreshToken, profile, done) => {
     try {
@@ -35,8 +43,8 @@ async (accessToken, refreshToken, profile, done) => {
                     email: profile.emails[0].value,
                     profilePicture: profile.photos[0].value,
                     role: 'faculty_staff',  // Default role
-                    accessToken: accessToken,
-                    refreshToken: refreshToken
+                    accessToken,
+                    refreshToken
                 });
             }
             await user.save();

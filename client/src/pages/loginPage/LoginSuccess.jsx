@@ -14,10 +14,16 @@ function LoginSuccess() {
 
       const decoded = jwtDecode(token);
       const userRole = decoded.role;
+      const mustChangePassword = decoded.mustChangePassword;
 
       sessionStorage.setItem("userRole", userRole);
 
-      console.log(token);
+      console.log(decoded);
+
+      if (mustChangePassword) {
+        navigate("/set-password");
+        return;
+      }
 
       if (userRole === "faculty_staff") {
         navigate("/u"); 
