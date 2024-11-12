@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './setPassword.css';
 
-
 const ChangePassword = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -38,9 +37,9 @@ const ChangePassword = () => {
       !passwordStrength.hasNumber || 
       !passwordStrength.hasSpecial || 
       !passwordStrength.hasMinLength) {
-    setError('Password does not meet all requirements');
-    return;
-  }
+      setError('Password does not meet all requirements');
+      return;
+    }
 
     if (password !== confirmPassword) {
       setError('Passwords do not match');
@@ -48,7 +47,7 @@ const ChangePassword = () => {
     }
 
     try {
-     const token = sessionStorage.getItem('authToken');
+      const token = sessionStorage.getItem('authToken');
       const response = await fetch('http://localhost:3000/auth/change-password', {
         method: 'POST',
         headers: {
@@ -73,8 +72,8 @@ const ChangePassword = () => {
   };
 
   return (
-    <div className="form-container">
-        <form onSubmit={handleSubmit}>
+    <div className="change-password-form-container">
+        <form onSubmit={handleSubmit} className="change-password-form">
             <h3>Change Password</h3>
             <div className="password-requirements">
             <h5>Password Requirements:</h5>

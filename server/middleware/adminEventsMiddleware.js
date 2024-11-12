@@ -42,30 +42,29 @@ const canEditEvent = async (req, res, next) => {
     const user = req.user;
     const { id } = req.params;
   
-    // Only applies to general admins
-    if (user.role === 'general_admin') {
-      const activeEvent = await Event.findOne({ isLocked: true });
+    if (user.role === 'general_admin' || 'departmental_admin') {
+      const event = await Event.findById(id);
   
-      // Check if activeEvent is locked and if lockedBy is valid before using .equals()
-      if (activeEvent && activeEvent.lockedBy && activeEvent.lockedBy.equals && !activeEvent.lockedBy.equals(user.id)) {
-        return res.status(403).json({ message: 'Another admin is currently editing. Please wait.' });
+      // If locked by another user, deny access
+      if (event.isLocked && event.lockedBy && !event.lockedBy.equals(user.id)) {
+        return res.status(403).json({ message: 'Event is being edited by another admin.' });
       }
   
-      // Lock the event for editing by this user
+      // Otherwise, lock it for the current user
       await Event.findByIdAndUpdate(id, { isLocked: true, lockedBy: user.id });
     }
   
     next();
   };
   
-  
   // Middleware to release the concurrency lock
   const clearConcurrencyLock = async (req, res, next) => {
     const user = req.user;
-    if (user.role === 'general_admin') {
-      await Event.updateMany({ lockedBy: user.id }, { $set: { isLocked: false, lockedBy: null } });
+    const { id } = req.params;
+  
+    if (user.role === 'general_admin' || 'departmental-admin') {
+      await Event.findByIdAndUpdate(id, { isLocked: false, lockedBy: null });
     }
     next();
   };
-  
 module.exports = { checkLockStatus, canEditEvent, clearEventLock, concurrencyLock, clearConcurrencyLock };

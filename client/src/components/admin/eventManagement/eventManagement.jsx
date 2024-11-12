@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCalendarCheck, faClock, faPlus, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
+import { faCalendarCheck, faClock, faPlus, faMapMarkerAlt, faLock } from '@fortawesome/free-solid-svg-icons';
 import './eventManagement.css';
 import { jwtDecode } from 'jwt-decode';
 import EventModal from '../createEvents/createEvents';
@@ -34,7 +34,17 @@ const [eventToDelete, setEventToDelete] = useState(null);
         startTime: new Date(event.startTime),
         endTime: new Date(event.endTime),
       }));
-      setEvents(formattedEvents);
+  
+      // Update event list and ensure isLocked status is correct
+      setEvents(prevEvents => {
+        return formattedEvents.map(newEvent => {
+          // Find if the event already exists and should be updated with new lock status
+          const prevEvent = prevEvents.find(event => event._id === newEvent._id);
+          return prevEvent
+            ? { ...prevEvent, isLocked: newEvent.isLocked }
+            : newEvent;
+        });
+      });
     } catch (error) {
       alert('Error fetching events: ' + error.message);
     } finally {
@@ -42,19 +52,39 @@ const [eventToDelete, setEventToDelete] = useState(null);
     }
   };
 
-  const handleEdit = (event) => {
+  //When edit button was clicked
+  const handleEdit = async (event) => {
+    const token = sessionStorage.getItem('authToken');
+    
+    if (!token) {
+      alert('User is not authenticated. Please log in.');
+      return;
+    }
+    
     const formattedSelectedEvent = event ? {
-        ...event,
-        eventDate: (event.eventDate instanceof Date ? event.eventDate : new Date(event.eventDate)).toISOString().split("T")[0], // format as YYYY-MM-DD
-        startTime: (event.startTime instanceof Date ? event.startTime : new Date(event.startTime)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
-        endTime: (event.endTime instanceof Date ? event.endTime : new Date(event.endTime)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
+      ...event,
+      eventDate: (event.eventDate instanceof Date ? event.eventDate : new Date(event.eventDate)).toISOString().split("T")[0], // format as YYYY-MM-DD
+      startTime: (event.startTime instanceof Date ? event.startTime : new Date(event.startTime)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
+      endTime: (event.endTime instanceof Date ? event.endTime : new Date(event.endTime)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
     } : null;
-
+    
     setSelectedEvent(formattedSelectedEvent);
     setIsModalOpen(true);
-};
-
-
+  
+    // Lock the event for editing by this user
+    try {
+      await axios.put(`http://localhost:3000/a/events/${event._id}/lock`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      // Event is successfully locked, proceed with editing
+    } catch (error) {
+      alert('Failed to lock event for editing: ' + error.message);
+      // If locking fails, revert the lock status in the UI
+      setEvents(prevEvents => prevEvents.map(ev =>
+        ev._id === event._id ? { ...ev, isLocked: false } : ev
+      ));
+    }
+  };
 
 const handleDelete = (eventId) => {
   setEventToDelete(eventId);
@@ -73,6 +103,23 @@ const confirmDelete = async () => {
   } catch (error) {
     console.error('Error deleting event:', error.message);
   }
+};
+
+//Unlock the event when user click cancel button
+const handleCancelEdit = async () => {
+  // If editing an event, unlock it
+  if (selectedEvent) {
+    const token = sessionStorage.getItem('authToken');
+    try {
+      await axios.put(`http://localhost:3000/a/events/${selectedEvent._id}/unlock`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+    } catch (error) {
+      alert('Error unlocking event: ' + error.message);
+    }
+  }
+  setIsModalOpen(false);
+  setSelectedEvent(null); // Reset selected event
 };
 
   const handleSaveEventDetails = async (eventDetails) => {
@@ -158,28 +205,48 @@ const confirmDelete = async () => {
     } catch (error) {
         alert('Error saving event: ' + (error.response?.data?.message || error.message));
     } finally {
-        setIsModalOpen(false);
-        setSelectedEvent(null);
-    }
+        // Release lock after save
+        try {
+          // Unlock the event
+          await axios.put(`http://localhost:3000/a/events/${selectedEvent._id}/unlock`, {}, {
+              headers: { Authorization: `Bearer ${token}` }
+          });
+        
+      } catch (error) {
+          alert('Error unlocking event: ' + error.message);
+      } finally {
+          // Close modal and reset selected event
+          setIsModalOpen(false);
+          setSelectedEvent(null);
+          fetchEvents(); // Refresh the event list
+      }
+  }
 };
+useEffect(() => {
+  fetchEvents();
+ // Set interval to fetch events every 3 seconds
+ const interval = setInterval(fetchEvents, 3000);
 
-  useEffect(() => {
-    fetchEvents();
-  }, []);
+ // Cleanup function to clear the interval when the component is unmounted
+ return () => clearInterval(interval);
+}, []);
 
   return (
     <div className="dashboard-container">
       <div className="content">
         <div className="dashboard-inline">
           <h2 className="dashboard-heading">Events</h2>
-          <button className="dashboard-button" onClick={() => setIsModalOpen(true)} disabled={loading}>
-            <FontAwesomeIcon icon={faPlus} />
-          </button>
+          <button className="dashboard-button" onClick={() => { 
+  setSelectedEvent(null); // Clear previous event data
+  setIsModalOpen(true); 
+}} disabled={loading}>
+  <FontAwesomeIcon icon={faPlus} />
+</button>
         </div>
 
         <EventModal
           isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
+          onClose={handleCancelEdit}
           onSave={handleSaveEventDetails}
           userRole={userRole}
           userCollege={userCollege}
@@ -216,8 +283,14 @@ const confirmDelete = async () => {
                   </div>
                 </div>
                 <div className="event-actions">
-                  <button className="btn-edit edit-button" onClick={() => handleEdit(event)}>Edit</button>
-                  <button className="btn-delete delete-button" onClick={() => handleDelete(event._id)}>Delete</button>
+                {event.isLocked ? (
+    <FontAwesomeIcon icon={faLock} className="lock-icon" title="Event is being edited by another admin" />
+  ) : (
+    <>
+      <button onClick={() => handleEdit(event)}>Edit</button>
+      <button onClick={() => handleDelete(event._id)}>Delete</button>
+    </>
+  )}
                 </div>
               </div>
             ))}
