@@ -334,3 +334,93 @@
     padding: 4px;
     border-radius: 6px;
 }
+/* Year View Styling */
+.year-view {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 20px;
+    justify-content: space-around;
+}
+
+.month {
+    width: 23%;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    overflow: hidden;
+}
+
+.month h3 {
+    text-align: center;
+    padding: 10px;
+    background-color: #007BFF;
+    color: white;
+    margin: 0;
+    font-size: 18px;
+}
+
+.month-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    padding: 10px;
+}
+
+/* Day Header Styling (Sun, Mon, Tue...) */
+.calendar-day-header {
+    text-align: center;
+    font-weight: bold;
+    color: #555;
+    padding: 5px;
+}
+
+/* Day Cells Styling */
+.calendar-day {
+    text-align: center;
+    padding: 8px;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.calendar-day:hover {
+    background-color: #f0f0f0;
+    border-radius: 5px;
+}
+
+.date-number {
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Highlight Today's Date */
+.calendar-day[style*="border: 2px solid blue"] {
+    background-color: #e0f7fa;
+}
+
+/* Event Styling */
+.event {
+    font-size: 12px;
+    margin-top: 5px;
+    padding: 4px;
+    border-radius: 5px;
+    color: white;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .month {
+        width: 48%;
+    }
+}
+
+@media (max-width: 480px) {
+    .month {
+        width: 100%;
+    }
+}

@@ -242,7 +242,7 @@ const Calendar = () => {
     
         const daysFromPrevMonth = Array.from(
             { length: firstDayOfWeek },
-            (_, i) => new Date(startOfMonth.getFullYear(), startOfMonth.getMonth(), -(firstDayOfWeek - i))
+            (_, i) => new Date(startOfMonth.getFullYear(), startOfMonth.getMonth(), i - firstDayOfWeek + 1)
         );
     
         const daysThisMonth = Array.from({ length: daysInMonth }, (_, i) => new Date(startOfMonth.getFullYear(), startOfMonth.getMonth(), i + 1));
@@ -275,7 +275,7 @@ const Calendar = () => {
                         {colleges.map(college => (
                             <option key={college} value={college}>{college}</option>
                         ))}
-                        </select>
+                    </select>
                 </div>
                 <div className="calendar-grid">
                     {daysOfWeek.map(day => (
@@ -471,46 +471,82 @@ const Calendar = () => {
             </>
         );
     };
-    // Year View
+   // Year View
     const renderYearView = () => {
+        const [selectedCollege, setSelectedCollege] = useState('');
         const months = Array.from({ length: 12 }, (_, i) => new Date(currentDate.getFullYear(), i, 1));
         const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
         const today = new Date();
-    
+
         return (
-            <>
-                <div className="calendar-header">
-                    <button className="prev-next" onClick={() => setCurrentDate(new Date(currentDate.getFullYear() - 1, 0, 1))}>
-                        <FontAwesomeIcon icon={faChevronLeft} />
-                    </button>
-                    <h2>{currentDate.getFullYear()}</h2>
-                    <button className="prev-next" onClick={() => setCurrentDate(new Date(currentDate.getFullYear() + 1, 0, 1))}>
-                        <FontAwesomeIcon icon={faChevronRight} />
-                    </button>
-                    {renderViewButtons()}
-                </div>
-                <div className="year-view">
-                    {months.map((month, monthIndex) => (
+        <>
+            <div className="calendar-header">
+                <button className="prev-next" onClick={() => setCurrentDate(new Date(currentDate.getFullYear() - 1, 0, 1))}>
+                    <FontAwesomeIcon icon={faChevronLeft} />
+                </button>
+                <h2>{currentDate.getFullYear()}</h2>
+                <button className="prev-next" onClick={() => setCurrentDate(new Date(currentDate.getFullYear() + 1, 0, 1))}>
+                    <FontAwesomeIcon icon={faChevronRight} />
+                </button>
+                {renderViewButtons()}
+                <select
+                        value={selectedCollege}
+                        onChange={(e) => setSelectedCollege(e.target.value)}
+                        className="college-filter-dropdown"
+                        >
+                        <option value="">All Colleges</option>
+                        {colleges.map(college => (
+                            <option key={college} value={college}>{college}</option>
+                        ))}
+                    </select>
+            </div>
+            <div className="year-view">
+                {months.map((month, monthIndex) => {
+                    // Get the first day of the month and the number of days in the month
+                    const startOfMonth = new Date(month.getFullYear(), month.getMonth(), 1);
+                    const endOfMonth = new Date(month.getFullYear(), month.getMonth() + 1, 0);
+                    const daysInMonth = endOfMonth.getDate();
+                    const firstDayOfWeek = startOfMonth.getDay();
+
+                    // Days from the previous month to fill the first week of the calendar
+                    const daysFromPrevMonth = Array.from(
+                        { length: firstDayOfWeek },
+                        (_, i) => new Date(startOfMonth.getFullYear(), startOfMonth.getMonth(), i - firstDayOfWeek + 1)
+                    );  
+
+                    // Days in the current month
+                    const daysThisMonth = Array.from({ length: daysInMonth }, (_, i) => new Date(startOfMonth.getFullYear(), startOfMonth.getMonth(), i + 1));
+
+                    // Calculate days needed from the next month to fill the 42-day grid
+                    const totalDaysInCalendar = daysFromPrevMonth.length + daysThisMonth.length;
+                    const daysFromNextMonthCount = totalDaysInCalendar < 42 ? 42 - totalDaysInCalendar : 0;
+                    const daysFromNextMonth = Array.from(
+                        { length: daysFromNextMonthCount },
+                        (_, i) => new Date(endOfMonth.getFullYear(), endOfMonth.getMonth() + 1, i + 1)
+                    );
+
+                    const allDays = [...daysFromPrevMonth, ...daysThisMonth, ...daysFromNextMonth];
+
+                    return (
                         <div key={monthIndex} className="month">
                             <h3>{month.toLocaleString('default', { month: 'long' })}</h3>
                             <div className="month-grid">
                                 {daysOfWeek.map(day => (
                                     <div key={day} className="calendar-day-header">{day}</div>
                                 ))}
-                                {Array.from({ length: 42 }, (_, dayIndex) => {
-                                    const date = new Date(month.getFullYear(), month.getMonth(), 1 - month.getDay() + dayIndex);
+                                {allDays.map((date, dayIndex) => {
                                     const formattedDate = date.toISOString().split('T')[0];
-                                    const eventsForDay = getEventsForDay(formattedDate);
                                     const isToday = date.toDateString() === today.toDateString();
                                     const isCurrentMonth = date.getMonth() === month.getMonth();
-    
+                                    const eventsForDay = getEventsForDay(formattedDate);
+
                                     return (
                                         <div 
                                             key={dayIndex} 
-                                            className="calendar-day" 
+                                            className="year-calendar-day" 
                                             style={{
                                                 opacity: isCurrentMonth ? 1 : 0.3,
-                                                border: isToday ? '2px solid #000' : 'none'
+                                                border: isToday ? '2px solid blue' : 'none'
                                             }}
                                         >
                                             <div className="date-number">{date.getDate()}</div>
@@ -524,43 +560,108 @@ const Calendar = () => {
                                 })}
                             </div>
                         </div>
-                    ))}
-                </div>
-            </>
-        );
-    };
+                    );
+                })}
+            </div>
+        </>
+    );
+};
     
     // Day View =========================================================================================================================================================================
     const renderDayView = () => {
         const [selectedCollege, setSelectedCollege] = useState('');
-
-        const startOfWeek = new Date(currentDate);
-        const dayOfWeek = startOfWeek.getDay();
-        startOfWeek.setDate(startOfWeek.getDate() - dayOfWeek);
-    
-        const endOfWeek = new Date(startOfWeek);
-        endOfWeek.setDate(startOfWeek.getDate() + 6);
-        const formattedDate = currentDate.toISOString().split('T')[0];
-        const eventsForDay = getEventsForDay(formattedDate);
+        
+        const months = Array.from({ length: 12 }, (_, i) => new Date(currentDate.getFullYear(), i, 1));
+        const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        const today = new Date();
+        const selectedDay = selectedDate ? new Date(selectedDate) : today;
+        const eventsForSelectedDay = getEventsForDay(selectedDay.toLocaleDateString('en-CA'));
 
         return (
+        <>
+            <div className="calendar-header">
+            <button className="prev-next" onClick={goToPrevious}><FontAwesomeIcon icon={faChevronLeft} /></button>
+                <h2>{selectedDay.toLocaleDateString('default', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</h2>
+                <button className="prev-next" onClick={goToNext}><FontAwesomeIcon icon={faChevronRight} /></button>
+                {renderViewButtons()}
+                <select
+                        value={selectedCollege}
+                        onChange={(e) => setSelectedCollege(e.target.value)}
+                        className="college-filter-dropdown"
+                        >
+                        <option value="">All Colleges</option>
+                        {colleges.map(college => (
+                            <option key={college} value={college}>{college}</option>
+                        ))}
+                    </select>
+            </div>
             <div className="day-view">
-                <h2>{currentDate.toLocaleDateString()}</h2>
-                {eventsForDay.length > 0 ? (
-                    eventsForDay.map(event => (
-                        <div key={event._id} className="day-event" style={(event.id)}>
-                            <strong>{event.title}</strong>
-                            <br />
-                            <small>{event.startTime} - {event.endTime}</small>
-                        </div>
-                    ))
+                <h3>Events for {selectedDay.toLocaleDateString()}</h3>
+
+                {eventsForSelectedDay.length > 0 ? (
+                    <div className="events-list">
+                        {eventsForSelectedDay.map(event => (
+                            <div key={event._id} className="event-detail"
+                                style={{
+                                    backgroundColor: `rgba(${hexToRgb(event.color)}, 0.25)`,
+                                    borderLeft: `5px solid ${event.color}`,
+                                }}
+                            >
+                                <span style={{
+                                    color: event.color,
+                                    fontWeight: 'bold',
+                                    fontSize: '14px',
+                                }}>
+                                    {event.title}
+                                </span>
+                                <p>{formatTime(event.startTime)} - {formatTime(event.endTime)}</p>
+                                <p>{event.description}</p>
+                            </div>
+                        ))}
+                    </div>
                 ) : (
                     <p>No events for this day.</p>
                 )}
             </div>
-        );
-    };
 
+            {showOverlay && (
+                <div className="calendar-overlay">
+                    <div className="overlay-content">
+                        <div className="overlay-header">
+                            <h2>{selectedDay.toLocaleDateString('default', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</h2>
+                            <button onClick={closeOverlay} className="close-button">Close</button>
+                        </div>
+                        <div className="events-list">
+                            {selectedEvents.length > 0 ? (
+                                selectedEvents.map(event => (
+                                    <div key={event._id} className="event-detail"
+                                        style={{
+                                            backgroundColor: `rgba(${hexToRgb(event.color)}, 0.25)`,
+                                            borderLeft: `5px solid ${event.color}`,
+                                        }}
+                                    >
+                                        <span
+                                            style={{
+                                                color: event.color,
+                                                fontWeight: 'bold',
+                                                fontSize: '14px',
+                                            }}
+                                        >
+                                            {event.title}
+                                        </span>
+                                        <p>{formatTime(event.startTime)} - {formatTime(event.endTime)}</p>
+                                    </div>
+                                ))
+                            ) : (
+                                <p>No events for this day.</p>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
+        </>
+    );
+};
     const renderCalendar = () => {
         switch (currentView) {
             case 'day':
