@@ -473,56 +473,73 @@ const Calendar = () => {
     };
     // Year View
     const renderYearView = () => {
-    const months = Array.from({ length: 12 }, (_, i) => new Date(currentDate.getFullYear(), i, 1));
-
-    return (
-        <>
-            <div className="calendar-header">
-                <button className="prev-next" onClick={() => setCurrentDate(new Date(currentDate.getFullYear() - 1, currentDate.getMonth(), 1))}>
-                    <FontAwesomeIcon icon={faChevronLeft} />
-                </button>
-                <h2>{currentDate.getFullYear()}</h2>
-                <button className="prev-next" onClick={() => setCurrentDate(new Date(currentDate.getFullYear() + 1, currentDate.getMonth(), 1))}>
-                    <FontAwesomeIcon icon={faChevronRight} />
-                </button>
-                {renderViewButtons()}
-            </div>
-            <div className="year-view">
-                {months.map((month, monthIndex) => (
-                    <div key={monthIndex} className="month">
-                        <h3>{month.toLocaleString('default', { month: 'long' })}</h3>
-                        <div className="month-grid">
-                            {daysOfWeek.map(day => (
-                                <div key={day} className="calendar-day-header">{day}</div>
-                            ))}
-                            {Array.from({ length: 42 }, (_, dayIndex) => {
-                                const date = new Date(month.getFullYear(), month.getMonth(), dayIndex - month.getDay() + 1);
-                                const formattedDate = date.toISOString().split('T')[0];
-                                const eventsForDay = getEventsForDay(formattedDate);
-                                const isToday = date.toDateString() === today.toDateString();
-
-                                return (
-                                    <div key={dayIndex} className="calendar-day" style={isToday ? { border: '2px solid' } : {}}>
-                                        <div className="date-number" style={{ opacity: date.getMonth() === month.getMonth() ? 1 : 0.3 }}>
-                                            {date.getDate()}
+        const months = Array.from({ length: 12 }, (_, i) => new Date(currentDate.getFullYear(), i, 1));
+        const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        const today = new Date();
+    
+        return (
+            <>
+                <div className="calendar-header">
+                    <button className="prev-next" onClick={() => setCurrentDate(new Date(currentDate.getFullYear() - 1, 0, 1))}>
+                        <FontAwesomeIcon icon={faChevronLeft} />
+                    </button>
+                    <h2>{currentDate.getFullYear()}</h2>
+                    <button className="prev-next" onClick={() => setCurrentDate(new Date(currentDate.getFullYear() + 1, 0, 1))}>
+                        <FontAwesomeIcon icon={faChevronRight} />
+                    </button>
+                    {renderViewButtons()}
+                </div>
+                <div className="year-view">
+                    {months.map((month, monthIndex) => (
+                        <div key={monthIndex} className="month">
+                            <h3>{month.toLocaleString('default', { month: 'long' })}</h3>
+                            <div className="month-grid">
+                                {daysOfWeek.map(day => (
+                                    <div key={day} className="calendar-day-header">{day}</div>
+                                ))}
+                                {Array.from({ length: 42 }, (_, dayIndex) => {
+                                    const date = new Date(month.getFullYear(), month.getMonth(), 1 - month.getDay() + dayIndex);
+                                    const formattedDate = date.toISOString().split('T')[0];
+                                    const eventsForDay = getEventsForDay(formattedDate);
+                                    const isToday = date.toDateString() === today.toDateString();
+                                    const isCurrentMonth = date.getMonth() === month.getMonth();
+    
+                                    return (
+                                        <div 
+                                            key={dayIndex} 
+                                            className="calendar-day" 
+                                            style={{
+                                                opacity: isCurrentMonth ? 1 : 0.3,
+                                                border: isToday ? '2px solid #000' : 'none'
+                                            }}
+                                        >
+                                            <div className="date-number">{date.getDate()}</div>
+                                            {isCurrentMonth && eventsForDay.map(event => (
+                                                <div key={event._id} className="event" style={{ backgroundColor: event.color }}>
+                                                    {event.title}
+                                                </div>
+                                            ))}
                                         </div>
-                                        {date.getMonth() === month.getMonth() && eventsForDay.map(event => (
-                                            <div key={event._id} className="event" style={{ backgroundColor: event.color }}>
-                                                {event.title}
-                                            </div>
-                                        ))}
-                                    </div>
-                                );
-                            })}
+                                    );
+                                })}
+                            </div>
                         </div>
-                    </div>
-                ))}
-            </div>
-        </>
-    );
+                    ))}
+                </div>
+            </>
+        );
     };
+    
     // Day View =========================================================================================================================================================================
     const renderDayView = () => {
+        const [selectedCollege, setSelectedCollege] = useState('');
+
+        const startOfWeek = new Date(currentDate);
+        const dayOfWeek = startOfWeek.getDay();
+        startOfWeek.setDate(startOfWeek.getDate() - dayOfWeek);
+    
+        const endOfWeek = new Date(startOfWeek);
+        endOfWeek.setDate(startOfWeek.getDate() + 6);
         const formattedDate = currentDate.toISOString().split('T')[0];
         const eventsForDay = getEventsForDay(formattedDate);
 
