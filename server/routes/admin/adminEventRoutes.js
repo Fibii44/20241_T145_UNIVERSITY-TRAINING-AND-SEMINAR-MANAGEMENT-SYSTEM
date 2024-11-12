@@ -19,5 +19,13 @@ eventRoutes.put('/a/events/:id', authenticateJWT, concurrencyLock, adminService.
 // Delete an event by ID (optional)
 eventRoutes.delete('/a/events/:id', authenticateJWT, concurrencyLock, adminService.deleteEvent, clearConcurrencyLock);
 
+eventRoutes.put('/a/events/:id/lock', authenticateJWT, concurrencyLock, (req, res) => {
+    res.status(200).send({ message: "Event locked for editing" });
+});
+// Unlock an event after editing
+eventRoutes.put('/a/events/:id/unlock', authenticateJWT, clearConcurrencyLock, (req, res) => {
+    res.status(200).send({ message: "Event unlocked successfully" });
+});
+
 module.exports = eventRoutes;
 

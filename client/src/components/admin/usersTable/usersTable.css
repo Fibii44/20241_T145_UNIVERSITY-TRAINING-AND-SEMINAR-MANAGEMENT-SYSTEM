@@ -44,6 +44,72 @@
 }
 
 
+.table {
+    width: 100%;
+    border-collapse: separate;
+    border-radius: 10px;
+    border: 2px solid #dee2e6;
+    overflow: hidden;
+    border-radius: 20px;
+
+}
+
+.table th {
+    background-color: #f8f9fa;
+    color: #495057;
+    font-weight: bold;
+    padding: 12px;
+    text-align: left;
+}
+
+
+.table td {
+    padding: 15px;
+    text-align: left;
+}
+
+
+
+
+
+
+
+
+.filter-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; /* Aligns the label and the filter vertically */
+  }
+  
+  .filter-role, .filter-department, .filter-status {
+    background-color: transparent;
+    border: none;
+    font-size: 14px;
+    width: 10px; /* Adjust width as needed */
+    padding: 8px;
+   
+  }
+
+  .filter-role {
+    border-color: #4CAF50; /* Green border for role filter */
+  }
+  
+  .filter-department {
+    border-color: #2196F3; /* Blue border for department filter */
+  }
+  
+  .filter-status {
+    border-color: #FF5722; /* Orange border for status filter */
+  }
+
+  .filter-role:focus, .filter-department:focus, .filter-status:focus {
+    border-color: transparent; /* Or choose any color you prefer */
+    outline: none; /* Optional: Removes the default outline */
+  }
+  
+
+
+
 .user-heading {
     padding: 10px 20px;
     background-color: #f9f9f9;
@@ -55,59 +121,11 @@
     margin: 20px;
     max-width: 100%;
     overflow: hidden; /* Prevent the container from having its own scrollbar */
+   
 }
 
 
-.custom-table {
-    width: 100%;
-    border-collapse: collapse;
-    
-}
 
-.custom-table input {
-    width: 100%;
-    border: 1px solid #ced4da;
-}
-
-.custom-table th,
-.custom-table td {
-    border: 1px solid #dee2e6;
-  
-}
-
-.custom-table th {
-    background-color: #e0e0e0;
-    color: rgb(27, 27, 27);
-}
-
-.custom-table tbody tr:nth-child(even) {
-    background-color: #f2f2f2;
-}
-
-.custom-table tbody tr:hover {
-    background-color: #e9ecef;
-}
-
-
-.custom-table select {
-    font-size: 14px; /* Same font size as the rest of the elements */
-    border: 1px solid #ced4da;
-    border-radius: 8px;
-    transition: border-color 0.3s;
-    min-width: none;;
-    margin: 0;
-}
-
-
-.custom-table select:focus {
-    border-color: #80bdff;
-    outline: none;
-}
-
-
-.custom-table select:hover {
-    border-color: #80bdff;
-}
 
 .pagination {
     display: flex;
@@ -148,37 +166,18 @@
   }
 
 
-/* Responsive Design */
-@media (max-width: 768px) {
-    .header-container {
-        flex-direction: column;
-        gap: 10px;
-        align-items: flex-start;
-    }
 
-    .filter-header {
-        justify-content: flex-start;
-        width: 100%;
-        padding-right: 20px;
-    }
-
-    .filter select {
-        width: 100%; /* Make select elements full-width on smaller screens */
-    }
-
-    .custom-table th, .custom-table td {
-        font-size: 10px; /* Smaller font size for mobile */
-       
-    }
-
-    .custom-table {
-        width: auto; /* Allow table to overflow horizontally */
-        max-width: 100%;
-    }
-}
-
-
-
+.profile-container {
+    display: flex;
+    align-items: center; /* Aligns image and text vertically */
+  }
+  
+  .profile-image {
+    margin-right: 10px; /* Adjust the gap between image and name */
+    width: 30px; /* Example width, adjust as needed */
+    height: 30px; /* Example height, adjust as needed */
+    border-radius: 50%; /* Optional: To make the image circular */
+  }
 /* For action buttons and table controls */
 .table_edit,
 .table_delete,

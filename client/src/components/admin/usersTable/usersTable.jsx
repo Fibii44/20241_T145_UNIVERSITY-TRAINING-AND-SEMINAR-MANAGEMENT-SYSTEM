@@ -4,55 +4,86 @@ import { useNavigate } from 'react-router-dom';
 import "./usersTable.css";
 import { jwtDecode } from 'jwt-decode';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrash, faSave, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faTrash, faSave, faTimes, faFilter } from '@fortawesome/free-solid-svg-icons';
 
 
+import defaultEventPicture from '../../../assets/default-profile.png'
 
+const UsersTable = ({ users, onDelete, onUpdate, selectAllChecked, onSelectAllChange, onRoleFilterChange, onDepartmentFilterChange, onStatusFilterChange }) => (
 
-const UsersTable = ({ users, onDelete, onUpdate, selectAllChecked, onSelectAllChange }) => (
-  <div className="table-container">
-    <div className="table-responsive">
-      <table className="custom-table">
-        <thead className="thead-dark">
-          <tr>
+  <div className="table-responsive">
+    <table className="table">
+      <thead className="thead-dark">
+        <tr>
           <th>
-              <input 
-                type="checkbox" 
-                checked={selectAllChecked} 
-                onChange={onSelectAllChange} 
-              /> {/* Select All Checkbox */}
-            </th>
-            <th>ID</th>
-            <th>NAME</th>
-            <th>EMAIL</th>
-            <th>ROLE</th>
-            <th>POSITION</th>
-            <th>DEPARTMENT</th>
-            <th>STATUS</th>
-            <th>ACTIONS</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((user, index) => (
-            <UserRow
-              key={user._id || index}
-              user={user}
-              onDelete={onDelete}
-              onUpdate={onUpdate}
-              selectAllChecked={selectAllChecked}
-            />
-          ))}
-        </tbody>
-      </table>
-    </div>
+            <input
+              type="checkbox"
+              checked={selectAllChecked}
+              onChange={onSelectAllChange}
+            /> {/* Select All Checkbox */}
+          </th>
+          <th>NAME</th>
+          <th>EMAIL</th>
+          <th>
+            <div className="filter-container">
+              <span>ROLE</span>
+              <select className="filter-role" onChange={e => onRoleFilterChange(e.target.value)}>
+                <option value="all">All</option>
+                <option value="faculty_staff">Faculty Staff</option>
+                <option value="departmental_admin">Departmental Admin</option>
+                <option value="general_admin">General Admin</option>
+              </select>
+            </div>
+          </th>
+          <th>POSITION</th>
+          <th>
+            <div className="filter-container">
+              <span>DEPARTMENT</span>
+              <select className="filter-department" onChange={e => onDepartmentFilterChange(e.target.value)}>
+                <option value="all">All</option>
+                <option value="College of Arts and Sciences">College of Arts and Sciences</option>
+                <option value="College of Business">College of Business</option>
+                <option value="College of Education">College of Education</option>
+                <option value="College of Law">College of Law</option>
+                <option value="College of Nursing">College of Nursing</option>
+                <option value="College of Technologies">College of Technologies</option>
+              </select>
+            </div>
+          </th>
+          <th>
+            <div className="filter-container">
+              <span>STATUS</span>
+              <select className="filter-status" onChange={e => onStatusFilterChange(e.target.value)}>
+                <option value="all">All</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
+          </th>
+          <th>ACTIONS</th>
+        </tr>
+      </thead>
+      <tbody>
+        {users.map((user, index) => (
+          <UserRow
+            key={user._id || index}
+            user={user}
+            onDelete={onDelete}
+            onUpdate={onUpdate}
+            selectAllChecked={selectAllChecked}
+          />
+        ))}
+      </tbody>
+    </table>
   </div>
+
 );
 
-const UserRow = ({ user, onDelete, onUpdate, selectAllChecked}) => {
+const UserRow = ({ user, onDelete, onUpdate, selectAllChecked }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({});
   const [isChecked, setIsChecked] = useState(selectAllChecked);
-  
+
 
   useEffect(() => {
     setFormData({
@@ -62,7 +93,7 @@ const UserRow = ({ user, onDelete, onUpdate, selectAllChecked}) => {
       position: user.position,
       department: user.department,
       status: user.status,
-      
+
     });
   }, [user]);
 
@@ -90,7 +121,7 @@ const UserRow = ({ user, onDelete, onUpdate, selectAllChecked}) => {
       <td>
         <input type="checkbox" checked={isChecked} onChange={handleCheckboxChange} />
       </td>
-      <td>{user._id}</td>
+
       {isEditing ? (
         <>
           <td><input type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} /></td>
@@ -132,7 +163,14 @@ const UserRow = ({ user, onDelete, onUpdate, selectAllChecked}) => {
         </>
       ) : (
         <>
-          <td>{user.name}</td>
+          <td className="profile-container">
+            <img
+              src={user.profilePicture || defaultEventPicture}
+              alt="Profile"
+              className="profile-image"
+            />
+            {user.name}
+          </td>
           <td>{user.email}</td>
           <td>{user.role}</td>
           <td>{user.position}</td>
@@ -142,12 +180,12 @@ const UserRow = ({ user, onDelete, onUpdate, selectAllChecked}) => {
       )}
       <td>
         {isEditing ? (
-           <>
+          <>
             <button className="table_save" onClick={handleSave}>
-              <FontAwesomeIcon icon={faSave} /> 
+              <FontAwesomeIcon icon={faSave} />
             </button>
             <button className="table_cancel" onClick={() => setIsEditing(false)}>
-              <FontAwesomeIcon icon={faTimes} /> 
+              <FontAwesomeIcon icon={faTimes} />
             </button>
           </>
         ) : (
@@ -170,12 +208,13 @@ const Table = () => {
   const [stats, setStats] = useState({ users: [] });
   const [departmentFilter, setDepartmentFilter] = useState('all');
   const [roleFilter, setRoleFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('all');
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage] = useState(10);
   const [currentUser, setCurrentUser] = useState(null); // Step 1: Define state for current user
   const [selectAllChecked, setSelectAllChecked] = useState(false);
-  
+
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
   };
@@ -218,10 +257,11 @@ const Table = () => {
     const filtered = stats.users.filter(user => {
       const matchesDepartment = departmentFilter === 'all' || user.department === departmentFilter;
       const matchesRole = roleFilter === 'all' || user.role === roleFilter;
-      return matchesDepartment && matchesRole;
+      const matchesStatus = statusFilter === 'all' || user.status === statusFilter;
+      return matchesDepartment && matchesRole && matchesStatus;
     });
     setFilteredUsers(filtered);
-  }, [departmentFilter, roleFilter, stats.users]);
+  }, [departmentFilter, roleFilter, statusFilter, stats.users]);
 
   // Retrieve the name of the in session user
   useEffect(() => {
@@ -253,26 +293,26 @@ const Table = () => {
     }
   };
 
-// Pagination logic
-const indexOfLastUser = currentPage * rowsPerPage;
-const indexOfFirstUser = indexOfLastUser - rowsPerPage;
-const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+  // Pagination logic
+  const indexOfLastUser = currentPage * rowsPerPage;
+  const indexOfFirstUser = indexOfLastUser - rowsPerPage;
+  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
 
-// Next Page Handler
-const nextPage = () => {
-  if (currentPage < Math.ceil(filteredUsers.length / rowsPerPage)) {
-    setCurrentPage(prevPage => prevPage + 1);
-  }
-};
+  // Next Page Handler
+  const nextPage = () => {
+    if (currentPage < Math.ceil(filteredUsers.length / rowsPerPage)) {
+      setCurrentPage(prevPage => prevPage + 1);
+    }
+  };
 
-// Prev Page Handler
-const prevPage = () => {
-  if (currentPage > 1) {
-    setCurrentPage(prevPage => prevPage - 1);
-  }
-};
+  // Prev Page Handler
+  const prevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(prevPage => prevPage - 1);
+    }
+  };
 
-const onSelectAllChange = () => setSelectAllChecked(!selectAllChecked);
+  const onSelectAllChange = () => setSelectAllChecked(!selectAllChecked);
 
   return (
     <div className="usertable-container">
@@ -317,13 +357,15 @@ const onSelectAllChange = () => setSelectAllChecked(!selectAllChecked);
             </div>
           </div>
         </div>
-        <UsersTable users={currentUsers} onDelete={handleDelete} onUpdate={handleUpdate} selectAllChecked={selectAllChecked} 
-        onSelectAllChange={onSelectAllChange}/>
+        <UsersTable users={currentUsers} onDelete={handleDelete} onUpdate={handleUpdate} selectAllChecked={selectAllChecked}
+          onSelectAllChange={onSelectAllChange} onRoleFilterChange={setRoleFilter}
+          onDepartmentFilterChange={setDepartmentFilter}
+          onStatusFilterChange={setStatusFilter} />
         <div className="pagination">
-    <button onClick={prevPage} disabled={currentPage === 1}>Prev</button>
-    <span>Page {currentPage} of {Math.ceil(filteredUsers.length / rowsPerPage)}</span>
-    <button onClick={nextPage} disabled={currentPage === Math.ceil(filteredUsers.length / rowsPerPage)}>Next</button>
-  </div>
+          <button onClick={prevPage} disabled={currentPage === 1}>Prev</button>
+          <span>Page {currentPage} of {Math.ceil(filteredUsers.length / rowsPerPage)}</span>
+          <button onClick={nextPage} disabled={currentPage === Math.ceil(filteredUsers.length / rowsPerPage)}>Next</button>
+        </div>
       </div>
     </div>
   );
