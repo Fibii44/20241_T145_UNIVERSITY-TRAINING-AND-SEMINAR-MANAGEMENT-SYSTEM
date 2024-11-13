@@ -8,37 +8,6 @@ const fs = require('fs');
 const path = require('path');
 
 
-
-let eventLocks = {}; // Store lock status in memory, key: eventId, value: adminId
-
-// Middleware to check if event is locked
-const checkLockStatus = async (req, res, next) => {
-  const eventId = req.params.id;
-  if (eventLocks[eventId]) {
-    return res.status(400).json({ message: 'This event is currently being edited by another admin.' });
-  }
-  next();
-};
-
-// Middleware to lock the event for editing
-const concurrencyLock = async (req, res, next) => {
-  const eventId = req.params.id;
-  const adminId = req.user.id;
-
-  if (eventLocks[eventId]) {
-    return res.status(400).json({ message: 'This event is locked for editing by another admin.' });
-  }
-
-  eventLocks[eventId] = adminId; // Lock the event
-  next();
-};
-
-// Middleware to clear the lock once editing is done
-const clearConcurrencyLock = async (req, res) => {
-  const eventId = req.params.id;
-  delete eventLocks[eventId]; // Unlock the event after action is complete
-};
-
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'uploads/eventPictures/');

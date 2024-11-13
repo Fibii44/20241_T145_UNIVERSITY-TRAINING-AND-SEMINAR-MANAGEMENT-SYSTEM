@@ -69,12 +69,6 @@
 }
 
 
-
-
-
-
-
-
 .filter-container {
     display: flex;
     justify-content: space-between;
@@ -87,6 +81,7 @@
     font-size: 14px;
     width: 10px; /* Adjust width as needed */
     padding: 8px;
+    cursor: pointer;
    
   }
 

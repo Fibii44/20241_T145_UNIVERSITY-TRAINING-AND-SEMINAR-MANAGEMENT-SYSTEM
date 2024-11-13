@@ -41,6 +41,8 @@ app.use(session({
   saveUninitialized: false,
 }));
 
+app.locals.sseClients = []; // Array to store SSE clients
+
 // Serve images in the 'eventPictures' folder
 app.use('/eventPictures', express.static(path.join(__dirname, 'uploads', 'eventPictures')));
 
