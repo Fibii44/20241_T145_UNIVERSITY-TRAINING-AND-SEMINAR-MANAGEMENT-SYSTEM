@@ -162,10 +162,17 @@ const EventM = ({ userRole, userCollege }) => {
     formData.append('description', rest.description || '');
     formData.append('color', rest.color || '#65a8ff');
     if (eventPicture) formData.append('eventPicture', eventPicture);
-    if (participants) {
+    if (!customParticipants.length) {
+      if (participants) {
       formData.append('participantGroup[college]', participants.college || "All");
       formData.append('participantGroup[department]', participants.department || "All");
+      }
     }
+
+    if(customParticipants.length > 0) {
+      customParticipants.forEach((email, index) => formData.append(`customParticipants[${index}]`, email.trim()));
+    }
+    
     if (reminders && reminders.length > 0) {
       reminders.forEach((reminder, index) => {
         formData.append(`reminders[${index}][method]`, reminder.method);
@@ -173,7 +180,6 @@ const EventM = ({ userRole, userCollege }) => {
       });
     }
 
-    customParticipants.forEach((email, index) => formData.append(`customParticipants[${index}]`, email.trim()));
 
     if (!selectedEvent) {
       formData.append('createdBy', userId);

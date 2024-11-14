@@ -16,10 +16,26 @@ function Event() {
     const [isLoading, setIsLoading] = useState(false); // Declare setIsLoading
     const [currentUser, setCurrentUser] = useState(null);
     const [canRegister, setCanRegister] = useState(false);
+    const [ isEventActive, setIsEventActive] = useState(false);
 
     const formatTime = (date) => {
         return new Date(date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
     };
+
+    const checkEventTime = () => {
+        if(!event) { return false; }
+        const currentTime = new Date();
+        const eventStart = new Date(event.startTime);
+        const eventEnd = new Date(event.endTime);
+
+        return currentTime < eventStart
+    }
+
+    useEffect(() => {
+        if(event) {
+            setIsEventActive(checkEventTime());
+        }
+    }, [event]);
 
     useEffect(() => {
         const checkUser = async () => {
@@ -30,13 +46,18 @@ function Event() {
                 const decodedToken = jwtDecode(token);
                 setCurrentUser(decodedToken);
 
+                const hasCustomParticipants = event?.customParticipants?.length > 0;
+                
+                if(hasCustomParticipants) {
+                    setCanRegister(event.customParticipants.includes(decodedToken.email));
+                    return;
+                }
+
                 const isOpenToAll = !event?.participantGroup?.college || event.participantGroup.college === " " || event.participantGroup.college === "All";
 
                 const isPartOfCollege = isOpenToAll || event?.participantGroup?.college === decodedToken.department;
 
-                const isCustomParticipant = event?.customParticipants?.includes(decodedToken.email);
-
-                setCanRegister(isOpenToAll || isPartOfCollege || isCustomParticipant);
+                setCanRegister(isOpenToAll || isPartOfCollege );
             }catch(error) {
                 console.error("Error checking user access", error);
                 setCanRegister(false);
@@ -160,9 +181,13 @@ function Event() {
                     <h6 className="event-description"><i className="fas fa-info-circle"></i> <strong>Description:</strong> {event.description}</h6>
                     <div className="user-register-button" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                         {canRegister ? (
-                        <button className='register-button' onClick={isRegistered ? handleCancellation : handleRegistration}>
-                            {registrationStatus}
-                            </button>
+                            isEventActive ? (
+                                <button className='register-button' onClick={isRegistered ? handleCancellation : handleRegistration}>
+                                    {registrationStatus}
+                                </button>
+                            ) : (
+                                <p>Event has already started or ended.</p>
+                            )   
                         ) : (
                             <p>You are not part of this event.</p>
                         )}

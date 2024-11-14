@@ -192,6 +192,20 @@ const deleteUser = async (req, res) => {
     }
 };
 
+const fetchEventParticipants = async (req, res) => {
+  try{
+    const { college } = req.query;
+    let query = {};
+    if(college && college !== "All") {
+      query.department = college;
+    }
+    const users = await User.find(query).select('-password');
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
 
 module.exports = {
   renderPersonnelPage,
@@ -199,5 +213,6 @@ module.exports = {
   editUser,
   renderUserTable,
   deleteUser,
-  upload
+  upload,
+  fetchEventParticipants
 };

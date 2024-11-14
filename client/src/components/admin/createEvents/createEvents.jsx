@@ -49,7 +49,7 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
 
       // Build the URL with query parameters
       const params = participants.college === "All" ? '' : `?college=${encodeURIComponent(participants.college)}`;
-      const url = `http://localhost:3000/a/users${params}`;
+      const url = `http://localhost:3000/a/event-participants${params}`;
 
       console.log("Request URL:", url);
       console.log("Authorization Token:", token);
