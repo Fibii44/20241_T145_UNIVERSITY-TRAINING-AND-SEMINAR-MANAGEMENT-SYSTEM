@@ -203,7 +203,6 @@
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
 }
-
 .day-view::-webkit-scrollbar {
     display: none; /* Chrome, Safari, and Opera */
 }
@@ -374,8 +373,11 @@
     font-weight: bold;
     color: #555;
     padding: 5px;
+    width: 10px;
 }
+.year-calendar-day {
 
+}
 /* Day Cells Styling */
 .calendar-day {
     text-align: center;

@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCalendarCheck, faClock, faPlus, faMapMarkerAlt, faLock } from '@fortawesome/free-solid-svg-icons';
+import { faCalendarCheck, faClock, faPlus, faMapMarkerAlt, faLock, faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import './eventManagement.css';
-import { jwtDecode } from 'jwt-decode';
 import EventModal from '../createEvents/createEvents';
-import DeleteModal from '../../modals/deleteModal/deleteModal'
+import DeleteModal from '../../modals/deleteModal/deleteModal';
 
 const EventM = ({ userRole, userCollege }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -16,6 +15,8 @@ const EventM = ({ userRole, userCollege }) => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [eventToDelete, setEventToDelete] = useState(null);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const eventsPerPage = 5;
 
   const toggleSidebar = () => setIsCollapsed(!isCollapsed);
 
@@ -52,7 +53,21 @@ const EventM = ({ userRole, userCollege }) => {
       setLoading(false);
     }
   };
+  const indexOfLastEvent = currentPage * eventsPerPage;
+  const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
+  const currentEvents = events.slice(indexOfFirstEvent, indexOfLastEvent);
 
+  const nextPage = () => {
+    if (currentPage < Math.ceil(events.length / eventsPerPage)) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const prevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
   //When edit button was clicked
   const handleEdit = async (event) => {
     const token = sessionStorage.getItem('authToken');
@@ -316,6 +331,15 @@ const EventM = ({ userRole, userCollege }) => {
               </div>
             ))}
           </div>
+          <div className="pagination">
+            <button onClick={prevPage} disabled={currentPage === 1}>
+              <FontAwesomeIcon icon={faChevronLeft} /> Prev
+            </button>
+            <span>Page {currentPage} of {Math.ceil(events.length / eventsPerPage)}</span>
+            <button onClick={nextPage} disabled={currentPage === Math.ceil(events.length / eventsPerPage)}>
+              Next <FontAwesomeIcon icon={faChevronRight} />
+            </button>
+          </div>  
         </div>
       </div>
     </div>

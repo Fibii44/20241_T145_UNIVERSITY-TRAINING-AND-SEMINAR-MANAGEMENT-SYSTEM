@@ -532,7 +532,7 @@ const Calendar = () => {
                             <h3>{month.toLocaleString('default', { month: 'long' })}</h3>
                             <div className="month-grid">
                                 {daysOfWeek.map(day => (
-                                    <div key={day} className="calendar-day-header">{day}</div>
+                                    <div key={day} className="year-calendar-day-header">{day}</div>
                                 ))}
                                 {allDays.map((date, dayIndex) => {
                                     const formattedDate = date.toISOString().split('T')[0];
@@ -596,7 +596,6 @@ const Calendar = () => {
                     </select>
             </div>
             <div className="day-view">
-                <h3>Events for {selectedDay.toLocaleDateString()}</h3>
 
                 {eventsForSelectedDay.length > 0 ? (
                     <div className="events-list">
