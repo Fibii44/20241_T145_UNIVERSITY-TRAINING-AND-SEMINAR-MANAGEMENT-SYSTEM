@@ -7,7 +7,6 @@ import EventModal from '../createEvents/createEvents';
 import DeleteModal from '../../modals/deleteModal/deleteModal';
 
 const EventM = ({ userRole, userCollege }) => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -17,8 +16,6 @@ const EventM = ({ userRole, userCollege }) => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const eventsPerPage = 5;
-
-  const toggleSidebar = () => setIsCollapsed(!isCollapsed);
 
   // Function to format time for display in 12-hour format
   const formatTime = (dateString) => {
@@ -297,7 +294,7 @@ const EventM = ({ userRole, userCollege }) => {
 
         <div className="context-card">
           <div className="admin-event-list">
-            {events.map((event, index) => (
+            {currentEvents.map((event, index) => (
               <div className="event-card" key={`${event._id}-${event.startTime.getTime()}`}>
                 <div className="event-image">
                   <img

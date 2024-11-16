@@ -1,0 +1,68 @@
+.history-events-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.history-events-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+    width: 100%;
+    max-width: 1600px;
+    margin: auto;
+}
+
+.history-event-card:hover {
+    transform: scale(1.05);
+}
+
+.event-img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+.event-details {
+    padding: 10px;
+}
+
+.event-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.event-description {
+    font-size: 0.9rem;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.event-info span {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.page-button {
+    margin: 0 5px;
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    background: #f9f9f9;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background 0.3s;
+}
+
+.page-button.active,
+.page-button:hover {
+    background: #007bff;
+    color: white;
+}

@@ -376,9 +376,16 @@ const Calendar = () => {
             : `${startOfWeek.toLocaleString('default', { month: 'long' })} ${startOfWeek.getDate()} - ${endOfWeek.toLocaleString('default', { month: 'long' })} ${endOfWeek.getDate()}, ${startOfWeek.getFullYear()}`;
             
 
-        const filterEventsByCollege = (events) => {
-            if (!selectedCollege) return events; // Show all events if no college is selected
-            return events.filter(event => event.participantGroup.college === selectedCollege);
+            const filterEventsByCollege = (events) => {
+                if (!selectedCollege) return events; // If no college is selected, show all events
+            
+                return events.filter(event => {
+                    if (!event.participantGroup) {
+                        console.warn("Event missing participantGroup:", event);
+                        return false;
+                    }
+                    return event.participantGroup.college === selectedCollege;
+                });
             };
 
         return (
