@@ -72,13 +72,14 @@ const Calendar = () => {
     const [showOverlay, setShowOverlay] = useState(false);
     const [selectedEvents, setSelectedEvents] = useState([]);
     const [selectedDate, setSelectedDate] = useState(null);
+    const [selectedCollege, setSelectedCollege] = useState('');
     const today = new Date();
     const colleges = [
-  'College of Arts and Sciences', 'College of Business', 'College of Education',
-  'College of Law', 'College of Public Administration and Governance', 
-  'College of Nursing', 'College of Technologies'
-];
-    // Function to open the overlay for a selected day
+                        'College of Arts and Sciences', 'College of Business', 'College of Education',
+                        'College of Law', 'College of Public Administration and Governance', 
+                        'College of Nursing', 'College of Technologies'
+                     ];
+                    // Function to open the overlay for a selected day
     const openOverlay = (date, events) => {
         setSelectedDate(date);
         setSelectedEvents(events);
@@ -233,7 +234,7 @@ const Calendar = () => {
     };
 
     const renderMonthView = () => {
-        const [selectedCollege, setSelectedCollege] = useState('');
+        
 
         const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
         const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
@@ -256,8 +257,15 @@ const Calendar = () => {
         const allDays = [...daysFromPrevMonth, ...daysThisMonth, ...daysFromNextMonth];
         const filterEventsByCollege = (events) => {
             if (!selectedCollege) return events; // If no college is selected, show all events
-            return events.filter(event => event.participantGroup.college === selectedCollege);
-          };
+        
+            return events.filter(event => {
+                if (!event.participantGroup) {
+                    console.warn("Event missing participantGroup:", event);
+                    return false;
+                }
+                return event.participantGroup.college === selectedCollege;
+            });
+        };
 
         return (
             <>
@@ -268,9 +276,9 @@ const Calendar = () => {
                     {renderViewButtons()}
                     <select
                         value={selectedCollege}
-                        onChange={(e) => setSelectedCollege(e.target.value)}
+                        onChange={(e) => setSelectedCollege(e.target.value)} 
                         className="college-filter-dropdown"
-                        >
+                    >
                         <option value="">All Colleges</option>
                         {colleges.map(college => (
                             <option key={college} value={college}>{college}</option>
