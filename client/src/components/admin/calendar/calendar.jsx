@@ -362,7 +362,6 @@ const Calendar = () => {
     
     // Week View
     const renderWeekView = () => {
-        const [selectedCollege, setSelectedCollege] = useState('');
 
         const startOfWeek = new Date(currentDate);
         const dayOfWeek = startOfWeek.getDay();
@@ -488,7 +487,6 @@ const Calendar = () => {
     };
    // Year View
     const renderYearView = () => {
-        const [selectedCollege, setSelectedCollege] = useState('');
         const months = Array.from({ length: 12 }, (_, i) => new Date(currentDate.getFullYear(), i, 1));
         const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
         const today = new Date();
@@ -584,7 +582,7 @@ const Calendar = () => {
     
     // Day View =========================================================================================================================================================================
     const renderDayView = () => {
-        const [selectedCollege, setSelectedCollege] = useState('');
+
         
         const months = Array.from({ length: 12 }, (_, i) => new Date(currentDate.getFullYear(), i, 1));
         const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
