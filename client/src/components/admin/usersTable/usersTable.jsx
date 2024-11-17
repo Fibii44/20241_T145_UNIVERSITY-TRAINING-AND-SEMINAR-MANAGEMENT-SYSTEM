@@ -5,15 +5,28 @@ import "./usersTable.css";
 import { jwtDecode } from 'jwt-decode';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import AddPersonnelModal from "../addPersonnelModal/addPersonnelModal";
-import { faEdit,  faSave, faTimes, faArchive, faUserPlus } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faSave, faTimes, faArchive, faUserPlus, faRedo } from '@fortawesome/free-solid-svg-icons';
 
 
 import defaultEventPicture from '../../../assets/default-profile.png'
 
-const UsersTable = ({ users, onDelete, onUpdate, selectAllChecked, onSelectAllChange, onRoleFilterChange, onDepartmentFilterChange, onStatusFilterChange }) => (
 
-  <div className="personnel-table-responsive">
-    <table className="personnel-table">
+const UsersTable = ({ users, onUpdate, selectAllChecked, onSelectAllChange, onRoleFilterChange, onDepartmentFilterChange, onStatusFilterChange }) => {
+  const [showInactive, setShowInactive] = useState(false); // State to toggle between active and inactive users
+  
+  const handleToggleStatus = () => {
+    setShowInactive(!showInactive); // Toggle between active and inactive user views
+  };
+
+  return (
+    <div className="personnel-table-responsive">
+      <div className="toggle-inactive-btn">
+        <button onClick={handleToggleStatus}>
+          <FontAwesomeIcon icon={faRedo} /> {showInactive ? 'Show Active Users' : 'Show Inactive Users'}
+        </button>
+      </div>
+      
+      <table className="personnel-table">
       <thead className="thead-dark">
         <tr>
           <th>
@@ -52,39 +65,36 @@ const UsersTable = ({ users, onDelete, onUpdate, selectAllChecked, onSelectAllCh
             </div>
           </th>
           <th>
-            <div className="filter-container">
-              <span>STATUS</span>
-              <select className="filter-status" onChange={e => onStatusFilterChange(e.target.value)}>
-                <option value="all">All</option>
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-              </select>
-            </div>
+            STATUS
           </th>
           <th>ACTIONS</th>
         </tr>
       </thead>
       <tbody>
-        {users.map((user, index) => (
-          <UserRow
-            key={user._id || index}
-            user={user}
-            onDelete={onDelete}
-            onUpdate={onUpdate}
-            selectAllChecked={selectAllChecked}
-          />
-        ))}
-      </tbody>
-    </table>
-  </div>
+          {users
+            .filter(user => showInactive ? user.status === 'inactive' : user.status === 'active')
+            .map((user, index) => (
+              <UserRow
+                key={user._id || index}
+                user={user}
+                onUpdate={onUpdate}
+                selectAllChecked={selectAllChecked}
+                showInactive={showInactive}
+              />
+            ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
 
-);
 
-const UserRow = ({ user, onDelete, onUpdate, selectAllChecked }) => {
+
+
+const UserRow = ({ user, onUpdate, selectAllChecked, showInactive }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({});
   const [isChecked, setIsChecked] = useState(selectAllChecked);
-
 
   useEffect(() => {
     setFormData({
@@ -94,7 +104,6 @@ const UserRow = ({ user, onDelete, onUpdate, selectAllChecked }) => {
       position: user.position,
       department: user.department,
       status: user.status,
-
     });
   }, [user]);
 
@@ -111,9 +120,17 @@ const UserRow = ({ user, onDelete, onUpdate, selectAllChecked }) => {
     }
   };
 
-  const handleDelete = () => {
+  const handleArchive = async () => {
     if (window.confirm("Are you sure you want to archive this user?")) {
-      onDelete(user._id);
+      const updatedUser = { ...user, status: "inactive" }; // Change the status to "inactive"
+      onUpdate(user._id, updatedUser); // Call the update function with the new status
+    }
+  };
+
+  const handleRestore = async () => {
+    if (window.confirm("Are you sure you want to restore this user?")) {
+      const updatedUser = { ...user, status: "active" }; // Change the status to "active"
+      onUpdate(user._id, updatedUser); // Call the update function with the new status
     }
   };
 
@@ -154,13 +171,7 @@ const UserRow = ({ user, onDelete, onUpdate, selectAllChecked }) => {
             </select>
           </td>
           <td>
-            <select
-              value={formData.status}
-              onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-            >
-              <option value="inactive">inactive</option>
-              <option value="active">active</option>
-            </select>
+            <span>{formData.status}</span>
           </td>
         </>
       ) : (
@@ -195,9 +206,15 @@ const UserRow = ({ user, onDelete, onUpdate, selectAllChecked }) => {
             <button className="table_edit" onClick={() => setIsEditing(true)}>
               <FontAwesomeIcon icon={faEdit} />
             </button>
-            <button className="table_delete" onClick={handleDelete}>
-              <FontAwesomeIcon icon={faArchive} />
-            </button>
+            {showInactive ? (
+              <button className="table_delete" onClick={handleRestore}>
+                <FontAwesomeIcon icon={faRedo} />
+              </button>
+            ) : (
+              <button className="table_delete" onClick={handleArchive}>
+                <FontAwesomeIcon icon={faArchive} />
+              </button>
+            )}
           </>
         )}
       </td>
@@ -213,7 +230,7 @@ const Table = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage] = useState(10);
+  const [rowsPerPage] = useState(50);
   const [currentUser, setCurrentUser] = useState(null); // Step 1: Define state for current user
   const [selectAllChecked, setSelectAllChecked] = useState(false);
 
@@ -284,37 +301,28 @@ const Table = () => {
     }
   };
 
-  // Delete Data
-  const handleDelete = async (userId) => {
-    try {
-      const archivedBy = currentUser; // Use the current user's name
-      await axios.delete(`http://localhost:3000/a/users/${userId}`, { data: { archivedBy } });
-      setFilteredUsers(filteredUsers.filter(user => user._id !== userId));
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  
 
-  // Pagination logic
-  const indexOfLastUser = currentPage * rowsPerPage;
-  const indexOfFirstUser = indexOfLastUser - rowsPerPage;
-  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+  // Pagination Logic
+const indexOfLastUser = currentPage * rowsPerPage;
+const indexOfFirstUser = indexOfLastUser - rowsPerPage;
 
-  // Next Page Handler
-  const nextPage = () => {
-    if (currentPage < Math.ceil(filteredUsers.length / rowsPerPage)) {
-      setCurrentPage(prevPage => prevPage + 1);
-    }
-  };
-
-  // Prev Page Handler
-  const prevPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(prevPage => prevPage - 1);
-    }
-  };
-
-  const onSelectAllChange = () => setSelectAllChecked(!selectAllChecked);
+// Paginate filtered users (those that are filtered by status)
+const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+ 
+   const nextPage = () => {
+     if (currentPage < Math.ceil(filteredUsers.length / rowsPerPage)) {
+       setCurrentPage(prevPage => prevPage + 1);
+     }
+   };
+ 
+   const prevPage = () => {
+     if (currentPage > 1) {
+       setCurrentPage(prevPage => prevPage - 1);
+     }
+   };
+ 
+   const onSelectAllChange = () => setSelectAllChecked(!selectAllChecked);
 
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -382,10 +390,11 @@ const Table = () => {
         </div>
 
 
-        <UsersTable users={currentUsers} onDelete={handleDelete} onUpdate={handleUpdate} selectAllChecked={selectAllChecked}
+        <UsersTable users={currentUsers} onUpdate={handleUpdate} selectAllChecked={selectAllChecked}
           onSelectAllChange={onSelectAllChange} onRoleFilterChange={setRoleFilter}
           onDepartmentFilterChange={setDepartmentFilter}
           onStatusFilterChange={setStatusFilter} />
+          
         <div className="pagination">
           <button onClick={prevPage} disabled={currentPage === 1}>Prev</button>
           <span>Page {currentPage} of {Math.ceil(filteredUsers.length / rowsPerPage)}</span>

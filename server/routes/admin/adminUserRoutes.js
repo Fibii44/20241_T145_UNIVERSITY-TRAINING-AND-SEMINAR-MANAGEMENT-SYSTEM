@@ -9,7 +9,7 @@ userRoutes.post('/a/personnel', authenticateJWT, verifyGeneralAdmin, concurrency
 userRoutes.get('/a/users', authenticateJWT, verifyGeneralAdmin, adminService.renderUserTable);
 userRoutes.get('/a/event-participants/', authenticateJWT, verifyGeneralAdmin, adminService.fetchEventParticipants);
 userRoutes.put('/a/users/:id', adminService.editUser);
-userRoutes.delete('/a/users/:id', adminService.deleteUser);
+// userRoutes.delete('/a/users/:id', adminService.deleteUser);
 
 
 module.exports = userRoutes;
