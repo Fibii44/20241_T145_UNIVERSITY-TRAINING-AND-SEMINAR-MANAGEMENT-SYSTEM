@@ -279,7 +279,7 @@ const Calendar = () => {
                         onChange={(e) => setSelectedCollege(e.target.value)} 
                         className="college-filter-dropdown"
                     >
-                        <option value="">All Colleges</option>
+                        <option value="">All Events</option>
                         {colleges.map(college => (
                             <option key={college} value={college}>{college}</option>
                         ))}
@@ -399,7 +399,7 @@ const Calendar = () => {
                         onChange={(e) => setSelectedCollege(e.target.value)}
                         className="college-filter-dropdown"
                         >
-                        <option value="">All Colleges</option>
+                        <option value="">All Events</option>
                         {colleges.map(college => (
                             <option key={college} value={college}>{college}</option>
                         ))}
@@ -472,7 +472,7 @@ const Calendar = () => {
                                             {event.title}
                                         </span>
                                             
-                                            <p>{formatTimeTo12Hour(event.startTime)} - {formatTimeTo12Hour(event.endTime)}</p>
+                                        <p>{formatTime(event.startTime)} - {formatTime(event.endTime)}</p>
                                         </div>
                                     ))
                                 ) : (
@@ -507,7 +507,7 @@ const Calendar = () => {
                         onChange={(e) => setSelectedCollege(e.target.value)}
                         className="college-filter-dropdown"
                         >
-                        <option value="">All Colleges</option>
+                        <option value="">All Events</option>
                         {colleges.map(college => (
                             <option key={college} value={college}>{college}</option>
                         ))}
@@ -602,7 +602,7 @@ const Calendar = () => {
                         onChange={(e) => setSelectedCollege(e.target.value)}
                         className="college-filter-dropdown"
                         >
-                        <option value="">All Colleges</option>
+                        <option value="">All Events</option>
                         {colleges.map(college => (
                             <option key={college} value={college}>{college}</option>
                         ))}

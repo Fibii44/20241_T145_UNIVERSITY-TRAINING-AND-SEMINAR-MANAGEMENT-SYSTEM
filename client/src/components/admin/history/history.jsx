@@ -113,8 +113,12 @@ const HistoryM = () => {
                     {/* Pagination Controls */}
                     {pastEvents.length > eventsPerPage && (
                         <div className="pagination">
-                            <button onClick={prevPage} disabled={currentPage === 1}>
-                                <FontAwesomeIcon icon={faChevronLeft} /> Prev
+                            <button
+                                className="page-btn"
+                                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                                disabled={currentPage === 1}
+                                >
+                                <FontAwesomeIcon icon={faChevronLeft} />
                             </button>
                             {Array.from({ length: totalPages }, (_, index) => (
                                 <button
@@ -128,9 +132,15 @@ const HistoryM = () => {
                                 </button>
                                 
                             ))}
-                            <button onClick={nextPage} disabled={currentPage === Math.ceil(events.length / eventsPerPage)}>
-                                Next <FontAwesomeIcon icon={faChevronRight} />
-                            </button>
+                            <button
+                                className="page-btn"
+                                onClick={() =>
+                                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                                }
+                                disabled={currentPage === totalPages}
+                                >
+                                <FontAwesomeIcon icon={faChevronRight} />
+                                </button>
                         </div>
                     )}
                 </div>

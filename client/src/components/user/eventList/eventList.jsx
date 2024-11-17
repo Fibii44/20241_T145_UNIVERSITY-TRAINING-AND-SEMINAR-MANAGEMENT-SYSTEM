@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import './eventList.css';
-import EventImage from '../../../assets/adminProfile.png';
-
 function EventGrid() {
     const [events, setEvents] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -26,7 +26,11 @@ function EventGrid() {
     const indexOfLastEvent = currentPage * eventsPerPage;
     const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
     const currentEvents = events.slice(indexOfFirstEvent, indexOfLastEvent);
-
+    const totalPages = Math.ceil(events.length / eventsPerPage);
+  
+    const handlePageClick = (pageNumber) => {
+      setCurrentPage(pageNumber);
+    };
     // Handle page navigation
     const handleNextPage = () => {
         if (currentPage < Math.ceil(events.length / eventsPerPage)) {
@@ -63,8 +67,35 @@ function EventGrid() {
                 ))}
             </div>
             <div className="pagination-controls mb-3" >
-                <button onClick={handlePrevPage} disabled={currentPage === 1}>❮ Prev</button>
-                <button onClick={handleNextPage} disabled={currentPage === Math.ceil(events.length / eventsPerPage)}>Next ❯</button>
+                
+            <button
+              className="page-btn"
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+            >
+              <FontAwesomeIcon icon={faChevronLeft} />
+            </button>
+            {Array.from({ length: totalPages }, (_, index) => (
+              <button
+                key={index + 1}
+                className={`page-number ${
+                  currentPage === index + 1 ? "active" : ""
+                }`}
+                onClick={() => handlePageClick(index + 1)}
+              >
+                {index + 1}
+              </button>
+            ))}
+
+                <button
+              className="page-btn"
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              }
+              disabled={currentPage === totalPages}
+            >
+              <FontAwesomeIcon icon={faChevronRight} />
+            </button>
             </div>
         </div>
     );

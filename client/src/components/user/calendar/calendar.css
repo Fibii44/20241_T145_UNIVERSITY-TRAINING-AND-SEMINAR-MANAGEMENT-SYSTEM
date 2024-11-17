@@ -354,8 +354,8 @@
 .month h3 {
     text-align: center;
     padding: 10px;
-    background-color: #007BFF;
-    color: white;
+    background-color: #cccccc;
+    color: rgb(128, 128, 128);
     margin: 0;
     font-size: 18px;
 }

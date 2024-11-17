@@ -53,7 +53,11 @@ const EventM = ({ userRole, userCollege }) => {
   const indexOfLastEvent = currentPage * eventsPerPage;
   const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
   const currentEvents = events.slice(indexOfFirstEvent, indexOfLastEvent);
+  const totalPages = Math.ceil(events.length / eventsPerPage);
 
+  const handlePageClick = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
   const nextPage = () => {
     if (currentPage < Math.ceil(events.length / eventsPerPage)) {
       setCurrentPage(currentPage + 1);
@@ -328,15 +332,36 @@ const EventM = ({ userRole, userCollege }) => {
               </div>
             ))}
           </div>
+          {/* Pagination */}
           <div className="pagination">
-            <button onClick={prevPage} disabled={currentPage === 1}>
-              <FontAwesomeIcon icon={faChevronLeft} /> Prev
+            <button
+              className="page-btn"
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+            >
+              <FontAwesomeIcon icon={faChevronLeft} />
             </button>
-            <span>Page {currentPage} of {Math.ceil(events.length / eventsPerPage)}</span>
-            <button onClick={nextPage} disabled={currentPage === Math.ceil(events.length / eventsPerPage)}>
-              Next <FontAwesomeIcon icon={faChevronRight} />
+            {Array.from({ length: totalPages }, (_, index) => (
+              <button
+                key={index + 1}
+                className={`page-number ${
+                  currentPage === index + 1 ? "active" : ""
+                }`}
+                onClick={() => handlePageClick(index + 1)}
+              >
+                {index + 1}
+              </button>
+            ))}
+            <button
+              className="page-btn"
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              }
+              disabled={currentPage === totalPages}
+            >
+              <FontAwesomeIcon icon={faChevronRight} />
             </button>
-          </div>  
+          </div>
         </div>
       </div>
     </div>
