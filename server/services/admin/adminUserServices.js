@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const User = require('../../models/user');
 const crypto = require('crypto');
-const DeletedUser = require('../../models/deletedUser');
+const DeletedUser = require('../../models/archivedUser');
 const multer = require('multer');
 const sendEmail = require('../../utils/sendEmail');
 
@@ -163,7 +163,7 @@ const editUser = async (req, res) => {
 // Function to delete user and transfer the deleted data to a new deleted user collection 
 const deleteUser = async (req, res) => {
     const userId = req.params.id;
-    const deletedBy = req.body.deletedBy; 
+    const archivedBy = req.body.archivedBy; 
 
     try {
         const user = await User.findById(userId);
@@ -173,20 +173,21 @@ const deleteUser = async (req, res) => {
 
         // Create a new DeletedUser document
         const deletedUser = new DeletedUser({
+            userId: user._id,
             name: user.name,
             email: user.email,
             role: user.role,
             position: user.position,
             department: user.department,
             phoneNumber: user.phoneNumber,
-            deletedBy: deletedBy, 
-            deletedAt: new Date() 
+            archivedBy: archivedBy, 
+            archivedAt: new Date() 
         });
 
         await deletedUser.save(); 
         await User.findByIdAndDelete(userId); // Delete the user from users collection
 
-        res.status(200).json({ message: 'User deleted successfully', deletedUser });
+        res.status(200).json({ message: 'User archived successfully', deletedUser });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

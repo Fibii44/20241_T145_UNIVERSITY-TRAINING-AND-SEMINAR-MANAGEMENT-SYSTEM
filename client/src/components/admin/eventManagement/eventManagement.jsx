@@ -3,8 +3,9 @@ import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarCheck, faClock, faPlus, faMapMarkerAlt, faLock, faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import './eventManagement.css';
+import { jwtDecode } from 'jwt-decode';
 import EventModal from '../createEvents/createEvents';
-import DeleteModal from '../../modals/deleteModal/deleteModal';
+import DeleteModal from '../../modals/deleteModal/deleteModal'
 
 const EventM = ({ userRole, userCollege }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -14,8 +15,10 @@ const EventM = ({ userRole, userCollege }) => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [eventToDelete, setEventToDelete] = useState(null);
 
+
   const [currentPage, setCurrentPage] = useState(1);
   const eventsPerPage = 5;
+
 
   // Function to format time for display in 12-hour format
   const formatTime = (dateString) => {
@@ -50,14 +53,12 @@ const EventM = ({ userRole, userCollege }) => {
       setLoading(false);
     }
   };
+
+
   const indexOfLastEvent = currentPage * eventsPerPage;
   const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
   const currentEvents = events.slice(indexOfFirstEvent, indexOfLastEvent);
-  const totalPages = Math.ceil(events.length / eventsPerPage);
 
-  const handlePageClick = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
   const nextPage = () => {
     if (currentPage < Math.ceil(events.length / eventsPerPage)) {
       setCurrentPage(currentPage + 1);
@@ -69,6 +70,9 @@ const EventM = ({ userRole, userCollege }) => {
       setCurrentPage(currentPage - 1);
     }
   };
+
+  
+
   //When edit button was clicked
   const handleEdit = async (event) => {
     const token = sessionStorage.getItem('authToken');
@@ -132,7 +136,7 @@ const EventM = ({ userRole, userCollege }) => {
           headers: { Authorization: `Bearer ${token}` }
         });
       } catch (error) {
-        alert('Error unlocking event: ' + error.message);
+       
       }
     }
     setIsModalOpen(false);
@@ -236,7 +240,7 @@ const EventM = ({ userRole, userCollege }) => {
         });
 
       } catch (error) {
-        alert('Error unlocking event: ' + error.message);
+       
       } finally {
         // Close modal and reset selected event
         setIsModalOpen(false);
@@ -296,7 +300,7 @@ const EventM = ({ userRole, userCollege }) => {
           onConfirmDelete={confirmDelete}
         />
 
-        <div className="context-card">
+<div className="context-card">
           <div className="admin-event-list">
             {currentEvents.map((event, index) => (
               <div className="event-card" key={`${event._id}-${event.startTime.getTime()}`}>
@@ -332,36 +336,15 @@ const EventM = ({ userRole, userCollege }) => {
               </div>
             ))}
           </div>
-          {/* Pagination */}
           <div className="pagination">
-            <button
-              className="page-btn"
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
-            >
-              <FontAwesomeIcon icon={faChevronLeft} />
+            <button onClick={prevPage} disabled={currentPage === 1}>
+              <FontAwesomeIcon icon={faChevronLeft} /> Prev
             </button>
-            {Array.from({ length: totalPages }, (_, index) => (
-              <button
-                key={index + 1}
-                className={`page-number ${
-                  currentPage === index + 1 ? "active" : ""
-                }`}
-                onClick={() => handlePageClick(index + 1)}
-              >
-                {index + 1}
-              </button>
-            ))}
-            <button
-              className="page-btn"
-              onClick={() =>
-                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-              }
-              disabled={currentPage === totalPages}
-            >
-              <FontAwesomeIcon icon={faChevronRight} />
+            <span>Page {currentPage} of {Math.ceil(events.length / eventsPerPage)}</span>
+            <button onClick={nextPage} disabled={currentPage === Math.ceil(events.length / eventsPerPage)}>
+              Next <FontAwesomeIcon icon={faChevronRight} />
             </button>
-          </div>
+          </div>  
         </div>
       </div>
     </div>

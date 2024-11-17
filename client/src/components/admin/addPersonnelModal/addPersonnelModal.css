@@ -12,7 +12,7 @@
   border: none;
 }
 
-form {
+.add-personnel-form  {
   width: 80%;
   padding: 2.5rem;
   background-color: #f8f8f8;
@@ -24,7 +24,7 @@ form {
   margin: 0 auto;
 }
 
-form h3 {
+.add-personnel-form h3 {
   text-align: center;
   margin-bottom: .5rem;
   grid-column: 1 / -1;
@@ -142,3 +142,5 @@ form button:hover {
   grid-column: 1 / -1;
   margin-top: 1rem;
 }
+
+

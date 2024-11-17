@@ -134,7 +134,7 @@ const AddPersonnelModal = ({ show, onClose }) => {
         onClick={(e) => e.stopPropagation()} 
       >
         <div className="personnel-modal-content">
-          <form onSubmit={handleSubmit}>
+        <form className="add-personnel-form" onSubmit={handleSubmit}>
             <h3>Add User Account</h3>
 
             <label className="profile-picture-label">

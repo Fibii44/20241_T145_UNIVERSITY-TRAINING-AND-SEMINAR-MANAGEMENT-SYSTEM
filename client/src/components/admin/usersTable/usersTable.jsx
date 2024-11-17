@@ -5,7 +5,7 @@ import "./usersTable.css";
 import { jwtDecode } from 'jwt-decode';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import AddPersonnelModal from "../addPersonnelModal/addPersonnelModal";
-import { faEdit, faTrash, faSave, faTimes, faFilter, faUserPlus } from '@fortawesome/free-solid-svg-icons';
+import { faEdit,  faSave, faTimes, faArchive, faUserPlus } from '@fortawesome/free-solid-svg-icons';
 
 
 import defaultEventPicture from '../../../assets/default-profile.png'
@@ -112,7 +112,7 @@ const UserRow = ({ user, onDelete, onUpdate, selectAllChecked }) => {
   };
 
   const handleDelete = () => {
-    if (window.confirm("Are you sure you want to delete this user?")) {
+    if (window.confirm("Are you sure you want to archive this user?")) {
       onDelete(user._id);
     }
   };
@@ -196,7 +196,7 @@ const UserRow = ({ user, onDelete, onUpdate, selectAllChecked }) => {
               <FontAwesomeIcon icon={faEdit} />
             </button>
             <button className="table_delete" onClick={handleDelete}>
-              <FontAwesomeIcon icon={faTrash} />
+              <FontAwesomeIcon icon={faArchive} />
             </button>
           </>
         )}
@@ -287,8 +287,8 @@ const Table = () => {
   // Delete Data
   const handleDelete = async (userId) => {
     try {
-      const deletedBy = currentUser; // Use the current user's name
-      await axios.delete(`http://localhost:3000/a/users/${userId}`, { data: { deletedBy } });
+      const archivedBy = currentUser; // Use the current user's name
+      await axios.delete(`http://localhost:3000/a/users/${userId}`, { data: { archivedBy } });
       setFilteredUsers(filteredUsers.filter(user => user._id !== userId));
     } catch (err) {
       console.log(err);
