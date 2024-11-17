@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "../addPersonnel/addPersonnel.css"; // Create this CSS file for styling
+import "./addPersonnelModal.css"; // Create this CSS file for styling
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useNavigate } from "react-router-dom";
 import { faCamera } from "@fortawesome/free-solid-svg-icons";
@@ -10,7 +10,6 @@ const AddPersonnelModal = ({ show, onClose }) => {
     name: "",
     email: "",
     phoneNumber: "",
-    department: "",
     gender: "",
     position: "",
     role: "",
@@ -129,12 +128,12 @@ const AddPersonnelModal = ({ show, onClose }) => {
   if (!show) return null;
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="addPersonnel modal-overlay" onClick={onClose}> 
       <div
         className="add-personnel-modal shadow-md"
-        onClick={(e) => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()} 
       >
-        <div className="modal-content">
+        <div className="personnel-modal-content">
           <form onSubmit={handleSubmit}>
             <h3>Add User Account</h3>
 
@@ -229,7 +228,7 @@ const AddPersonnelModal = ({ show, onClose }) => {
             </label>
 
             {error && <p className="error-message">{error}</p>}
-            <div className="buttons">
+            <div className="personnel-modal-buttons"  style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
               <button type="submit">Add User</button>
               <button
                 type="button"

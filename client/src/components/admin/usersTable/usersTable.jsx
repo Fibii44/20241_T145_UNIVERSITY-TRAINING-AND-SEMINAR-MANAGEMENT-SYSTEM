@@ -4,15 +4,16 @@ import { useNavigate } from 'react-router-dom';
 import "./usersTable.css";
 import { jwtDecode } from 'jwt-decode';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrash, faSave, faTimes, faFilter } from '@fortawesome/free-solid-svg-icons';
+import AddPersonnelModal from "../addPersonnelModal/addPersonnelModal";
+import { faEdit, faTrash, faSave, faTimes, faFilter, faUserPlus } from '@fortawesome/free-solid-svg-icons';
 
 
 import defaultEventPicture from '../../../assets/default-profile.png'
 
 const UsersTable = ({ users, onDelete, onUpdate, selectAllChecked, onSelectAllChange, onRoleFilterChange, onDepartmentFilterChange, onStatusFilterChange }) => (
 
-  <div className="table-responsive">
-    <table className="table">
+  <div className="personnel-table-responsive">
+    <table className="personnel-table">
       <thead className="thead-dark">
         <tr>
           <th>
@@ -118,13 +119,14 @@ const UserRow = ({ user, onDelete, onUpdate, selectAllChecked }) => {
 
   return (
     <tr className={isChecked ? "row-selected" : ""}>
-      <td>
+      <td width="1%"> 
         <input type="checkbox" checked={isChecked} onChange={handleCheckboxChange} />
       </td>
 
       {isEditing ? (
         <>
           <td><input type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} /></td>
+    
           <td><input type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} /></td>
           <td>
             <select
@@ -314,12 +316,24 @@ const Table = () => {
 
   const onSelectAllChange = () => setSelectAllChecked(!selectAllChecked);
 
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+
   return (
     <div className="usertable-container">
       <div className="content">
         <div className="header-container">
           <h2>Users Table</h2>
-          <div className="filter-header">
+          <div className="filter-header"> 
+
             <div className="filter">
               <label htmlFor="departmentFilter">Department:</label>
               <select
@@ -355,8 +369,19 @@ const Table = () => {
                 <option value="general_admin">General Admin</option>
               </select>
             </div>
+            <div className="add-personnel-button">
+                <a href="#" onClick={(e) => { 
+                  e.preventDefault(); 
+                  handleOpenModal(); 
+                }}> 
+                  <FontAwesomeIcon icon={faUserPlus} /> 
+                </a>
+                <AddPersonnelModal show={isModalOpen} onClose={handleCloseModal} />
+              </div>
           </div>
         </div>
+
+
         <UsersTable users={currentUsers} onDelete={handleDelete} onUpdate={handleUpdate} selectAllChecked={selectAllChecked}
           onSelectAllChange={onSelectAllChange} onRoleFilterChange={setRoleFilter}
           onDepartmentFilterChange={setDepartmentFilter}

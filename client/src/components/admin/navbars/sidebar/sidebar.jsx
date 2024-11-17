@@ -58,12 +58,12 @@ const Sidebar = ({ activePage }) => {
         {/* Conditionally render Personnel and Users menu items for general_admin */}
         {role === 'general_admin' && (
           <>
-            <li className={activePage === 'personnel' ? 'active' : ''}>
+            {/*<li className={activePage === 'personnel' ? 'active' : ''}>
               <Link to="/a/personnel">
                 <span className="icon"><FontAwesomeIcon icon={faClock} size="lg" /></span>
                 {!isCollapsed && <span className='list-name'>Personnel</span>}
               </Link>
-            </li>
+            </li>*/}
             <li className={activePage === 'users' ? 'active' : ''}>
               <Link to="/a/users">
                 <span className="icon"><FontAwesomeIcon icon={faUsers} size="lg" /></span>

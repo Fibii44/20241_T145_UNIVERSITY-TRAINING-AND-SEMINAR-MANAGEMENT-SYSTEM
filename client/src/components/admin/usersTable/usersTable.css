@@ -12,6 +12,7 @@
     display: flex;
     justify-content: flex-end;
     flex-grow: 1;
+    align-items: center;
 }
 
 .filter {
@@ -43,31 +44,49 @@
     border-color: #80bdff;
 }
 
-
-.table {
-    width: 100%;
-    border-collapse: separate;
-    border-radius: 10px;
-    border: 2px solid #dee2e6;
-    overflow: hidden;
-    border-radius: 20px;
-
+.personnel-name {
+  white-space: nowrap; /* Prevent the name cell content from wrapping */
 }
 
-.table th {
-    background-color: #f8f9fa;
-    color: #495057;
-    font-weight: bold;
-    padding: 12px;
-    text-align: left;
+.personnel-name input[type="text"] {
+  word-wrap: break-word; 
+  width: 100%;
+  vertical-align: top; /* Add this line */ 
+}
+
+.personnel-table {
+  background-color: #f8f9fa;
+  color: #495057;
+  padding: 12px;
+  text-align: left; 
+  align-items: center; /* Vertically center the content */
 }
 
 
-.table td {
-    padding: 15px;
-    text-align: left;
+.personnel-table th {
+  background-color: #f8f9fa;
+  color: #495057;
+  font-weight: bold;
+  padding: 12px;
+  text-align: left; 
+  align-items: center; /* Vertically center the content */
 }
 
+
+.personnel-table td {
+  padding: 15px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.personnel-name { 
+  white-space: nowrap;  
+}
+
+.personnel-name input[type="text"] {
+  word-wrap: break-word; 
+  width: 100%;          
+}
 
 .filter-container {
     display: flex;
@@ -160,19 +179,19 @@
     background-color: #d1d1d1; /* Light cyan background for selected rows */
   }
 
-
-
-.profile-container {
-    display: flex;
-    align-items: center; /* Aligns image and text vertically */
+  .profile-container {
+    align-items: center;    /* Vertically align the image and text */
+    white-space: nowrap;    /* Prevent the content from wrapping */
   }
   
   .profile-image {
-    margin-right: 10px; /* Adjust the gap between image and name */
-    width: 30px; /* Example width, adjust as needed */
-    height: 30px; /* Example height, adjust as needed */
-    border-radius: 50%; /* Optional: To make the image circular */
+    margin-right: 10px;    /* Adjust spacing between image and text */
+    width: 30px;           /* Adjust image size as needed */
+    height: 30px;          /* Adjust image size as needed */
+    border-radius: 50%;    /* Make the image circular (optional) */
+    object-fit: cover;     /* Ensure the image covers the area */
   }
+
 /* For action buttons and table controls */
 .table_edit,
 .table_delete,
@@ -184,7 +203,6 @@
     border-radius: 4px;
     padding: 8px 8px;
     cursor: pointer;
-    margin: 0 5px;
     transition: background-color 0.3s;
     font-size: 12px;
     height: 30px;
@@ -212,5 +230,53 @@
 
 .table_save:hover {
     background-color: rgb(39, 143, 94);
+}
+.add-personnel-button svg{ 
+  font-size: 24px;   
+  color: #011c39;  
+  margin-bottom: 0;
+  transition: transform 0.2s ease; /* Add a transition for a smooth hover effect */
+}
+
+.add-personnel-button a {
+  position: relative; 
+  display: inline-flex; /* Use inline-flex to align to text baseline */
+  align-items: flex-end; 
+}
+
+.add-personnel-button .fa-user-plus { 
+  font-size: 2rem;   
+  color: #011c39;  
+  transition: transform 0.2s ease; 
+  margin-top: 1rem;
+  margin-right: 1rem;
+  vertical-align: text-bottom; /* Align to the text baseline */
+}
+
+.add-personnel-button a:hover svg {
+  transform: scale(1.1); /* Slightly increase the size of the icon on hover */
+}
+
+.add-personnel-button a .tooltip { /* Style the tooltip */
+  visibility: hidden;
+  color: #333;
+  bottom: 100%;  /* Adjust this value to position it below the center */
+  left: 1rem;
+  transform: translateX(-50%); 
+  text-align: center;
+  padding: 5px 10px;
+  border-radius: 6px;
+  
+  position: absolute;
+  z-index: 1;/* Position the tooltip above the icon */
+  transform: translateX(-50%); 
+  opacity: 0;
+  transition: opacity 0.3s;
+  white-space: nowrap; /* Prevent the tooltip text from wrapping */
+}
+
+.add-personnel-button a:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
 }
 
