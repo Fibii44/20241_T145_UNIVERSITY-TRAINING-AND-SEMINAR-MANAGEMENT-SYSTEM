@@ -2,8 +2,7 @@ import Footer from '../../components/user/footer/footer.jsx';
 import { useState } from 'react';
 import Sidebar from '../../components/user/navbars/sidebar.jsx';
 import Topbar from '../../components/user/navbars/topbar.jsx';
-import Certificate from '../../components/user/certificates/certificate.jsx';
-
+import Certificate from '../../components/user/certificatesGallery/certificate.jsx';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
 const Certificates = ({ userId, eventId }) => {
@@ -20,7 +19,7 @@ const Certificates = ({ userId, eventId }) => {
         <Sidebar isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} activePage="certificates"/>
         <div className="content">
           <Topbar />
-          
+          <Certificate />
           <Footer />
         </div>
       </div>

@@ -30,6 +30,20 @@ const corsOptions = {
   credentials: true, 
 };
 
+app.get('/eventPictures/:filename', (req, res) => {
+  const filename = req.params.filename;
+  const imagePath = path.join(__dirname, 'uploads', 'eventPictures', filename); // Corrected path
+
+  console.log("Trying to access file:", imagePath); // Log the file path
+
+  res.download(imagePath, filename, (err) => { 
+    if (err) {
+      console.error("Error downloading file:", err);
+      res.status(404).send('File not found'); 
+    }
+  });
+});
+
 app.use(bodyParser.json());
 app.use(cors(corsOptions)); 
 app.use(express.json());
@@ -40,6 +54,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
 }));
+
 
 app.locals.sseClients = []; // Array to store SSE clients
 
