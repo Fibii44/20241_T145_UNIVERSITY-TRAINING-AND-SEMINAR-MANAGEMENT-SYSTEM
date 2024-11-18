@@ -17,7 +17,7 @@ const EventM = ({ userRole, userCollege }) => {
 
 
   const [currentPage, setCurrentPage] = useState(1);
-  const eventsPerPage = 5;
+  const eventsPerPage = 4;
 
 
   // Function to format time for display in 12-hour format
@@ -303,7 +303,7 @@ const EventM = ({ userRole, userCollege }) => {
 <div className="context-card">
           <div className="admin-event-list">
             {currentEvents.map((event, index) => (
-              <div className="event-card" key={`${event._id}-${event.startTime.getTime()}`}>
+              <div className="admin-event-card" key={`${event._id}-${event.startTime.getTime()}`}>
                 <div className="event-image">
                   <img
                     src={`http://localhost:3000/eventPictures/${event.eventPicture}`}

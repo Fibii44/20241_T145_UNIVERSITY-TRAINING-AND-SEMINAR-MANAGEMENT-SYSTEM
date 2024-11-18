@@ -34,12 +34,12 @@
   
   .admin-event-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 24px; /* Space between cards */
     padding: 20px;
     background-color: #f5f6fa;
     margin: 2rem auto; /* Center grid horizontally */
-    width: 98rem; /* Set max width for the grid */
+    width: 88rem; /* Set max width for the grid */
 }
   
   .admin-event-card {
@@ -56,7 +56,46 @@
     align-items: left;
     height: 100%; /* Make each card take full height in its grid cell */
 }
+.admin-event-card:hover {
+  background-color: rgb(226, 241, 241);/* Zoom in effect */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Slightly darker shadow on hover */
+}
+.admin-event-card p {
+  margin-top: 6px;
+  font-size: 14px;
+  color: #011c39;
   
+}
+.admin-event-card .date {
+  color: grey;
+  font-size: 12px;
+  margin-bottom: 12px;
+  text-align: left;
+}
+.admin-event-card button {
+  background-color: white;
+  color: #011c39;
+  border: 1px solid grey;
+  border-radius: 18px;
+  height: 2.5rem;
+  padding: 0 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  margin-top: auto; /* Push button to bottom of card */
+}
+.admin-event-card:hover button {
+  background-color: #feb800; /* Change button color to yellow */
+  color: #333; /* Optional: Change text color when button is hovered */
+}
+.admin-event-card:hover .event-image {
+  transform: scale(1.05);
+}
+.admin-event-card .event-description {
+  height: 15rem;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
   .event-image {
     width: 100%; 
     height: auto; 
@@ -64,13 +103,12 @@
   }
   
   .event-title {
-    height: 5rem;
+    height: 2rem;
     overflow: hidden;
   }
   .event-title h3{
     font-size: 16px; 
     color: #333; 
-    margin: 10px 0; 
   }
   
   .event-description {

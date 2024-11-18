@@ -1,3 +1,23 @@
+.dashboard-inline {
+    display: flex;
+    padding: 8px;
+  }
+  
+  .dashboard-button {
+    padding: 10px 40px;
+    background-color: #ffc107;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-left: auto;
+  
+  }
+  
+  .dashboard-button:hover {
+    background-color: #c79202;
+  
+  } 
 .history-events-list {
     display: flex;
     flex-direction: column;
@@ -12,9 +32,63 @@
     max-width: 1600px;
     margin: auto;
 }
-
+.history-event-card {
+    cursor: pointer;
+    width: 20rem;
+    text-align: left;
+    background-color: white;
+    padding: 30px;
+    border-radius: 18px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    height: 100%; /* Make each card take full height in its grid cell */
+}
 .history-event-card:hover {
-    transform: scale(1.05);
+  background-color: rgb(226, 241, 241);/* Zoom in effect */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Slightly darker shadow on hover */
+}
+.history-event-card p {
+  margin-top: 6px;
+  font-size: 14px;
+  color: #011c39;
+  
+}
+.history-event-card .date {
+  color: grey;
+  font-size: 12px;
+  margin-bottom: 12px;
+  text-align: left;
+}
+.history-event-card button {
+  background-color: white;
+  color: #011c39;
+  border: 1px solid grey;
+  border-radius: 18px;
+  height: 2.5rem;
+  padding: 0 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  margin-top: auto; /* Push button to bottom of card */
+}
+.history-event-card:hover button {
+  background-color: #feb800; /* Change button color to yellow */
+  color: #333; /* Optional: Change text color when button is hovered */
+}
+.history-event-card:hover .event-image {
+  transform: scale(1.05);
+}
+.history-event-card .event-description {
+  height: 15rem;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+.history-event-card h3 {
+  padding-top: 12px;
+  font-size: 20px;
+  text-align: left;
 }
 
 .event-img {
@@ -66,3 +140,30 @@
     background: #007bff;
     color: white;
 }
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.pagination-controls button {
+  background-color: #011c39;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  margin: 0 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.pagination-controls button:disabled {
+  background-color: grey;
+  cursor: not-allowed;
+}
+
+.pagination-controls button:hover:not(:disabled) {
+  background-color: #feb800;
+}
+

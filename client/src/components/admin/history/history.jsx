@@ -10,7 +10,7 @@ const HistoryM = () => {
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(false);
     const [currentPage, setCurrentPage] = useState(1); // Manage pagination state
-    const eventsPerPage = 5;
+    const eventsPerPage = 4;
 
     // Fetch events when the component mounts
     useEffect(() => {
@@ -68,7 +68,7 @@ const HistoryM = () => {
                             <div className="history-events-grid">
                                 {currentEvents.map(event => (
                                     <div
-                                        className="event-card"
+                                        className="history-event-card"
                                         key={event._id}
                                         onClick={() => navigate(`/events/${event._id}`)}
                                     >

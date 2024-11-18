@@ -49,7 +49,7 @@ function EventGrid() {
             <div className="events-grid" style={{contentAlign: 'center', margin: '0 auto'}}>
                 {currentEvents.map((event) => (
                     <Link to={`/u/events/${event._id}`} key={event._id} className="event-link">
-                        <div className="event-card">
+                        <div className="user-event-card">
                             <img src={`http://localhost:3000/eventPictures/${event.eventPicture}`} alt={event.title} className="event-image" onError={(e) => (e.target.src = '/src/assets/default-eventPicture.jpg')} /> 
                             <h3 style={{ color: '#011c39' }}>{event.title}</h3>
                             <p className='date'>

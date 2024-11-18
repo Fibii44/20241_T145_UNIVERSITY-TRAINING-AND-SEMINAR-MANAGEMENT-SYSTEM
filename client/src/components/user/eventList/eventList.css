@@ -7,7 +7,7 @@
     width: 80rem /* Set max width for the grid */
 }
 
-.event-card h3 {
+.user-event-card h3 {
     padding-top: 12px;
     font-size: 20px;
     text-align: left;
@@ -17,7 +17,7 @@
     text-decoration: none; /* Remove underline */
 }
 
-.event-card {
+.user-event-card {
     cursor: pointer;
     width: 18rem;
     text-align: left;
@@ -32,7 +32,7 @@
     height: 100%; /* Make each card take full height in its grid cell */
 }
 
-.event-card:hover {
+.user-event-card:hover {
     background-color: rgb(226, 241, 241);/* Zoom in effect */
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Slightly darker shadow on hover */
 }
@@ -44,21 +44,21 @@
     margin-bottom: 12px;
     transition: transform 0.3s ease
 }
-.event-card p {
+.user-event-card p {
     margin-top: 6px;
     font-size: 14px;
     color: #011c39;
     
 }
 
-.event-card .date {
+.user-event-card .date {
     color: grey;
     font-size: 12px;
     margin-bottom: 12px;
     text-align: left;
 }
 
-.event-card button {
+.user-event-card button {
     background-color: white;
     color: #011c39;
     border: 1px solid grey;
@@ -70,14 +70,14 @@
     margin-top: auto; /* Push button to bottom of card */
 }
 
-.event-card:hover button {
+.user-event-card:hover button {
     background-color: #feb800; /* Change button color to yellow */
     color: #333; /* Optional: Change text color when button is hovered */
 }
-.event-card:hover .event-image {
+.user-event-card:hover .event-image {
     transform: scale(1.05);
 }
-.event-card .event-description {
+.user-event-card .event-description {
     height: 15rem;
     margin-bottom: 20px;
     overflow: hidden;
