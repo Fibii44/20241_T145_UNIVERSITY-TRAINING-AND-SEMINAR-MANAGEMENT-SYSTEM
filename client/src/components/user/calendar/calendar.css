@@ -443,3 +443,18 @@
     margin-bottom: 10px; /* Match inline style in your JSX */
     border-left: 5px solid transparent; /* Match dynamic border color */
 }
+.college-filter-dropdown {
+    border-radius: 5px; /* Slightly rounded corners for a modern look */
+    border: 1px solid #ccc; /* Add a subtle border for definition */
+    padding: 8px 12px; /* Ensure proper spacing for content */
+    background-color: #f9f9f9; /* Light background for a clean appearance */
+    font-size: 14px; /* Ensure readable text */
+    color: #333; /* Neutral text color */
+    transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition for hover effects */
+}
+
+.college-filter-dropdown:hover {
+    background-color: #e6e6e6; /* Slightly darker shade on hover */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Add a subtle shadow on hover for depth */
+    cursor: pointer; /* Indicate interactivity */
+}
