@@ -11,22 +11,19 @@ import { faEdit, faSave, faTimes, faArchive, faUserPlus, faRedo } from '@fortawe
 import defaultEventPicture from '../../../assets/default-profile.png'
 
 
-const UsersTable = ({ users, onUpdate, selectAllChecked, onSelectAllChange, onRoleFilterChange, onDepartmentFilterChange, onStatusFilterChange }) => {
-  const [showInactive, setShowInactive] = useState(false); // State to toggle between active and inactive users
-  
-  const handleToggleStatus = () => {
-    setShowInactive(!showInactive); // Toggle between active and inactive user views
-  };
-
-  return (
-    <div className="personnel-table-responsive">
-      <div className="toggle-inactive-btn">
-        <button onClick={handleToggleStatus}>
-          <FontAwesomeIcon icon={faRedo} /> {showInactive ? 'Show Active Users' : 'Show Inactive Users'}
-        </button>
-      </div>
-      
-      <table className="personnel-table">
+const UsersTable = ({ 
+  users, 
+  onDelete, 
+  onUpdate, 
+  selectAllChecked, 
+  onSelectAllChange, 
+  onRoleFilterChange, 
+  onDepartmentFilterChange, 
+  onStatusFilterChange, 
+  statusFilter 
+}) => (
+  <div className="personnel-table-responsive">
+    <table className="personnel-table">
       <thead className="thead-dark">
         <tr>
           <th>
@@ -65,30 +62,32 @@ const UsersTable = ({ users, onUpdate, selectAllChecked, onSelectAllChange, onRo
             </div>
           </th>
           <th>
-            STATUS
+            <div className="filter-container">
+              <span>STATUS</span>
+              <select className="filter-status" onChange={e => onStatusFilterChange(e.target.value)}>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
           </th>
           <th>ACTIONS</th>
         </tr>
       </thead>
       <tbody>
-          {users
-            .filter(user => showInactive ? user.status === 'inactive' : user.status === 'active')
-            .map((user, index) => (
-              <UserRow
-                key={user._id || index}
-                user={user}
-                onUpdate={onUpdate}
-                selectAllChecked={selectAllChecked}
-                showInactive={showInactive}
-              />
-            ))}
-        </tbody>
-      </table>
-    </div>
-  );
-};
-
-
+        {users.map((user, index) => (
+          <UserRow
+            key={user._id || index}
+            user={user}
+            onDelete={onDelete}
+            onUpdate={onUpdate}
+            selectAllChecked={selectAllChecked}
+            showInactive={statusFilter === 'inactive'}  // Pass this prop to UserRow
+          />
+        ))}
+      </tbody>
+    </table>
+  </div>
+);
 
 
 const UserRow = ({ user, onUpdate, selectAllChecked, showInactive }) => {
@@ -136,14 +135,13 @@ const UserRow = ({ user, onUpdate, selectAllChecked, showInactive }) => {
 
   return (
     <tr className={isChecked ? "row-selected" : ""}>
-      <td width="1%"> 
+      <td width="1%">
         <input type="checkbox" checked={isChecked} onChange={handleCheckboxChange} />
       </td>
 
       {isEditing ? (
         <>
           <td><input type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} /></td>
-    
           <td><input type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} /></td>
           <td>
             <select
@@ -191,7 +189,7 @@ const UserRow = ({ user, onUpdate, selectAllChecked, showInactive }) => {
           <td>{user.status}</td>
         </>
       )}
-      <td>
+       <td>
         {isEditing ? (
           <>
             <button className="table_save" onClick={handleSave}>
@@ -206,13 +204,13 @@ const UserRow = ({ user, onUpdate, selectAllChecked, showInactive }) => {
             <button className="table_edit" onClick={() => setIsEditing(true)}>
               <FontAwesomeIcon icon={faEdit} />
             </button>
-            {showInactive ? (
-              <button className="table_delete" onClick={handleRestore}>
-                <FontAwesomeIcon icon={faRedo} />
+            {user.status === 'inactive' ? (
+              <button className="table_restore" onClick={handleRestore}>
+                <FontAwesomeIcon icon={faRedo} /> Restore
               </button>
             ) : (
-              <button className="table_delete" onClick={handleArchive}>
-                <FontAwesomeIcon icon={faArchive} />
+              <button className="table_archive" onClick={handleArchive}>
+                <FontAwesomeIcon icon={faArchive} /> Archive
               </button>
             )}
           </>
@@ -221,16 +219,17 @@ const UserRow = ({ user, onUpdate, selectAllChecked, showInactive }) => {
     </tr>
   );
 };
+
 const Table = () => {
   const navigate = useNavigate();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [stats, setStats] = useState({ users: [] });
   const [departmentFilter, setDepartmentFilter] = useState('all');
   const [roleFilter, setRoleFilter] = useState('all');
-  const [statusFilter, setStatusFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('active');
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage] = useState(50);
+  const [rowsPerPage] = useState(10);
   const [currentUser, setCurrentUser] = useState(null); // Step 1: Define state for current user
   const [selectAllChecked, setSelectAllChecked] = useState(false);
 
@@ -276,7 +275,7 @@ const Table = () => {
     const filtered = stats.users.filter(user => {
       const matchesDepartment = departmentFilter === 'all' || user.department === departmentFilter;
       const matchesRole = roleFilter === 'all' || user.role === roleFilter;
-      const matchesStatus = statusFilter === 'all' || user.status === statusFilter;
+      const matchesStatus = user.status === statusFilter;
       return matchesDepartment && matchesRole && matchesStatus;
     });
     setFilteredUsers(filtered);

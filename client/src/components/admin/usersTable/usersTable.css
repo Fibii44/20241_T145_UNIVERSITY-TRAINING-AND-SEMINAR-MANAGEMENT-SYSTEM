@@ -194,7 +194,7 @@
 
 /* For action buttons and table controls */
 .table_edit,
-.table_delete,
+.table_archive,
 .table_save,
 .table_cancel {
     background-color: #007bff;
