@@ -1,201 +1,211 @@
 .header-container {
-    margin-bottom: 20px;
-    margin-left: 20px;
-    margin-top: 10px;
-    display: flex;
-    align-items: center;
-    font-size: 12px;
-    flex-wrap: wrap;
+  margin-bottom: 20px;
+  margin-left: 20px;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  flex-wrap: wrap;
 }
 
 .filter-header {
-    display: flex;
-    justify-content: flex-end;
-    flex-grow: 1;
-    align-items: center;
+  display: flex;
+  justify-content: flex-end;
+  flex-grow: 1;
+  align-items: center;
 }
 
 .filter {
-    display: flex;
-    flex-direction: column;
-    margin-right: 20px;
+  display: flex;
+  flex-direction: column;
+  margin-right: 20px;
 }
 
 .filter label {
-    margin-bottom: 5px;
-    font-weight: bold;
+  margin-bottom: 5px;
+  font-weight: bold;
 }
 
 .filter select {
-    padding: 8px 2px;
-    border: 1px solid #ced4da;
-    border-radius: 8px;
-    transition: border-color 0.3s;
-    width: 100px;
-    margin: 0;
+  padding: 8px 2px;
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  transition: border-color 0.3s;
+  width: 100px;
+  margin: 0;
 }
 
 .filter select:focus {
-    border-color: #80bdff;
-    outline: none;
+  border-color: #80bdff;
+  outline: none;
 }
 
 .filter select:hover {
-    border-color: #80bdff;
+  border-color: #80bdff;
 }
 
 .personnel-name {
-  white-space: nowrap; /* Prevent the name cell content from wrapping */
+white-space: nowrap; /* Prevent the name cell content from wrapping */
 }
 
 .personnel-name input[type="text"] {
-  word-wrap: break-word; 
-  width: 100%;
-  vertical-align: top; /* Add this line */ 
+word-wrap: break-word; 
+width: 100%;
+vertical-align: top; /* Add this line */ 
 }
 
 .personnel-table {
-  background-color: #f8f9fa;
-  color: #495057;
-  padding: 12px;
-  text-align: left; 
-  align-items: center; /* Vertically center the content */
+background-color: #f8f9fa;
+color: #495057;
+padding: 12px;
+text-align: left; 
+align-items: center; /* Vertically center the content */
+
 }
 
+.personnel-table-name{
+width: 5rem;
+}
 
 .personnel-table th {
-  background-color: #f8f9fa;
-  color: #495057;
-  font-weight: bold;
-  padding: 12px;
-  text-align: left; 
-  align-items: center; /* Vertically center the content */
+background-color: #f8f9fa;
+color: #495057;
+font-weight: bold;
+padding: 12px;
+text-align: left; 
+align-items: center; /* Vertically center the content */
+table-layout: fixed; 
+
 }
 
 
 .personnel-table td {
-  padding: 15px;
-  text-align: left;
-  vertical-align: top;
+padding: 15px;
+text-align: left;
+vertical-align: top;
+  table-layout: fixed; 
+
 }
 
 .personnel-name { 
-  white-space: nowrap;  
+white-space: nowrap;  
 }
 
 .personnel-name input[type="text"] {
-  word-wrap: break-word; 
-  width: 100%;          
+word-wrap: break-word; 
+width: 100%;          
 }
 
 .filter-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center; /* Aligns the label and the filter vertically */
-  }
-  
-  .filter-role, .filter-department, .filter-status {
-    background-color: transparent;
-    border: none;
-    font-size: 14px;
-    width: 10px; /* Adjust width as needed */
-    padding: 8px;
-    cursor: pointer;
-   
-  }
+  display: flex;
+  justify-content: space-between;
+  align-items: center; /* Aligns the label and the filter vertically */
+}
 
-  .filter-role {
-    border-color: #4CAF50; /* Green border for role filter */
-  }
-  
-  .filter-department {
-    border-color: #2196F3; /* Blue border for department filter */
-  }
-  
-  .filter-status {
-    border-color: #FF5722; /* Orange border for status filter */
-  }
+.filter-role, .filter-department, .filter-status {
+  background-color: transparent;
+  border: none;
+  font-size: 14px;
+  width: 10px; /* Adjust width as needed */
+  padding: 8px;
+  cursor: pointer;
+ 
+}
 
-  .filter-role:focus, .filter-department:focus, .filter-status:focus {
-    border-color: transparent; /* Or choose any color you prefer */
-    outline: none; /* Optional: Removes the default outline */
-  }
-  
+.filter-role {
+  border-color: #4CAF50; /* Green border for role filter */
+}
+
+.filter-department {
+  border-color: #2196F3; /* Blue border for department filter */
+}
+
+.filter-status {
+  border-color: #FF5722; /* Orange border for status filter */
+}
+
+.filter-role:focus, .filter-department:focus, .filter-status:focus {
+  border-color: transparent; /* Or choose any color you prefer */
+  outline: none; /* Optional: Removes the default outline */
+}
+
 
 
 
 .user-heading {
-    padding: 10px 20px;
-    background-color: #f9f9f9;
-    border: 1px solid #dedede;
-    border-radius: 5px;
+  padding: 10px 20px;
+  background-color: #f9f9f9;
+  border: 1px solid #dedede;
+  border-radius: 5px;
 }
 
 .table-container {
-    margin: 20px;
-    max-width: 100%;
-    overflow: hidden; /* Prevent the container from having its own scrollbar */
-   
+  margin: 20px;
+  max-width: 100%;
+  overflow: hidden; /* Prevent the container from having its own scrollbar */
+ 
 }
 
 
 
 
 .pagination {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-  }
-  
-  .pagination button {
-    padding: 5px 10px;
-    margin: 0 10px;
-    border: none;
-    border-radius: 5px;
-    background-color: #011c39;
-    color: rgb(255, 255, 255);
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    
-  }
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
 
-  .pagination button:hover {
-    background-color: #feb800; /* Changes color on hover */
-    
-  }
- 
+.pagination button {
+  padding: 5px 10px;
+  margin: 0 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #011c39;
+  color: rgb(255, 255, 255);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
   
-  .pagination button:disabled {
-    background-color: grey;
-    cursor: not-allowed;
-  }
-  
-  .pagination span {
-    padding: 8px 16px;
-    font-size: 14px;
-  }
+}
 
-  .row-selected {
-    background-color: #d1d1d1; /* Light cyan background for selected rows */
-  }
-
-  .profile-container {
-    align-items: center;    /* Vertically align the image and text */
-    white-space: nowrap;    /* Prevent the content from wrapping */
-  }
+.pagination button:hover {
+  background-color: #feb800; /* Changes color on hover */
   
-  .profile-image {
-    margin-right: 10px;    /* Adjust spacing between image and text */
-    width: 30px;           /* Adjust image size as needed */
-    height: 30px;          /* Adjust image size as needed */
-    border-radius: 50%;    /* Make the image circular (optional) */
-    object-fit: cover;     /* Ensure the image covers the area */
-  }
+}
+
+
+.pagination button:disabled {
+  background-color: grey;
+  cursor: not-allowed;
+}
+
+.pagination span {
+  padding: 8px 16px;
+  font-size: 14px;
+}
+
+.row-selected {
+  background-color: #d1d1d1; /* Light cyan background for selected rows */
+}
+
+.profile-container {
+  align-items: center;    /* Vertically align the image and text */
+  white-space: nowrap;    /* Prevent the content from wrapping */
+}
+
+.profile-image {
+  margin-right: 10px;    /* Adjust spacing between image and text */
+  width: 30px;           /* Adjust image size as needed */
+  height: 30px;          /* Adjust image size as needed */
+  border-radius: 50%;    /* Make the image circular (optional) */
+  object-fit: cover;     /* Ensure the image covers the area */
+}  /* Ensure the image covers the area */
 
 /* For action buttons and table controls */
 .table_edit,
 .table_archive,
 .table_save,
+.table_restore,
+.table_delete,
 .table_cancel {
     background-color: #007bff;
     color: white;
@@ -209,74 +219,84 @@
     width: 30px;
     justify-content: center;
     flex-shrink: 0;
+    margin-right: .1rem;
 }
 
+.button-actions{
+  justify-content: center;
+  align-items: flex-end;
+}
 .table_edit:hover {
-    background-color: #0056b3;
+  background-color: #0056b3;
 }
 
 .table_delete,
 .table_cancel {
-    background-color: #dc3545;
+  background-color: #dc3545;
 }
 
+
 .table_delete:hover {
-    background-color: #c82333;
+  background-color: #c82333;
 }
 
 .table_save {
-    background-color: #32b35d;
+  background-color: #32b35d;
 }
 
 .table_save:hover {
-    background-color: rgb(39, 143, 94);
+  background-color: rgb(39, 143, 94);
 }
+
+
+
+
+
 .add-personnel-button svg{ 
-  font-size: 24px;   
-  color: #011c39;  
-  margin-bottom: 0;
-  transition: transform 0.2s ease; /* Add a transition for a smooth hover effect */
+font-size: 24px;   
+color: #011c39;  
+margin-bottom: 0;
+transition: transform 0.2s ease; /* Add a transition for a smooth hover effect */
 }
 
 .add-personnel-button a {
-  position: relative; 
-  display: inline-flex; /* Use inline-flex to align to text baseline */
-  align-items: flex-end; 
+position: relative; 
+display: inline-flex; /* Use inline-flex to align to text baseline */
+align-items: flex-end; 
 }
 
 .add-personnel-button .fa-user-plus { 
-  font-size: 2rem;   
-  color: #011c39;  
-  transition: transform 0.2s ease; 
-  margin-top: 1rem;
-  margin-right: 1rem;
-  vertical-align: text-bottom; /* Align to the text baseline */
+font-size: 2rem;   
+color: #011c39;  
+transition: transform 0.2s ease; 
+margin-top: 1rem;
+margin-right: 1rem;
+vertical-align: text-bottom; /* Align to the text baseline */
 }
 
 .add-personnel-button a:hover svg {
-  transform: scale(1.1); /* Slightly increase the size of the icon on hover */
+transform: scale(1.1); /* Slightly increase the size of the icon on hover */
 }
 
 .add-personnel-button a .tooltip { /* Style the tooltip */
-  visibility: hidden;
-  color: #333;
-  bottom: 100%;  /* Adjust this value to position it below the center */
-  left: 1rem;
-  transform: translateX(-50%); 
-  text-align: center;
-  padding: 5px 10px;
-  border-radius: 6px;
-  
-  position: absolute;
-  z-index: 1;/* Position the tooltip above the icon */
-  transform: translateX(-50%); 
-  opacity: 0;
-  transition: opacity 0.3s;
-  white-space: nowrap; /* Prevent the tooltip text from wrapping */
+visibility: hidden;
+color: #333;
+bottom: 100%;  /* Adjust this value to position it below the center */
+left: 1rem;
+transform: translateX(-50%); 
+text-align: center;
+padding: 5px 10px;
+border-radius: 6px;
+
+position: absolute;
+z-index: 1;/* Position the tooltip above the icon */
+transform: translateX(-50%); 
+opacity: 0;
+transition: opacity 0.3s;
+white-space: nowrap; /* Prevent the tooltip text from wrapping */
 }
 
 .add-personnel-button a:hover .tooltip {
-  visibility: visible;
-  opacity: 1;
+visibility: visible;
+opacity: 1;
 }
-

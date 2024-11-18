@@ -141,10 +141,11 @@ const UserRow = ({ user, onUpdate, selectAllChecked, showInactive }) => {
 
       {isEditing ? (
         <>
-          <td><input type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} /></td>
-          <td><input type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} /></td>
+          <td><input className="form-control" type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} /></td>
+          <td><input className="form-control" type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} /></td>
           <td>
             <select
+              className="form-select"
               value={formData.role}
               onChange={(e) => setFormData({ ...formData, role: e.target.value })}
             >
@@ -153,9 +154,10 @@ const UserRow = ({ user, onUpdate, selectAllChecked, showInactive }) => {
               <option value="general_admin">General Admin</option>
             </select>
           </td>
-          <td><input type="text" value={formData.position} onChange={(e) => setFormData({ ...formData, position: e.target.value })} /></td>
+          <td><input className="form-control" type="text" value={formData.position} onChange={(e) => setFormData({ ...formData, position: e.target.value })} /></td>
           <td>
             <select
+              className="form-select"
               value={formData.department}
               onChange={(e) => setFormData({ ...formData, department: e.target.value })}
             >
@@ -189,7 +191,7 @@ const UserRow = ({ user, onUpdate, selectAllChecked, showInactive }) => {
           <td>{user.status}</td>
         </>
       )}
-       <td>
+       <td className="button-actions">
         {isEditing ? (
           <>
             <button className="table_save" onClick={handleSave}>
@@ -206,12 +208,12 @@ const UserRow = ({ user, onUpdate, selectAllChecked, showInactive }) => {
             </button>
             {user.status === 'inactive' ? (
               <button className="table_restore" onClick={handleRestore}>
-                <FontAwesomeIcon icon={faRedo} /> Restore
+                <FontAwesomeIcon icon={faRedo} />
               </button>
             ) : (
               <button className="table_archive" onClick={handleArchive}>
-                <FontAwesomeIcon icon={faArchive} /> Archive
-              </button>
+                <FontAwesomeIcon icon={faArchive} />
+              </button> 
             )}
           </>
         )}
@@ -290,11 +292,29 @@ const Table = () => {
     }
   }, []);
 
+
+  useEffect(() => {
+    const filtered = stats.users.filter(user => {
+      const matchesDepartment = departmentFilter === 'all' || user.department === departmentFilter;
+      const matchesRole = roleFilter === 'all' || user.role === roleFilter;
+      const matchesStatus = user.status === statusFilter;
+      return matchesDepartment && matchesRole && matchesStatus;
+    });
+    setFilteredUsers(filtered);
+  }, [departmentFilter, roleFilter, statusFilter, stats.users]);
+
   // Update Data
   const handleUpdate = async (userId, formData) => {
     try {
       await axios.put(`http://localhost:3000/a/users/${userId}`, formData);
       setFilteredUsers(filteredUsers.map(user => (user._id === userId ? { ...user, ...formData } : user)));
+   
+      setStats(prevStats => ({ 
+        ...prevStats, 
+        users: prevStats.users.map(user => 
+          user._id === userId ? { ...user, ...formData } : user
+        )
+      }));
     } catch (err) {
       console.log(err);
     }
