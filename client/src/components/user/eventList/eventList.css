@@ -1,7 +1,7 @@
 .events-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 24px; /* Space between cards */
+    gap: 1rem; /* Space between cards */
     padding: 20px;
     background-color: #f5f6fa; /* Center grid horizontally */
     width: 80rem /* Set max width for the grid */

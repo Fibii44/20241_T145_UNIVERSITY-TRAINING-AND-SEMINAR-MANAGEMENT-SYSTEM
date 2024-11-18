@@ -1,0 +1,304 @@
+.certificates-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 equal-width columns */
+    grid-template-rows: repeat(2, 1fr); /* 2 equal-height rows */ 
+    grid-auto-flow: row dense; 
+    gap: 24px; 
+    padding: 20px;
+    background-color: #f5f6fa;
+    width: 70rem; 
+  }
+
+  .certificates-card .card-content {  
+    display: flex;        
+    align-items: flex-start; /* Align items to the top of the container */
+    padding: 0;
+  }
+
+  .certificates-card .column-first { /* Target the first column */
+    width: 100%;
+  }
+  
+  .certificates-card .download-icon {
+    margin-left: auto;   /* Push the button to the right within its column */
+    margin-top: 1.6rem;   /* Push the button to the bottom of the column */
+    font-size: 1.5em;    /* Adjust font size for icon scaling (example) */ 
+    color: #011c39;
+    opacity: 0.5;
+  }
+
+  .certificates-card .download-icon:hover {
+    opacity: 1;
+  }
+
+
+
+
+  .certificates-card h3 {
+    padding-top: 12px;
+    font-size: 20px;
+    text-align: left;
+    margin-bottom: 0;
+  }
+  
+  .certificates-link {
+    text-decoration: none; /* Remove underline */
+  }
+  
+  .certificates-container{
+    background-color: #f5f6fa
+  }
+  
+  /* Sort Container Styles */
+  .certificates-sort-container {
+  width: 80%;
+  margin: 10;
+  }
+  
+  .certificates-card {
+    cursor: pointer;
+    width: 18rem;
+    text-align: left;
+    background-color: white;
+    padding: 1.3rem;
+    border-radius: 18px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    width: 100%;
+    height: 100%; 
+  }
+  
+  .certificates-card:hover {
+    background-color: rgb(226, 241, 241);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); 
+  }
+  
+  .certificate-image {
+    width: 100%;
+    max-height: 150px; 
+    border-radius: 10px;
+    object-fit: cover; 
+    margin-bottom: 12px;
+    transition: transform 0.3s ease
+  }
+  
+  .certificates-card p {
+    margin-top: 6px;
+    font-size: 14px;
+    color: #011c39;  
+  }
+  
+  .certificates-card .date {
+    color: grey;
+    font-size: 12px;
+    margin-bottom: 12px;
+    text-align: left;
+  }
+  
+  .certificates-card button {
+    background-color: white;
+    color: #011c39;
+    border: 1px solid grey;
+    border-radius: 18px;
+    height: 2.5rem;
+    padding: 0 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    margin-top: auto; 
+  }
+  
+  .certificates-card:hover button {
+    background-color: #feb800; 
+    color: #333; 
+  }
+  
+  .certificates-card:hover .event-image {
+    transform: scale(1.05);
+  }
+  
+  .certificates-card .event-description {
+    height: 15rem;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  
+  .pagination-controls {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  .pagination-controls button {
+    background-color: #011c39;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 0 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .pagination-controls button:disabled {
+    background-color: grey;
+    cursor: not-allowed;
+  }
+  
+  .pagination-controls button:hover:not(:disabled) {
+    background-color: #feb800;
+  }
+
+
+  .certificates-sort-options {
+    display: flex;
+    justify-content: end;
+    align-items: center; /* Vertically align the groups */
+  }
+  
+  .sort-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .certificate-image {
+    width: 100%; 
+    height: auto; 
+  }
+  
+  .certificates-grid .certificate-image { 
+    aspect-ratio: 1 / 1; 
+    width: 19rem;
+    object-fit: cover;
+  }
+
+  .certificates-list{
+   width: 70%;
+ 
+  }
+
+  .list-view-image {
+    width: 90px; 
+    height: 90px;
+    object-fit: cover; 
+    float: left; 
+    margin-right: 15px; 
+    margin-left: 15px;
+}
+
+.certificates-list-item {
+  display: flex;           /* Use flexbox for positioning */
+  flex-direction: column;  /* Stack elements vertically */
+  align-items: flex-start; /* Align items to the left */ 
+  border: 1px solid #ccc;
+  padding: 10px; 
+  border-radius: 10px;
+  margin-bottom: 10px; 
+  margin-top: 10px;
+}
+
+.certificates-list-item h3{
+    font-size: 1.5rem;
+}
+
+.certificates-list-item .date{
+    font-size: 1rem;
+    color: grey;
+}
+  /* Custom Select Styles */
+  .custom-select {
+    appearance: none; 
+    padding: .7rem;
+    border: none;
+    border-radius: 8px;
+    background-color: #f5f6fa;
+    font-size: 16px;
+    cursor: pointer;
+    position: relative; 
+    margin-left: 15px; /* Spacing between dropdowns */
+  }
+  
+  .custom-select:hover {
+    background-color: #ffffff; 
+  }
+  
+  .custom-select:focus {
+    outline: none; 
+    box-shadow: 0 0 0 2px rgba(1, 28, 57, 0.3);
+  }
+  
+  .custom-select::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    border-top: 6px solid #333;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    pointer-events: none; 
+  }
+  
+  /* Custom Select Options Styles */
+  .custom-select-options {
+    position: absolute;
+    top: calc(100% + 5px); 
+    left: 0;
+    z-index: 10; 
+    background-color: #f5f6fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    width: max-content; 
+    display: none; 
+  }
+  
+  .custom-select:hover .custom-select-options,
+  .custom-select:focus .custom-select-options {
+    display: block; 
+  }
+  
+  .custom-select-options li {
+    padding: 10px 15px;
+    list-style: none;
+    cursor: pointer;
+  }
+  
+  .custom-select-options li:hover {
+    background-color: #f0f0f0; 
+  }
+  
+  /* Custom Button Styles */
+  .custom-button {
+    appearance: none; /* Remove default button appearance */
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+    background-color: #f5f6fa; /* White background */
+    font-size: 16px;
+    cursor: pointer;
+    position: relative; /* For positioning the dropdown arrow */
+    margin-left: 15px; /* Spacing between dropdowns */
+  }
+  
+  .custom-button:hover {
+    background-color: #f0f0f0; /* Subtle hover effect */
+  }
+  
+  .custom-button:focus {
+    outline: none; /* Remove default focus outline */
+    box-shadow: 0 0 0 2px rgba(1, 28, 57, 0.3); /* Add a focus ring */
+  }
+  
+  .custom-button::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    border-top: 6px solid #333;
+  }
+  
