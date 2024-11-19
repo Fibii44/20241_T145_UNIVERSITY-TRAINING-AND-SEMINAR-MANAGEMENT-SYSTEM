@@ -6,7 +6,7 @@ import { jwtDecode } from 'jwt-decode';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import AddPersonnelModal from "../addPersonnelModal/addPersonnelModal";
 import { faEdit, faSave, faTimes, faArchive, faUserPlus, faRedo } from '@fortawesome/free-solid-svg-icons';
-
+import ConfirmArchiveModal from "../../modals/confirmModal/confirmArchiveModal"
 
 import defaultEventPicture from '../../../assets/default-profile.png'
 
@@ -94,7 +94,8 @@ const UserRow = ({ user, onUpdate, selectAllChecked, showInactive }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({});
   const [isChecked, setIsChecked] = useState(selectAllChecked);
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalAction, setModalAction] = useState(null);
   useEffect(() => {
     setFormData({
       name: user.name,
@@ -113,27 +114,40 @@ const UserRow = ({ user, onUpdate, selectAllChecked, showInactive }) => {
   const handleCheckboxChange = () => setIsChecked(!isChecked);
 
   const handleSave = () => {
-    if (window.confirm("Are you sure you want to save these changes?")) {
+    setModalAction(() => () => {
       onUpdate(user._id, formData);
       setIsEditing(false);
-    }
+    });
+    setIsModalOpen(true);
   };
 
-  const handleArchive = async () => {
-    if (window.confirm("Are you sure you want to archive this user?")) {
-      const updatedUser = { ...user, status: "inactive" }; // Change the status to "inactive"
-      onUpdate(user._id, updatedUser); // Call the update function with the new status
-    }
+  const handleArchive = () => {
+    setModalAction(() => () => {
+      const updatedUser = { ...user, status: "inactive" };
+      onUpdate(user._id, updatedUser);
+    });
+    setIsModalOpen(true);
   };
-
-  const handleRestore = async () => {
-    if (window.confirm("Are you sure you want to restore this user?")) {
-      const updatedUser = { ...user, status: "active" }; // Change the status to "active"
-      onUpdate(user._id, updatedUser); // Call the update function with the new status
-    }
+  const handleRestore = () => {
+    setModalAction(() => () => {
+      const updatedUser = { ...user, status: "active" };
+      onUpdate(user._id, updatedUser);
+    });
+    setIsModalOpen(true);
   };
 
   return (
+    <>
+      <ConfirmArchiveModal
+        isOpen={isModalOpen}
+        title="Archive User?"
+        message="This user will be inactive"
+        onConfirm={() => {
+          modalAction();
+          setIsModalOpen(false);
+        }}
+        onCancel={() => setIsModalOpen(false)}
+      />
     <tr className={isChecked ? "row-selected" : ""}>
       <td width="1%">
         <input type="checkbox" checked={isChecked} onChange={handleCheckboxChange} />
@@ -219,6 +233,7 @@ const UserRow = ({ user, onUpdate, selectAllChecked, showInactive }) => {
         )}
       </td>
     </tr>
+    </>
   );
 };
 
