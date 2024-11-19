@@ -97,9 +97,7 @@
 }
 
   .event-image {
-    width: 100%; 
-    height: auto; 
-    border-radius: 10px; 
+    
   }
   
   .event-title {
@@ -164,6 +162,8 @@
     width: 100%;
     max-height: 200px;
     overflow: hidden;
+    height: auto; 
+    border-radius: 10px; 
   }
   
   .event-img {

@@ -36,11 +36,20 @@
     background-color: rgb(226, 241, 241);/* Zoom in effect */
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Slightly darker shadow on hover */
 }
+.user-image {
+    max-height: 150px;
+    overflow: hidden;
+    border-radius: 10px;
+}
+.user-image:hover {
+    transition: transform 0.3s ease
+}
 .event-image {
     width: 100%;
-    max-height: 200px; /* Adjust to fit within the card */
-    border-radius: 8px;
-    object-fit: cover; /* Ensure the image fills the space without distortion */
+    max-height: 200px;
+    overflow: hidden;
+    height: auto; 
+    border-radius: 10px;/* Ensure the image fills the space without distortion */
     margin-bottom: 12px;
     transition: transform 0.3s ease
 }
