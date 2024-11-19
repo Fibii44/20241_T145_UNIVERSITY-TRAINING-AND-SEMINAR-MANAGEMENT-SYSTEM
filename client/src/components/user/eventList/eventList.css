@@ -1,10 +1,11 @@
-.events-grid {
+.user-events-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1rem; /* Space between cards */
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px; /* Space between cards */
     padding: 20px;
-    background-color: #f5f6fa; /* Center grid horizontally */
-    width: 80rem /* Set max width for the grid */
+    background-color: #f5f6fa;
+    margin: 2rem auto; /* Center grid horizontally */
+    width: 88rem; /* Set max width for the grid */
 }
 
 .user-event-card h3 {
@@ -19,7 +20,7 @@
 
 .user-event-card {
     cursor: pointer;
-    width: 18rem;
+    width: 20rem;
     text-align: left;
     background-color: white;
     padding: 30px;
@@ -29,7 +30,7 @@
     display: flex;
     flex-direction: column;
     align-items: left;
-    height: 100%; /* Make each card take full height in its grid cell */
+    height: 100%;/* Make each card take full height in its grid cell */
 }
 
 .user-event-card:hover {
@@ -37,7 +38,7 @@
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Slightly darker shadow on hover */
 }
 .user-image {
-    max-height: 150px;
+    height: 150px;
     overflow: hidden;
     border-radius: 10px;
 }
@@ -48,7 +49,7 @@
     width: 100%;
     max-height: 200px;
     overflow: hidden;
-    height: auto; 
+    height: 100%; 
     border-radius: 10px;/* Ensure the image fills the space without distortion */
     margin-bottom: 12px;
     transition: transform 0.3s ease
@@ -119,3 +120,6 @@
 .pagination-controls button:hover:not(:disabled) {
     background-color: #feb800;
 }
+
+/* 
+Sort */

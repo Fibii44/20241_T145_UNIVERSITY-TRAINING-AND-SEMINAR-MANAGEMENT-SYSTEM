@@ -570,7 +570,6 @@ const Calendar = () => {
                                     {event.title}
                                 </span>
                                 <p>{formatTime(event.startTime)} - {formatTime(event.endTime)}</p>
-                                <p>{event.description}</p>
                             </div>
                         ))}
                     </div>

@@ -522,8 +522,8 @@
         
         // Day View =========================================================================================================================================================================
         const renderDayView = () => {
-    
-            
+
+        
             const months = Array.from({ length: 12 }, (_, i) => new Date(currentDate.getFullYear(), i, 1));
             const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
             const today = new Date();
@@ -567,7 +567,6 @@
                                         {event.title}
                                     </span>
                                     <p>{formatTime(event.startTime)} - {formatTime(event.endTime)}</p>
-                                    <p>{event.description}</p>
                                 </div>
                             ))}
                         </div>

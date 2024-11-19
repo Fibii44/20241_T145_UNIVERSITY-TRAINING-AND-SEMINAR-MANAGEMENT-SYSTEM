@@ -171,3 +171,14 @@
     height: auto;
     object-fit: cover;
   }
+
+/* Sort Container ====================================== */
+.sort-label {
+  font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+.sort-container select {
+  border-radius: 10px;
+  margin: 5px;
+  padding: 3px;
+  font-size: 14px;
+}

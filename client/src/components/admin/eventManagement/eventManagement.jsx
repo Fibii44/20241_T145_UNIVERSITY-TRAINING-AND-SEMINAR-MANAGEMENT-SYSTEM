@@ -14,7 +14,7 @@ const EventM = ({ userRole, userCollege }) => {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [eventToDelete, setEventToDelete] = useState(null);
-
+  const [sortOption, setSortOption] = useState('dateAsc');
 
   const [currentPage, setCurrentPage] = useState(1);
   const eventsPerPage = 4;
@@ -30,7 +30,6 @@ const EventM = ({ userRole, userCollege }) => {
     try {
       setLoading(true);
       const response = await axios.get('http://localhost:3000/a/events');
-      // Convert `startTime` and `endTime` to Date objects in state
       const formattedEvents = response.data.map(event => ({
         ...event,
         startTime: new Date(event.startTime),
@@ -250,6 +249,21 @@ const EventM = ({ userRole, userCollege }) => {
     }
   };
 
+  const handleSort = (option) => {
+    setSortOption(option);
+    const sortedEvents = [...events];
+    if (option === 'dateAsc') {
+      sortedEvents.sort((a, b) => new Date(a.startTime) - new Date(b.startTime));
+    } else if (option === 'dateDesc') {
+      sortedEvents.sort((a, b) => new Date(b.startTime) - new Date(a.startTime));
+    } else if (option === 'titleAsc') {
+      sortedEvents.sort((a, b) => a.title.localeCompare(b.title));
+    } else if (option === 'titleDesc') {
+      sortedEvents.sort((a, b) => b.title.localeCompare(a.title));
+    }
+    setEvents(sortedEvents);
+  };
+  
   useEffect(() => {
     fetchEvents();
 
@@ -299,7 +313,23 @@ const EventM = ({ userRole, userCollege }) => {
           onClose={() => setIsDeleteModalOpen(false)}
           onConfirmDelete={confirmDelete}
         />
+{/* Sorting Dropdown */}
+<div className="sort-container">
+          <label className='sort-label' htmlFor="sort">Sort By:</label>
+          <br />
+          <select
+            id="sort"
+            value={sortOption}
+            onChange={(e) => handleSort(e.target.value)}
+          >
+            <option value="dateAsc">Date (Ascending)</option>
+            <option value="dateDesc">Date (Descending)</option>
+            <option value="titleAsc">Title (A-Z)</option>
+            <option value="titleDesc">Title (Z-A)</option>
+          </select>
+        </div>
 
+{/* Events */}
 <div className="context-card">
           <div className="admin-event-list">
             {currentEvents.map((event, index) => (

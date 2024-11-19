@@ -6,8 +6,9 @@ import { jwtDecode } from 'jwt-decode';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import AddPersonnelModal from "../addPersonnelModal/addPersonnelModal";
 import { faEdit, faSave, faTimes, faArchive, faUserPlus, faRedo } from '@fortawesome/free-solid-svg-icons';
-import ConfirmArchiveModal from "../../modals/confirmModal/confirmArchiveModal"
-
+import ConfirmArchiveModal from "../../modals/archiveConfirmModal/confirmArchiveModal"
+import SaveModal from "../../modals/saveConfirmModal/confirmSaveModal"
+import RestoreModal from "../../modals/restoreModal/restoreModal"
 import defaultEventPicture from '../../../assets/default-profile.png'
 
 
@@ -94,7 +95,11 @@ const UserRow = ({ user, onUpdate, selectAllChecked, showInactive }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({});
   const [isChecked, setIsChecked] = useState(selectAllChecked);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [isArchiveModalOpen, setIsArchiveModalOpen] = useState(false);
+  const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
+  const [isRestoreModalOpen, setIsRestoreModalOpen] = useState(false);
+
   const [modalAction, setModalAction] = useState(null);
   useEffect(() => {
     setFormData({
@@ -118,7 +123,7 @@ const UserRow = ({ user, onUpdate, selectAllChecked, showInactive }) => {
       onUpdate(user._id, formData);
       setIsEditing(false);
     });
-    setIsModalOpen(true);
+    setIsSaveModalOpen(true);
   };
 
   const handleArchive = () => {
@@ -126,27 +131,47 @@ const UserRow = ({ user, onUpdate, selectAllChecked, showInactive }) => {
       const updatedUser = { ...user, status: "inactive" };
       onUpdate(user._id, updatedUser);
     });
-    setIsModalOpen(true);
+    setIsArchiveModalOpen(true);
   };
   const handleRestore = () => {
     setModalAction(() => () => {
       const updatedUser = { ...user, status: "active" };
       onUpdate(user._id, updatedUser);
     });
-    setIsModalOpen(true);
+    setIsRestoreModalOpen(true);
   };
 
   return (
     <>
       <ConfirmArchiveModal
-        isOpen={isModalOpen}
+        isOpen={isArchiveModalOpen}
         title="Archive User?"
         message="This user will be inactive"
         onConfirm={() => {
           modalAction();
-          setIsModalOpen(false);
+          setIsArchiveModalOpen(false);
         }}
-        onCancel={() => setIsModalOpen(false)}
+        onCancel={() => setIsArchiveModalOpen(false)}
+      />
+      <SaveModal
+        isOpen={isSaveModalOpen}
+        title="Save Changes"
+        message="Changes will be permanently saved."
+        onConfirm={() => {
+          modalAction();
+          setIsSaveModalOpen(false);
+        }}
+        onCancel={() => setIsSaveModalOpen(false)}
+      />
+      <RestoreModal
+        isOpen={isRestoreModalOpen}
+        title="Restore User"
+        message="This user will be active and can be used."
+        onConfirm={() => {
+          modalAction();
+          setIsRestoreModalOpen(false);
+        }}
+        onCancel={() => setIsRestoreModalOpen(false)}
       />
     <tr className={isChecked ? "row-selected" : ""}>
       <td width="1%">

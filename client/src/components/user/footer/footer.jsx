@@ -3,7 +3,6 @@ import BukSULogo from '/src/assets/buksu.png'
 import './footer.css'
 
 function Footer() {
-  const [count, setCount] = useState(0)
 
   return (
     <>

@@ -7,6 +7,7 @@ import './eventList.css';
 function EventGrid() {
     const [events, setEvents] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
+    const [sortOption, setSortOption] = useState('dateAsc'); 
     const eventsPerPage = 4;
 
     useEffect(() => {
@@ -22,6 +23,20 @@ function EventGrid() {
         fetchEvents();
     }, []);
 
+    const handleSort = (option) => {
+      setSortOption(option);
+      const sortedEvents = [...events];
+      if (option === 'dateAsc') {
+        sortedEvents.sort((a, b) => new Date(a.startTime) - new Date(b.startTime));
+      } else if (option === 'dateDesc') {
+        sortedEvents.sort((a, b) => new Date(b.startTime) - new Date(a.startTime));
+      } else if (option === 'titleAsc') {
+        sortedEvents.sort((a, b) => a.title.localeCompare(b.title));
+      } else if (option === 'titleDesc') {
+        sortedEvents.sort((a, b) => b.title.localeCompare(a.title));
+      }
+      setEvents(sortedEvents);
+    };
     // Calculate the indexes of the first and last event on the current page
     const indexOfLastEvent = currentPage * eventsPerPage;
     const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
@@ -44,9 +59,27 @@ function EventGrid() {
         }
     };
 
+    const handleSortChange = (event) => {
+      setSortOption(event.target.value);
+      setCurrentPage(1); // Reset to the first page on sort change
+  }
     return (
         <div>
-            <div className="events-grid" style={{contentAlign: 'center', margin: '0 auto'}}>
+<div className="sort-container">
+          <label className='sort-label' htmlFor="sort">Sort By:</label>
+          <br />
+          <select
+            id="sort"
+            value={sortOption}
+            onChange={(e) => handleSort(e.target.value)}
+          >
+            <option value="dateAsc">Date (Ascending)</option>
+            <option value="dateDesc">Date (Descending)</option>
+            <option value="titleAsc">Title (A-Z)</option>
+            <option value="titleDesc">Title (Z-A)</option>
+          </select>
+        </div>
+            <div className="user-events-grid" style={{contentAlign: 'center', margin: '0 auto'}}>
                 {currentEvents.map((event) => (
                     <Link to={`/u/events/${event._id}`} key={event._id} className="event-link">
                         <div className="user-event-card">
