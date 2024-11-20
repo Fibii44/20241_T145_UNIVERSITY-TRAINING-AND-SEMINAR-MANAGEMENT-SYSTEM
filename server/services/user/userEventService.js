@@ -247,8 +247,12 @@ const cancelRegistration = async (req, res) => {
 
 // Render Google Calendar integration page
 const renderCalendar = async (req, res) => {
-    res.send('Google Calendar Integration Page');
-    // Integrate Google Calendar API logic here
+    try {
+        const registrations = await Registration.find();
+        res.json(registrations);
+    } catch (error) {
+        res.status(500).send('Error retrieving events');
+    }
 };
 
 

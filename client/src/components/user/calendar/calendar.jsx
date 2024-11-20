@@ -7,6 +7,7 @@
     
     const Calendar = () => {
         const [events, setEvents] = useState([]);
+        const [registeredEvents, setRegisteredEvents] = useState([]);
         const [currentView, setCurrentView] = useState('month');
         const [currentDate, setCurrentDate] = useState(new Date());
         const [showOverlay, setShowOverlay] = useState(false);
@@ -38,7 +39,7 @@
         useEffect(() => {
             const fetchEvents = async () => {
                 try {
-                    const response = await axios.get('http://localhost:3000/a/events');
+                    const response = await axios.get('http://localhost:3000/u/events');
                     console.log('Fetched events:', response.data);
                     setEvents(response.data);
                 } catch (error) {
@@ -49,6 +50,18 @@
             fetchEvents();
         }, []);
     
+        useEffect(() => {
+            const fetchRegisteredEvents = async () => {
+                try {
+                    const response = await axios.get('http://localhost:3000/u/calendar');
+                    setRegisteredEvents(response.data);
+                } catch (error) {
+                    console.error('Error fetching registered events:', error);
+                }
+            };
+            fetchRegisteredEvents();
+        }, []);
+
         function hexToRgb(hex) {
             hex = hex.replace('#', '');
             let r = parseInt(hex.substring(0, 2), 16);
@@ -173,9 +186,7 @@
             }
         };
     
-        const renderMonthView = () => {
-            
-    
+const renderMonthView = () => {
             const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
             const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
             const daysInMonth = endOfMonth.getDate();
@@ -195,16 +206,22 @@
             );
         
             const allDays = [...daysFromPrevMonth, ...daysThisMonth, ...daysFromNextMonth];
-            const filterEventsByCollege = (events) => {
-                if (!selectedCollege) return events; // If no college is selected, show all events
-            
-                return events.filter(event => {
-                    if (!event.participantGroup) {
-                        console.warn("Event missing participantGroup:", event);
-                        return false;
-                    }
-                    return event.participantGroup.college === selectedCollege;
-                });
+
+             const filterEventsByCollege = (events) => {
+                if (selectedCollege === 'Registered Events') {
+                    return events.filter(event =>
+                        registeredEvents.some(registration => registration.eventId === event._id)
+                    );
+                }
+
+                if (selectedCollege) {
+                    return events.filter(event => {
+                        if (!event.participantGroup) return false;
+                        return event.participantGroup.college === selectedCollege;
+                    });
+                }
+
+                return events; // Default: Return all events if no filter is selected
             };
     
             return (
