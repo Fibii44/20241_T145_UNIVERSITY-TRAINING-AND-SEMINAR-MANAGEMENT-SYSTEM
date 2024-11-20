@@ -121,7 +121,7 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
       setActiveReminder('None');
     } else {
       const reminderTime = getReminderTimeInMinutes(reminder);
-      setReminders([{method: 'popup', minutesBefore: reminderTime}]);
+      setReminders([{ method: 'popup', minutesBefore: reminderTime }]);
       setActiveReminder(reminder);
     }
   };
@@ -187,24 +187,24 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
   const handleSaveDetails = (e) => {
     e.preventDefault();
 
-      // Get the user's timezone offset in minutes
-  const timezoneOffset = new Date().getTimezoneOffset();
-  const timezoneOffsetHours = Math.abs(Math.floor(timezoneOffset / 60));
-  const timezoneOffsetMinutes = Math.abs(timezoneOffset % 60);
-  
-  // Format the offset as "+HH:MM" or "-HH:MM"
-  const formattedOffset = 
-    (timezoneOffset > 0 ? "-" : "+") +
-    String(timezoneOffsetHours).padStart(2, "0") +
-    ":" +
-    String(timezoneOffsetMinutes).padStart(2, "0");
+    // Get the user's timezone offset in minutes
+    const timezoneOffset = new Date().getTimezoneOffset();
+    const timezoneOffsetHours = Math.abs(Math.floor(timezoneOffset / 60));
+    const timezoneOffsetMinutes = Math.abs(timezoneOffset % 60);
 
-  // Combine date and time inputs and append timezone offset
-  const combinedStart = new Date(`${date}T${startTime}:00${formattedOffset}`);
-  const combinedEnd = new Date(`${date}T${endTime}:00${formattedOffset}`);
+    // Format the offset as "+HH:MM" or "-HH:MM"
+    const formattedOffset =
+      (timezoneOffset > 0 ? "-" : "+") +
+      String(timezoneOffsetHours).padStart(2, "0") +
+      ":" +
+      String(timezoneOffsetMinutes).padStart(2, "0");
 
-  const isoStartTime = combinedStart.toISOString();
-  const isoEndTime = combinedEnd.toISOString();
+    // Combine date and time inputs and append timezone offset
+    const combinedStart = new Date(`${date}T${startTime}:00${formattedOffset}`);
+    const combinedEnd = new Date(`${date}T${endTime}:00${formattedOffset}`);
+
+    const isoStartTime = combinedStart.toISOString();
+    const isoEndTime = combinedEnd.toISOString();
 
     let eventColor;
     switch (participants.college) {
@@ -232,13 +232,13 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
       default:
         eventColor = '#65a8ff'; // Default Blue
     }
-  
+
     const cleanedParticipants = selectedParticipants
       .map((participant) => participant.email.trim()) // Remove extra spaces
       .filter((email) => email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)); // Validate email format
-  
+
     console.log("Event Picture before save:", eventPicture);
-  
+
     // Proceed with saving the event details
     onSave({
       title,
@@ -375,19 +375,18 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
                       )}
 
                       <div className="selected-participants">
-                        <h4 class="select-label">Selected Participants</h4>
+                        <h4 className="select-label">Selected Participants</h4>
+
+                        {/* Map through the selected participants and display them */}
                         {selectedParticipants.map((participant) => (
                           <div key={participant.email} className="participant-item">
-                            
                             <li className="selected-participant">
                               <div className="participant-info">
-                                <img src={participant.profilePicture} alt="Profile" className="participant-img" />
                                 <span className="participant-email">{participant.email}</span>
                               </div>
                               <button className="cancel-btn" onClick={() => handleRemoveParticipant(participant.email)}>
                                 <FontAwesomeIcon icon={faTimes} />
                               </button>
-
                             </li>
                           </div>
                         ))}

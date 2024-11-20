@@ -23,6 +23,8 @@ const UsersTable = ({
   onStatusFilterChange, 
   statusFilter 
 }) => (
+
+  <div className="user-table-container"> 
   <div className="personnel-table-responsive">
     <table className="personnel-table">
       <thead className="thead-dark">
@@ -87,6 +89,7 @@ const UsersTable = ({
         ))}
       </tbody>
     </table>
+  </div>
   </div>
 );
 

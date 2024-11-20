@@ -34,6 +34,7 @@ const EventM = ({ userRole, userCollege }) => {
         ...event,
         startTime: new Date(event.startTime),
         endTime: new Date(event.endTime),
+        customParticipants: event.customParticipants || [], 
       }));
 
       // Update event list and ensure isLocked status is correct
@@ -305,7 +306,10 @@ const EventM = ({ userRole, userCollege }) => {
           onSave={handleSaveEventDetails}
           userRole={userRole}
           userCollege={userCollege}
-          initialEventData={selectedEvent}
+          initialEventData={selectedEvent ? {
+            ...selectedEvent,
+            customParticipants: selectedEvent.customParticipants.map(email => ({ email })) // Wrap emails in objects with email key
+          } : null}
         />
 
         <DeleteModal
