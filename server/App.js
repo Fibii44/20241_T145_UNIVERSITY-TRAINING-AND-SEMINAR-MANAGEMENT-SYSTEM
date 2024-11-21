@@ -15,6 +15,7 @@ const adminUserRoutes = require('./routes/admin/adminUserRoutes');
 const adminReportRoutes = require('./routes/admin/adminReportRoutes');
 
 // user routes
+const formSubmissionRoutes = require('./routes/user/formSubmissionRoutes');
 const userPageRoutes = require('./routes/user/userPageRoutes');
 const userEventRoutes = require('./routes/user/userEventRoutes');
 const userProfileRoutes = require('./routes/user/userProfileRoutes');
@@ -74,6 +75,7 @@ app.use("/", adminPageRoutes);
 app.use("/", adminEventRoutes);
 app.use("/", adminUserRoutes);
 app.use("/", adminReportRoutes);
+app.use("/", formSubmissionRoutes);
 app.use("/", userPageRoutes);
 app.use("/", userEventRoutes);
 app.use("/", userProfileRoutes);

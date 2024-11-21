@@ -9,14 +9,19 @@ function Event() {
     const [event, setEvent] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [showImage, setShowImage] = useState(false); 
+    const [showImage, setShowImage] = useState(false);
     const [isRegistered, setIsRegistered] = useState(false);
     const [registrationStatus, setRegistrationStatus] = useState("Register");
-    const [googleEventId, setGoogleEventId] = useState(null); // Store Google Calendar event ID
-    const [isLoading, setIsLoading] = useState(false); // Declare setIsLoading
+    const [googleEventId, setGoogleEventId] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
     const [currentUser, setCurrentUser] = useState(null);
     const [canRegister, setCanRegister] = useState(false);
-    const [ isEventActive, setIsEventActive] = useState(false);
+    const [isEventActive, setIsEventActive] = useState(false);
+    const [hasSubmittedForm, setHasSubmittedForm] = useState(false);
+    const [formStatus, setFormStatus] = useState(null);
+    const [certificateStatus, setCertificateStatus] = useState(null);
+    const [submissionStatus, setSubmissionStatus] = useState('idle'); // 'idle' | 'waiting' | 'checking' | 'success' | 'error'
+    const [submissionMessage, setSubmissionMessage] = useState('');
 
     const formatTime = (date) => {
         return new Date(date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
@@ -31,80 +36,244 @@ function Event() {
         return currentTime < eventStart
     }
 
+    const isEventCompleted = () => {
+        if(!event) { return false; }
+        const currentTime = new Date();
+        const eventEnd = new Date(event.endTime);
+
+        return currentTime > eventEnd;
+    };
+
+     // Function to check if user can access form
+    const canAccessForm = () => {
+        return (
+            isRegistered && 
+        event && 
+        isEventCompleted(event) && 
+        event.formLink && 
+        !hasSubmittedForm
+        );
+    };
+
+    // Check form status
+    const checkFormStatus = async () => {
+        try {
+            const token = sessionStorage.getItem('authToken');
+            if (!token) {
+                console.log('No token found');
+                return;
+            }
+            
+            // First check if there's a registration
+            const regResponse = await axios.get(`http://localhost:3000/u/events/${id}/check-registration`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            
+            if (!regResponse.data.isRegistered) {
+                console.log('User not registered for this event');
+                return;
+            }
+    
+            const response = await axios.get(`http://localhost:3000/u/events/${id}/form-status`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            
+            setFormStatus(response.data);
+            setHasSubmittedForm(response.data.hasSubmittedForm);
+            if (response.data.hasSubmittedForm) {
+                setCertificateStatus(response.data.certificateGenerated ? 'generated' : 'pending');
+            }
+        } catch (error) {
+            if (error.response?.status === 404) {
+                console.log('No form submission found');
+                setHasSubmittedForm(false);
+            } else {
+                console.error('Error checking form status:', error);
+            }
+        }
+    };
+
+    // Handle form submission
+    const handleFormSubmission = async () => {
+        try {
+            setSubmissionStatus('checking');
+            setSubmissionMessage('Verifying your form submission...');
+            setIsLoading(true);
+            
+            const token = sessionStorage.getItem('authToken');
+            if (!token) {
+                throw new Error('Please log in to submit the form');
+            }
+
+            if (!event.formLink) {
+                throw new Error('Invalid form link. Please contact the event organizer.');
+            }
+
+            // Updated form link validation to handle more Google Form URL patterns
+            const formId = event.formLink.match(/\/forms\/d\/e\/([^/]+)\//) ||  // Pattern 1: .../forms/d/e/[formId]/...
+                          event.formLink.match(/\/forms\/d\/([^/]+)\//) ||      // Pattern 2: .../forms/d/[formId]/...
+                          event.formLink.match(/\/forms\/([^/]+)/) ||           // Pattern 3: .../forms/[formId]
+                          event.formLink.match(/forms.gle\/(\w+)/);             // Pattern 4: forms.gle/[shortId]
+                          
+            if (!formId || !formId[1]) {
+                console.error('Form link:', event.formLink); // For debugging
+                throw new Error('Could not process form link. Please contact the event organizer.');
+            }
+
+            // Add a small delay to allow Google Form submission to be recorded
+            await new Promise(resolve => setTimeout(resolve, 3000));
+
+            const response = await axios.post(
+                `http://localhost:3000/u/events/${id}/form-submission`,
+                {
+                    formId: formId[1],
+                    formLink: event.formLink
+                },  
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+
+            if (response.data.hasSubmittedForm) {
+                setHasSubmittedForm(true);
+                setFormStatus(response.data);
+                setSubmissionStatus('success');
+                setSubmissionMessage('Form submission verified successfully! Your certificate will be available soon.');
+                checkFormStatus();
+            }
+
+        } catch (error) {
+            console.error('Error submitting form:', error);
+            setSubmissionStatus('error');
+            if (error.response?.status === 404) {
+                setSubmissionMessage('Your form submission was not found. Please make sure you submit the form using your registered email address.');
+            } else {
+                setSubmissionMessage(error.message || 'Failed to record form submission. Please try again.');
+            }
+            setHasSubmittedForm(false);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    // Update the form link click handler
+    const handleFormLinkClick = (e) => {
+        e.preventDefault();
+        if (!event.formLink) {
+            alert('Form link is not available. Please contact the event organizer.');
+            return;
+        }
+        
+        // Set status to waiting
+        setSubmissionStatus('waiting');
+        setSubmissionMessage('Please complete and submit the form. After submission, click "Verify Submission" below.');
+        
+        // Open form in new tab
+        window.open(event.formLink, '_blank');
+    };
+    
+    // Separate verify button component
+    const VerifySubmissionButton = () => (
+        <button 
+            onClick={handleFormSubmission}
+            disabled={isLoading}
+            className="verify-submission-btn"
+        >
+            {isLoading ? 'Verifying...' : 'Verify Submission'}
+        </button>
+    );
+
+    // Download certificate
+    const downloadCertificate = async () => {
+        try {
+            const token = sessionStorage.getItem('authToken');
+            const response = await axios.get(`http://localhost:3000/u/events/${id}/certificate`, {
+                headers: { 
+                    Authorization: `Bearer ${token}` 
+                },
+                responseType: 'blob'
+            });
+
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `${event.title}-certificate.pdf`);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('Error downloading certificate:', error);
+            alert('Error downloading certificate. Please try again later.');
+        }
+    };
+
     useEffect(() => {
-        if(event) {
+        const fetchEventAndData = async () => {
+            try {
+                setLoading(true);
+                const token = sessionStorage.getItem('authToken');
+                
+                // First fetch event details
+                const eventResponse = await axios.get(`http://localhost:3000/u/events/${id}`);
+                setEvent(eventResponse.data);
+    
+                if (token) {
+                    // Check registration status
+                    const regResponse = await axios.get(`http://localhost:3000/u/events/${id}/check-registration`, {
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+                    
+                    setIsRegistered(regResponse.data.isRegistered);
+                    setRegistrationStatus(regResponse.data.isRegistered ? "Cancel Registration" : "Register");
+                    setGoogleEventId(regResponse.data.googleEventId || null);
+    
+                    // Set user access
+                    const decodedToken = jwtDecode(token);
+                    setCurrentUser(decodedToken);
+    
+                    // Check registration eligibility
+                    const hasCustomParticipants = eventResponse.data?.customParticipants?.length > 0;
+                    setCanRegister(hasCustomParticipants 
+                        ? eventResponse.data.customParticipants.includes(decodedToken.email)
+                        : !eventResponse.data?.participantGroup?.college || 
+                          eventResponse.data.participantGroup.college === " " || 
+                          eventResponse.data.participantGroup.college === "All" ||
+                          eventResponse.data.participantGroup.college === decodedToken.department
+                    );
+    
+                    // Only check form status if:
+                    // 1. User is registered
+                    // 2. Event has a form link
+                    // 3. Event is completed
+                    if (regResponse.data.isRegistered && 
+                        eventResponse.data.formLink && 
+                        new Date() > new Date(eventResponse.data.endTime)) {
+                        try {
+                            await checkFormStatus();
+                        } catch (error) {
+                            console.log('Form status check failed:', error);
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                setError(error.response?.status === 404 
+                    ? "Event not found" 
+                    : "Failed to fetch event data"
+                );
+            } finally {
+                setLoading(false);
+            }
+        };
+    
+        fetchEventAndData();
+    }, [id]);
+
+    // Update event active status whenever event changes
+    useEffect(() => {
+        if (event) {
             setIsEventActive(checkEventTime());
         }
     }, [event]);
-
-    useEffect(() => {
-        const checkUser = async () => {
-            const token = sessionStorage.getItem('authToken');
-            if(!token) { return false; }
-
-            try {
-                const decodedToken = jwtDecode(token);
-                setCurrentUser(decodedToken);
-
-                const hasCustomParticipants = event?.customParticipants?.length > 0;
-                
-                if(hasCustomParticipants) {
-                    setCanRegister(event.customParticipants.includes(decodedToken.email));
-                    return;
-                }
-
-                const isOpenToAll = !event?.participantGroup?.college || event.participantGroup.college === " " || event.participantGroup.college === "All";
-
-                const isPartOfCollege = isOpenToAll || event?.participantGroup?.college === decodedToken.department;
-
-                setCanRegister(isOpenToAll || isPartOfCollege );
-            }catch(error) {
-                console.error("Error checking user access", error);
-                setCanRegister(false);
-            }
-
-        };
-        if(event) { checkUser(); }
-    }, [event]);
-
-    useEffect(() => {
-
-        const checkRegistration = async () => {
-            const token = sessionStorage.getItem('authToken');
-            console.log(token);
-            if (!token) {
-                setError("No token found, please log in.");
-                return;
-            }
-        
-            try {
-                console.log(`Checking registration status ${id}`);
-                const response = await axios.get(`http://localhost:3000/u/events/${id}/check-registration`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-                setIsRegistered(response.data.isRegistered);
-                setRegistrationStatus(response.data.isRegistered ? "Cancel Registration" : "Register");
-                setGoogleEventId(response.data.googleEventId || null); // Store googleEventId from response
-            } catch (err) {
-                console.error("Error checking registration status", err);
-                setError("Failed to check registration status");
-            }
-        };
-        
-        const fetchEvent = async () => {
-            try {
-                const response = await axios.get(`http://localhost:3000/u/events/${id}`);
-                setEvent(response.data);
-                setLoading(false);
-            } catch (err) {
-                setError("Failed to fetch event");
-                setLoading(false);
-            }
-        };
-
-        fetchEvent();
-        checkRegistration();
-    }, [id]);
 
 
     const handleRegistration = async () => {
@@ -116,6 +285,22 @@ function Event() {
             alert('Event added to your Google Calendar with reminders');
         } catch (err) {
             alert('Failed to register for the event');
+        }
+    };
+
+    const checkCertificateStatus = async () => {
+        try{
+            const token = sessionStorage.getItem('authToken');
+            const response = await axios.get(`http://localhost:3000/u/events/${id}/certificate-status`, { headers: { Authorization: `Bearer ${token}` } });
+            
+            if(response.data.status === 'generated'){
+                setCertificateStatus('generated');
+                alert('Your certificate is ready!');
+            } else {
+                setTimeout(checkCertificateStatus, 10000);
+            }
+        } catch (error) {
+            console.error('Error checking certificate status:', error);
         }
     };
 
@@ -185,11 +370,87 @@ function Event() {
                                 <button className='register-button' onClick={isRegistered ? handleCancellation : handleRegistration}>
                                     {registrationStatus}
                                 </button>
-                            ) : (
-                                <p>Event has already started or ended.</p>
+                             ) : (
+                                isEventCompleted() ? (
+                                    // Show form section if event is completed
+                                    <div>
+                                        {canAccessForm() && (
+                                            <div className="post-event-section">
+                                               <h4>Post-Event Survey</h4>
+                                                <p>Please complete the survey to receive your certificate.</p>
+                                                <div className="form-link-container">
+                                                    <a 
+                                                        href={event.formLink} 
+                                                        target="_blank" 
+                                                        rel="noopener noreferrer"
+                                                        className="form-link"
+                                                        onClick={handleFormLinkClick}
+                                                    >
+                                                        Click here to access the survey form
+                                                    </a>
+                                                    
+                                                    {submissionStatus !== 'idle' && (
+                                                        <div className={`submission-status ${submissionStatus}`}>
+                                                            {isLoading && <div className="loading-spinner"></div>}
+                                                            <p>{submissionMessage}</p>
+                                                            {submissionStatus === 'waiting' && (
+                                                                <>
+                                                                    <p className="submission-instructions">
+                                                                        Important:
+                                                                        <ul>
+                                                                            <li>Use your registered email ({currentUser?.email})</li>
+                                                                            <li>Complete and submit the form</li>
+                                                                            <li>Click "Verify Submission" after submitting</li>
+                                                                        </ul>
+                                                                    </p>
+                                                                    <VerifySubmissionButton />
+                                                                </>
+                                                            )}
+                                                            {submissionStatus === 'error' && (
+                                                                <button 
+                                                                    onClick={handleFormSubmission}
+                                                                    disabled={isLoading}
+                                                                >
+                                                                    Try Verifying Again
+                                                                </button>
+                                                            )}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        )}
+                                        {!hasSubmittedForm && (
+                                            <p>Please submit the form to receive your certificate.</p>
+                                        )}
+
+                                        {/* Certificate Section */}
+                                        {hasSubmittedForm && (
+                                            <div className="certificate-section">
+                                                <h4>Certificate Status</h4>
+                                                {certificateStatus === 'generated' ? (
+                                                    <>
+                                                        <p>Your certificate is ready!</p>
+                                                        <button 
+                                                            className="download-certificate-button"
+                                                            onClick={downloadCertificate}
+                                                        >
+                                                            Download Certificate
+                                                        </button>
+                                                    </>
+                                                ) : formStatus?.status === 'approved' ? (
+                                                    <p>Your certificate is being generated...</p>
+                                                ) : (
+                                                    <p>Your form submission is pending approval. Certificate will be available after approval.</p>
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <p>Event has already started.</p>
+                                )
                             )   
                         ) : (
-                            <p>You are not part of this event.</p>
+                            <p>You are not eligible for this event.</p>
                         )}
                     </div>
                 </div> 

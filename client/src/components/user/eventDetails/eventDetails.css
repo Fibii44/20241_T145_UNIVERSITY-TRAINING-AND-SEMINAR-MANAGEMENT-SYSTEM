@@ -128,3 +128,89 @@ body {
   .register-button:hover {
     background-color: #FFB800;
   }
+
+  .post-event-section {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background-color: #f8f9fa;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.post-event-section h4 {
+    color: #2c3e50;
+    margin-bottom: 1rem;
+}
+
+.form-link-container {
+    margin-top: 1rem;
+    text-align: center;
+}
+
+.form-link {
+    color: #007bff;
+    text-decoration: underline;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.form-link:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+.submission-status {
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.submission-status.waiting {
+    background-color: #fff3cd;
+    border: 1px solid #ffeeba;
+    color: #856404;
+}
+
+.submission-status.checking {
+    background-color: #cce5ff;
+    border: 1px solid #b8daff;
+    color: #004085;
+}
+
+.submission-status.success {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+}
+
+.submission-status.error {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+}
+
+.submission-instructions {
+    text-align: left;
+    margin-top: 1rem;
+}
+
+.submission-instructions ul {
+    margin-top: 0.5rem;
+    padding-left: 1.5rem;
+}
+
+.loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    border-top-color: #007bff;
+    animation: spin 1s ease-in-out infinite;
+    margin-right: 10px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}

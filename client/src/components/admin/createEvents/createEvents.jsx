@@ -26,6 +26,9 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
   const [selectedParticipants, setSelectedParticipants] = useState(initialEventData?.customParticipants || []);
   const [isFilterVisible, setIsFilterVisible] = useState(false); // Track filter visibility state
   const [searchTerm, setSearchTerm] = useState('');
+  const [ formLink, setFormLink] = useState('');
+  const [formId, setFormId] = useState('');
+  const [ certificateTemplate, setCertificateTemplate] = useState(null);
 
   // Sample data for colleges and departments
   const colleges = ['College of Arts and Sciences', 'College of Business', 'College of Education', 'College of Law', 'College of Public Administration and Governance', 'College of Nursing', 'College of Technologies'];
@@ -140,7 +143,6 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
         return 0;
     }
   };
-
   const handleCollegeChange = (e) => {
     const selectedCollege = e.target.value;
     setParticipants(prev => ({
@@ -174,7 +176,8 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
         college: initialEventData.participantGroup?.college || '',
         department: initialEventData.participantGroup?.department || ''
       });
-
+      setFormLink(initialEventData.formLink || '');
+      setCertificateTemplate(initialEventData.certificateTemplate || null);
     }
   }, [isOpen, initialEventData]);
 
@@ -250,6 +253,9 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
       description,
       reminders,
       participants,
+      formLink,
+      formId,
+      certificateTemplate,
       customParticipants: cleanedParticipants, // Include selected participants in the saved event
       color: eventColor,
     });
@@ -257,7 +263,55 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
   };
   if (!isOpen) return null;
 
+  // Function to validate Google Form URL
+  const validateFormLink = (url) => {
+    // Patterns for both full and shortened Google Form URLs
+    const patterns = [
+      /^https:\/\/docs\.google\.com\/forms\/d\/e\//, // Full URL
+      /^https:\/\/forms\.gle\//, // Shortened URL
+      /^https:\/\/docs\.google\.com\/forms\/d\// // Direct form URL
+    ];
+    
+    return patterns.some(pattern => pattern.test(url));
+  };
 
+  // Handler for form link changes
+  const handleFormLinkChange = (e) => {
+    const url = e.target.value.trim();
+    if (url && !validateFormLink(url)) {
+      alert('Please enter a valid Google Forms URL');
+      return;
+    }
+    setFormLink(url);
+  };
+
+  const handleFormIdChange = (e) => {
+    const id = e.target.value.trim();
+    if(id && !validateFormLink(id)){
+      alert('Please enter a valid Google Forms ID');
+      return;
+    }
+    setFormId(id);
+  };
+
+  // Handler for certificate template changes
+  const handleCertificateTemplateChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Validate file type
+      const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+      if (!validTypes.includes(file.type)) {
+        alert('Please upload a PDF or Word document');
+        return;
+      }
+      // Validate file size (e.g., max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('File size should be less than 5MB');
+        return;
+      }
+      setCertificateTemplate(file);
+    }
+  };
 
 
   return (
@@ -313,6 +367,37 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
                   <input type="text" placeholder="Enter location" value={location} onChange={(e) => setLocation(e.target.value)} className="form-control" />
                   <FontAwesomeIcon icon={faMapMarkerAlt} className="location-icon" />
                 </div>
+
+                <div className="form-section mb-3">
+                  <h4>Post-Event Settings</h4>
+                  <p>Enter the Google Form link for respondent form.</p>
+                  <input 
+                    type="text" 
+                    placeholder="Google Form Link" 
+                    value={formLink} 
+                    onChange={handleFormLinkChange} 
+                    className="form-control mb-2"
+                  />
+                  <p>Enter the Google Form Link with Edit Access</p>
+                  <input 
+                    type="text" 
+                    placeholder="Google Form ID" 
+                    value={formId} 
+                    onChange={handleFormIdChange} 
+                    className="form-control mb-2"
+                  />
+                  <div className="certificate-upload">
+                    <label>Certificate Template:</label>
+                    <input
+                      type="file"
+                      accept=".pdf,.doc,.docx"
+                      onChange={handleCertificateTemplateChange}
+                      className="form-control"
+                    />
+                    {certificateTemplate && <p>Template Selected: {certificateTemplate.name}</p>}
+                  </div>
+                </div>
+
 
                 <button type="button" className="invite-participants-btn" onClick={toggleFilterVisibility}>
                   + Invite Participants

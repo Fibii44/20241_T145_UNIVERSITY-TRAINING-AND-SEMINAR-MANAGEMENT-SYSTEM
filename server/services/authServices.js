@@ -113,7 +113,7 @@ const logout = async (req, res) => {
     }
 
     // Clear the session cookie
-    res.clearCookie('connect.sid'); // 'connect.sid' is the default cookie for express-session
+    res.clearCookie('connect.sid'); 
 
     res.json({ message: 'Logged out successfully' });
   });

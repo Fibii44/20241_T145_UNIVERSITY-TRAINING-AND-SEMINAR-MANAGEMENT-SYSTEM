@@ -14,6 +14,7 @@ const renderLoginPage = async (req, res) => {
     }
 };
 
+
 const renderNotification = async (req, res) => {
     try{
         res.send('Notification Page')

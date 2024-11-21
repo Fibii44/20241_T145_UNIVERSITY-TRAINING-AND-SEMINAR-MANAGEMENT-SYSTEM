@@ -25,6 +25,7 @@
     "nodemailer": "^6.9.16",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
+    "pdf-lib": "^1.17.1",
     "react-google-recaptcha-v3": "^1.10.1",
     "uuid": "^11.0.2"
   },

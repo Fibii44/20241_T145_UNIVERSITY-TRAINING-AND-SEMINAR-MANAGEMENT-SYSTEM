@@ -1,4 +1,5 @@
 const { google } = require('googleapis');
+const fs = require('fs');
 const OAuth2 = google.auth.OAuth2;
 
 const createGmailClient = async (accessToken, refreshToken) => {
@@ -21,7 +22,7 @@ const createGmailClient = async (accessToken, refreshToken) => {
   }
 };
 
-const sendEmail = async (to, subject, text, { accessToken, refreshToken }) => {
+const sendEmail = async (to, subject, text, { accessToken, refreshToken, attachments = [] }) => {
   try {
     console.log('Sending email with tokens:', {
       accessToken: accessToken?.substring(0, 20) + '...',
@@ -29,27 +30,55 @@ const sendEmail = async (to, subject, text, { accessToken, refreshToken }) => {
     });
 
     const gmail = await createGmailClient(accessToken, refreshToken);
+    const boundary = `----=${Date.now().toString(36)}`;
+    const textBoundary = `----=Text${Date.now().toString(36)}`;
 
-     // Create email with proper headers
-     const emailLines = [
-        'MIME-Version: 1.0',
-        'Content-Type: text/plain; charset=utf-8',
-        'Content-Transfer-Encoding: 7bit',
-        `From: BukSU Engage <${process.env.GMAIL_USER}>`,
-        `Reply-To: no-reply@buksu.edu.ph`,
-        `To: ${to}`,
-        `Subject: ${subject}`,
-        '',
-        text,
-        '',
-        '---',
-        'This is an official email from BukSU Engage.',
-        'Please do not reply to this email.',
-        `© ${new Date().getFullYear()} Bukidnon State University. All rights reserved.`
-      ].join('\r\n');
+    // Create email with proper headers
+    const emailLines = [
+      'MIME-Version: 1.0',
+      `Content-Type: multipart/mixed; boundary="${boundary}"`,
+      `From: BukSU Engage <${process.env.GMAIL_USER}>`,
+      `Reply-To: no-reply@buksu.edu.ph`,
+      `To: ${to}`,
+      `Subject: ${subject}`,
+      '',
+      `--${boundary}`,
+      `Content-Type: multipart/alternative; boundary="${textBoundary}"`,
+      '',
+      `--${textBoundary}`,
+      'Content-Type: text/plain; charset=UTF-8',
+      'Content-Transfer-Encoding: 7bit',
+      '',
+      text.trim(),  // Trim to remove extra whitespace
+      '',
+      `--${textBoundary}--`,
+      ''
+    ];
+
+    // Add attachments if present
+    for (const attachment of attachments) {
+      const fileContent = fs.readFileSync(attachment.path);
+      const base64Data = fileContent.toString('base64');
+
+      emailLines.push(`--${boundary}`);
+      emailLines.push(`Content-Type: ${attachment.contentType}`);
+      emailLines.push('Content-Transfer-Encoding: base64');
+      emailLines.push(`Content-Disposition: attachment; filename="${attachment.filename}"`);
+      emailLines.push('');
+      emailLines.push(base64Data);
+      emailLines.push('');
+    }
+
+    // Add final boundary and footer
+    emailLines.push(`--${boundary}--`);
+    emailLines.push('');
+    emailLines.push('---');
+    emailLines.push('This is an official email from BukSU Engage.');
+    emailLines.push('Please do not reply to this email.');
+    emailLines.push(`© ${new Date().getFullYear()} Bukidnon State University. All rights reserved.`);
 
     // Encode the email
-    const encodedEmail = Buffer.from(emailLines)
+    const encodedEmail = Buffer.from(emailLines.join('\r\n'))
       .toString('base64')
       .replace(/\+/g, '-')
       .replace(/\//g, '_')

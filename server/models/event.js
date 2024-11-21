@@ -50,6 +50,18 @@ const EventSchema = new mongoose.Schema({
             required: true
         }
     }],
+    formLink: {
+        type: String,
+        required: false
+    },
+    formId: {
+        type: String,
+        required: false
+    },
+    certificateTemplate: {
+        type: String,
+        required: false
+    },
     participantGroup: {
         college: {
             type: String,
