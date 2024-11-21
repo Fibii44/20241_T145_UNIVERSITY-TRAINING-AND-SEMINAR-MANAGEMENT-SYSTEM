@@ -4,9 +4,11 @@
     import './calendar.css';
     import axios from 'axios';
     import { Link } from 'react-router-dom';
-    
+    import { jwtDecode } from 'jwt-decode';
+
     const Calendar = () => {
         const [events, setEvents] = useState([]);
+        const [user, setUser] = useState({ name: '', profilePicture: '', role: '', id: '' });
         const [registeredEvents, setRegisteredEvents] = useState([]);
         const [currentView, setCurrentView] = useState('month');
         const [currentDate, setCurrentDate] = useState(new Date());
@@ -15,11 +17,13 @@
         const [selectedDate, setSelectedDate] = useState(null);
         const [selectedCollege, setSelectedCollege] = useState('');
         const today = new Date();
+        const loggedInUserId = user.id;
         const colleges = [
                             'Registered Events','College of Arts and Sciences', 'College of Business', 'College of Education',
                             'College of Law', 'College of Public Administration and Governance', 
                             'College of Nursing', 'College of Technologies'
                          ];
+                         
                         // Function to open the overlay for a selected day
         const openOverlay = (date, events) => {
             setSelectedDate(date);
@@ -51,9 +55,24 @@
         }, []);
     
         useEffect(() => {
+            const token = sessionStorage.getItem('authToken');
+            if (token) {
+                const decoded = jwtDecode(token);
+                setUser({
+                    name: decoded.name,
+                    email: decoded.email,
+                    profilePicture: decoded.profilePicture,
+                    role: decoded.role,
+                    id: decoded.id
+                });
+            }
+        }, []);
+    
+        useEffect(() => {
             const fetchRegisteredEvents = async () => {
                 try {
                     const response = await axios.get('http://localhost:3000/u/calendar');
+                    console.log('Fetched registered events:', response.data); // Debugging
                     setRegisteredEvents(response.data);
                 } catch (error) {
                     console.error('Error fetching registered events:', error);
@@ -61,6 +80,7 @@
             };
             fetchRegisteredEvents();
         }, []);
+        
 
         function hexToRgb(hex) {
             hex = hex.replace('#', '');
@@ -207,23 +227,30 @@ const renderMonthView = () => {
         
             const allDays = [...daysFromPrevMonth, ...daysThisMonth, ...daysFromNextMonth];
 
-             const filterEventsByCollege = (events) => {
+            const filterEventsByCollege = (events) => {
                 if (selectedCollege === 'Registered Events') {
                     return events.filter(event =>
-                        registeredEvents.some(registration => registration.eventId === event._id)
+                        registeredEvents.some(registration =>
+                            registration.eventId === event._id && registration.userId === loggedInUserId
+                        )
                     );
                 }
-
+            
                 if (selectedCollege) {
                     return events.filter(event => {
                         if (!event.participantGroup) return false;
                         return event.participantGroup.college === selectedCollege;
                     });
                 }
-
+            
                 return events; // Default: Return all events if no filter is selected
             };
     
+            const filteredEvents = filterEventsByCollege(events);
+            
+            console.log('Logged-in User ID:', loggedInUserId);
+            console.log('Registered Events:', registeredEvents);
+            console.log('Filtered Events:', filteredEvents);
             return (
                 <>
                     <div className="calendar-header">
@@ -250,8 +277,11 @@ const renderMonthView = () => {
                             // Convert to locale date to avoid timezone issues
                             const formattedDate = date.toLocaleDateString('en-CA'); // Format as YYYY-MM-DD
                             const dayNumber = date.getDate();
-                            const eventsForDay = filterEventsByCollege(getEventsForDay(formattedDate));
-                            const isToday = date.toDateString() === today.toDateString();
+                            const eventsForDay = filteredEvents.filter(event => {
+                            const eventDate = new Date(event.eventDate).toISOString().split('T')[0];
+                                return eventDate === formattedDate;
+                            });
+                        const isToday = date.toDateString() === today.toDateString();
     
                             return (
                                 <div
