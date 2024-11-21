@@ -177,6 +177,7 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
         department: initialEventData.participantGroup?.department || ''
       });
       setFormLink(initialEventData.formLink || '');
+      setFormId(initialEventData.formId || '');
       setCertificateTemplate(initialEventData.certificateTemplate || null);
     }
   }, [isOpen, initialEventData]);
@@ -390,11 +391,12 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
                     <label>Certificate Template:</label>
                     <input
                       type="file"
+                      id="certificateTemplate"
                       accept=".pdf,.doc,.docx"
                       onChange={handleCertificateTemplateChange}
                       className="form-control"
                     />
-                    {certificateTemplate && <p>Template Selected: {certificateTemplate.name}</p>}
+                    {certificateTemplate && <p>Template Selected: {certificateTemplate.name || certificateTemplate}</p>}
                   </div>
                 </div>
 

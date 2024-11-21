@@ -14,7 +14,7 @@
 .modal {
   background: white;
   border-radius: 8px;
-  width: 500px;
+  width: 600px;
   max-height: 90%;
   overflow-y: auto;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
@@ -115,7 +115,7 @@
   font-weight: bold;
   transition: background-color 0.3s;
   font-size: 14px;
-  min-width: 170px;
+  min-width: 220px;
 }
 
 .event-close-button {
