@@ -6,18 +6,8 @@ const NotificationSchema = new mongoose.Schema(
         notificationId: { type: String, unique: true, default: uuidv4 },
         title: {
             type: String,
-            required: true
+            required: true,
         },
-        // userId: {
-        //     type: mongoose.Schema.Types.ObjectId,
-        //     ref: 'User',
-        //     required: [true, 'User ID is required'],
-        // },
-        // eventId: {
-        //     type: mongoose.Schema.Types.ObjectId,
-        //     ref: 'Event',
-        //     required: [true, 'Event ID is required'],
-        // },
         message: {
             type: String,
             trim: true,
@@ -32,6 +22,18 @@ const NotificationSchema = new mongoose.Schema(
             type: Date,
             default: null, // Will be set when marked as read
         },
+        customParticipants: {
+            type: [String], // Array of strings for participant emails or IDs
+            validate: {
+                validator: function (v) {
+                    // Optional: Add custom validation for email format
+                    return v.every(email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email));
+                },
+                message: 'Invalid email format in customParticipants',
+            },
+            default: [], // Default to an empty array
+        },
+        
         createdAt: { type: Date, default: Date.now },
     },
     {

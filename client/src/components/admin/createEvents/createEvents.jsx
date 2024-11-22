@@ -85,6 +85,7 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
     fetchParticipants();
   }, [participants.college, participants.department]);
 
+  
   const handleSearch = (e) => {
     const term = e.target.value.toLowerCase();
     setSearchTerm(term);
@@ -188,6 +189,8 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
       setEventPicture(file);
     }
   };
+
+  
   const handleSaveDetails = async (e) => {
     e.preventDefault();
   
@@ -266,11 +269,12 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
     try {
       // Save the event
       await onSave(eventData);
-  
+      
       // Send notifications
       const notificationData = {
         title: `Invitation to ${title}`,
         message: `You are invited to attend the event: "${title}" on ${date} at ${location}.`,
+        customParticipants: cleanedParticipants,
 
       };
   
