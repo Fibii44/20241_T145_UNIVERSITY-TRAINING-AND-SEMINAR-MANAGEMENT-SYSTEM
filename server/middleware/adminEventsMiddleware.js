@@ -67,4 +67,5 @@ const canEditEvent = async (req, res, next) => {
     }
     next();
   };
+  
 module.exports = { checkLockStatus, canEditEvent, clearEventLock, concurrencyLock, clearConcurrencyLock };

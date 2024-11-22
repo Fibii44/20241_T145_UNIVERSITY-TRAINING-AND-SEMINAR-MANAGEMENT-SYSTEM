@@ -1,28 +1,23 @@
 const mongoose = require('mongoose');
+const { v4: uuidv4 } = require('uuid');
 
 const NotificationSchema = new mongoose.Schema(
     {
-        notificationId: {
+        notificationId: { type: String, unique: true, default: uuidv4 },
+        title: {
             type: String,
-            required: true,
-            unique: true,
-            trim: true,
+            required: true
         },
-        userId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'User',
-            required: [true, 'User ID is required'],
-        },
-        eventId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Event',
-            required: [true, 'Event ID is required'],
-        },
-        type: {
-            type: String,
-            enum: ['Event Invitation', 'Event Reminder', 'Event Update', 'General Notification'],
-            required: [true, 'Notification type is required'],
-        },
+        // userId: {
+        //     type: mongoose.Schema.Types.ObjectId,
+        //     ref: 'User',
+        //     required: [true, 'User ID is required'],
+        // },
+        // eventId: {
+        //     type: mongoose.Schema.Types.ObjectId,
+        //     ref: 'Event',
+        //     required: [true, 'Event ID is required'],
+        // },
         message: {
             type: String,
             trim: true,
@@ -37,6 +32,7 @@ const NotificationSchema = new mongoose.Schema(
             type: Date,
             default: null, // Will be set when marked as read
         },
+        createdAt: { type: Date, default: Date.now },
     },
     {
         timestamps: true, // Adds createdAt and updatedAt fields

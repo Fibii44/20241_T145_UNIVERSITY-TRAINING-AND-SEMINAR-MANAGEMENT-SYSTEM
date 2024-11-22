@@ -271,12 +271,10 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
       const notificationData = {
         title: `Invitation to ${title}`,
         message: `You are invited to attend the event: "${title}" on ${date} at ${location}.`,
-        participants: cleanedParticipants,
-        college: participants.college,
-        department: participants.department,
+
       };
   
-      await axios.post('http://localhost:3000/u/notification/items', notificationData, {
+      await axios.post('http://localhost:3000/a/notification/items', notificationData, {
         headers: {
           'Content-Type': 'application/json',
         },

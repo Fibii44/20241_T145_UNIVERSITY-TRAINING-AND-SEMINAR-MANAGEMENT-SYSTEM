@@ -26,14 +26,21 @@ const viewItem = async (req, res) => {
 // Create a new item
 const createItem = async (req, res) => {
     try {
+        // Create a new item from the request body
         const newItem = new userNotification(req.body);
+
+        // Save the item to the database
         await newItem.save();
-        res.status(201).json(newItem);
+
+        res.status(201).json({ message: 'Item created successfully', newItem });
     } catch (error) {
         console.error('Error creating item:', error);
-        res.status(500).send('Error creating item');
+
+        // Send a detailed error message for debugging
+        res.status(500).json({ message: 'Error creating item', error: error.message });
     }
 };
+
 
 // Update an existing item
 const updateItem = async (req, res) => {
