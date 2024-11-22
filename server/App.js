@@ -80,6 +80,8 @@ app.use("/", userPageRoutes);
 app.use("/", userEventRoutes);
 app.use("/", userProfileRoutes);
 
+const userNotification = require('./routes/user/userNotificationRoutes');
+app.use('/', userNotification);
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {

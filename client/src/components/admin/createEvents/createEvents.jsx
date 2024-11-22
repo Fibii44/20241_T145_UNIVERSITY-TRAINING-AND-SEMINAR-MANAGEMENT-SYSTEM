@@ -188,28 +188,29 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
       setEventPicture(file);
     }
   };
-  const handleSaveDetails = (e) => {
+  const handleSaveDetails = async (e) => {
     e.preventDefault();
-
+  
     // Get the user's timezone offset in minutes
     const timezoneOffset = new Date().getTimezoneOffset();
     const timezoneOffsetHours = Math.abs(Math.floor(timezoneOffset / 60));
     const timezoneOffsetMinutes = Math.abs(timezoneOffset % 60);
-
+  
     // Format the offset as "+HH:MM" or "-HH:MM"
     const formattedOffset =
       (timezoneOffset > 0 ? "-" : "+") +
       String(timezoneOffsetHours).padStart(2, "0") +
       ":" +
       String(timezoneOffsetMinutes).padStart(2, "0");
-
+  
     // Combine date and time inputs and append timezone offset
     const combinedStart = new Date(`${date}T${startTime}:00${formattedOffset}`);
     const combinedEnd = new Date(`${date}T${endTime}:00${formattedOffset}`);
-
+  
     const isoStartTime = combinedStart.toISOString();
     const isoEndTime = combinedEnd.toISOString();
-
+  
+    // Assign colors based on selected college
     let eventColor;
     switch (participants.college) {
       case 'College of Arts and Sciences':
@@ -236,15 +237,16 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
       default:
         eventColor = '#65a8ff'; // Default Blue
     }
-
+  
+    // Clean participant emails
     const cleanedParticipants = selectedParticipants
       .map((participant) => participant.email.trim()) // Remove extra spaces
       .filter((email) => email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)); // Validate email format
-
+  
     console.log("Event Picture before save:", eventPicture);
-
-    // Proceed with saving the event details
-    onSave({
+  
+    // Prepare event data
+    const eventData = {
       title,
       date,
       eventPicture,
@@ -259,9 +261,35 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
       certificateTemplate,
       customParticipants: cleanedParticipants, // Include selected participants in the saved event
       color: eventColor,
-    });
+    };
+  
+    try {
+      // Save the event
+      await onSave(eventData);
+  
+      // Send notifications
+      const notificationData = {
+        title: `Invitation to ${title}`,
+        message: `You are invited to attend the event: "${title}" on ${date} at ${location}.`,
+        participants: cleanedParticipants,
+        college: participants.college,
+        department: participants.department,
+      };
+  
+      await axios.post('http://localhost:3000/u/notification/items', notificationData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      console.log('Notifications sent successfully');
+    } catch (error) {
+      console.error('Error saving event or sending notifications:', error);
+    }
+  
     onClose();
   };
+  
   if (!isOpen) return null;
 
   // Function to validate Google Form URL
@@ -404,7 +432,6 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
                 <button type="button" className="invite-participants-btn" onClick={toggleFilterVisibility}>
                   + Invite Participants
                 </button>
-
                 {isFilterVisible && (
                   <div className="card-filter">
                     <div className="participant-filter-custom mt-1">
