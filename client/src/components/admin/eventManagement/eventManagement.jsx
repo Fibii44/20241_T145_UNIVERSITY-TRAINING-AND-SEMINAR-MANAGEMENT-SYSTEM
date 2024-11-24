@@ -5,7 +5,7 @@ import { faCalendarCheck, faClock, faPlus, faMapMarkerAlt, faLock, faChevronLeft
 import './eventManagement.css';
 import { jwtDecode } from 'jwt-decode';
 import EventModal from '../createEvents/createEvents';
-import DeleteModal from '../../modals/deleteModal/deleteModal'
+import DeleteModal from '../../modals/deleteModal/deleteModal';
 
 const EventM = ({ userRole, userCollege }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -15,7 +15,7 @@ const EventM = ({ userRole, userCollege }) => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [eventToDelete, setEventToDelete] = useState(null);
   const [sortOption, setSortOption] = useState('dateAsc');
-
+  const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const eventsPerPage = 4;
 
@@ -34,30 +34,29 @@ const EventM = ({ userRole, userCollege }) => {
         ...event,
         startTime: new Date(event.startTime),
         endTime: new Date(event.endTime),
-        customParticipants: event.customParticipants || [], 
       }));
-
-      // Update event list and ensure isLocked status is correct
-      setEvents(prevEvents => {
-        return formattedEvents.map(newEvent => {
-          // Find if the event already exists and should be updated with new lock status
-          const prevEvent = prevEvents.find(event => event._id === newEvent._id);
-          return prevEvent
-            ? { ...prevEvent, isLocked: newEvent.isLocked }
-            : newEvent;
-        });
-      });
+      setEvents(formattedEvents);
     } catch (error) {
       alert('Error fetching events: ' + error.message);
     } finally {
       setLoading(false);
     }
   };
-
+  const handleSearch = (e) => {
+    setSearchQuery(e.target.value);
+    setCurrentPage(1); // Reset to the first page when searching
+  };
+  const filteredEvents = events?.filter(event => 
+    (event.title?.toLowerCase() || '').includes(searchQuery?.toLowerCase() || '') || 
+    (event.description?.toLowerCase() || '').includes(searchQuery?.toLowerCase() || '') || 
+    (event.location?.toLowerCase() || '').includes(searchQuery?.toLowerCase() || '')
+  ) || [];
 
   const indexOfLastEvent = currentPage * eventsPerPage;
   const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
-  const currentEvents = events.slice(indexOfFirstEvent, indexOfLastEvent);
+  const currentEvents = filteredEvents.slice(indexOfFirstEvent, indexOfLastEvent);
+
+  const totalPages = Math.ceil(filteredEvents.length / eventsPerPage);
 
   const nextPage = () => {
     if (currentPage < Math.ceil(events.length / eventsPerPage)) {
@@ -295,6 +294,13 @@ const EventM = ({ userRole, userCollege }) => {
     <div className="dashboard-container">
       <div className="content">
         <div className="dashboard-inline">
+        <input
+            type="text"
+            className="search-bar"
+            placeholder="Search events..."
+            value={searchQuery}
+            onChange={handleSearch}
+          />
           <h2 className="dashboard-heading">Events</h2>
           <button className="dashboard-button" onClick={() => {
             setSelectedEvent(null); // Clear previous event data

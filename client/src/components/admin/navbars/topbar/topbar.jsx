@@ -39,8 +39,7 @@ const Topbar = () => {
     return (
         <div className="topbar">
             <div className="search-admin">
-                <i className="fa fa-search search-icon"></i>
-                <input type="text" placeholder="Search..." />
+
             </div>
             <div className="user-info">
                 <div className="notification" onClick={toggleNotificationModal} style={{ cursor: 'pointer' }}>

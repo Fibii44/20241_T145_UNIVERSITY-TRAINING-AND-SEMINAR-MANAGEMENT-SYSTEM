@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTachometerAlt, faCalendarCheck, faClock, faCog, faSignOutAlt, faBars, faUsers, faCalendar, faHistory } from '@fortawesome/free-solid-svg-icons';
+import { faTachometerAlt, faCalendarCheck, faClock, faCog, faSignOutAlt, faBars, faUsers, faCalendar, faHistory, faClipboardCheck } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom'; 
 import './sidebar.css';
 import LogoutModal from '../../../user/logoutModal/logoutModal';
@@ -83,6 +83,12 @@ const Sidebar = ({ activePage }) => {
           <Link to="/a/events">
             <span className="icon"><FontAwesomeIcon icon={faCalendar} size="lg" /></span>
             {!isCollapsed && <span className='list-name'>Events</span>}
+          </Link>
+        </li>
+        <li className={activePage === 'activity-logs' ? 'active' : ''}>
+          <Link to="/a/activity-logs">
+            <span className="icon"><FontAwesomeIcon icon={faClipboardCheck} size="lg" /></span>
+            {!isCollapsed && <span className='list-name'>Activity Logs</span>}
           </Link>
         </li>
       </ul>

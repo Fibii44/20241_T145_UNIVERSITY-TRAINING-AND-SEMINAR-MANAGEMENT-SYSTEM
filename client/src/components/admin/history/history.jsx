@@ -1,24 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
-import axios from 'axios'; // Ensure axios is imported
+import { useNavigate } from 'react-router-dom'; 
+import axios from 'axios'; 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarCheck, faClock, faPlus, faMapMarkerAlt, faLock, faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import './history.css'; // Ensure you define grid styles here
+import './history.css'; 
 
 const HistoryM = () => {
     const navigate = useNavigate();
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [currentPage, setCurrentPage] = useState(1); // Manage pagination state
+    const [searchQuery, setSearchQuery] = useState(''); // State for search query
+    const [currentPage, setCurrentPage] = useState(1); 
     const eventsPerPage = 4;
 
-    // Fetch events when the component mounts
     useEffect(() => {
         const fetchEvents = async () => {
             try {
                 setLoading(true);
                 const response = await axios.get('http://localhost:3000/a/events');
-                // Format events, ensuring eventDate is a Date object
                 const formattedEvents = response.data.map(event => ({
                     ...event,
                     eventDate: new Date(event.eventDate),
@@ -30,36 +29,43 @@ const HistoryM = () => {
                 setLoading(false);
             }
         };
-
         fetchEvents();
     }, []);
 
-    // Filter events to show only past events
     const pastEvents = events.filter(event => event.eventDate < new Date());
 
-    // Get current page events
+    // Filter past events based on search query
+    const filteredEvents = pastEvents.filter(event =>
+        event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        event.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        event.location.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
     const indexOfLastEvent = currentPage * eventsPerPage;
     const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
-    const currentEvents = pastEvents.slice(indexOfFirstEvent, indexOfLastEvent);
+    const currentEvents = filteredEvents.slice(indexOfFirstEvent, indexOfLastEvent);
 
-    // Handle page navigation
-    const totalPages = Math.ceil(pastEvents.length / eventsPerPage);
+    const totalPages = Math.ceil(filteredEvents.length / eventsPerPage);
+
     const handlePageChange = (page) => setCurrentPage(page);
-    const nextPage = () => {
-        if (currentPage < Math.ceil(events.length / eventsPerPage)) {
-          setCurrentPage(currentPage + 1);
-        }
-      };
-    
-      const prevPage = () => {
-        if (currentPage > 1) {
-          setCurrentPage(currentPage - 1);
-        }
-      };
+
     return (
         <div className="dashboard-container">
             <div className="content">
                 <h2 className="dashboard-heading">Past Events</h2>
+                
+                {/* Search Bar */}
+                <input
+                    type="text"
+                    placeholder="Search past events..."
+                    className="search-bar"
+                    value={searchQuery}
+                    onChange={(e) => {
+                        setSearchQuery(e.target.value);
+                        setCurrentPage(1); // Reset to the first page on new search
+                    }}
+                />
+
                 <div className="context-card">
                     <div className="history-events-list">
                         {loading ? (
@@ -111,13 +117,13 @@ const HistoryM = () => {
                     </div>
 
                     {/* Pagination Controls */}
-                    {pastEvents.length > eventsPerPage && (
+                    {filteredEvents.length > eventsPerPage && (
                         <div className="pagination">
                             <button
                                 className="page-btn"
                                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                                 disabled={currentPage === 1}
-                                >
+                            >
                                 <FontAwesomeIcon icon={faChevronLeft} />
                             </button>
                             {Array.from({ length: totalPages }, (_, index) => (
@@ -130,7 +136,6 @@ const HistoryM = () => {
                                 >
                                     {index + 1}
                                 </button>
-                                
                             ))}
                             <button
                                 className="page-btn"
@@ -138,9 +143,9 @@ const HistoryM = () => {
                                     setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                                 }
                                 disabled={currentPage === totalPages}
-                                >
+                            >
                                 <FontAwesomeIcon icon={faChevronRight} />
-                                </button>
+                            </button>
                         </div>
                     )}
                 </div>

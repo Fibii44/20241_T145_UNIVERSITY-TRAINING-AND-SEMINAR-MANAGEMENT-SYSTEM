@@ -1,0 +1,112 @@
+.activity-log-container {
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.activity-log-header {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.activity-log-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.activity-log-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background-color: #fff;
+}
+
+.activity-log-item:hover {
+    background-color: #f1f1f1;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.log-profile-picture {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 15px;
+}
+
+.activity-log-details {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.log-action {
+    font-size: 1rem;
+    color: #555;
+    margin: 0;
+}
+
+.log-timestamp {
+    font-size: 0.85rem;
+    color: #888;
+}
+
+.pagination-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.pagination-button {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.pagination-button:disabled {
+    background-color: #ddd;
+    cursor: not-allowed;
+}
+
+.pagination-button:hover:not(:disabled) {
+    background-color: #0056b3;
+}
+
+.pagination-info {
+    font-size: 0.9rem;
+    color: #555;
+}
+.activity-log-search {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.activity-log-search:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.no-logs-message {
+    text-align: center;
+    font-size: 1rem;
+    color: #888;
+    margin-top: 20px;
+}
