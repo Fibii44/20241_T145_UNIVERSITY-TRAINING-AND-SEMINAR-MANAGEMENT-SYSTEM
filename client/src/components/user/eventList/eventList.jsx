@@ -68,7 +68,7 @@ function EventGrid() {
 <div className="sort-container">
           <label className='sort-label' htmlFor="sort">Sort By:</label>
           <br />
-          <select
+          <select class="event-sort"
             id="sort"
             value={sortOption}
             onChange={(e) => handleSort(e.target.value)}

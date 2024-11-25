@@ -1,4 +1,5 @@
 const User = require('../../models/user');
+const Registration = require('../../models/registration');
 // db connection
 // Render user profile page
 const renderProfilePage = async (req, res) => {
@@ -60,10 +61,17 @@ const viewCertificate = async (req, res) => {
 
 const renderHistoryPage = async (req, res) => {
     try {
-        const history = await EventHistory.find({ userId: req.user.id });
-        res.json(history);
-    } catch (error) {
-        res.status(500).send('Error retrieving event history');
+        const userId = req.user.id;
+        const registrations = await Registration.find({ userId }).populate('eventId');
+
+        const events = registrations
+            .map(reg => reg.eventId)
+            .filter(event => event); // Filter out any null or invalid events
+
+        res.json(events || []); // Always send an array
+    } catch (err) {
+        console.error("Error fetching registered events", err);
+        res.status(500).json([]);
     }
 };
 

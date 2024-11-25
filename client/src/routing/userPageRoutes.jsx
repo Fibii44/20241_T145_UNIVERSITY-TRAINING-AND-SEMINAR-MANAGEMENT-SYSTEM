@@ -4,7 +4,7 @@ import Home from  '../pages/user/home';
 import Events  from  '../pages/user/eventsPage';
 import Calendar from '../pages/user/calendarPage'
 import Certificates from '../pages/user/certificates'
-import History from '../pages/user/history'
+import History from '../pages/user/historyList'
 import Profile from '../pages/user/profile'
 import EventDetails from '../pages/user/eventDetails';
 

@@ -10,7 +10,7 @@ function CertificateGrid() {
   const [currentPage, setCurrentPage] = useState(1);
   const [sortBy, setSortBy] = useState('date'); 
   const [viewMode, setViewMode] = useState('grid'); // State for grid/list view
-  const eventsPerPage = 6;
+  const eventsPerPage = 15;
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -105,58 +105,103 @@ function CertificateGrid() {
                   ) : (
                     <FontAwesomeIcon icon={faList} />
                   )}
-    </button>
+              </button>
             </div>
           </div>
 
           <div className={viewMode === 'grid' ? 'certificates-grid' : 'certificates-list'}> 
-          {currentEvents.map((event) => (
-           <div key={event._id} className="certificates-link">
-              <div className={viewMode === 'grid' ? 'certificates-card' : 'certificates-list-item'}> 
-                <img 
-                  src={`http://localhost:3000/eventPictures/${event.eventPicture}`} 
-                  alt={event.title} 
-                  className={`certificate-image ${viewMode === 'list' ? 'list-view-image' : ''}`} 
-                /> 
+              {currentEvents.map((event) => (
+                <div key={event._id} className="certificates-link">
+                  <div className={viewMode === 'grid' ? 'certificates-card' : 'certificates-list-item'}> 
+                    {viewMode === 'list' ? ( // Conditional rendering for list view
+                      <div className="list-view-container"> 
+                        <img 
+                          src={`http://localhost:3000/eventPictures/${event.eventPicture}`} 
+                          alt={event.title} 
+                          className="list-view-image" 
+                        /> 
 
-                <div className="card-content"> {/* Added a container for the columns */}
-                  <div className="column-first"> {/* First column */}
-                    <h3 style={{ color: '#011c39' }}>{event.title}</h3>
-                    <p className='date'>
-                      {new Date(event.eventDate).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric"
-                      })}
-                    </p>
-                  </div>
+                        <div className="column-first"> 
+                          <h3 style={{ color: '#011c39' }}>{event.title}</h3>
+                          <p className='date'>
+                            {new Date(event.eventDate).toLocaleDateString("en-US", {
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric"
+                            })}
+                          </p>
+                        </div>
 
-                  <div className="column-last"> 
-                  <a
-                    href={`http://localhost:3000/eventPictures/${event.eventPicture}`}
-                    download={event.title + ".jpg"} // Make sure event.title is correct
-                    onClick={(e) => {
-                      e.preventDefault(); 
-                      e.stopPropagation();
-                
-                      const link = document.createElement('a');
-                      link.href = `http://localhost:3000/eventPictures/${event.eventPicture}`;
-                      link.setAttribute('download', event.title + ".jpg"); // Set the correct filename here as well
-                      document.body.appendChild(link);
-                      link.click();
-                      document.body.removeChild(link);  
-                    }}
-                  >
-                    <div className="download-icon">
-                      <FontAwesomeIcon icon={faDownload} />
-                    </div>
-  </a>
+                        <div className="download-column"> 
+                          <a
+                            href={`http://localhost:3000/eventPictures/${event.eventPicture}`}
+                            download={event.title + ".jpg"} 
+                            onClick={(e) => {
+                              e.preventDefault(); 
+                              e.stopPropagation();
+                        
+                              const link = document.createElement('a');
+                              link.href = `http://localhost:3000/eventPictures/${event.eventPicture}`;
+                              link.setAttribute('download', event.title + ".jpg"); 
+                              document.body.appendChild(link);
+                              link.click();
+                              document.body.removeChild(link);  
+                            }}
+                          >
+                            <div className="download-icon">
+                              <FontAwesomeIcon icon={faDownload} />
+                            </div>
+                          </a>
+                        </div>
+                      </div>
+                    ) : ( // Rendering for grid view (unchanged)
+                      <>
+                        <img 
+                          src={`http://localhost:3000/eventPictures/${event.eventPicture}`} 
+                          alt={event.title} 
+                          className={`certificate-image ${viewMode === 'list' ? 'list-view-image' : ''}`} 
+                        /> 
+
+                        <div className="card-content"> 
+                          <div className="column-first"> 
+                            <h3 style={{ color: '#011c39' }}>{event.title}</h3>
+                            <p className='date'>
+                              {new Date(event.eventDate).toLocaleDateString("en-US", {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric"
+                              })}
+                            </p>
+                          </div>
+
+                          <div className="column-last"> 
+                            <a 
+                              href={`http://localhost:3000/eventPictures/${event.eventPicture}`}
+                              download={event.title + ".jpg"} 
+                              onClick={(e) => {
+                                e.preventDefault(); 
+                                e.stopPropagation();
+                          
+                                const link = document.createElement('a');
+                                link.href = `http://localhost:3000/eventPictures/${event.eventPicture}`;
+                                link.setAttribute('download', event.title + ".jpg"); 
+                                document.body.appendChild(link);
+                                link.click();
+                                document.body.removeChild(link);  
+                              }}
+                            >
+                              <div className="download-icon">
+                                <FontAwesomeIcon icon={faDownload} />
+                              </div>
+                            </a>
+                          </div>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
-              </div>
+              ))}
             </div>
-          ))}
-        </div>
 
       <div className="pagination-controls">
         <button onClick={handlePrevPage} disabled={currentPage === 1}>❮ Prev</button>

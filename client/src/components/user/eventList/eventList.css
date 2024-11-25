@@ -121,5 +121,11 @@
     background-color: #feb800;
 }
 
-/* 
-Sort */
+.sort-container .sort-label{
+    margin-top: 1rem;
+    margin-left: 2rem;
+    }
+.sort-container .event-sort{
+    margin-left: 2rem;
+    border-radius: .5rem;
+}
