@@ -76,7 +76,7 @@ const HistoryM = () => {
                                     <div
                                         className="history-event-card"
                                         key={event._id}
-                                        onClick={() => navigate(`/events/${event._id}`)}
+                                        onClick={() => navigate(`/history/${event._id}`)}
                                     >
                                         <img
                                             src={`http://localhost:3000/eventPictures/${event.eventPicture}`}

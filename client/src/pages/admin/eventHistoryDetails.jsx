@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import Sidebar from '../../components/admin/navbars/sidebar/sidebar';
 import Topbar from '../../components/admin/navbars/topbar/topbar';
-import Dashboard from '../../components/admin/dashboard/dashboard';
+import History from '../../components/admin/eventHistoryDetails/eventHistoryDetails'
 
 const dashboard = () => {
 
@@ -18,7 +18,7 @@ const dashboard = () => {
             <div className="content">
                 <Topbar />
                 <div className="context-card">
-                  <Dashboard />
+                <History />
                 </div>
             </div>
         </div>

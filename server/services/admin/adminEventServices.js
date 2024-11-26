@@ -67,11 +67,19 @@ const upload = multer({
 const renderEventsPage = async (req, res) => {
   try {
     const events = await Event.find();
-    res.json(events);
+
+    // Check if events exist
+    if (!events || events.length === 0) {
+      return res.status(404).json({ message: "No events found" }); // Return 404 error
+    }
+
+    // If events exist, return them
+    res.status(200).json(events);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: "Internal Server Error", error: error.message });
   }
 };
+
 
 const addEvent = async (req, res) => {
   try {

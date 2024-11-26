@@ -6,6 +6,7 @@ import './eventManagement.css';
 import { jwtDecode } from 'jwt-decode';
 import EventModal from '../createEvents/createEvents';
 import DeleteModal from '../../modals/deleteModal/deleteModal';
+import Toast from '../../modals/successToast/toast'
 
 const EventM = ({ userRole, userCollege }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -18,7 +19,12 @@ const EventM = ({ userRole, userCollege }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const eventsPerPage = 4;
+  const [toast, setToast] = useState(null);
 
+  const showToast = (message, type = 'success') => {
+    setToast({ message, type });
+  };
+  
 
   // Function to format time for display in 12-hour format
   const formatTime = (dateString) => {
@@ -27,21 +33,38 @@ const EventM = ({ userRole, userCollege }) => {
   };
 
   const fetchEvents = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get('http://localhost:3000/a/events');
-      const formattedEvents = response.data.map(event => ({
-        ...event,
-        startTime: new Date(event.startTime),
-        endTime: new Date(event.endTime),
-      }));
-      setEvents(formattedEvents);
-    } catch (error) {
-      alert('Error fetching events: ' + error.message);
-    } finally {
-      setLoading(false);
+  try {
+    setLoading(true);
+    const response = await axios.get('http://localhost:3000/a/events');
+
+    const formattedEvents = response.data.map(event => ({
+      ...event,
+      startTime: new Date(event.startTime),
+      endTime: new Date(event.endTime),
+    }));
+
+    setEvents(formattedEvents);
+  } catch (error) {
+    if (error.response) {
+      showToast(
+        `Error: ${error.response.status} - ${
+          error.response.data?.message || "Failed to fetch events from the server."
+        }`,
+        'error' // Pass 'error' for red color
+      );
+    } else if (error.request) {
+      showToast(
+        "Error: Unable to fetch events. Please check your network connection or try again later.",
+        'error'
+      );
+    } else {
+      showToast(`Error: ${error.message}`, 'error');
     }
-  };
+  } finally {
+    setLoading(false);
+  }
+};
+
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
     setCurrentPage(1); // Reset to the first page when searching
@@ -77,7 +100,7 @@ const EventM = ({ userRole, userCollege }) => {
     const token = sessionStorage.getItem('authToken');
 
     if (!token) {
-      alert('User is not authenticated. Please log in.');
+      showToast('User is not authenticated. Please log in.','error');
       return;
     }
 
@@ -98,7 +121,7 @@ const EventM = ({ userRole, userCollege }) => {
       });
       // Event is successfully locked, proceed with editing
     } catch (error) {
-      alert('Failed to lock event for editing: ' + error.message);
+      showToast('Failed to lock event for editing: ' + error.message, 'error');
       // If locking fails, revert the lock status in the UI
       setEvents(prevEvents => prevEvents.map(ev =>
         ev._id === event._id ? { ...ev, isLocked: false } : ev
@@ -153,13 +176,13 @@ const EventM = ({ userRole, userCollege }) => {
 
     // If any date is invalid, alert the user and return early
     if (!formattedEventDate || !formattedStartTime || !formattedEndTime) {
-      alert('Invalid date or time values. Please check the inputs.');
+      showToast('Invalid date or time values. Please check the inputs.', 'error');
       return;
     }
 
     const token = sessionStorage.getItem('authToken');
     if (!token) {
-      alert('User is not authenticated. Please log in.');
+      showToast('User is not authenticated. Please log in.', 'error');
       return;
     }
 
@@ -168,7 +191,7 @@ const EventM = ({ userRole, userCollege }) => {
       const decodedToken = jwtDecode(token);
       userId = decodedToken.id;
     } catch (error) {
-      alert('Invalid or expired token. Please log in again.');
+      showToast('Invalid or expired token. Please log in again.', 'error');
       return;
     }
 
@@ -213,42 +236,55 @@ const EventM = ({ userRole, userCollege }) => {
     try {
       let response;
       if (selectedEvent) {
-        response = await axios.put(`http://localhost:3000/a/events/${selectedEvent._id}`, formData, {
-          headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' }
-        });
-        alert('Event updated successfully');
+        response = await axios.put(
+          `http://localhost:3000/a/events/${selectedEvent._id}`,
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'multipart/form-data',
+            },
+          }
+        );
+        showToast('Event updated successfully');
       } else {
         response = await axios.post('http://localhost:3000/a/events', formData, {
-          headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' }
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data',
+          },
         });
-        alert(response.data.message || 'Event created successfully');
+        showToast(response.data.message || 'Event created successfully');
       }
 
       const updatedEvent = {
         ...response.data,
         startTime: new Date(response.data.startTime),
         endTime: new Date(response.data.endTime),
-        eventDate: new Date(response.data.eventDate), // Add this if `eventDate` is also needed
+        eventDate: new Date(response.data.eventDate),
       };
-      setEvents(prevEvents => prevEvents.map(event => (event._id === selectedEvent?._id ? updatedEvent : event)));
-      await fetchEvents(); // Force re-fetching of events to ensure data consistency
+      setEvents((prevEvents) =>
+        prevEvents.map((event) =>
+          event._id === selectedEvent?._id ? updatedEvent : event
+        )
+      );
+      await fetchEvents();
     } catch (error) {
-      alert('Error saving event: ' + (error.response?.data?.message || error.message));
+      showToast('Error saving event: ' + (error.response?.data?.message || error.message));
     } finally {
-      // Release lock after save
       try {
-        // Unlock the event
-        await axios.put(`http://localhost:3000/a/events/${selectedEvent._id}/unlock`, {}, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-
+        await axios.put(
+          `http://localhost:3000/a/events/${selectedEvent._id}/unlock`,
+          {},
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
       } catch (error) {
-       
+        console.error(error);
       } finally {
-        // Close modal and reset selected event
         setIsModalOpen(false);
         setSelectedEvent(null);
-        
       }
     }
   };
@@ -321,6 +357,7 @@ const EventM = ({ userRole, userCollege }) => {
             customParticipants: selectedEvent.customParticipants.map(email => ({ email })) // Wrap emails in objects with email key
           } : null}
         />
+  {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
         <DeleteModal
           isOpen={isDeleteModalOpen}
