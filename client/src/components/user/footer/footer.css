@@ -15,9 +15,10 @@ body, #root, .NavbarWithSidebar-container {
 footer {
     position: relative; /* Enables positioning for pseudo-elements */
     color: #000324; /* Adjust text color for readability */
-    padding: 20px;
     text-align: center;
     width: 100%;
+    height: 18rem;
+    padding: 3rem;
     background-color: #ffffff; /* Default background color */
     overflow: hidden; /* Ensures content stays within bounds */
 }

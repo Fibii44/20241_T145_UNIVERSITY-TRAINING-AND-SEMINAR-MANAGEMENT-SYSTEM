@@ -19,18 +19,15 @@ function Footer() {
                     </div>      
                     <div className='info'>
                         <div className='footer-header'>
-                            <p>Admissions</p>
+                            <p>Contact Us</p>
                         </div>
                         <div className='footer-content'>
-                            <p>Admission</p>
-                            <p>Events</p>
-                            <p>Manage Training and Seminar</p>
-                            <p>Schedules</p>
-                        </div> 
-                        <div className='footer-content'>
-
-                        </div>
-                    </div>    
+                            <p>Fortich St., Malaybalay City,</p>
+                            <p>Bukidnon</p>
+                            <p>+63-88-813-5661 To 5663</p>
+                            <p>+63-88-813-2717</p>
+                        </div>  
+                    </div>   
                     <div className='info'>
                         <div className='footer-header'>
                             <p>Services</p>

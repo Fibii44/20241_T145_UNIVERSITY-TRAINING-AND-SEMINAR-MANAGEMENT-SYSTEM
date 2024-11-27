@@ -10,8 +10,19 @@
 
 .user-event-card h3 {
     padding-top: 12px;
-    font-size: 20px;
+    font-size: 18px;
     text-align: left;
+    overflow: hidden;
+    height: 3rem;
+    white-space: nowrap; /* Prevent wrapping */
+    text-overflow: ellipsis; /* Add '...' for long text */
+    display: block; /* Ensure ellipsis works */
+    width: 100%; /* Limit width for ellipsis */
+}
+@media (max-width: 768px) {
+    .user-event-card h3 {
+        font-size: 16px; /* Reduce font size on smaller screens */
+    }
 }
 
 .event-link {
@@ -78,6 +89,7 @@
     cursor: pointer;
     transition: background-color 0.3s ease, color 0.3s ease;
     margin-top: auto; /* Push button to bottom of card */
+    width: 100%;
 }
 
 .user-event-card:hover button {
@@ -135,3 +147,25 @@
     font-weight: bold;
     border-radius: 4px;
 }
+/* Search */
+.search-container {
+    margin: 20px 0;
+    text-align: center;
+    padding-left: 2rem;
+}
+
+.search-bar {
+    width: 80%;
+    max-width: 400px;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline: none;
+}
+
+.search-bar:focus {
+    border-color: #011c39;
+    box-shadow: 0 0 5px rgba(1, 28, 57, 0.5);
+}
+
