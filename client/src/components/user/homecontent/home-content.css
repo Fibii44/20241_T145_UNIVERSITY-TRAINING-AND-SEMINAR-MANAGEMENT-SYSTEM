@@ -1,26 +1,25 @@
-.home-background { 
-    position: relative;
-    background-image: url('../../../assets/homebg.jpg');
-    background-size:cover ;   
-    background-position: center;
-    height: 100vh;            
-    width: 100%;             
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column; /* Stack children vertically */
+.home-background {
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  transition: background-image 1s ease-in-out; /* Smooth transition for background image */
 }
 
 .overlay {
-    position: absolute; 
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 139, 0.308); 
-    z-index: 1; 
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 139, 0.308);
+  z-index: 1;
 }
-
 h3 {
     color: white; /* White color for 'BukSU' */
     margin-bottom: 10px; /* Space between h3 and search bar */
