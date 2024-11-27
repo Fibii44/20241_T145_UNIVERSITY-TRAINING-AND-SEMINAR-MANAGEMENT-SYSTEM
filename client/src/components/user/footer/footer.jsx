@@ -22,6 +22,12 @@ function Footer() {
                             <p>Admissions</p>
                         </div>
                         <div className='footer-content'>
+                            <p>Admission</p>
+                            <p>Events</p>
+                            <p>Manage Training and Seminar</p>
+                            <p>Schedules</p>
+                        </div> 
+                        <div className='footer-content'>
 
                         </div>
                     </div>    
@@ -29,6 +35,12 @@ function Footer() {
                         <div className='footer-header'>
                             <p>Services</p>
                         </div>
+                        <div className='footer-content'>
+                            <p>Admission</p>
+                            <p>Events</p>
+                            <p>Manage Training and Seminar</p>
+                            <p>Schedules</p>
+                        </div> 
                         <div className='footer-content'>
 
                         </div>

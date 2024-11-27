@@ -278,10 +278,6 @@ const Table = () => {
   const [currentUser, setCurrentUser] = useState(null); // Step 1: Define state for current user
   const [selectAllChecked, setSelectAllChecked] = useState(false);
 
-  const toggleSidebar = () => {
-    setIsCollapsed(!isCollapsed);
-  };
-
   useEffect(() => {
 
     const token = sessionStorage.getItem("authToken");
@@ -302,7 +298,8 @@ const Table = () => {
         console.error("Access check failed:", error);
       }
     }
-
+    
+     
     const fetchStats = async () => {
       try {
         const response = await axios.get('http://localhost:3000/a/dashboard');
@@ -366,26 +363,34 @@ const Table = () => {
   
 
   // Pagination Logic
-const indexOfLastUser = currentPage * rowsPerPage;
-const indexOfFirstUser = indexOfLastUser - rowsPerPage;
+  const indexOfLastUser = currentPage * rowsPerPage;
+  const indexOfFirstUser = indexOfLastUser - rowsPerPage;
 
-// Paginate filtered users (those that are filtered by status)
-const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
- 
-   const nextPage = () => {
-     if (currentPage < Math.ceil(filteredUsers.length / rowsPerPage)) {
-       setCurrentPage(prevPage => prevPage + 1);
-     }
-   };
- 
-   const prevPage = () => {
-     if (currentPage > 1) {
-       setCurrentPage(prevPage => prevPage - 1);
-     }
-   };
- 
-   const onSelectAllChange = () => setSelectAllChecked(!selectAllChecked);
+  // Paginate filtered users (those that are filtered by status)
+  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
 
+  const onSelectAllChange = () => setSelectAllChecked(!selectAllChecked);
+  const totalPages = Math.ceil(filteredUsers.length / rowsPerPage);
+
+  const getCurrentPageData = () => {
+    const startIndex = (currentPage - 1) * rowsPerPage;
+    return filteredUsers.slice(startIndex, startIndex + rowsPerPage);
+  };
+  
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+  const handlePrev = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prev) => prev - 1);
+    }
+  };
+  
+  const handleNext = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage((prev) => prev + 1);
+    }
+  };
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const handleOpenModal = () => {
@@ -452,17 +457,32 @@ const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
         </div>
 
 
-        <UsersTable users={currentUsers} onUpdate={handleUpdate} selectAllChecked={selectAllChecked}
+        <UsersTable users={getCurrentPageData()} onUpdate={handleUpdate} selectAllChecked={selectAllChecked}
           onSelectAllChange={onSelectAllChange} onRoleFilterChange={setRoleFilter}
           onDepartmentFilterChange={setDepartmentFilter}
           onStatusFilterChange={setStatusFilter} />
           
-        <div className="pagination">
-          <button onClick={prevPage} disabled={currentPage === 1}>Prev</button>
-          <span>Page {currentPage} of {Math.ceil(filteredUsers.length / rowsPerPage)}</span>
-          <button onClick={nextPage} disabled={currentPage === Math.ceil(filteredUsers.length / rowsPerPage)}>Next</button>
-        </div>
+          <div className="pagination">
+        <button onClick={handlePrev} disabled={currentPage === 1}>
+          Prev
+        </button>
+        
+        {/* Render page numbers */}
+        {Array.from({ length: totalPages }, (_, i) => (
+          <button
+            key={i + 1}
+            className={`page-number ${currentPage === i + 1 ? 'active' : ''}`}
+            onClick={() => handlePageChange(i + 1)}
+          >
+            {i + 1}
+          </button>
+        ))}
+        
+        <button onClick={handleNext} disabled={currentPage === totalPages}>
+          Next
+        </button>
       </div>
+    </div>
     </div>
   );
 };

@@ -13,13 +13,46 @@ body, #root, .NavbarWithSidebar-container {
 
 /* Footer styling */
 footer {
-    background-color: #ffffff;
+    position: relative; /* Enables positioning for pseudo-elements */
+    color: #000324; /* Adjust text color for readability */
     padding: 20px;
     text-align: center;
-    position: relative;
     width: 100%;
+    background-color: #ffffff; /* Default background color */
+    overflow: hidden; /* Ensures content stays within bounds */
 }
-
+footer::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 25%; /* Covers 1/4 of the footer */
+    height: 100%;
+    background: linear-gradient(
+        to left,
+        rgba(255, 255, 255, 0.1), /* Transparent black at the left */
+        rgb(255, 255, 255)
+    ), 
+    url('https://buksu.edu.ph/wp-content/uploads/2020/05/Artboard-2.png'); /* Path to your image */
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: 1; /* Above the footer background but below content */
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: 1; /* Above the footer background but below content */
+}
+footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 25%; /* Start the fade effect from the 3rd section */
+    width: 10%; /* Width of the fade effect */
+    height: 100%;
+    background: linear-gradient(to right, rgba(255, 255, 255, 0), #ffffff); /* Fade from transparent to white */
+    z-index: 1; /* Same z-index as the background image */
+}
 /* Container styling */
 .footer-container {
     display: flex;
@@ -47,9 +80,12 @@ footer {
 .location, .info {
     flex: 1; /* Allow sections to take equal width */
     min-width: 150px; /* Set minimum width for smaller screens */
-    margin: 10px; /* Add space around sections */
+    margin: 0px; /* Add space around sections */
 }
 
+.location h3 {
+    text-align: left;
+}
 /* Align content within each section to the left */
 .footer-left-top .location,
 .footer-left-top .info {
@@ -93,6 +129,7 @@ footer {
     font-weight: bold;
     color: #000353;
     margin: 0;
+    text-align: left;
 }
 
 .footer-left-bottom p {

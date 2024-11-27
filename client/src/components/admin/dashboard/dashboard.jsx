@@ -3,11 +3,12 @@ import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faCalendarCheck, faBan, faChevronLeft, faChevronRight} from '@fortawesome/free-solid-svg-icons';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-
+import { Link } from 'react-router-dom';
 import "./dashboard.css";
 
-const StatCard = ({ title, count, icon, color }) => (
-  <div className="dashboard__card"> {/* Updated class name for specificity */}
+const StatCard = ({ title, count, icon, color, Route }) => (
+
+  <Link to={Route} className="dashboard__card"> {/* Updated class name for specificity */}
     <div className="card-content">
       <div className="stat-content">
         <div className="text-content">
@@ -19,7 +20,8 @@ const StatCard = ({ title, count, icon, color }) => (
         </div>
       </div>  
     </div>
-  </div>
+  </Link>
+
 );
 
 
@@ -178,11 +180,11 @@ const Dashboard = () => {
       <div className="content">
         <h2 className="dashboard-heading">Dashboard</h2>
         <div className="dashboard">
-          <StatCard title="Total User" count={stats.totalUsers} icon={<FontAwesomeIcon icon={faUser} size="2x" />} color="#4a90e2"/>
-          <StatCard title="Total Events" count={stats.totalEvents} icon={<FontAwesomeIcon icon={faCalendarCheck} size="2x" />} color="#ffe600"/>
-          <StatCard title="Upcoming Events" count={stats.upcomingEvents} icon={<FontAwesomeIcon icon={faCalendarCheck} size="2x" />} color="#9b51e0" />
-          <StatCard title="Successful Events" count={stats.successfulEvents || 0} icon={<FontAwesomeIcon icon={faCalendarCheck} size="2x" />} color="#34c759" />
-          <StatCard title="Canceled Events" count={stats.canceledEvents} icon={<FontAwesomeIcon icon={faBan} size="2x" />} color="#ff3b30" />
+          <StatCard Route="/a/users" title="Total User" count={stats.totalUsers} icon={<FontAwesomeIcon icon={faUser} size="2x" />} color="#4a90e2"/>
+          <StatCard Route="/a/events" title="Total Events" count={stats.totalEvents} icon={<FontAwesomeIcon icon={faCalendarCheck} size="2x" />} color="#ffe600"/>
+          <StatCard Route="/a/events" title="Upcoming Events" count={stats.upcomingEvents} icon={<FontAwesomeIcon icon={faCalendarCheck} size="2x" />} color="#9b51e0" />
+          <StatCard Route="/a/events" title="Successful Events" count={stats.successfulEvents || 0} icon={<FontAwesomeIcon icon={faCalendarCheck} size="2x" />} color="#34c759" />
+          <StatCard Route="/a/events" title="Canceled Events" count={stats.canceledEvents} icon={<FontAwesomeIcon icon={faBan} size="2x" />} color="#ff3b30" />
         </div>
         
         <Chart 
