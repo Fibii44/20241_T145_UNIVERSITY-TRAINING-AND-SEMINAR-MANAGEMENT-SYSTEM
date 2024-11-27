@@ -66,7 +66,7 @@ const HistoryM = () => {
                     }}
                 />
 
-                <div className="context-card">
+                <div className="history-context-card">
                     <div className="history-events-list">
                         {loading ? (
                             <p>Loading events...</p>
@@ -75,7 +75,7 @@ const HistoryM = () => {
                                 {currentEvents.map(event => (
                                     <div
                                         className="history-event-card"
-                                        key={event._id}
+                                       key={event._id}
                                         onClick={() => navigate(`/history/${event._id}`)}
                                     >
                                         <img
@@ -116,7 +116,7 @@ const HistoryM = () => {
                         )}
                     </div>
 
-                    {/* Pagination Controls */}
+                                        {/* Pagination Controls */}
                     {filteredEvents.length > eventsPerPage && (
                         <div className="pagination">
                             <button
@@ -126,17 +126,24 @@ const HistoryM = () => {
                             >
                                 <FontAwesomeIcon icon={faChevronLeft} />
                             </button>
-                            {Array.from({ length: totalPages }, (_, index) => (
-                                <button
-                                    key={index}
-                                    className={`page-button ${
-                                        currentPage === index + 1 ? 'active' : ''
-                                    }`}
-                                    onClick={() => handlePageChange(index + 1)}
-                                >
-                                    {index + 1}
-                                </button>
-                            ))}
+                            {Array.from({ length: Math.min(5, totalPages) }, (_, index) => {
+                                const startPage = Math.max(
+                                    1,
+                                    Math.min(totalPages - 4, currentPage - 2)
+                                );
+                                const pageNumber = startPage + index;
+                                return (
+                                    <button
+                                        key={pageNumber}
+                                        className={`page-button ${
+                                            currentPage === pageNumber ? 'active' : ''
+                                        }`}
+                                        onClick={() => handlePageChange(pageNumber)}
+                                    >
+                                        {pageNumber}
+                                    </button>
+                                );
+                            })}
                             <button
                                 className="page-btn"
                                 onClick={() =>
@@ -148,6 +155,7 @@ const HistoryM = () => {
                             </button>
                         </div>
                     )}
+
                 </div>
             </div>
         </div>

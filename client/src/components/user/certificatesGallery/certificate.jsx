@@ -203,10 +203,26 @@ function CertificateGrid() {
               ))}
             </div>
 
-      <div className="pagination-controls">
-        <button onClick={handlePrevPage} disabled={currentPage === 1}>❮ Prev</button>
-        <button onClick={handleNextPage} disabled={currentPage === Math.ceil(events.length / eventsPerPage)}>Next ❯</button>
-      </div>
+            <div className="pagination-controls">
+  <button onClick={handlePrevPage} disabled={currentPage === 1}>
+    ❮ Prev
+  </button>
+  {Array.from({ length: Math.ceil(events.length / eventsPerPage) }, (_, index) => (
+    <button
+      key={index + 1}
+      onClick={() => setCurrentPage(index + 1)}
+      className={`page-number-button ${currentPage === index + 1 ? "active" : ""}`}
+    >
+      {index + 1}
+    </button>
+  ))}
+  <button
+    onClick={handleNextPage}
+    disabled={currentPage === Math.ceil(events.length / eventsPerPage)}
+  >
+    Next ❯
+  </button>
+</div>
     </div>
   );
 }

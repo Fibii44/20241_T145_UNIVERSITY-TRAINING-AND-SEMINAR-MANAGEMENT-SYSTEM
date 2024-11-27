@@ -1,4 +1,6 @@
-.dashboard-inline {
+  
+  
+  .dashboard-inline {
     display: flex;
     padding: 8px;
   }
@@ -18,33 +20,36 @@
     background-color: #c79202;
   
   } 
-.history-events-list {
+  .history-events-list {
     display: flex;
     flex-direction: column;
     align-items: center;
-}
-
-.history-events-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 20px;
     width: 100%;
-    max-width: 1600px;
-    margin: auto;
+}
+.history-context-card {
+  align-items: center;
+}
+.history-events-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px; /* Margin between cards */
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto; /* Center horizontally */
 }
 .history-event-card {
-    cursor: pointer;
-    width: 20rem;
-    text-align: left;
-    background-color: white;
-    padding: 30px;
-    border-radius: 18px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    display: flex;
-    flex-direction: column;
-    align-items: left;
-    height: 100%; /* Make each card take full height in its grid cell */
+  cursor: pointer;
+  width: 100%; /* Adjust width based on grid cell */
+  max-width: 300px; /* Optional: Limit the card size */
+  text-align: left;
+  background-color: white;
+  padding: 20px;
+  border-radius: 18px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 .history-event-card:hover {
   background-color: rgb(226, 241, 241);/* Zoom in effect */
@@ -180,3 +185,37 @@
   border-color: #007bff;
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
+.pagination .page-button.active {
+  background-color: #feb800; /* Highlight color */
+  color: #060038;
+  font-weight: bold;
+}
+
+.pagination .page-button {
+  margin: 0 10px;
+  padding: 10px 20px;
+  border: none;
+  background-color: #011c39;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.pagination .page-button:hover {
+  background-color: #feb800;
+}
+
+.pagination .page-btn {
+  padding: 8px 12px;
+  border: none;
+  background-color: #011c39;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.pagination .page-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+
+

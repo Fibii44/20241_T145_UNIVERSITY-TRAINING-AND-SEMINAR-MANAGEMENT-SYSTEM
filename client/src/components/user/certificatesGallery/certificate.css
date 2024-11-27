@@ -343,3 +343,22 @@ margin: 0;
 .pagination-controls button:hover:not(:disabled) {
   background-color: #feb800;
 }
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  margin-top: 20px;
+}
+
+.page-number-button {
+  padding: 5px 10px;
+  border: 1px solid #ddd;
+  background-color: #f9f9f9;
+  cursor: pointer;
+}
+
+.page-number-button.active {
+  background-color: #feb800;
+  color: #0b003d;
+  border-color: #feb800;
+}

@@ -15,7 +15,9 @@ const listItems = async (req, res) => {
 const viewItem = async (req, res) => {
     try {
         const item = await userNotification.findById(req.params.id);
-        if (!item) return res.status(404).send('Item not found');
+        if (!item) {
+           return res.status(404).send('Item not found'); 
+        } 
         res.json(item);
     } catch (error) {
         console.error('Error viewing item:', error);

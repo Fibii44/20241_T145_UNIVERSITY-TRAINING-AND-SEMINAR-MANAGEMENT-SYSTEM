@@ -80,7 +80,9 @@ const EventM = ({ userRole, userCollege }) => {
   const currentEvents = filteredEvents.slice(indexOfFirstEvent, indexOfLastEvent);
 
   const totalPages = Math.ceil(filteredEvents.length / eventsPerPage);
-
+  const maxVisibleButtons = 5;
+  const visiblePagesStart = Math.max(currentPage - Math.floor(maxVisibleButtons / 2), 1);
+  const visiblePagesEnd = Math.min(visiblePagesStart + maxVisibleButtons - 1, totalPages);
   const nextPage = () => {
     if (currentPage < Math.ceil(events.length / eventsPerPage)) {
       setCurrentPage(currentPage + 1);
@@ -417,15 +419,30 @@ const EventM = ({ userRole, userCollege }) => {
               </div>
             ))}
           </div>
-          <div className="pagination">
+{/* Pagination */}
+<div className="pagination">
             <button onClick={prevPage} disabled={currentPage === 1}>
-              <FontAwesomeIcon icon={faChevronLeft} /> Prev
+              <FontAwesomeIcon icon={faChevronLeft} />
             </button>
-            <span>Page {currentPage} of {Math.ceil(events.length / eventsPerPage)}</span>
-            <button onClick={nextPage} disabled={currentPage === Math.ceil(events.length / eventsPerPage)}>
-              Next <FontAwesomeIcon icon={faChevronRight} />
+            {Array.from({ length: visiblePagesEnd - visiblePagesStart + 1 }, (_, idx) => {
+              const page = visiblePagesStart + idx;
+              return (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  className={`page-button ${currentPage === page ? 'active' : ''}`}
+                >
+                  {page}
+                </button>
+              );
+            })}
+            <button
+              onClick={nextPage}
+              disabled={currentPage === totalPages}
+            >
+              <FontAwesomeIcon icon={faChevronRight} />
             </button>
-          </div>  
+          </div>
         </div>
       </div>
     </div>

@@ -129,3 +129,9 @@
     margin-left: 2rem;
     border-radius: .5rem;
 }
+.page-number.active {
+    background-color: #feb800;
+    color: #000;
+    font-weight: bold;
+    border-radius: 4px;
+}

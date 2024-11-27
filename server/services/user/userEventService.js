@@ -19,12 +19,15 @@ const listEvents = async (req, res) => {
 const viewEvent = async (req, res) => {
     try {
         const event = await Event.findById(req.params.id);
-        if (!event) return res.status(404).send('Event not found');
-        res.json(event);
+        if (!event) {
+            return res.status(404).send('Event not found');
+        }
+        res.status(200).json(event); // Set the status before sending the response
     } catch (error) {
         res.status(500).send('Error retrieving event');
     }
 };
+
 
 // Handle registration and attendance
 const registration = async (req, res) => {

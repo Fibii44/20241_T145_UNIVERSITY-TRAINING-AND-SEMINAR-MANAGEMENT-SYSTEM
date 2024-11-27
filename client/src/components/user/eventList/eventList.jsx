@@ -102,37 +102,46 @@ function EventGrid() {
                     </Link>
                 ))}
             </div>
-            <div className="pagination-controls mb-3" >
-                
-            <button
-              className="page-btn"
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
-            >
-              <FontAwesomeIcon icon={faChevronLeft} />
-            </button>
-            {Array.from({ length: totalPages }, (_, index) => (
-              <button
-                key={index + 1}
-                className={`page-number ${
-                  currentPage === index + 1 ? "active" : ""
-                }`}
-                onClick={() => handlePageClick(index + 1)}
-              >
-                {index + 1}
-              </button>
-            ))}
-
+            <div className="pagination-controls mb-3">
+    <button
+        className="page-btn"
+        onClick={handlePrevPage}
+        disabled={currentPage === 1}
+    >
+        <FontAwesomeIcon icon={faChevronLeft} />
+    </button>
+    {Array.from(
+        {
+            length: Math.min(5, totalPages), // Show a maximum of 5 page buttons
+        },
+        (_, i) => {
+            const startPage = Math.max(
+                1,
+                Math.min(currentPage - 2, totalPages - 4) // Ensure consistent shifts in visible range
+            );
+            const pageNumber = startPage + i;
+            return (
                 <button
-              className="page-btn"
-              onClick={() =>
-                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-              }
-              disabled={currentPage === totalPages}
-            >
-              <FontAwesomeIcon icon={faChevronRight} />
-            </button>
-            </div>
+                    key={pageNumber}
+                    className={`page-number ${
+                        currentPage === pageNumber ? "active" : ""
+                    }`}
+                    onClick={() => handlePageClick(pageNumber)}
+                >
+                    {pageNumber}
+                </button>
+            );
+        }
+    )}
+    <button
+        className="page-btn"
+        onClick={handleNextPage}
+        disabled={currentPage === totalPages}
+    >
+        <FontAwesomeIcon icon={faChevronRight} />
+    </button>
+</div>
+
         </div>
     );
 }
