@@ -15,7 +15,8 @@ eventRoutes.get('/a/events/:id/check-lock', checkLockStatus);
 
 // Events Page - Render all events
 eventRoutes.get('/a/events', adminService.renderEventsPage);
-
+// Get Specific Event
+eventRoutes.get('/a/events/:id', adminService.getSpecificEvent );
 // Add a new event
 eventRoutes.post('/a/events', authenticateJWT, adminService.upload.fields([{ name: 'eventPicture', maxCount: 1 }, { name: 'certificateTemplate', maxCount: 1 }]), adminService.addEvent);  
     

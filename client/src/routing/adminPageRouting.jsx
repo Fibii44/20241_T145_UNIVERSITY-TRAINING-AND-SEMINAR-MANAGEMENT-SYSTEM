@@ -21,7 +21,7 @@ function Admin() {
           <Route path="calendar" element={<Calendar />} />
           <Route path="users" element={<Table />} />
           <Route path="history" element={<History />} />
-          <Route path="history/:id" element={<EventDetails />} /> 
+          <Route path="events/:id" element={<EventDetails />} /> 
           <Route path="personnel" element={<AddUser />} /> 
           <Route path="events" element={<Events />} />
           <Route path='activity-logs' element={<Logs />} />

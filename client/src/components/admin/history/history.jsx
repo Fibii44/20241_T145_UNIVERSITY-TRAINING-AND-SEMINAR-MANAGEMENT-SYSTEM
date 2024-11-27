@@ -4,6 +4,7 @@ import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarCheck, faClock, faPlus, faMapMarkerAlt, faLock, faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import './history.css'; 
+import { Link } from 'react-router-dom';
 
 const HistoryM = () => {
     const navigate = useNavigate();
@@ -73,10 +74,9 @@ const HistoryM = () => {
                         ) : currentEvents.length > 0 ? (
                             <div className="history-events-grid">
                                 {currentEvents.map(event => (
-                                    <div
+                                    <Link to={`/a/events/${event._id}`}
                                         className="history-event-card"
-                                       key={event._id}
-                                        onClick={() => navigate(`/history/${event._id}`)}
+                                        key={event._id}    
                                     >
                                         <img
                                             src={`http://localhost:3000/eventPictures/${event.eventPicture}`}
@@ -108,7 +108,7 @@ const HistoryM = () => {
                                                 </span>
                                             </div>
                                         </div>
-                                    </div>
+                                    </Link>
                                 ))}
                             </div>
                         ) : (

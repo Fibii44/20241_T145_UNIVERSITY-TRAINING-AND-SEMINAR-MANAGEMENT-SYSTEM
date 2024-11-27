@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import './calendar.css';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const Calendar = () => {
     const [events, setEvents] = useState([]);
@@ -330,103 +331,132 @@ const Calendar = () => {
                 });
             };
 
-        return (
-            <>
-                <div className="calendar-header">
-                    <button className="prev-next" onClick={goToPrevious}><FontAwesomeIcon icon={faChevronLeft} /></button>
-                    <h2>{weekHeader}</h2>
-                    <button className="prev-next" onClick={goToNext}><FontAwesomeIcon icon={faChevronRight} /></button>
-                    {renderViewButtons()}
-                    <select
-                        value={selectedCollege}
-                        onChange={(e) => setSelectedCollege(e.target.value)}
-                        className="college-filter-dropdown"
-                        >
-                        <option value="">All Events</option>
-                        {colleges.map(college => (
-                            <option key={college} value={college}>{college}</option>
-                        ))}
-                    </select>
-                </div>
-                <div className="calendar-grid">
-                    {daysOfWeek.map(day => (
-                        <div key={day} className="calendar-day-header">{day}</div>
-                    ))}
-                    {Array.from({ length: 7 }, (_, index) => {
-                        const date = new Date(startOfWeek);
-                        date.setDate(startOfWeek.getDate() + index);
-                        const formattedDate = date.toISOString().split('T')[0];
-                        const dayNumber = date.getDate();
-                        const eventsForDay = filterEventsByCollege(getEventsForDay(formattedDate));
-                        const isToday = date.toDateString() === today.toDateString();
-                        
-                        return (
-                            <div
-                                key={index}
-                                className="calendar-day"
-                                style={isToday ? { border: '2px solid' } : {}}
-                                onClick={() => openOverlay(formattedDate, eventsForDay)}
-                            >
-                                <div className="date-number" style={{ opacity: date.getMonth() !== currentDate.getMonth() ? 0.5 : 1 }}>
-                                    {dayNumber}
-                                </div>
-                                <div className="events-for-day grid-container">
-                                    {eventsForDay.map(event => (
-                                        <Link to={`/u/events/${event._id}`} key={event._id} className="event-link">
-                                            <div 
-                                                className="event grid-item" 
-                                                style={{ backgroundColor: event.color }}
-                                            >
-                                                <span style={{ color: event.color, fontWeight: 'bold', fontSize: '14px' }}>
-                                                    {event.title}
-                                                </span>
-                                            </div>
-                                        </Link>
-                                    ))}
-                                </div>
-                            </div>
-                        );
-                    })}
-                </div>
-                {showOverlay && (
-                    <div className="calendar-overlay">
-                        <div className="overlay-content">
-                            <div className='overlay-header'>
+            return (
+                <>
+                    <div className="container">
+                        {/* Header Section */}
+                        <div className="calendar-header">
+                            <button className="prev-next" onClick={goToPrevious}>
+                                <FontAwesomeIcon icon={faChevronLeft} />
+                            </button>
                             <h2>{weekHeader}</h2>
-                                <button onClick={closeOverlay} className="close-button">Close</button>
-                            </div>
-                            <div className="events-list">
-                                {selectedEvents.length > 0 ? (
-                                    selectedEvents.map(event => (
-                                        <div key={event._id} className="event-detail" 
-                                        style={{ 
-                                            backgroundColor: `rgba(${hexToRgb(event.color)}, 0.25)`,
-                                            borderLeft: `5px solid ${event.color}`,
-                                            
-                                        }}
-                                        >
-                                            <span 
-                                                style={{ 
-                                                    color: event.color,    // Keep title color fully opaque
-                                                    fontWeight: 'bold', 
-                                                    fontSize: '14px'
-                                                }}
-                                            >
-                                            {event.title}
-                                        </span>
-                                            
-                                        <p>{formatTime(event.startTime)} - {formatTime(event.endTime)}</p>
-                                        </div>
-                                    ))
-                                ) : (
-                                    <p>No events for this day.</p>
-                                )}
-                            </div>
+                            <button className="prev-next" onClick={goToNext}>
+                                <FontAwesomeIcon icon={faChevronRight} />
+                            </button>
+                            {renderViewButtons()}
+                            <select
+                                value={selectedCollege}
+                                onChange={(e) => setSelectedCollege(e.target.value)}
+                                className="college-filter-dropdown"
+                            >
+                                <option value="">All Events</option>
+                                {colleges.map((college) => (
+                                    <option key={college} value={college}>
+                                        {college}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
+            
+                        {/* Calendar Grid */}
+                        <div className="calendar-grid">
+                            {daysOfWeek.map((day) => (
+                                <div key={day} className="calendar-day-header">
+                                    {day}
+                                </div>
+                            ))}
+                            {Array.from({ length: 7 }, (_, index) => {
+                                const date = new Date(startOfWeek);
+                                date.setDate(startOfWeek.getDate() + index);
+                                const formattedDate = date.toISOString().split('T')[0];
+                                const dayNumber = date.getDate();
+                                const eventsForDay = filterEventsByCollege(getEventsForDay(formattedDate));
+                                const isToday = date.toDateString() === today.toDateString();
+            
+                                return (
+                                    <div
+                                        key={index}
+                                        className="calendar-day"
+                                        style={isToday ? { border: '2px solid' } : {}}
+                                        onClick={() => openOverlay(formattedDate, eventsForDay)}
+                                    >
+                                        <div
+                                            className="date-number"
+                                            style={{ opacity: date.getMonth() !== currentDate.getMonth() ? 0.5 : 1 }}
+                                        >
+                                            {dayNumber}
+                                        </div>
+                                        <div className="events-for-day grid-container">
+                                            {eventsForDay.map((event) => (
+                                                <Link to={`/u/events/${event._id}`} key={event._id} className="event-link">
+                                                    <div
+                                                        className="event grid-item"
+                                                        style={{ backgroundColor: event.color }}
+                                                    >
+                                                        <span
+                                                            style={{
+                                                                color: event.color,
+                                                                fontWeight: 'bold',
+                                                                fontSize: '14px',
+                                                            }}
+                                                        >
+                                                            {event.title}
+                                                        </span>
+                                                    </div>
+                                                </Link>
+                                            ))}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+            
+                        {/* Overlay Section */}
+                        {showOverlay && (
+                            <div className="calendar-overlay">
+                                <div className="overlay-content">
+                                    <div className="overlay-header">
+                                        <h2>{weekHeader}</h2>
+                                        <button onClick={closeOverlay} className="close-button">
+                                            Close
+                                        </button>
+                                    </div>
+                                    <div className="events-list">
+                                        {selectedEvents.length > 0 ? (
+                                            selectedEvents.map((event) => (
+                                                <div
+                                                    key={event._id}
+                                                    className="event-detail"
+                                                    style={{
+                                                        backgroundColor: `rgba(${hexToRgb(event.color)}, 0.25)`,
+                                                        borderLeft: `5px solid ${event.color}`,
+                                                    }}
+                                                >
+                                                    <span
+                                                        style={{
+                                                            color: event.color,
+                                                            fontWeight: 'bold',
+                                                            fontSize: '14px',
+                                                        }}
+                                                    >
+                                                        {event.title}
+                                                    </span>
+                                                    <p>
+                                                        {formatTime(event.startTime)} - {formatTime(event.endTime)}
+                                                    </p>
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <p>No events for this day.</p>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </div>
-                )}
-            </>
-        );
+                </>
+            );
+            
     };
    // Year View
     const renderYearView = () => {

@@ -25,12 +25,14 @@
     flex-direction: column;
     align-items: center;
     width: 100%;
+    margin: 0rem auto; /* Center grid horizontally */
 }
 .history-context-card {
   align-items: center;
 }
 .history-events-grid {
   display: grid;
+  margin: 0rem auto; /* Center grid horizontally */
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 20px; /* Margin between cards */
   width: 100%;
@@ -50,6 +52,8 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  text-decoration: none; /* Remove the underline */
+  color: inherit;
 }
 .history-event-card:hover {
   background-color: rgb(226, 241, 241);/* Zoom in effect */

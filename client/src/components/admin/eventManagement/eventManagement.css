@@ -3,7 +3,9 @@
   display: flex;
   padding: 8px;
 }
-
+.dashboard-inline .search-bar {
+  margin-left: 20px;
+}
 .dashboard-button {
   padding: 10px 40px;
   background-color: #ffc107;
@@ -36,9 +38,8 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 24px; /* Space between cards */
-  padding: 20px;
   background-color: #f5f6fa;
-  margin: 2rem auto; /* Center grid horizontally */
+  margin: 0rem auto; /* Center grid horizontally */
   width: 88rem; /* Set max width for the grid */
 }
 

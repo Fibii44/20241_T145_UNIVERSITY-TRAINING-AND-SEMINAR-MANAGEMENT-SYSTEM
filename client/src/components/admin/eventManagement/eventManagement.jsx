@@ -331,15 +331,15 @@ const EventM = ({ userRole, userCollege }) => {
   return (
     <div className="dashboard-container">
       <div className="content">
-        <div className="dashboard-inline">
-        <input
+        <div className="dashboard-inline">        
+          <h2 className="dashboard-heading">Events</h2>
+          <input
             type="text"
             className="search-bar"
             placeholder="Search events..."
             value={searchQuery}
             onChange={handleSearch}
           />
-          <h2 className="dashboard-heading">Events</h2>
           <button className="dashboard-button" onClick={() => {
             setSelectedEvent(null); // Clear previous event data
             setIsModalOpen(true);
