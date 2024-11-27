@@ -3,7 +3,7 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import Sidebar from '../../components/admin/navbars/sidebar/sidebar';
 import Topbar from '../../components/admin/navbars/topbar/topbar';
 import History from '../../components/admin/eventHistoryDetails/eventHistoryDetails'
-
+import './page.css'
 const dashboard = () => {
 
     const [isCollapsed, setIsCollapsed] = useState(false);
@@ -14,10 +14,10 @@ const dashboard = () => {
 
     return (
         <div className="dashboard-container">
-            <Sidebar isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} activePage="dashboard" />
+            <Sidebar isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} activePage="history" />
             <div className="content">
                 <Topbar />
-                <div className="context-card">
+                <div className="context-cards">
                 <History />
                 </div>
             </div>

@@ -1,13 +1,17 @@
 /*Event Details*/
-
+.content {
+  flex: 1; 
+  padding: 0;
+  background-color: #F5F6FA;
+  overflow-y: auto; 
+}
 /* Container for the entire event section */
 .event-container {
-    background-color: #f9f9f9;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    margin: 20px;
-  }
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box; 
+  overflow: hidden;/* Include padding/border in element's total width */
+}
   
   .card-wrapper {
     display: flex;
@@ -51,4 +55,7 @@
   .info-container span svg {
     margin-right: 5px;
     color: #aaa;
+  }
+  .card-content h3 {
+    font-size: 20px;
   }

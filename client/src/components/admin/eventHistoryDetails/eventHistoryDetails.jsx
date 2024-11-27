@@ -11,8 +11,6 @@ import {
     Tooltip,
     ResponsiveContainer,
 } from 'recharts';
-import Sidebar from '../../../components/admin/navbars/sidebar/sidebar';
-import Topbar from '../../../components/admin/navbars/topbar/topbar';
 import './eventHistoryDetails.css';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3000';
