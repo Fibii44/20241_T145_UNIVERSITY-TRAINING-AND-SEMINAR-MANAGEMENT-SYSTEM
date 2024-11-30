@@ -1,27 +1,74 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import io from 'socket.io-client';
+import axios from 'axios';
+import moment from 'moment';
 import './activityLog.css';
 
 const ActivityLog = () => {
-    const logs = [
-        { id: 1, action: 'User John Doe added a new event', timestamp: '2024-11-23 10:30 AM', profile: 'https://i1.sndcdn.com/artworks-ni2AePohJoooy2Nr-qHH4aA-t500x500.jpg' },
-        { id: 2, action: 'Admin updated seminar details', timestamp: '2024-11-22 04:45 PM', profile: 'https://i1.sndcdn.com/artworks-ni2AePohJoooy2Nr-qHH4aA-t500x500.jpg' },
-        { id: 3, action: 'User Jane Smith registered for a workshop', timestamp: '2024-11-21 02:15 PM', profile: 'https://i1.sndcdn.com/artworks-ni2AePohJoooy2Nr-qHH4aA-t500x500.jpg' },
-        { id: 4, action: 'System auto-synced calendar with Google', timestamp: '2024-11-20 12:00 PM', profile: 'https://i1.sndcdn.com/artworks-ni2AePohJoooy2Nr-qHH4aA-t500x500.jpg' },
-        // Add more mock logs here
-    ];
-
+    const [logs, setLogs] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const logsPerPage = 8;
+
+    useEffect(() => {
+        // Fetch initial logs
+        const fetchLogs = async () => {
+            try {
+                const token = sessionStorage.getItem('authToken');
+                const response = await axios.get('http://localhost:3000/a/activity-logs', {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                setLogs(response.data);
+                setLoading(false);
+            } catch (error) {
+                console.error('Error fetching logs:', error);
+                setError('Failed to load activity logs');
+                setLoading(false);
+            }
+        };
+
+        fetchLogs();
+
+        // Set up Socket.IO connection
+        const socket = io('http://localhost:3000');
+
+        socket.on('connect', () => {
+            console.log('Connected to Socket.IO server');
+        });
+
+        socket.on('newActivity', (activity) => {
+            setLogs(prevLogs => {
+                const newLog = {
+                    ...activity,
+                    userId: {
+                        name: activity.userName,
+                        profilePicture: activity.userProfile
+                    },
+                    createdAt: new Date()
+                };
+                return [newLog, ...prevLogs];
+            });
+        });
+
+        socket.on('connect_error', (error) => {
+            console.error('Socket connection error:', error);
+        });
+
+        return () => {
+            socket.disconnect();
+        };
+    }, []);
 
     // Filter logs based on search query
     const filteredLogs = logs.filter((log) =>
         log.action.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        log.timestamp.toLowerCase().includes(searchQuery.toLowerCase())
+        moment(log.createdAt).format('YYYY-MM-DD HH:mm:ss').toLowerCase().includes(searchQuery.toLowerCase()) ||
+        log.userId?.name?.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     const totalPages = Math.ceil(filteredLogs.length / logsPerPage);
-
     const startIndex = (currentPage - 1) * logsPerPage;
     const currentLogs = filteredLogs.slice(startIndex, startIndex + logsPerPage);
 
@@ -35,26 +82,43 @@ const ActivityLog = () => {
 
     const handleSearch = (e) => {
         setSearchQuery(e.target.value);
-        setCurrentPage(1); // Reset to the first page when searching
+        setCurrentPage(1);
     };
+
+    if (loading) {
+        return <div className="loading">Loading activity logs...</div>;
+    }
+
+    if (error) {
+        return <div className="error">{error}</div>;
+    }
 
     return (
         <div className="activity-log-container">
             <h2 className="activity-log-header">Activity Logs</h2>
             <input
                 type="text"
-                placeholder="Search activity logs..."
+                placeholder="Search by action, date, or user..."
                 className="activity-log-search"
                 value={searchQuery}
                 onChange={handleSearch}
             />
             <ul className="activity-log-list">
                 {currentLogs.map((log) => (
-                    <li key={log.id} className="activity-log-item">
-                        <img src={log.profile} alt="Profile" className="log-profile-picture" />
+                    <li key={log._id} className="activity-log-item">
+                        <img 
+                            src={log.userId?.profilePicture || '/default-profile.png'} 
+                            alt="Profile" 
+                            className="log-profile-picture" 
+                        />
                         <div className="activity-log-details">
-                            <p className="log-action">{log.action}</p>
-                            <p className="log-timestamp">{log.timestamp}</p>
+                            <p className="log-action">
+                                <span className="user-name">{log.userId?.name}</span>
+                                {log.action}
+                            </p>
+                            <p className="log-timestamp">
+                                {moment(log.createdAt).format('MMMM D, YYYY h:mm A')}
+                            </p>
                         </div>
                     </li>
                 ))}
@@ -63,13 +127,21 @@ const ActivityLog = () => {
                 )}
             </ul>
             <div className="pagination-controls">
-                <button onClick={handlePrevious} disabled={currentPage === 1} className="pagination-button">
+                <button 
+                    onClick={handlePrevious} 
+                    disabled={currentPage === 1} 
+                    className="pagination-button"
+                >
                     Previous
                 </button>
                 <span className="pagination-info">
                     Page {currentPage} of {totalPages}
                 </span>
-                <button onClick={handleNext} disabled={currentPage === totalPages} className="pagination-button">
+                <button 
+                    onClick={handleNext} 
+                    disabled={currentPage === totalPages} 
+                    className="pagination-button"
+                >
                     Next
                 </button>
             </div>

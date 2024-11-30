@@ -1,5 +1,6 @@
 const { initialize } = require('../../config/googleConfig');
 const { generateAndEmailCertificate } = require('./certificateService');
+const { emitNewActivity } = require('../../config/socketConfig')
 const { google } = require('googleapis');
 const FormSubmission = require('../../models/formSubmission');
 const Registration = require('../../models/registration');
@@ -219,6 +220,8 @@ const recordFormSubmission = async (req, res) => {
             );
 
             console.log('Form submission recorded: ', submission._id);
+            await emitNewActivity(userId, 'Completed Form Submission', {eventId: eventId, eventTitle: event.title})
+            
 
             try{
                 await generateAndEmailCertificate(submission._id);

@@ -3,12 +3,13 @@ const passport = require('passport');
 const User = require('../models/user');
 const bcrypt = require('bcrypt');
 const { verifyRecaptcha } = require('../utils/verifyRecaptcha.js');
-
+const { emitNewActivity } = require('../config/socketConfig.js');
+const { Timestamp } = require('mongodb');
 const JWT_SECRET = process.env.JWT_SECRET; 
 const JWT_EXPIRES_IN = '1h'; 
 
 const googleOAuthCallback = (req, res, next) => {
-  passport.authenticate('google', (error, user, info) => {
+  passport.authenticate('google', async (error, user, info) => {
     if (error) {
       return res.status(500).json({ message: 'Authentication failed', error: error.message });
     }
@@ -35,8 +36,10 @@ const googleOAuthCallback = (req, res, next) => {
       { expiresIn: JWT_EXPIRES_IN }
     );
 
+     await emitNewActivity(user._id, 'Login', {userName: user.name} )
+
     // Redirect to frontend with the token
-    return res.redirect(`http://localhost:5000/login/success?token=${token}`);
+    return res.status(200).redirect(`http://localhost:5000/login/success?token=${token}`);
   })(req, res, next);
 };
 // Manual login with reCAPTCHA
@@ -97,8 +100,10 @@ const manualLogin = async (req, res) => {
       JWT_SECRET, 
       { expiresIn: JWT_EXPIRES_IN }
     );
+    
+    await emitNewActivity(user._id, 'Login', {userName: user.name})
 
-    res.json({ success: true, token });
+    res.status(200).json({ success: true, token });
   } catch (error) {
     console.error("Login error:", error.message);
     return res.status(500).json({ success: false, message: 'Login error', error: error.message });
@@ -115,8 +120,9 @@ const logout = async (req, res) => {
     // Clear the session cookie
     res.clearCookie('connect.sid'); 
 
-    res.json({ message: 'Logged out successfully' });
+    res.status(200).json({ message: 'Logged out successfully' });
   });
+  await emitNewActivity(req.user.id, 'Logout', {userName: req.user.name})
 };
 
 const changePassword = async (req, res) => {
@@ -143,8 +149,8 @@ const changePassword = async (req, res) => {
     user.salt = salt;
     user.mustChangePassword = false;
     await user.save();
-
-    res.json({ message: 'Password changed successfully' });
+    await emitNewActivity(userId, 'Password Changed', {userName: user.name})
+    res.status(200).json({ message: 'Password changed successfully' });
   } catch (error) {
     console.error("Error changing password:", error.message);
     return res.status(500).json({ message: 'Error changing password', error: error.message });

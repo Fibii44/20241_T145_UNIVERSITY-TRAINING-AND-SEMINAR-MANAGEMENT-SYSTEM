@@ -1,6 +1,8 @@
 const User =   require('../../models/user');
 const Events = require('../../models/event')
 const DeletedEvents = require('../../models/deletedEvents');
+const ActivityLog = require('../../models/activityLog');
+
 
 const renderDashboard = async (req, res) => {
     try {
@@ -63,8 +65,21 @@ const renderCalendarPage = async (req, res) => {
 };
 
 
+const getLogs = async (req, res) => {
+    try {
+        const logs = await ActivityLog.find()
+            .populate('userId', 'name email profilePicture')
+            .sort({ timestamp: -1 });
+        res.status(200).json(logs);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+
 
 module.exports = {
     renderDashboard,
     renderCalendarPage,
+    getLogs
 }
