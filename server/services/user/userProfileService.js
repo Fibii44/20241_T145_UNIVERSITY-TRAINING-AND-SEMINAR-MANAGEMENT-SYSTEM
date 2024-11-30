@@ -1,5 +1,6 @@
 const User = require('../../models/user');
 const Registration = require('../../models/registration');
+const { emitNewActivity } = require('../../config/socketConfig')
 // db connection
 // Render user profile page
 const renderProfilePage = async (req, res) => {
@@ -31,6 +32,7 @@ const updateUserProfile = async (req, res) => {
         user.position = position;
 
         const updatedUser = await user.save();
+        await emitNewActivity(user._id, 'Updated User Profile', {userName: user.name})
 
         res.json(updatedUser);  // Return the updated user data to the client without sensitive details in the logs
     } catch (error) {
