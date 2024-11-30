@@ -1,6 +1,7 @@
 const { PDFDocument, StandardFonts, rgb } = require('pdf-lib');
 const fs = require('fs');
 const path = require('path');
+const { emitNewActivity } = require('../../config/socketConfig')
 const FormSubmission = require('../../models/formSubmission');
 const Event = require('../../models/event');
 const User = require('../../models/user');
@@ -61,18 +62,20 @@ const generateAndEmailCertificate = async (submissionId) => {
         const { width, height } = firstPage.getSize();
 
         // Embed fonts
-        const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);  // Use HelveticaBold as a fallback
+        const helveticaBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);  // HelveticaBold
+        const helveticaRoman = await pdfDoc.embedFont(StandardFonts.Helvetica);
 
         // Find and replace placeholders
         const replacements = [
             {
-                placeholder: '[ Name ]',
+                placeholder: '[name]',
                 value: user.name,
                 x: width * 0.5,  // Center horizontally
                 y: height * 0.6, // Position from top
                 fontSize: 30,
                 color: rgb(0, 0, 1), // Blue
-                align: 'center'
+                align: 'center',
+                font: helveticaBold
             },
             {
                 placeholder: '[eventName]',
@@ -81,7 +84,8 @@ const generateAndEmailCertificate = async (submissionId) => {
                 y: height * 0.45, // Position from top
                 fontSize: 24,
                 color: rgb(0, 0, 0),
-                align: 'center'
+                align: 'center',
+                font: helveticaBold
             },
             {
                 placeholder: '[date]',
@@ -90,13 +94,16 @@ const generateAndEmailCertificate = async (submissionId) => {
                 y: height * 0.35, // Position from top
                 fontSize: 20,
                 color: rgb(0, 0, 0),
-                align: 'center'
+                align: 'center',
+                font: helveticaRoman
             }
         ];
 
         // Add text for each replacement
         for (const replacement of replacements) {
-            const textWidth = font.widthOfTextAtSize(replacement.value, replacement.fontSize);
+            console.log(`Replacing "${replacement.placeholder}" with "${replacement.value}" at coordinates: (${replacement.x}, ${replacement.y})`);
+
+            const textWidth = replacement.font.widthOfTextAtSize(replacement.value, replacement.fontSize);
             const xPosition = replacement.align === 'center' 
                 ? replacement.x - (textWidth / 2) 
                 : replacement.x;
@@ -105,7 +112,7 @@ const generateAndEmailCertificate = async (submissionId) => {
                 x: xPosition,
                 y: replacement.y,
                 size: replacement.fontSize,
-                font: font,
+                font: replacement.font,
                 color: replacement.color
             });
         }
@@ -183,6 +190,8 @@ BukSU Engage Team
         await FormSubmission.findByIdAndUpdate(submissionId, {
             certificateGenerated: true
         });
+
+        await emitNewActivity(user.id, 'Generated Certificate and Sent Email', { eventId: event._id, eventTitle: event.title})
 
         return {
             certificateId: certificate._id,

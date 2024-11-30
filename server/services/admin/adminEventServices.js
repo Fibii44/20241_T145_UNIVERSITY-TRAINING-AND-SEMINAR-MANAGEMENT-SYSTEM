@@ -1,6 +1,7 @@
 const Event = require('../../models/event');
 const { initialize } = require('../../config/googleConfig');
 const axios = require('axios');
+const { emitNewActivity } = require('../../config/socketConfig');
 const DeletedEvent = require('../../models/deletedEvents');
 const multer = require('multer');
 const { v4: uuidv4 } = require('uuid');
@@ -102,6 +103,7 @@ const addEvent = async (req, res) => {
     });
     console.log(newEvent);
     await newEvent.save();
+    await emitNewActivity(user.id, 'Created New Event', { eventId: newEvent._id, eventTitle: newEvent.title });
     res.status(201).json({ message: 'Event added successfully', newEvent });
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -320,6 +322,7 @@ const updateEvent = async (req, res) => {
     }
     // Unlock the event after updating
     await Event.findByIdAndUpdate(eventId, { isLocked: false, lockedBy: null });
+    await emitNewActivity(userId, 'Updated Event', {eventId: eventId, eventTitle: event.title, })
 
     res.status(200).json({ message: 'Event updated successfully', event: updatedEvent });
   } catch (error) {
@@ -381,6 +384,7 @@ const deleteEvent = async (req, res) => {
 
     // Delete the original event from the Event collection
     await Event.findByIdAndDelete(eventId);
+    await emitNewActivity(req.user.id, 'Deleted Event', {eventId: eventId, eventTitle: event.title})
 
     res.status(200).json({ message: 'Event and associated picture deleted successfully' });
   } catch (error) {

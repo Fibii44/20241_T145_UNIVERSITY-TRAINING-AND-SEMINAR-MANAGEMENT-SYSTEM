@@ -2,6 +2,7 @@ const { google } = require('googleapis');
 const Event = require('../../models/event');
 const User = require('../../models/user');
 const Registration = require('../../models/registration');
+const { emitNewActivity } = require('../../config/socketConfig')
 
 // Replace with model
 
@@ -165,8 +166,9 @@ const registration = async (req, res) => {
         console.log(registration);
 
         await registration.save();
+        await emitNewActivity(userId, 'Registered for Event', {eventId: eventId, eventTitle: event.title})
 
-        res.send(`User ${userId} registered for event ${eventId}`);
+        res.status(200).send(`User ${userId} registered for event ${eventId}`);
     } catch (googleError) {
         console.error("Detailed error:", googleError);  // This will show the full error object
         console.error("Error message:", googleError.message);
@@ -189,7 +191,7 @@ const checkRegistration = async (req, res) => {
                 googleEventId: registration.googleEventId
             });
         } else {
-            res.json({
+            res.status(200).json({
                 isRegistered: false,
                 status: null
             });
@@ -235,7 +237,8 @@ const cancelRegistration = async (req, res) => {
         }
 
         await Registration.deleteOne({ _id: registration._id });
-        res.json({ message: 'Registration cancelled successfully' });
+        await emitNewActivity(userId, 'Unregistered for Event', {eventId: eventId})
+        res.status(200).json({ message: 'Registration cancelled successfully' });
     } catch (error) {
         console.error('Cancel registration error:', error);
         res.status(500).json({

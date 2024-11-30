@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const User = require('../../models/user');
 const crypto = require('crypto');
 // const DeletedUser = require('../../models/archivedUser');
+const { emitNewActivity } = require('../../config/socketConfig')
 const multer = require('multer');
 const sendEmail = require('../../utils/sendEmail');
 
@@ -80,6 +81,8 @@ const addPersonnelAccount = async (req, res) => {
 
     await newUser.save();
     console.log(newUser);
+
+    await emitNewActivity(req.user.id, 'Created New User', { userId: newUser._id, userName: newUser.name });
 
     // Extract access and refresh tokens from req.user, or handle if missing
     const { accessToken, refreshToken } = req.user || {};
