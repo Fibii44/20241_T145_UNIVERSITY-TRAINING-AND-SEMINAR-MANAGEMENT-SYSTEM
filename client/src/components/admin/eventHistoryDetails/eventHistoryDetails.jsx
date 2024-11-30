@@ -99,12 +99,13 @@ const UsersTable = ({ users }) => (
 );
 
 const EventDetails = () => {
-    const { id } = useParams(); // Get event ID from the URL
-    const [isCollapsed, setIsCollapsed] = useState(false);
+    const { id } = useParams();
     const [eventDetail, setEventDetail] = useState(null);
-    const [chartData, setChartData] = useState([]);
+    const [attendeesCount, setAttendeesCount] = useState(0);
     const [users, setUsers] = useState([]);
+    const [chartData, setChartData] = useState([]);
     const [loading, setLoading] = useState(true);
+
 
     const toggleSidebar = () => {
         setIsCollapsed(!isCollapsed);
@@ -124,13 +125,13 @@ const EventDetails = () => {
             }
         };
 
-        const fetchChartData = async () => {
+        const fetchAttendeesCount = async () => {
             try {
-                const response = await fetch(`${API_URL}/a/events/${id}/statistics`);
+                const response = await fetch(`${API_URL}/a/event/registrations/${id}`);
                 const data = await response.json();
-                setChartData(data);
+                setAttendeesCount(data.length || 0);
             } catch (error) {
-                console.error('Error fetching chart data:', error);
+                console.error('Error fetching attendees count:', error);
             }
         };
 
@@ -138,15 +139,16 @@ const EventDetails = () => {
             try {
                 const response = await fetch(`${API_URL}/a/events/${id}/participants`);
                 const data = await response.json();
-                setUsers(data);
+                setUsers(data || []);
             } catch (error) {
                 console.error('Error fetching participants:', error);
             }
         };
 
         fetchEvent();
-        fetchChartData();
+        fetchAttendeesCount();
         fetchUsers();
+        setLoading(false);
     }, [id]);
 
     if (loading) {
@@ -166,21 +168,21 @@ const EventDetails = () => {
                     <div className="card-wrapper">
                         <div className="details-section">
                             <img
-                                src={eventDetail.image || 'fallback-image.png'}
-                                alt={eventDetail.title}
-                                className="image-thumbnail"
+                                src={`${API_URL}/eventPictures/${eventDetail?.eventPicture || 'default-eventPicture.jpg'}`}
+                                alt={`${eventDetail?.title || 'No'} image`}
+                                className="event-img"
                             />
-                            <h3 className="title-heading">{eventDetail.title}</h3>
-                            <p className="description-text">{eventDetail.description}</p>
+                            <h3 className="title-heading">{eventDetail?.title}</h3>
+                            <p className="description-text">{eventDetail?.description}</p>
                             <div className="info-container">
                                 <span>
-                                    <FontAwesomeIcon icon={faCalendarCheck} /> {eventDetail.date}
+                                    <FontAwesomeIcon icon={faCalendarCheck} /> {eventDetail?.date}
                                 </span>
                                 <span>
-                                    <FontAwesomeIcon icon={faClock} /> {eventDetail.time}
+                                    <FontAwesomeIcon icon={faClock} /> {eventDetail?.time}
                                 </span>
                                 <span>
-                                    <FontAwesomeIcon icon={faMapMarkerAlt} /> {eventDetail.location}
+                                    <FontAwesomeIcon icon={faMapMarkerAlt} /> {eventDetail?.location}
                                 </span>
                             </div>
                         </div>
@@ -190,25 +192,25 @@ const EventDetails = () => {
                 <div className="dashboard">
                     <StatCard
                         title="Attendees Registered"
-                        count={eventDetail.registeredAttendees}
+                        count={attendeesCount}
                         icon={<FontAwesomeIcon icon={faUsers} size="2x" />}
                         color="#4a90e2"
                     />
                     <StatCard
                         title="Participants Attended"
-                        count={eventDetail.participantsAttended}
+                        count={users.filter(user => user.status === 'attended').length}
                         icon={<FontAwesomeIcon icon={faUsers} size="2x" />}
                         color="#9b51e0"
                     />
                     <StatCard
                         title="Participants Absent"
-                        count={eventDetail.participantsAbsent}
+                        count={attendeesCount - users.filter(user => user.status === 'attended').length}
                         icon={<FontAwesomeIcon icon={faUsers} size="2x" />}
                         color="#F08080"
                     />
                     <StatCard
                         title="Event Duration"
-                        count={`${eventDetail.eventDuration} Hours`}
+                        count={eventDetail?.duration || 'N/A'}
                         icon={<FontAwesomeIcon icon={faClock} size="2x" />}
                         color="#ff3b30"
                     />

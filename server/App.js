@@ -12,7 +12,7 @@ require('dotenv').config();
 const adminPageRoutes = require('./routes/admin/adminPageRoutes');
 const adminEventRoutes = require('./routes/admin/adminEventRoutes');
 const adminUserRoutes = require('./routes/admin/adminUserRoutes');
-const adminReportRoutes = require('./routes/admin/adminReportRoutes');
+const adminReportRoutes = require('./routes/admin/adminEventReportRoutes');
 
 // user routes
 const formSubmissionRoutes = require('./routes/user/formSubmissionRoutes');

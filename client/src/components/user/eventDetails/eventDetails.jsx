@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import './eventDetails.css'
+import Toast from '../../modals/successToast/toast'
 
 function Event() {
     const { id } = useParams();
@@ -22,7 +23,11 @@ function Event() {
     const [certificateStatus, setCertificateStatus] = useState(null);
     const [submissionStatus, setSubmissionStatus] = useState('idle'); // 'idle' | 'waiting' | 'checking' | 'success' | 'error'
     const [submissionMessage, setSubmissionMessage] = useState('');
+    const [toast, setToast] = useState(null);
 
+    const showToast = (message, type = 'success') => {
+        setToast({ message, type });
+      };
     const formatTime = (date) => {
         return new Date(date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
     };
@@ -158,7 +163,7 @@ function Event() {
     const handleFormLinkClick = (e) => {
         e.preventDefault();
         if (!event.formLink) {
-            alert('Form link is not available. Please contact the event organizer.');
+            showToast('Form link is not available. Please contact the event organizer.', 'error');
             return;
         }
         
@@ -279,56 +284,62 @@ function Event() {
     const handleRegistration = async () => {
         const token = sessionStorage.getItem('authToken');
         try {
-            const response = await axios.post('http://localhost:3000/u/events/', { eventId: id }, { headers: { Authorization: `Bearer ${token}` } });
+            const response = await axios.post(
+                'http://localhost:3000/u/events/',
+                { eventId: id },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
             setIsRegistered(true); // User is now registered
             setRegistrationStatus("Cancel Registration"); // Change the button text to "Cancel Registration"
-            alert('Event added to your Google Calendar with reminders');
+            showToast('Event added to your Google Calendar with reminders', 'success');
         } catch (err) {
-            alert('Failed to register for the event');
+            showToast('Failed to register for the event', 'error');
         }
     };
-
     const checkCertificateStatus = async () => {
-        try{
+        try {
             const token = sessionStorage.getItem('authToken');
-            const response = await axios.get(`http://localhost:3000/u/events/${id}/certificate-status`, { headers: { Authorization: `Bearer ${token}` } });
-            
-            if(response.data.status === 'generated'){
+            const response = await axios.get(
+                `http://localhost:3000/u/events/${id}/certificate-status`,
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+    
+            if (response.data.status === 'generated') {
                 setCertificateStatus('generated');
-                alert('Your certificate is ready!');
+                showToast('Your certificate is ready!', 'success');
             } else {
                 setTimeout(checkCertificateStatus, 10000);
             }
         } catch (error) {
             console.error('Error checking certificate status:', error);
+            showToast('Error checking certificate status. Please try again.', 'error');
         }
     };
 
     const handleCancellation = async () => {
         const token = sessionStorage.getItem('authToken');
-        
         try {
             if (!googleEventId) {
-                alert('No Google Calendar event found to cancel.');
+                showToast('No Google Calendar event found to cancel.', 'error');
                 return;
             }
-            // Send delete request with the googleEventId
             await axios.delete(
                 `http://localhost:3000/u/events/${id}/cancellation`,
-                { 
+                {
                     headers: { Authorization: `Bearer ${token}` },
-                    data: { 
-                        googleEventId: googleEventId 
-                    }
+                    data: { googleEventId: googleEventId },
                 }
             );
-            
+    
             setIsRegistered(false);
             setRegistrationStatus("Register");
-            alert('Registration and calendar event cancelled successfully');
+            showToast('Registration and calendar event cancelled successfully', 'success');
         } catch (error) {
             console.error('Cancellation error:', error);
-            alert('Failed to cancel registration: ' + (error.response?.data?.message || error.message));
+            showToast(
+                'Failed to cancel registration: ' + (error.response?.data?.message || error.message),
+                'error'
+            );
         } finally {
             setIsLoading(false);
         }
@@ -341,6 +352,7 @@ function Event() {
     return (
         <div className="card" style={{ maxWidthwidth: '1000px'}}>
             <div className="container eventDetail">
+            {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
                 <div className="user-event-details" key={event._id || event.id} style={{contentAlign: 'center', margin: '0 auto'}}>
                     <img 
                         src={`http://localhost:3000/eventPictures/${event.eventPicture}`} 
