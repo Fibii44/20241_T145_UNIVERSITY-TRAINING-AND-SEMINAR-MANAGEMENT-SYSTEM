@@ -11,4 +11,6 @@ adminReportRoutes.get('/a/event/registrations/:id', adminService.getRegisteredUs
 adminReportRoutes.get('/a/event/form-submissions', adminService.formSubmissions);
 //GET all submissions in a specific eventId
 adminReportRoutes.get('/a/event/form-submissions/:id', adminService.formSubmissionsEvent);
+//GET users in Aggregated data endpoint
+adminReportRoutes.get('/a/event/attendees/:id', adminService.aggregateUserForms)
 module.exports = adminReportRoutes;

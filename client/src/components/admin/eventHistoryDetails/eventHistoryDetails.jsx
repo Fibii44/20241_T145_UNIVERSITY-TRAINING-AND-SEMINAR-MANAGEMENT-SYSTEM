@@ -75,10 +75,10 @@ const EventDetails = () => {
     const [eventDetail, setEventDetail] = useState(null);
     const [registeredCount, setregisteredCount] = useState(0);
     const [attendedCount, setAttendedCount] = useState(0);
-    const [attendedList, setAttendedList] = useState(0)
+    const [attendedList, setAttendedList] = useState([])
     const [users, setUsers] = useState([]);
     const [chartData, setChartData] = useState({
-        responses: 0
+        eventRating: 0
     });
     const [loading, setLoading] = useState(true);
 
@@ -123,17 +123,47 @@ const EventDetails = () => {
                 // Extract eventRating for the chart
                 const chartData = data.map((item, index) => ({
                     name: `User ${index + 1}`,
-                    eventRating: parseInt(item.eventRating), // Convert rating to number if needed
+                    eventRating: item.eventRating, // Convert rating to number if needed
                 }));
-        
+                console.log(chartData);
+                
                 setChartData(chartData); // Set chart data
                 setAttendedList(data);
             } catch (error) {
                 console.error('Error fetching participants:', error);
             }
         };
+        // const fetchAggregatedAttendees = async () => {
+        //     try {
+        //         const response = await fetch(`http://localhost:3000/a/event/attendees/${id}`);
+        //         const data = await response.json();
+        //         setUsers(data); // Set the aggregated data
+        //     } catch (error) {
+        //         console.error('Error fetching aggregated attendees:', error);
+        //     }
+        // };
+        const token = sessionStorage.getItem("authToken");
+        const fetchUsers = async () => {
+                try {
+                    const response = await fetch('http://localhost:3000/a/users', {
+                        method: 'GET',
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    });
+                    if (response.ok) {
+                        const data = await response.json();
+                        setUsers(data); // Store the fetched users
+                    } else if (response.status === 403) {
+                        navigate('/a/dashboard'); // Redirect if access is denied
+                    }
+                } catch (error) {
+                    console.error("Error fetching users:", error);
+                }
+            };
         
-
+        // fetchAggregatedAttendees()
+        fetchUsers();
         fetchEvent();
         fetchAttended();
         fetchregisteredCount();
@@ -149,34 +179,63 @@ const EventDetails = () => {
         return <div>No event details available for this ID.</div>;
     }
     
-    // UsersTable Component
-    const UsersTable = ({ users }) => {
-        console.log("users:", users);
-        return (
-            <div className="table-container">
-                <h2 className="users-heading">Registered Participants Attended</h2>
-                <table className="table table-striped">
-                    <thead className="thead-dark">
-                        <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Phone Number</th>
-                            <th>Position</th>
-                            <th>Gender</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {Array.isArray(users) && users.map(user => (
-                            <tr key={user.id}>
+// UsersTable Component
+const UsersTable = ({ attendedList = [], users = [] }) => {
+    if (!Array.isArray(attendedList) || !Array.isArray(users)) {
+        console.error("Invalid data: 'attendedList' or 'users' is not an array");
+        return null;
+    }
+
+    // Match attendedList to users by userId
+    const matchedUsers = attendedList
+    .map((attended) => {
+        const user = users.find((u) => {
+            // console.log("Comparing:", attended.userId, u._id);
+            return u._id === attended.userId;
+        });
+        return user ? { ...user, eventRating: attended.eventRating } : null;
+    })
+    .filter(Boolean);
+
+    return (
+        <div className="table-container">
+            <h2 className="users-heading">Registered Participants Attended</h2>
+            <table className="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone Number</th>
+                        <th>Role</th>
+                        <th>Rating</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {matchedUsers.length > 0 ? (
+                        matchedUsers.map((user) => (
+                            <tr key={user.userId}>
                                 <td>{user.userId}</td>
+                                <td>{user.name || "N/A"}</td>
+                                <td>{user.email || "N/A"}</td>
+                                <td>{user.phoneNumber || "N/A"}</td>
+                                <td>{user.role || "N/A"}</td>
+                                <td>{user.eventRating || "N/A"}</td>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-        );
-    };
+                        ))
+                    ) : (
+                        <tr>
+                            <td colSpan="6">No matching users found</td>
+                        </tr>
+                    )}
+                </tbody>
+            </table>
+        </div>
+    );
+};
+
+    
+    
     return (
         <div className="dashboard-container">
             <div className="content">
@@ -237,9 +296,9 @@ const EventDetails = () => {
                         color="#ff3b30"
                     />
                 </div>
-
+                
                 <Chart chartData={chartData} />
-                <UsersTable users={attendedList} />
+                <UsersTable attendedList={attendedList} users={users} />
             </div>
         </div>
     );
