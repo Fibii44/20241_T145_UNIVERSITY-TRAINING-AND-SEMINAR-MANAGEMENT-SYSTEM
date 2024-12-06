@@ -5,7 +5,6 @@ import { faCamera, faMapMarkerAlt, faTimes } from '@fortawesome/free-solid-svg-i
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './createEvent.css';
 import { jwtDecode } from 'jwt-decode';
-import CertificateGenerator from '../certificateGenerator/certificateGenerator';
 
 const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEventData = null }) => {
   const [title, setTitle] = useState('');
@@ -28,7 +27,6 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
   const [searchTerm, setSearchTerm] = useState('');
   const [ formLink, setFormLink] = useState('');
   const [formId, setFormId] = useState('');
-  const [ certificateTemplate, setCertificateTemplate] = useState(null);
 
   // Sample data for colleges and departments
   const colleges = ['College of Arts and Sciences', 'College of Business', 'College of Education', 'College of Law', 'College of Public Administration and Governance', 'College of Nursing', 'College of Technologies'];
@@ -179,7 +177,6 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
       });
       setFormLink(initialEventData.formLink || '');
       setFormId(initialEventData.formId || '');
-      setCertificateTemplate(initialEventData.certificateTemplate || null);
     }
   }, [isOpen, initialEventData]);
 
@@ -261,7 +258,6 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
       participants,
       formLink,
       formId,
-      certificateTemplate,
       customParticipants: cleanedParticipants, // Include selected participants in the saved event
       color: eventColor,
     };
@@ -323,25 +319,6 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
       return;
     }
     setFormId(id);
-  };
-
-  // Handler for certificate template changes
-  const handleCertificateTemplateChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      // Validate file type
-      const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-      if (!validTypes.includes(file.type)) {
-        alert('Please upload a PDF or Word document');
-        return;
-      }
-      // Validate file size (e.g., max 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        alert('File size should be less than 5MB');
-        return;
-      }
-      setCertificateTemplate(file);
-    }
   };
 
 
@@ -417,17 +394,6 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
                     onChange={handleFormIdChange} 
                     className="form-control mb-2"
                   />
-                  <div className="certificate-upload">
-                    <label>Certificate Template:</label>
-                    <input
-                      type="file"
-                      id="certificateTemplate"
-                      accept=".pdf,.doc,.docx"
-                      onChange={handleCertificateTemplateChange}
-                      className="form-control"
-                    />
-                    {certificateTemplate && <p>Template Selected: {certificateTemplate.name || certificateTemplate}</p>}
-                  </div>
                 </div>
 
 

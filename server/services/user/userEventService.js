@@ -187,7 +187,7 @@ const checkRegistration = async (req, res) => {
     try {
         const registration = await Registration.findOne({ eventId, userId });
         if (registration) {
-            res.json({
+            res.status(200).json({
                 isRegistered: true,
                 status: registration.status,
                 registrationDate: registration.registrationDate,
@@ -213,7 +213,7 @@ const cancelRegistration = async (req, res) => {
     const eventId = req.params.id;
     const userId = req.user.id;
     const token = req.user.accessToken;
-
+    const event = await Event.findById(eventId);
     const oauth2Client = new google.auth.OAuth2();
     oauth2Client.setCredentials({ access_token: token });
 
@@ -240,7 +240,7 @@ const cancelRegistration = async (req, res) => {
         }
 
         await Registration.deleteOne({ _id: registration._id });
-        await emitNewActivity(userId, 'Unregistered for Event', {eventId: eventId})
+        await emitNewActivity(userId, 'Unregistered for Event', {eventId: eventId, eventTitle: event.title})
         res.status(200).json({ message: 'Registration cancelled successfully' });
     } catch (error) {
         console.error('Cancel registration error:', error);
@@ -255,7 +255,7 @@ const cancelRegistration = async (req, res) => {
 const renderCalendar = async (req, res) => {
     try {
         const registrations = await Registration.find();
-        res.json(registrations);
+        res.status(200).json(registrations);
     } catch (error) {
         res.status(500).send('Error retrieving events');
     }

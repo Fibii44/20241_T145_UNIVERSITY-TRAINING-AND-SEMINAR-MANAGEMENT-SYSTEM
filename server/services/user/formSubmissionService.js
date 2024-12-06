@@ -98,8 +98,6 @@ const getOrCreateSpreadsheet = async (formId, formTitle) => {
         });
 
         const spreadsheetId = spreadsheet.data.spreadsheetId;
-
-
         console.log('Created and linked new spreadsheet:', spreadsheetId);
         return spreadsheetId;
     } catch (error) {
@@ -210,7 +208,8 @@ const recordFormSubmission = async (req, res) => {
                     $set: {
                         status: 'approved',
                         submittedAt: submissionTimestamp || new Date(),
-                        formLink: event.formId,
+                        formLink: event.formLink,
+                        spreadsheetId,
                         verifiedAt: new Date(),
                         responses: formattedResponse, // Store the formatted response
                         registrationId: registration._id

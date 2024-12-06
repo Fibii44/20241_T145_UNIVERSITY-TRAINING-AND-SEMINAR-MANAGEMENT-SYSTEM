@@ -1,4 +1,4 @@
-const { PDFDocument, StandardFonts, rgb } = require('pdf-lib');
+const PDFDocument = require('pdfkit');
 const fs = require('fs');
 const path = require('path');
 const { emitNewActivity } = require('../../config/socketConfig')
@@ -21,18 +21,6 @@ const generateAndEmailCertificate = async (submissionId) => {
 
         const { userId: user, eventId: event } = submission;
 
-        // Check if certificate template exists
-        if (!event.certificateTemplate) {
-            throw new Error('Certificate template not found');
-        }
-
-        const templatePath = path.join(__dirname, '../../uploads/certificateTemplates', event.certificateTemplate);
-        console.log('Template path:', templatePath);
-        
-        if (!fs.existsSync(templatePath)) {
-            throw new Error(`Certificate template file not found at: ${templatePath}`);
-        }
-
         const certificatesDir = path.join(__dirname, '../../uploads/certificates');
         if (!fs.existsSync(certificatesDir)) {
             fs.mkdirSync(certificatesDir, { recursive: true });
@@ -47,89 +35,90 @@ const generateAndEmailCertificate = async (submissionId) => {
             });
         };
 
+
         const fileName = `cert-${Date.now()}.pdf`;
         outputPath = path.join(certificatesDir, fileName);
 
-        if(!fs.existsSync(outputPath)) {
-            console.error('Output path does not exist:', outputPath);   
-        }
+        // Create a new PDF document
+        const doc = new PDFDocument({
+        size: 'A4',
+        layout: 'landscape',
+        margin: 50,
+        });
 
-        // Load and modify the PDF template
-        const templateBytes = fs.readFileSync(templatePath);
-        const pdfDoc = await PDFDocument.load(templateBytes);
-        const pages = pdfDoc.getPages();
-        const firstPage = pages[0];
-        const { width, height } = firstPage.getSize();
+        const stream = fs.createWriteStream(outputPath);
+        doc.pipe(stream);
 
-        // Embed fonts
-        const helveticaBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);  // HelveticaBold
-        const helveticaRoman = await pdfDoc.embedFont(StandardFonts.Helvetica);
+        // Add Background (Optional)
+        const backgroundImage = 'uploads/certificateTemplates/BukSU-Logo-Background.png';
+        doc.image(backgroundImage, 0, 0, { width: doc.page.width, height: doc.page.height });
 
-        // Find and replace placeholders
-        const replacements = [
-            {
-                placeholder: '[name]',
-                value: user.name,
-                x: width * 0.5,  // Center horizontally
-                y: height * 0.6, // Position from top
-                fontSize: 30,
-                color: rgb(0, 0, 1), // Blue
-                align: 'center',
-                font: helveticaBold
-            },
-            {
-                placeholder: '[eventName]',
-                value: event.title,
-                x: width * 0.5,  // Center horizontally
-                y: height * 0.45, // Position from top
-                fontSize: 24,
-                color: rgb(0, 0, 0),
-                align: 'center',
-                font: helveticaBold
-            },
-            {
-                placeholder: '[date]',
-                value: formatDate(new Date()),
-                x: width * 0.5,  // Center horizontally
-                y: height * 0.35, // Position from top
-                fontSize: 20,
-                color: rgb(0, 0, 0),
-                align: 'center',
-                font: helveticaRoman
-            }
-        ];
+        // Title: "Certificate of Completion"
+        doc
+        .moveDown(4)
+        .fontSize(40)
+        .font('Helvetica-Bold')
+        .fillColor('#000')
+        .text('Certificate of Completion', { align: 'center', baseline: 'top' });
 
-        // Add text for each replacement
-        for (const replacement of replacements) {
-            console.log(`Replacing "${replacement.placeholder}" with "${replacement.value}" at coordinates: (${replacement.x}, ${replacement.y})`);
+        // Subtitle: "This is to certify that"
+        doc
+        .moveDown(0.5)
+        .fontSize(19)
+        .font('Helvetica')
+        .text('This is to certify that', { align: 'center' });
 
-            const textWidth = replacement.font.widthOfTextAtSize(replacement.value, replacement.fontSize);
-            const xPosition = replacement.align === 'center' 
-                ? replacement.x - (textWidth / 2) 
-                : replacement.x;
+        const nameWidth = doc.widthOfString(user.name, {fontSize: 40, font: 'Helvetica-Bold'});
+        const xCenter = (doc.page.width - nameWidth) / 2;
 
-            firstPage.drawText(replacement.value, {
-                x: xPosition,
-                y: replacement.y,
-                size: replacement.fontSize,
-                font: replacement.font,
-                color: replacement.color
-            });
-        }
+        // User's Name
+        doc
+        .moveDown(1.5)
+        .fontSize(45)
+        .font('Helvetica-Bold')
+        .fillColor('#000')
+        .text(user.name, { align: 'center' });
 
-        // Save the modified PDF
-        const pdfBytes = await pdfDoc.save();
-        fs.writeFileSync(outputPath, pdfBytes);
+        doc.moveDown(0.2);
+        doc.moveTo(xCenter, doc.y).lineTo(xCenter + nameWidth, doc.y).stroke('#000');
 
-        console.log('Saving certificate to:', outputPath);
-        fs.writeFileSync(outputPath, pdfBytes);
+        // Description: "has successfully completed the event"
+        doc
+        .moveDown(1)
+        .fontSize(15)
+        .font('Helvetica')
+        .fillColor('#000')
+        .text(`has successfully completed the event ${event.title}`, { align: 'center' });
 
-        if (fs.existsSync(outputPath)) {
-            console.log('Certificate saved successfully:', outputPath);
-        } else {
-            console.error('Failed to save certificate at:', outputPath);
-            throw new Error('PDF generation failed');
-        }
+
+        // Date of Completion
+        const formattedDate = `which was conducted on ${formatDate(new Date(event.eventDate))}`;
+        doc
+        .moveDown(0.5)
+        .fontSize(15)
+        .font('Helvetica')
+        .fillColor('#000')
+        .text(formattedDate, { align: 'center' });
+
+        // Footer or Additional Notes (Optional)
+        doc
+          .moveDown(4)
+          .fontSize(10)
+          .text('This is an official document issued by BukSU Engage.', { align: 'bottom-left' });
+        doc
+          .moveUp(1)
+          .fontSize(10)
+          .text(`© ${new Date().getFullYear()} Bukidnon State University. All rights reserved.`, { align: 'right' });
+
+        doc.end();
+
+        // Wait for the stream to finish before proceeding
+        await new Promise((resolve, reject) => {
+        stream.on('finish', resolve);
+        stream.on('error', reject);
+        });
+
+    console.log('Certificate saved successfully:', outputPath);
 
         // Store certificate in database
         const certificate = await Certificate.create({
@@ -138,7 +127,7 @@ const generateAndEmailCertificate = async (submissionId) => {
             submissionId: submission._id,
             fileName: fileName,
             issuedDate: new Date(),
-            status: 'issued'
+            status: 'issued',
         });
 
         // Prepare and send email
@@ -153,33 +142,25 @@ Event Details:
 - Event: ${event.title}
 - Completion Date: ${formatDate(new Date(submission.submittedAt))}
 
-To view all your certificates:
-1. Log in to BukSU Engage
-2. Navigate to your profile
-3. Click on the "Certificates" section
-
 Best regards,
 BukSU Engage Team
         `;
 
-        if (!fs.existsSync(outputPath)) {
-            console.error('Certificate file does not exist at:', outputPath);
-            throw new Error('Cannot attach certificate, file not found');
-        }
-        
         try {
             await sendEmail(
                 user.email,
                 `Certificate of Completion - ${event.title}`,
                 emailContent,
-                {
+                {   
                     accessToken: process.env.GMAIL_ACCESS_TOKEN,
                     refreshToken: process.env.GMAIL_REFRESH_TOKEN,
-                    attachments: [{
-                        filename: fileName,
-                        path: outputPath,
-                        contentType: 'application/pdf'
-                    }]
+                    attachments: [
+                        {
+                            filename: fileName,
+                            path: outputPath,
+                            contentType: 'application/pdf',
+                        },
+                    ],
                 }
             );
             console.log('Certificate email sent successfully to:', user.email);
@@ -188,16 +169,15 @@ BukSU Engage Team
         }
 
         await FormSubmission.findByIdAndUpdate(submissionId, {
-            certificateGenerated: true
+            certificateGenerated: true,
         });
 
-        await emitNewActivity(user.id, 'Generated Certificate and Sent Email', { eventId: event._id, eventTitle: event.title})
+        await emitNewActivity(user.id, 'Generated Certificate and Sent Email', { eventId: event._id, eventTitle: event.title });
 
         return {
             certificateId: certificate._id,
-            fileName: fileName // Changed from filePath
+            fileName: fileName,
         };
-
     } catch (error) {
         console.error('Error in generateAndEmailCertificate:', error);
         if (outputPath && fs.existsSync(outputPath)) {
@@ -206,7 +186,6 @@ BukSU Engage Team
         throw error;
     }
 };
-
 // Get user's certificates
 const getUserCertificates = async (req, res) => {
     try {

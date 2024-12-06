@@ -168,7 +168,7 @@ const EventM = ({ userRole, userCollege }) => {
   };
 
   const handleSaveEventDetails = async (eventDetails) => {
-    const { date, startTime, endTime, participants, customParticipants = [], eventPicture, reminders, formLink, formId, certificateTemplate, ...rest } = eventDetails;
+    const { date, startTime, endTime, participants, customParticipants = [], eventPicture, reminders, formLink, formId, ...rest } = eventDetails;
 
 
     // Ensure the date, startTime, and endTime are valid Date objects before calling toISOString
@@ -219,7 +219,6 @@ const EventM = ({ userRole, userCollege }) => {
 
     if(formLink) { formData.append('formLink', formLink); }
     if(formId){ formData.append('formId', formId); }
-    if(certificateTemplate) { formData.append('certificateTemplate', certificateTemplate); }
     
     if (reminders && reminders.length > 0) {
       reminders.forEach((reminder, index) => {

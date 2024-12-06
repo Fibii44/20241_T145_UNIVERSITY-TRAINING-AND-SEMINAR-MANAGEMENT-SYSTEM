@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const { v4: uuidv4 } = require('uuid');
 
+
 const NotificationSchema = new mongoose.Schema(
     {
         notificationId: { type: String, unique: true, default: uuidv4 },

@@ -20,7 +20,8 @@ const ActivityLog = () => {
                 const response = await axios.get('http://localhost:3000/a/activity-logs', {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                setLogs(response.data);
+                const sortedLogs = response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)); // Sort logs by date
+                setLogs(sortedLogs);
                 setLoading(false);
             } catch (error) {
                 console.error('Error fetching logs:', error);
@@ -113,8 +114,10 @@ const ActivityLog = () => {
                         />
                         <div className="activity-log-details">
                             <p className="log-action">
-                                <span className="user-name">{log.userId?.name}</span>
-                                {log.action}
+                                <span className="user-name">{log.userId?.name}</span> {log.action}
+                                {log.details?.eventId && (
+                                    <span className="event-name">{log.details.eventTitle}</span>
+                                )}
                             </p>
                             <p className="log-timestamp">
                                 {moment(log.createdAt).format('MMMM D, YYYY h:mm A')}
