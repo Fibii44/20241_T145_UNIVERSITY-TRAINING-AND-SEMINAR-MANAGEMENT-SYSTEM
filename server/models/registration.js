@@ -26,4 +26,5 @@ const registrationSchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
+
 module.exports = mongoose.model('Registration', registrationSchema);

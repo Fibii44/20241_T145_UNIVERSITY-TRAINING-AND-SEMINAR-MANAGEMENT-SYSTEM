@@ -38,7 +38,7 @@ const renderDashboard = async (req, res) => {
             activeUsers: item.activeUsers,
           }));
 
-        res.json({
+        res.status(200).json({
             totalUsers,
             totalEvents,
             upcomingEvents,
@@ -70,6 +70,8 @@ const getLogs = async (req, res) => {
         const logs = await ActivityLog.find()
             .populate('userId', 'name email profilePicture')
             .sort({ timestamp: -1 });
+
+
         res.status(200).json(logs);
     } catch (error) {
         res.status(500).json({ message: error.message });

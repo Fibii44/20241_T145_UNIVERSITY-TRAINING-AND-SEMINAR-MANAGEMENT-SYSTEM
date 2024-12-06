@@ -12,32 +12,16 @@ const path = require('path');
 
 
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    let uploadPath = 'uploads/';
-    if (file.fieldname === 'eventPicture') {
-      uploadPath += 'eventPictures/';
-    } else if (file.fieldname === 'certificateTemplate') {
-      uploadPath += 'certificateTemplates/';
-    }
-    
-    // Create directory if it doesn't exist
-    if (!fs.existsSync(uploadPath)) {
-      fs.mkdirSync(uploadPath, { recursive: true });
-    }
-    
-    cb(null, uploadPath);
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/eventPictures/');
   },
   filename: (req, file, cb) => {
     const shortUUID = uuidv4().split('-')[0];
     const timeStamp = Date.now().toString().slice(-5);
     let uniqueFilename = `${shortUUID}-${timeStamp}${path.extname(file.originalname)}`;
 
-    const uploadPath = file.fieldname === 'eventPicture' ? 
-      'uploads/eventPictures/' : 
-      'uploads/certificateTemplates/';
-
-    while(fs.existsSync(path.join(__dirname, `../../${uploadPath}${uniqueFilename}`))) {
-      const newUUID = uuidv4().split('-')[0];
+    while(fs.existsSync(path.join(__dirname, `../../uploads/eventPictures/${uniqueFilename}`))) {
+      const newUUID = uuidv4.split('-')[0];
       uniqueFilename = `${newUUID}-${timeStamp}${path.extname(file.originalname)}`;
     }
 
@@ -48,20 +32,10 @@ const storage = multer.diskStorage({
 const upload = multer({
   storage,
   fileFilter: (req, file, cb) => {
-    if (file.fieldname === 'eventPicture') {
-      if (!file.mimetype.startsWith('image/')) {
-        return cb(new Error('Only images are allowed for event pictures'), false);
-      }
-    } else if (file.fieldname === 'certificateTemplate') {
-      const allowedMimes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-      if (!allowedMimes.includes(file.mimetype)) {
-        return cb(new Error('Only PDF and Word documents are allowed for certificate templates'), false);
-      }
+    if (!file.mimetype.startsWith('image/')) {
+      return cb(new Error('Only images are allowed'), false);
     }
     cb(null, true);
-  },
-  limits: {
-    fileSize: 5 * 1024 * 1024 // 5MB limit
   }
 });
 
@@ -78,8 +52,7 @@ const addEvent = async (req, res) => {
   try {
     const {title, eventDate, startTime, endTime, location, description, participantGroup, color, customParticipants, reminders, formLink, formId} = req.body;
     console.log(req.files)
-    const eventPicture = req.files?.eventPicture ? req.files.eventPicture[0].filename : null; // Set eventPicture 
-    const certificateTemplate = req.files?.certificateTemplate ? req.files.certificateTemplate[0].filename : null; // Set certificateTemplate
+    const eventPicture = req.file ? req.file.filename : null // Set eventPicture 
     
     const user = req.user;
     const newEvent = new Event({
@@ -96,7 +69,6 @@ const addEvent = async (req, res) => {
       reminders,
       formLink,
       formId,
-      certificateTemplate,
       createdBy: user.id,
       isLocked: false,
       lockedBy: null,
@@ -365,19 +337,6 @@ const deleteEvent = async (req, res) => {
         }
       } catch (error) {
         console.error(`Failed to delete event picture: ${error.message}`);
-        // Log the error but continue with event deletion
-      }
-    }
-
-    if(event.certificateTemplate) {
-      const certificatePath = path.join(__dirname, '../../uploads/certificateTemplates', event.certificateTemplate);
-      try {
-        if (fs.existsSync(certificatePath)) {
-          fs.unlinkSync(certificatePath); // Delete the certificate file
-          console.log(`Deleted certificate: ${certificatePath}`);
-        }
-      } catch (error) {
-        console.error(`Failed to delete certificate template: ${error.message}`);
         // Log the error but continue with event deletion
       }
     }

@@ -10,8 +10,7 @@ const DeletedEventSchema = new mongoose.Schema({
   location: String,
   deletedByName: String, 
   deletedByRole: String,
-  deletedAt: { type: Date, default: Date.now }
-});
+}, {timestamps: true});
 
 const DeletedEvent = mongoose.model('DeletedEvent', DeletedEventSchema);
 

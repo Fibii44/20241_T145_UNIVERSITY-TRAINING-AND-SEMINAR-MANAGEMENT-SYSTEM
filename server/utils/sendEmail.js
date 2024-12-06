@@ -2,6 +2,7 @@ const { google } = require('googleapis');
 const fs = require('fs');
 const OAuth2 = google.auth.OAuth2;
 
+
 const createGmailClient = async (accessToken, refreshToken) => {
   try {
     const oauth2Client = new OAuth2(
@@ -14,6 +15,16 @@ const createGmailClient = async (accessToken, refreshToken) => {
       access_token: accessToken,
       refresh_token: refreshToken
     });
+
+    oauth2Client.on('tokens', (tokens) => {
+      if (tokens.refresh_token) {
+        console.log('New refresh token received. Updating .env file...');
+        updateEnvFile('GMAIL_REFRESH_TOKEN', tokens.refresh_token); // Update .env file
+      }
+      console.log('New access token:', tokens.access_token);
+    });
+
+    await oauth2Client.getAccessToken();
 
     return google.gmail({ version: 'v1', auth: oauth2Client });
   } catch (error) {

@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+// Form Submission Schema
 const formSubmissionSchema = new mongoose.Schema({
     eventId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -21,10 +22,6 @@ const formSubmissionSchema = new mongoose.Schema({
         required: true
     },
     spreadsheetId: {
-        type: String,
-        required: false
-    },
-    googleFormResponseId: {
         type: String,
         required: false
     },
