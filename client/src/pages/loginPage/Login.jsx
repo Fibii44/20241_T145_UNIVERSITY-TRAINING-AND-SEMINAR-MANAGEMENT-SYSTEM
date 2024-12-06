@@ -8,18 +8,18 @@ import {
   MDBCardBody,
   MDBInput,
 } from 'mdb-react-ui-kit';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FcGoogle } from 'react-icons/fc';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './login.css'; 
-import Logo from '../../assets/buksu-logo.png'
+import Logo from '../../assets/buksu-logo.png';
 
 function Login() {
   const navigate = useNavigate();
   const { executeRecaptcha } = useGoogleReCaptcha();
 
   const [formData, setFormData] = useState({ email: '', password: '' });
+  const [errorMessage, setErrorMessage] = useState(''); // State for error message
 
   const handleInputChange = (event) => {
     setFormData({
@@ -39,6 +39,7 @@ function Login() {
   };
 
   const handleManualLogin = async () => {
+    setErrorMessage(''); // Clear error message before attempting login
     try {
       const recaptchaToken = await executeRecaptcha('login');
       console.log("reCAPTCHA Token:", recaptchaToken);
@@ -56,7 +57,8 @@ function Login() {
       if (!response.ok) {
         const errorText = await response.text();
         console.error("Error response:", errorText);
-        throw new Error(`HTTP error! status: ${response.status}`);
+        setErrorMessage('Invalid username or password'); // Show error message
+        return;
       }
 
       const data = await response.json();
@@ -65,11 +67,11 @@ function Login() {
         console.log("Token:", data.token);
         navigate(`/login/success?token=${data.token}`); // Redirect to success 
       } else {
-        alert(data.message);
+        setErrorMessage(data.message); // Show error message from response
       }
     } catch (error) {
       console.error("Error during login:", error);
-      alert('An error occurred during login. Please try again.');
+      setErrorMessage('An error occurred during login. Please try again.'); // Show generic error message
     }
   };
 
@@ -112,12 +114,16 @@ function Login() {
                 onKeyDown={handleKeyDown}
               />
 
-              <div class="login-form-check">
-                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"/>
-                <label class="form-check-label" for="flexCheckDefault">
+              <div  style={{ magin: '0'}} className="login-form-check">
+                <input className="form-check-input" type="checkbox" id="flexCheckDefault"/>
+                <label className="form-check-label" htmlFor="flexCheckDefault">
                   Stay logged in
                 </label>
               </div>
+
+              {errorMessage && ( // Conditionally render error message
+                  <p style={{ fontSize: '16px', margin: '0' }} className="text-danger mt-3">{errorMessage}</p>
+                )}
 
               <div className="d-grid gap-2 col-6 mx-auto mt-3">
                 <button
@@ -133,8 +139,8 @@ function Login() {
               <hr className="my-4 w-100" />
 
               <div onClick={handleGoogleLogin} style={{ display: 'flex', alignItems: 'center', flexDirection: 'column', cursor: 'pointer' }}>
-              <FcGoogle style={{ fontSize: 40 }}/>
-                <h5 class="mt-3">Continue with Google</h5>
+                <FcGoogle style={{ fontSize: 40 }} />
+                <h5 className="mt-3">Continue with Google</h5>
               </div>
             </MDBCardBody>
           </MDBCard>

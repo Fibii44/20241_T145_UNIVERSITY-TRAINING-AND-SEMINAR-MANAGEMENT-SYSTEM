@@ -11,6 +11,7 @@ function EventGrid() {
     const [currentPage, setCurrentPage] = useState(1);
     const [sortOption, setSortOption] = useState('dateAsc');
     const [searchQuery, setSearchQuery] = useState('');
+    const [filterOption, setFilterOption] = useState('all'); // New state for filtering
     const eventsPerPage = 4;
 
     useEffect(() => {
@@ -55,6 +56,23 @@ function EventGrid() {
         setCurrentPage(1); // Reset to first page
     };
 
+    const handleFilter = (option) => {
+        setFilterOption(option);
+        const today = new Date();
+        let filtered;
+
+        if (option === 'all') {
+            filtered = events;
+        } else if (option === 'upcoming') {
+            filtered = events.filter(event => new Date(event.eventDate) >= today);
+        } else if (option === 'past') {
+            filtered = events.filter(event => new Date(event.eventDate) < today);
+        }
+
+        setFilteredEvents(filtered);
+        setCurrentPage(1); // Reset to first page
+    };
+
     // Pagination
     const indexOfLastEvent = currentPage * eventsPerPage;
     const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
@@ -83,20 +101,50 @@ function EventGrid() {
             </div>
 
             {/* Sort Dropdown */}
-            <div className="sort-container">
-                <label className="sort-label" htmlFor="sort">Sort By:</label>
-                <br />
-                <select
-                    className="event-sort"
-                    id="sort"
-                    value={sortOption}
-                    onChange={(e) => handleSort(e.target.value)}>
+        <div className="sort-container">
+            <label className="sort-label" htmlFor="sort">Filter & Sort By:</label>
+            <br />
+            <select
+                className="event-sort"
+                id="sort"
+                value={sortOption}
+                onChange={(e) => {
+                    const selectedOption = e.target.value;
+                    if (selectedOption === 'all') {
+                        setFilteredEvents(events); // Show all events
+                    } else if (selectedOption === 'upcoming') {
+                        const today = new Date();
+                        setFilteredEvents(
+                            events.filter(event => new Date(event.eventDate) >= today)
+                        ); // Show upcoming events
+                    } else if (selectedOption === 'past') {
+                        const today = new Date();
+                        setFilteredEvents(
+                            events.filter(event => new Date(event.eventDate) < today)
+                        ); // Show past events
+                    } else {
+                        handleSort(selectedOption); // Handle sorting
+                    }
+                    setSortOption(selectedOption);
+                    setCurrentPage(1); // Reset to first page
+                }}
+            >
+                {/* Filter Options */}
+                <optgroup label="Filters">
+                    <option value="all">All Events</option>
+                    <option value="upcoming">Upcoming Events</option>
+                    <option value="past">Past Events</option>
+                </optgroup>
+                {/* Sort Options */}
+                <optgroup label="Sort By">
                     <option value="dateAsc">Date (Ascending)</option>
                     <option value="dateDesc">Date (Descending)</option>
                     <option value="titleAsc">Title (A-Z)</option>
                     <option value="titleDesc">Title (Z-A)</option>
-                </select>
-            </div>
+                </optgroup>
+            </select>
+        </div>
+
 
             {/* Events Grid */}
             <div className="user-events-grid" style={{ contentAlign: 'center', margin: '0 auto' }}>
