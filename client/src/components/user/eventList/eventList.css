@@ -133,13 +133,13 @@
     background-color: #feb800;
 }
 
-.sort-container .sort-label{
-    margin-top: 1rem;
-    margin-left: 2rem;
-    }
-.sort-container .event-sort{
-    margin-left: 2rem;
+.event-sort-container .event-sort{
+    display: flex;
     border-radius: .5rem;
+    font-size: 14px;
+    margin: 5px;
+    transform: translateY(-30px);
+    margin-left: 27rem;
 }
 .page-number.active {
     background-color: #feb800;

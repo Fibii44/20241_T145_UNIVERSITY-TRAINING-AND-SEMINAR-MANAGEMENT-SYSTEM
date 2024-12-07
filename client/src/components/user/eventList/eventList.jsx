@@ -18,15 +18,20 @@ function EventGrid() {
         const fetchEvents = async () => {
             try {
                 const response = await axios.get(`http://localhost:3000/u/events`);
-                setEvents(response.data);
-                setFilteredEvents(response.data); // Initialize filtered events
+                const today = new Date();
+                const filtered = response.data.filter(
+                    (event) => new Date(event.eventDate).setHours(0, 0, 0, 0) >= today.setHours(0, 0, 0, 0)
+                );
+                setEvents(filtered);
+                setFilteredEvents(filtered); // Initialize filtered events
             } catch (err) {
                 console.error("Failed to fetch events", err);
             }
         };
-
+    
         fetchEvents();
     }, []);
+    
 
     const handleSort = (option) => {
         setSortOption(option);
@@ -60,18 +65,23 @@ function EventGrid() {
         setFilterOption(option);
         const today = new Date();
         let filtered;
-
+    
         if (option === 'all') {
             filtered = events;
         } else if (option === 'upcoming') {
-            filtered = events.filter(event => new Date(event.eventDate) >= today);
+            filtered = events.filter(
+                (event) => new Date(event.eventDate).setHours(0, 0, 0, 0) >= today.setHours(0, 0, 0, 0)
+            );
         } else if (option === 'past') {
-            filtered = events.filter(event => new Date(event.eventDate) < today);
+            filtered = events.filter(
+                (event) => new Date(event.eventDate).setHours(0, 0, 0, 0) < today.setHours(0, 0, 0, 0)
+            );
         }
-
+    
         setFilteredEvents(filtered);
         setCurrentPage(1); // Reset to first page
     };
+    
 
     // Pagination
     const indexOfLastEvent = currentPage * eventsPerPage;
@@ -98,11 +108,10 @@ function EventGrid() {
                     value={searchQuery}
                     onChange={(e) => handleSearch(e.target.value)}
                 />
-            </div>
-
-            {/* Sort Dropdown */}
-        <div className="sort-container">
-            <label className="sort-label" htmlFor="sort">Filter & Sort By:</label>
+               
+                 {/* Sort Dropdown */}
+        <div className="event-sort-container">
+            
             <br />
             <select
                 className="event-sort"
@@ -144,6 +153,9 @@ function EventGrid() {
                 </optgroup>
             </select>
         </div>
+            </div>
+            
+           
 
 
             {/* Events Grid */}

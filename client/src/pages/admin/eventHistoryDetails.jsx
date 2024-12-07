@@ -3,6 +3,7 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import Sidebar from '../../components/admin/navbars/sidebar/sidebar';
 import Topbar from '../../components/admin/navbars/topbar/topbar';
 import History from '../../components/admin/eventHistoryDetails/eventHistoryDetails'
+import Footer from '../../components/user/footer/footer'
 import './page.css'
 const dashboard = () => {
 
@@ -20,6 +21,7 @@ const dashboard = () => {
                 <div className="context-cards">
                 <History />
                 </div>
+                <Footer />
             </div>
         </div>
     );

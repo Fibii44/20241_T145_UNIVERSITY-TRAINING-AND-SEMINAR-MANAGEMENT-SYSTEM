@@ -238,25 +238,23 @@ const UsersTable = ({ attendedList = [], users = [] }) => {
     
     return (
         <div className="dashboard-container">
-            <div className="content">
-                <h2 className="dashboard-heading">Event Report</h2>
-
-                <div className="event-container">
+            <div className="event-container">
+            <h2 className="dashboard-heading">Event Report</h2>
                     <div className="card-wrapper">
                         <div className="details-section">
                             <img
                                 src={`http://localhost:3000/eventPictures/${eventDetail?.eventPicture}`}
                                 alt={`${eventDetail?.title || 'No'} image`}
-                                className="event-img"
+                                className="history-event-img"
                             />
                             <h3 className="title-heading">{eventDetail?.title}</h3>
                             <p className="description-text">{eventDetail?.description}</p>
                             <div className="info-container">
                                 <span>
-                                    <FontAwesomeIcon icon={faCalendarCheck} /> {eventDetail?.date}
+                                    <FontAwesomeIcon icon={faCalendarCheck} /> {eventDetail?.eventDate}
                                 </span>
                                 <span>
-                                    <FontAwesomeIcon icon={faClock} /> {eventDetail?.time}
+                                    <FontAwesomeIcon icon={faClock} /> {eventDetail?.startTime}
                                 </span>
                                 <span>
                                     <FontAwesomeIcon icon={faMapMarkerAlt} /> {eventDetail?.location}
@@ -266,41 +264,45 @@ const UsersTable = ({ attendedList = [], users = [] }) => {
                     </div>
                 </div>
 
-                <div className="dashboard">
-                    <StatCard
-                        title="Attendees Registered"
-                        count={registeredCount}
-                        icon={<FontAwesomeIcon icon={faUsers} size="2x" />}
-                        color="#4a90e2"
-                    />
-                    <StatCard
-                        title="Participants Attended"
-                        count={attendedCount}
-                        icon={<FontAwesomeIcon icon={faUsers} size="2x" />}
-                        color="#9b51e0"
-                    />
-                    <StatCard
-                        title="Participants Absent"
-                        count={registeredCount - attendedCount}
-                        icon={<FontAwesomeIcon icon={faUsers} size="2x" />}
-                        color="#F08080"
-                    />
-                    <StatCard
-                        title="Event Duration"
-                        count={
-                            eventDetail.startTime && eventDetail.endTime
-                                ? calculateEventDuration(eventDetail.startTime, eventDetail.endTime)
-                                : 'N/A'
-                        }
-                        icon={<FontAwesomeIcon icon={faClock} size="2x" />}
-                        color="#ff3b30"
-                    />
-                </div>
+        
                 
-                <Chart chartData={chartData} />
-                <UsersTable attendedList={attendedList} users={users} />
+                <div className="content">
+                    <div className="dashboard">
+                        <StatCard
+                            title="Attendees Registered"
+                            count={registeredCount}
+                            icon={<FontAwesomeIcon icon={faUsers} size="2x" />}
+                            color="#4a90e2"
+                        />
+                        <StatCard
+                            title="Participants Attended"
+                            count={attendedCount}
+                            icon={<FontAwesomeIcon icon={faUsers} size="2x" />}
+                            color="#9b51e0"
+                        />
+                        <StatCard
+                            title="Participants Absent"
+                            count={registeredCount - attendedCount}
+                            icon={<FontAwesomeIcon icon={faUsers} size="2x" />}
+                            color="#F08080"
+                        />
+                        <StatCard
+                            title="Event Duration"
+                            count={
+                                eventDetail.startTime && eventDetail.endTime
+                                    ? calculateEventDuration(eventDetail.startTime, eventDetail.endTime)
+                                    : 'N/A'
+                            }
+                            icon={<FontAwesomeIcon icon={faClock} size="2x" />}
+                            color="#ff3b30"
+                        />
+                    </div>
+                    
+                    <Chart chartData={chartData} />
+                    <UsersTable attendedList={attendedList} users={users} />
+                </div>
             </div>
-        </div>
+    
     );
 };
 
