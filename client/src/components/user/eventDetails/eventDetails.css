@@ -1,6 +1,7 @@
 body {
   font-family: 'Nunito Sans', sans-serif;
 }
+
 .events-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Increased min width */
@@ -12,6 +13,10 @@ body {
 }
 .event-card h3{
     color: black;
+}
+.event-details-card {
+  position: relative;
+  overflow: hidden;
 }
 .event-item {
     cursor: pointer;
@@ -50,11 +55,8 @@ body {
 
 
 .user-event-details{
-    width: 1000px; /* Adjust as needed */
-    border: 1px solid #e9e9e9; /* Add a subtle border */
+    width: 100%; 
     padding: 30px;
-    border-radius: 20px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   }
   
   .user-event-details h3 {
@@ -63,13 +65,20 @@ body {
     font-size: 2.5rem;
     text-align: center;
     margin-bottom: 5px; /* Space between title and image */
+    display: inline-block; /* Ensure the border doesn't span the full width */
+    border-bottom: 3px solid #FEB800; /* Set the underline thickness and color */
+    padding-bottom: 5px; 
   }
   
-  .event-image {
+  .event-details-image {
     width: 100%; /* Image takes full width */
-    height: auto; /* Maintain aspect ratio */
+    height: 30rem; 
     border-radius: 15px;
     margin-bottom: 15px; /* Space below the image */
+    border: solid 14px #011c39;
+    margin-top: 2rem;
+    box-shadow: 0 10px 10px rgba(0, 0, 0, 0.10);
+    z-index: 99;
   }
 
   .user-event-details p{ /* Target the span after <strong> */
@@ -105,24 +114,31 @@ body {
 .user-event-details .event-description {   
     text-align: justify;  
     margin-bottom: 10px; /* Space between paragraphs */
+    font-size: 20px;
+    color: #011c39;
+    
   }  
   
   .user-event-details strong {
     font-weight: bold; /* Make the labels bold */
   }
 
-
+  .user-register-button {
+    width: 12rem;
+    margin-top: 20px;
+  }
   .register-button {
     background-color: white;
     color: #011c39;
     border: 1px solid grey;
-    border-radius: 18px;
-    height: 2.5rem;
+    border-radius: 130px;
+    height: 3rem;
     padding: 0 75px;
     cursor: pointer;
     transition: background-color 0.3s ease, color 0.3s ease;
     content: right;         /* Center the button horizontally */
     align-items: center;     /* Center the button horizontally */ 
+    transform: translateX(20px);
   }
   
   .register-button:hover {
@@ -210,7 +226,49 @@ body {
     animation: spin 1s ease-in-out infinite;
     margin-right: 10px;
 }
-
+.information {
+  display: flex;
+  background-color: white;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
+}
+.left-details {
+  width: 16rem;
+}
+.right-details {
+  display: flex;
+  text-align: left;
+  width: 55rem;
+}
+.event-details-section {
+  margin: 20px;
+  gap: 10px;
+  display: flex;
+  flex-direction: column;
+}
+.college-department {
+  transform: translateY(-6rem);
+  margin-left: 30px;
+  display: inline-block; /* Allows the div to shrink to fit its content */
+  padding-top: 10px;
+  padding: 0 20px; /* Add padding for spacing */
+  max-width: 100%; /* Prevent overflow for long text */
+  word-wrap: break-word; /* Ensures text wraps inside the container */
+  text-align: center; /* Centers the text inside the container */
+  background-color: #ffffff; /* Example background color, customizable */
+  border-radius: 10px; /* Adds rounded corners */
+  box-shadow: 0 10px 100px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.college-department:hover {
+  transform: translateY(-6rem) scale(1.05); /* Slightly zoom in the element */
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); /* Increase shadow for hover effect */
+}
+.college-department p {
+  margin-top: 16px;
+  color: white;
+}
 @keyframes spin {
     to { transform: rotate(360deg); }
 }

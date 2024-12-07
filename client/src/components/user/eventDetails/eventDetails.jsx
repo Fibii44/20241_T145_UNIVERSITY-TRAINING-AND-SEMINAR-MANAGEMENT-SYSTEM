@@ -350,122 +350,138 @@ function Event() {
     if (!event) return <p>Event not found.</p>;
 
     return (
-        <div className="card" style={{ maxWidthwidth: '1000px'}}>
-            <div className="container eventDetail">
+        <div className="event-details-card">
+            {/* Background circle */}
+        <div className="container eventDetail">
+                
             {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
-                <div className="user-event-details" key={event._id || event.id} style={{contentAlign: 'center', margin: '0 auto'}}>
-                    <img 
-                        src={`http://localhost:3000/eventPictures/${event.eventPicture}`} 
-                        alt={event.title} 
-                        className="event-image" 
-                        onClick={() => setShowImage(true)} // Show overlay on click
-                    />
-
-                    {showImage && ( // Overlay div
-                        <div className="event-image-overlay" onClick={() => setShowImage(false)}>
-                            <img 
-                                src={`http://localhost:3000/eventPictures/${event.eventPicture}`} 
-                                alt={event.title} 
-                                className="large-image" 
-                            />
-                        </div>
-                    )}
-
-                    <h3><strong>{event.title}</strong></h3>
-                    <h6 className="event-date"><i className="fas fa-calendar-alt"></i> <strong>Date:</strong> <strong>{new Date(event.eventDate).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</strong></h6>
-                    <h6 className="event-time"><i className="fas fa-clock"></i> <strong>Time:</strong> <strong>{formatTime(event.startTime)} - {formatTime(event.endTime)}</strong></h6>
-                    <h6 className="event-location"><i className="fas fa-map-marker-alt"></i> <strong>Location:</strong> <strong>{event.location}</strong></h6>
-                    <h6 className="event-description"><i className="fas fa-info-circle"></i> <strong>Description:</strong> {event.description}</h6>
-                    <div className="user-register-button" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                        {canRegister ? (
-                            isEventActive ? (
-                                <button className='register-button' onClick={isRegistered ? handleCancellation : handleRegistration}>
-                                    {registrationStatus}
-                                </button>
-                             ) : (
-                                isEventCompleted() ? (
-                                    // Show form section if event is completed
-                                    <div>
-                                        {canAccessForm() && (
-                                            <div className="post-event-section">
-                                               <h4>Post-Event Survey</h4>
-                                                <p>Please complete the survey to receive your certificate.</p>
-                                                <div className="form-link-container">
-                                                    <a 
-                                                        href={event.formLink} 
-                                                        target="_blank" 
-                                                        rel="noopener noreferrer"
-                                                        className="form-link"
-                                                        onClick={handleFormLinkClick}
-                                                    >
-                                                        Click here to access the survey form
-                                                    </a>
-                                                    
-                                                    {submissionStatus !== 'idle' && (
-                                                        <div className={`submission-status ${submissionStatus}`}>
-                                                            {isLoading && <div className="loading-spinner"></div>}
-                                                            <p>{submissionMessage}</p>
-                                                            {submissionStatus === 'waiting' && (
-                                                                <>
-                                                                    <p className="submission-instructions">
-                                                                        Important:
-                                                                        <ul>
-                                                                            <li>Use your registered email ({currentUser?.email})</li>
-                                                                            <li>Complete and submit the form</li>
-                                                                            <li>Click "Verify Submission" after submitting</li>
-                                                                        </ul>
-                                                                    </p>
-                                                                    <VerifySubmissionButton />
-                                                                </>
-                                                            )}
-                                                            {submissionStatus === 'error' && (
-                                                                <button 
-                                                                    onClick={handleFormSubmission}
-                                                                    disabled={isLoading}
-                                                                >
-                                                                    Try Verifying Again
-                                                                </button>
+            <div className="user-event-details" key={event._id || event.id} style={{contentAlign: 'center', margin: '0 auto'}}>
+            
+                <h3><strong>{event.title}</strong></h3>
+                <img 
+                    src={`http://localhost:3000/eventPictures/${event.eventPicture}`} 
+                    alt={event.title} 
+                    className="event-details-image" 
+                    onClick={() => setShowImage(true)} // Show overlay on click
+                    onError={(e) => (e.target.src = '/src/assets/default-eventPicture.jpg')}
+                />
+                <div className='college-department' style={{backgroundColor: event.color}}>
+                    <p>{event.participantGroup["college"]}</p>
+                </div>
+                {showImage && ( // Overlay div
+                    <div className="event-image-overlay" onClick={() => setShowImage(false)}>
+                        <img 
+                            src={`http://localhost:3000/eventPictures/${event.eventPicture}`} 
+                            alt={event.title} 
+                            className="large-image" 
+                            onError={(e) => (e.target.src = '/src/assets/default-eventPicture.jpg')}
+                        />
+                    </div>
+                )}
+                    <div className='information'>
+                        <div className='left-details'>  
+                            <div className="user-register-button" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                                {canRegister ? (
+                                    isEventActive ? (
+                                        <button className='register-button' onClick={isRegistered ? handleCancellation : handleRegistration}>
+                                            {registrationStatus}
+                                        </button>
+                                    ) : (
+                                        isEventCompleted() ? (
+                                            // Show form section if event is completed
+                                            <div>
+                                                {canAccessForm() && (
+                                                    <div className="post-event-section">
+                                                    <h4>Post-Event Survey</h4>
+                                                        <p>Please complete the survey to receive your certificate.</p>
+                                                        <div className="form-link-container">
+                                                            <a 
+                                                                href={event.formLink} 
+                                                                target="_blank" 
+                                                                rel="noopener noreferrer"
+                                                                className="form-link"
+                                                                onClick={handleFormLinkClick}
+                                                            >
+                                                                Click here to access the survey form
+                                                            </a>
+                                                            
+                                                            {submissionStatus !== 'idle' && (
+                                                                <div className={`submission-status ${submissionStatus}`}>
+                                                                    {isLoading && <div className="loading-spinner"></div>}
+                                                                    <p>{submissionMessage}</p>
+                                                                    {submissionStatus === 'waiting' && (
+                                                                        <>
+                                                                            <p className="submission-instructions">
+                                                                                Important:
+                                                                                <ul>
+                                                                                    <li>Use your registered email ({currentUser?.email})</li>
+                                                                                    <li>Complete and submit the form</li>
+                                                                                    <li>Click "Verify Submission" after submitting</li>
+                                                                                </ul>
+                                                                            </p>
+                                                                            <VerifySubmissionButton />
+                                                                        </>
+                                                                    )}
+                                                                    {submissionStatus === 'error' && (
+                                                                        <button 
+                                                                            onClick={handleFormSubmission}
+                                                                            disabled={isLoading}
+                                                                        >
+                                                                            Try Verifying Again
+                                                                        </button>
+                                                                    )}
+                                                                </div>
                                                             )}
                                                         </div>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        )}
-                                        {!hasSubmittedForm && (
-                                            <p>Please submit the form to receive your certificate.</p>
-                                        )}
+                                                    </div>
+                                                )}
+                                                {!hasSubmittedForm && (
+                                                    <p>Please submit the form to receive your certificate.</p>
+                                                )}
 
-                                        {/* Certificate Section */}
-                                        {hasSubmittedForm && (
-                                            <div className="certificate-section">
-                                                <h4>Certificate Status</h4>
-                                                {certificateStatus === 'generated' ? (
-                                                    <>
-                                                        <p>Your certificate is ready!</p>
-                                                        <button 
-                                                            className="download-certificate-button"
-                                                            onClick={downloadCertificate}
-                                                        >
-                                                            Download Certificate
-                                                        </button>
-                                                    </>
-                                                ) : formStatus?.status === 'approved' ? (
-                                                    <p>Your certificate is being generated...</p>
-                                                ) : (
-                                                    <p>Your form submission is pending approval. Certificate will be available after approval.</p>
+                                                {/* Certificate Section */}
+                                                {hasSubmittedForm && (
+                                                    <div className="certificate-section">
+                                                        <h4>Certificate Status</h4>
+                                                        {certificateStatus === 'generated' ? (
+                                                            <>
+                                                                <p>Your certificate is ready!</p>
+                                                                <button 
+                                                                    className="download-certificate-button"
+                                                                    onClick={downloadCertificate}
+                                                                >
+                                                                    Download Certificate
+                                                                </button>
+                                                            </>
+                                                        ) : formStatus?.status === 'approved' ? (
+                                                            <p>Your certificate is being generated...</p>
+                                                        ) : (
+                                                            <p>Your form submission is pending approval. Certificate will be available after approval.</p>
+                                                        )}
+                                                    </div>
                                                 )}
                                             </div>
-                                        )}
-                                    </div>
+                                        ) : (
+                                            <p>Event has already started.</p>
+                                        )
+                                    )   
                                 ) : (
-                                    <p>Event has already started.</p>
-                                )
-                            )   
-                        ) : (
-                            <p>You are not eligible for this event.</p>
-                        )}
+                                    <p>You are not eligible for this event.</p>
+                                )}
+                            </div>
+                            <div className='event-details-section'>
+                                <h6 className="event-date"><i className="fas fa-calendar-alt" style={{color: `#FFB800`}}></i>  <strong>{new Date(event.eventDate).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</strong></h6>
+                                <h6 className="event-time"><i className="fas fa-clock" style={{color: `#FFB800`}}></i><strong>{formatTime(event.startTime)} - {formatTime(event.endTime)}</strong></h6>
+                                <h6 className="event-location"><i className="fas fa-map-marker-alt" style={{color: `#FFB800`}}></i>  <strong>{event.location}</strong></h6>
+                            </div>
+                        </div>
+                        <div className='right-details'>
+                            <h6 className="event-description">{event.description}</h6>
+                        </div> 
                     </div>
+                    
                 </div> 
+                
             </div>
         </div>
     );

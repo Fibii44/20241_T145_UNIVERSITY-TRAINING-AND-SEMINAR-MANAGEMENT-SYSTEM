@@ -22,10 +22,10 @@ function Footer() {
                             <p>Contact Us</p>
                         </div>
                         <div className='footer-content'>
-                            <p>Fortich St., Malaybalay City,</p>
-                            <p>Bukidnon</p>
-                            <p>+63-88-813-5661 To 5663</p>
-                            <p>+63-88-813-2717</p>
+                            <p>citl@buksu.edu.ph</p>
+                            <p>Local 139</p>
+                            <p>Buksu Center for Innovative Teaching and Learning</p>
+                            <p>BukSU Citl</p>
                         </div>  
                     </div>   
                     <div className='info'>

@@ -142,7 +142,7 @@ function EventGrid() {
                 <optgroup label="Filters">
                     <option value="all">All Events</option>
                     <option value="upcoming">Upcoming Events</option>
-                    <option value="past">Past Events</option>
+                    <option value="past">Today's Events</option>
                 </optgroup>
                 {/* Sort Options */}
                 <optgroup label="Sort By">
@@ -170,6 +170,12 @@ function EventGrid() {
                                     className="event-image"
                                     onError={(e) => (e.target.src = '/src/assets/default-eventPicture.jpg')}
                                 />
+                                {event.participantGroup?.college && (
+                                    <div className='event-college-department' style={{ backgroundColor: event.color }}>
+                                        <p>{event.participantGroup.college}</p>
+                                    </div>
+                                )}
+
                             </div>
                             <h3 style={{ color: '#011c39' }}>{event.title}</h3>
                             <p className="date">

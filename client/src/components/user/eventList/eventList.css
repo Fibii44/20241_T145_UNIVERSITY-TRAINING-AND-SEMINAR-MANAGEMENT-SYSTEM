@@ -168,4 +168,24 @@
     border-color: #011c39;
     box-shadow: 0 0 5px rgba(1, 28, 57, 0.5);
 }
-
+.event-college-department {
+    transform: translateY(-3rem);
+    display: inline-block; /* Allows the div to shrink to fit its content */
+    padding: 0 10px; /* Add padding for spacing */
+    max-width: 100%; /* Prevent overflow for long text */
+    word-wrap: break-word; /* Ensures text wraps inside the container */
+    text-align: center; /* Centers the text inside the container */
+    background-color: #ffffff; /* Example background color, customizable */
+    border-radius: 0px 20px 20px 0px; /* Adds rounded corners */
+    box-shadow: 0 10px 100px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .event-college-department:hover {
+    transform: translateY(-3rem) scale(1.05); /* Slightly zoom in the element */
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); /* Increase shadow for hover effect */
+  }
+  .event-college-department p {
+    margin-top: 10px;
+    color: white;
+    font-size: 10px;
+  }
