@@ -3,19 +3,17 @@ const userNotification = express.Router();
 const authenticateJWT = require('../../middleware/auth');
 const userNewFeatureService = require('../../services/user/userNotificationService');
 
-// List all items
+// List all notification
 userNotification.get('/a/notification/items', userNewFeatureService.listItems);
 
-// View a specific item by ID
-userNotification.get('/a/notification/items/:id', userNewFeatureService.viewItem);
-
-// Create a new item
+// Create a new  notification item
 userNotification.post('/a/notification/items',  userNewFeatureService.createItem);
 
-// Update an existing item
-userNotification.put('/a/notification/items/:id',  userNewFeatureService.updateItem);
+// Update exisiting notification item details
+userNotification.put('/a/notification/update/:id',  userNewFeatureService. updateNotificationStatus);
 
-// Delete an item
-userNotification.delete('/a/notification/items/:id',  userNewFeatureService.deleteItem);
+// Update exisiting notification item removestatus
+userNotification.put('/a/notification/remove/:id',  userNewFeatureService. removeNotification);
+
 
 module.exports = userNotification;

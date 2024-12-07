@@ -245,8 +245,8 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
   
     console.log("Event Picture before save:", eventPicture);
   
-    // Prepare event data
-    const eventData = {
+     // Prepare event data
+     const eventData = {
       title,
       date,
       eventPicture,
@@ -265,24 +265,8 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
     try {
       // Save the event
       await onSave(eventData);
-      
-      // Send notifications
-      const notificationData = {
-        title: `Invitation to ${title}`,
-        message: `You are invited to attend the event: "${title}" on ${date} at ${location}.`,
-        customParticipants: cleanedParticipants,
-
-      };
-  
-      await axios.post('http://localhost:3000/a/notification/items', notificationData, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-  
-      console.log('Notifications sent successfully');
     } catch (error) {
-      console.error('Error saving event or sending notifications:', error);
+      console.error('Error saving event:', error);
     }
   
     onClose();

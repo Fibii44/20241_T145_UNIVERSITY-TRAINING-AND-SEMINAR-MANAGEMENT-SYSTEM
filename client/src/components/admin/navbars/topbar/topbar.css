@@ -119,3 +119,14 @@
 }
 
 
+.unread-text {
+  color: red;
+  font-size: 12px;
+  margin-left: 10px;
+}
+
+.read-text {
+  color: green;
+  font-size: 12px;
+  margin-left: 10px;
+}

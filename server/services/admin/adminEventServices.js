@@ -1,4 +1,6 @@
 const Event = require('../../models/event');
+const User = require('../../models/user');
+const Notification = require('../../models/notification');
 const { initialize } = require('../../config/googleConfig');
 const axios = require('axios');
 const { emitNewActivity } = require('../../config/socketConfig');
@@ -83,6 +85,67 @@ const addEvent = async (req, res) => {
     });
     console.log(newEvent);
     await newEvent.save();
+
+// Create an array of conditions to check for participants
+const conditions = [];
+
+// If customParticipants are provided, add them to the conditions
+if (newEvent.customParticipants && newEvent.customParticipants.length > 0) {
+  conditions.push({ email: { $in: newEvent.customParticipants } });
+}
+
+// If college is provided in participantGroup
+if (participantGroup && participantGroup.college) {
+  if (participantGroup.college.toLowerCase() === "all") {
+    // Include all users with the role "faculty_staff" and status "active" across all departments
+    conditions.push({ role: "faculty_staff", status: "active" });
+  } else {
+    // Include users from a specific department with the role "faculty_staff" and status "active"
+    conditions.push({ 
+      department: participantGroup.college, 
+      role: "faculty_staff",
+      status: "active" 
+    });
+  }
+}
+
+// Perform the query with OR logic based on the conditions
+const users = await User.find({ $or: conditions });
+
+// Log fetched users for debugging
+console.log("Fetched Users:", users);
+
+// Create userNotifications array
+const userNotifications = users.map(user => ({
+  userId: user._id,
+  name: user.name,
+  status: 'unread', // Set status as unread initially
+}));
+
+// Log userNotifications for debugging
+console.log("User Notifications:", userNotifications);
+
+// Create notification for the event
+const notification = {
+  title: newEvent.title,
+  message: `You are invited to attend the event titled "${newEvent.title}" on ${new Date(newEvent.eventDate).toLocaleDateString('en-PH', { 
+    year: 'numeric', 
+    month: 'long', 
+    day: 'numeric' 
+  })} at ${newEvent.location}.`,
+  eventId: newEvent._id,
+  customParticipants: newEvent.customParticipants, // Array of custom participants
+  participantGroup: newEvent.participantGroup,
+  userNotifications: userNotifications,
+  createdAt: new Date(),
+};
+
+// Log notification before saving
+console.log("Notification Object:", notification);
+
+await Notification.create(notification);
+
+
     await emitNewActivity(user.id, 'Created New Event', { eventId: newEvent._id, eventTitle: newEvent.title });
     res.status(201).json({ message: 'Event added successfully', newEvent });
   } catch (error) {
@@ -315,6 +378,26 @@ const updateEvent = async (req, res) => {
     }
     // Unlock the event after updating
     await Event.findByIdAndUpdate(eventId, { isLocked: false, lockedBy: null });
+
+       // Update notifications
+    const updatedNotificationMessage = `The event titled "${updatedEvent.title}" has been updated. Check the updated details and join us again on ${new Date(updatedEvent.eventDate).toLocaleDateString('en-PH', { 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    })} at ${updatedEvent.location}.`;
+
+    await Notification.updateMany(
+      { eventId: eventId },
+      { 
+        $set: { 
+          "message": updatedNotificationMessage,
+          "title": updatedEvent.title, 
+          "customParticipants": updatedEvent.customParticipants,
+          "participantGroup": updatedEvent.participantGroup
+        }
+      }
+    );
+
     await emitNewActivity(userId, 'Updated Event', {eventId: eventId, eventTitle: event.title, })
 
     res.status(200).json({ message: 'Event updated successfully', event: updatedEvent });
@@ -333,6 +416,9 @@ const deleteEvent = async (req, res) => {
     if (!event) {
       return res.status(404).json({ message: 'Event not found' });
     }
+    
+     // Delete the associated notifications for this event
+     await Notification.deleteOne({ eventId });
 
     // Prepare the data to be stored in the deletedEvents collection
     const deletedEventData = {

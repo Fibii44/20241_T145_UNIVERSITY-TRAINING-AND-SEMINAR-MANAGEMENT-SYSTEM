@@ -27,13 +27,13 @@ function Event() {
 
     const showToast = (message, type = 'success') => {
         setToast({ message, type });
-      };
+    };
     const formatTime = (date) => {
         return new Date(date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
     };
 
     const checkEventTime = () => {
-        if(!event) { return false; }
+        if (!event) { return false; }
         const currentTime = new Date();
         const eventStart = new Date(event.startTime);
         const eventEnd = new Date(event.endTime);
@@ -42,21 +42,21 @@ function Event() {
     }
 
     const isEventCompleted = () => {
-        if(!event) { return false; }
+        if (!event) { return false; }
         const currentTime = new Date();
         const eventEnd = new Date(event.endTime);
 
         return currentTime > eventEnd;
     };
 
-     // Function to check if user can access form
+    // Function to check if user can access form
     const canAccessForm = () => {
         return (
-            isRegistered && 
-        event && 
-        isEventCompleted(event) && 
-        event.formLink && 
-        !hasSubmittedForm
+            isRegistered &&
+            event &&
+            isEventCompleted(event) &&
+            event.formLink &&
+            !hasSubmittedForm
         );
     };
 
@@ -68,21 +68,21 @@ function Event() {
                 console.log('No token found');
                 return;
             }
-            
+
             // First check if there's a registration
             const regResponse = await axios.get(`http://localhost:3000/u/events/${id}/check-registration`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            
+
             if (!regResponse.data.isRegistered) {
                 console.log('User not registered for this event');
                 return;
             }
-    
+
             const response = await axios.get(`http://localhost:3000/u/events/${id}/form-status`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            
+
             setFormStatus(response.data);
             setHasSubmittedForm(response.data.hasSubmittedForm);
             if (response.data.hasSubmittedForm) {
@@ -104,7 +104,7 @@ function Event() {
             setSubmissionStatus('checking');
             setSubmissionMessage('Verifying your form submission...');
             setIsLoading(true);
-            
+
             const token = sessionStorage.getItem('authToken');
             if (!token) {
                 throw new Error('Please log in to submit the form');
@@ -116,10 +116,10 @@ function Event() {
 
             // Updated form link validation to handle more Google Form URL patterns
             const formId = event.formLink.match(/\/forms\/d\/e\/([^/]+)\//) ||  // Pattern 1: .../forms/d/e/[formId]/...
-                          event.formLink.match(/\/forms\/d\/([^/]+)\//) ||      // Pattern 2: .../forms/d/[formId]/...
-                          event.formLink.match(/\/forms\/([^/]+)/) ||           // Pattern 3: .../forms/[formId]
-                          event.formLink.match(/forms.gle\/(\w+)/);             // Pattern 4: forms.gle/[shortId]
-                          
+                event.formLink.match(/\/forms\/d\/([^/]+)\//) ||      // Pattern 2: .../forms/d/[formId]/...
+                event.formLink.match(/\/forms\/([^/]+)/) ||           // Pattern 3: .../forms/[formId]
+                event.formLink.match(/forms.gle\/(\w+)/);             // Pattern 4: forms.gle/[shortId]
+
             if (!formId || !formId[1]) {
                 console.error('Form link:', event.formLink); // For debugging
                 throw new Error('Could not process form link. Please contact the event organizer.');
@@ -133,7 +133,7 @@ function Event() {
                 {
                     formId: formId[1],
                     formLink: event.formLink
-                },  
+                },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
 
@@ -166,18 +166,18 @@ function Event() {
             showToast('Form link is not available. Please contact the event organizer.', 'error');
             return;
         }
-        
+
         // Set status to waiting
         setSubmissionStatus('waiting');
         setSubmissionMessage('Please complete and submit the form. After submission, click "Verify Submission" below.');
-        
+
         // Open form in new tab
         window.open(event.formLink, '_blank');
     };
-    
+
     // Separate verify button component
     const VerifySubmissionButton = () => (
-        <button 
+        <button
             onClick={handleFormSubmission}
             disabled={isLoading}
             className="verify-submission-btn"
@@ -191,8 +191,8 @@ function Event() {
         try {
             const token = sessionStorage.getItem('authToken');
             const response = await axios.get(`http://localhost:3000/u/events/${id}/certificate`, {
-                headers: { 
-                    Authorization: `Bearer ${token}` 
+                headers: {
+                    Authorization: `Bearer ${token}`
                 },
                 responseType: 'blob'
             });
@@ -216,41 +216,41 @@ function Event() {
             try {
                 setLoading(true);
                 const token = sessionStorage.getItem('authToken');
-                
+
                 // First fetch event details
                 const eventResponse = await axios.get(`http://localhost:3000/u/events/${id}`);
                 setEvent(eventResponse.data);
-    
+
                 if (token) {
                     // Check registration status
                     const regResponse = await axios.get(`http://localhost:3000/u/events/${id}/check-registration`, {
                         headers: { Authorization: `Bearer ${token}` }
                     });
-                    
+
                     setIsRegistered(regResponse.data.isRegistered);
                     setRegistrationStatus(regResponse.data.isRegistered ? "Cancel Registration" : "Register");
                     setGoogleEventId(regResponse.data.googleEventId || null);
-    
+
                     // Set user access
                     const decodedToken = jwtDecode(token);
                     setCurrentUser(decodedToken);
-    
+
                     // Check registration eligibility
                     const hasCustomParticipants = eventResponse.data?.customParticipants?.length > 0;
-                    setCanRegister(hasCustomParticipants 
+                    setCanRegister(hasCustomParticipants
                         ? eventResponse.data.customParticipants.includes(decodedToken.email)
-                        : !eventResponse.data?.participantGroup?.college || 
-                          eventResponse.data.participantGroup.college === " " || 
-                          eventResponse.data.participantGroup.college === "All" ||
-                          eventResponse.data.participantGroup.college === decodedToken.department
+                        : !eventResponse.data?.participantGroup?.college ||
+                        eventResponse.data.participantGroup.college === " " ||
+                        eventResponse.data.participantGroup.college === "All" ||
+                        eventResponse.data.participantGroup.college === decodedToken.department
                     );
-    
+
                     // Only check form status if:
                     // 1. User is registered
                     // 2. Event has a form link
                     // 3. Event is completed
-                    if (regResponse.data.isRegistered && 
-                        eventResponse.data.formLink && 
+                    if (regResponse.data.isRegistered &&
+                        eventResponse.data.formLink &&
                         new Date() > new Date(eventResponse.data.endTime)) {
                         try {
                             await checkFormStatus();
@@ -261,15 +261,15 @@ function Event() {
                 }
             } catch (error) {
                 console.error("Error fetching data:", error);
-                setError(error.response?.status === 404 
-                    ? "Event not found" 
+                setError(error.response?.status === 404
+                    ? "Event not found"
                     : "Failed to fetch event data"
                 );
             } finally {
                 setLoading(false);
             }
         };
-    
+
         fetchEventAndData();
     }, [id]);
 
@@ -303,7 +303,7 @@ function Event() {
                 `http://localhost:3000/u/events/${id}/certificate-status`,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
-    
+
             if (response.data.status === 'generated') {
                 setCertificateStatus('generated');
                 showToast('Your certificate is ready!', 'success');
@@ -330,7 +330,7 @@ function Event() {
                     data: { googleEventId: googleEventId },
                 }
             );
-    
+
             setIsRegistered(false);
             setRegistrationStatus("Register");
             showToast('Registration and calendar event cancelled successfully', 'success');
@@ -352,35 +352,35 @@ function Event() {
     return (
         <div className="event-details-card">
             {/* Background circle */}
-        <div className="container eventDetail">
-                
-            {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
-            <div className="user-event-details" key={event._id || event.id} style={{contentAlign: 'center', margin: '0 auto'}}>
-            
-                <h3><strong>{event.title}</strong></h3>
-                <img 
-                    src={`http://localhost:3000/eventPictures/${event.eventPicture}`} 
-                    alt={event.title} 
-                    className="event-details-image" 
-                    onClick={() => setShowImage(true)} // Show overlay on click
-                    onError={(e) => (e.target.src = '/src/assets/default-eventPicture.jpg')}
-                />
-                <div className='college-department' style={{backgroundColor: event.color}}>
-                    <p>{event.participantGroup["college"]}</p>
-                </div>
-                {showImage && ( // Overlay div
-                    <div className="event-image-overlay" onClick={() => setShowImage(false)}>
-                        <img 
-                            src={`http://localhost:3000/eventPictures/${event.eventPicture}`} 
-                            alt={event.title} 
-                            className="large-image" 
-                            onError={(e) => (e.target.src = '/src/assets/default-eventPicture.jpg')}
-                        />
+            <div className="container eventDetail">
+
+                {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+                <div className="user-event-details" key={event._id || event.id} style={{ contentAlign: 'center', margin: '0 auto' }}>
+
+                    <h3><strong>{event.title}</strong></h3>
+                    <img
+                        src={`http://localhost:3000/eventPictures/${event.eventPicture}`}
+                        alt={event.title}
+                        className="event-details-image"
+                        onClick={() => setShowImage(true)} // Show overlay on click
+                        onError={(e) => (e.target.src = '/src/assets/default-eventPicture.jpg')}
+                    />
+                    <div className='college-department' style={{ backgroundColor: event.color }}>
+                        <p>{event.participantGroup?.college || 'This is a Custom Event'}</p>
                     </div>
-                )}
+                    {showImage && ( // Overlay div
+                        <div className="event-image-overlay" onClick={() => setShowImage(false)}>
+                            <img
+                                src={`http://localhost:3000/eventPictures/${event.eventPicture}`}
+                                alt={event.title}
+                                className="large-image"
+                                onError={(e) => (e.target.src = '/src/assets/default-eventPicture.jpg')}
+                            />
+                        </div>
+                    )}
                     <div className='information'>
-                        <div className='left-details'>  
-                            <div className="user-register-button" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                        <div className='left-details'>
+                            <div className="user-register-button" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                                 {canRegister ? (
                                     isEventActive ? (
                                         <button className='register-button' onClick={isRegistered ? handleCancellation : handleRegistration}>
@@ -392,19 +392,19 @@ function Event() {
                                             <div>
                                                 {canAccessForm() && (
                                                     <div className="post-event-section">
-                                                    <h4>Post-Event Survey</h4>
+                                                        <h4>Post-Event Survey</h4>
                                                         <p>Please complete the survey to receive your certificate.</p>
                                                         <div className="form-link-container">
-                                                            <a 
-                                                                href={event.formLink} 
-                                                                target="_blank" 
+                                                            <a
+                                                                href={event.formLink}
+                                                                target="_blank"
                                                                 rel="noopener noreferrer"
                                                                 className="form-link"
                                                                 onClick={handleFormLinkClick}
                                                             >
                                                                 Click here to access the survey form
                                                             </a>
-                                                            
+
                                                             {submissionStatus !== 'idle' && (
                                                                 <div className={`submission-status ${submissionStatus}`}>
                                                                     {isLoading && <div className="loading-spinner"></div>}
@@ -423,7 +423,7 @@ function Event() {
                                                                         </>
                                                                     )}
                                                                     {submissionStatus === 'error' && (
-                                                                        <button 
+                                                                        <button
                                                                             onClick={handleFormSubmission}
                                                                             disabled={isLoading}
                                                                         >
@@ -446,7 +446,7 @@ function Event() {
                                                         {certificateStatus === 'generated' ? (
                                                             <>
                                                                 <p>Your certificate is ready!</p>
-                                                                <button 
+                                                                <button
                                                                     className="download-certificate-button"
                                                                     onClick={downloadCertificate}
                                                                 >
@@ -464,24 +464,24 @@ function Event() {
                                         ) : (
                                             <p>Event has already started.</p>
                                         )
-                                    )   
+                                    )
                                 ) : (
                                     <p>You are not eligible for this event.</p>
                                 )}
                             </div>
                             <div className='event-details-section'>
-                                <h6 className="event-date"><i className="fas fa-calendar-alt" style={{color: `#FFB800`}}></i>  <strong>{new Date(event.eventDate).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</strong></h6>
-                                <h6 className="event-time"><i className="fas fa-clock" style={{color: `#FFB800`}}></i><strong>{formatTime(event.startTime)} - {formatTime(event.endTime)}</strong></h6>
-                                <h6 className="event-location"><i className="fas fa-map-marker-alt" style={{color: `#FFB800`}}></i>  <strong>{event.location}</strong></h6>
+                                <h6 className="event-date"><i className="fas fa-calendar-alt" style={{ color: `#FFB800` }}></i>  <strong>{new Date(event.eventDate).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</strong></h6>
+                                <h6 className="event-time"><i className="fas fa-clock" style={{ color: `#FFB800` }}></i><strong>{formatTime(event.startTime)} - {formatTime(event.endTime)}</strong></h6>
+                                <h6 className="event-location"><i className="fas fa-map-marker-alt" style={{ color: `#FFB800` }}></i>  <strong>{event.location}</strong></h6>
                             </div>
                         </div>
                         <div className='right-details'>
                             <h6 className="event-description">{event.description}</h6>
-                        </div> 
+                        </div>
                     </div>
-                    
-                </div> 
-                
+
+                </div>
+
             </div>
         </div>
     );

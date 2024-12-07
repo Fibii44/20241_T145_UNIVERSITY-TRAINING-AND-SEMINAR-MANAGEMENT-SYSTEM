@@ -3,7 +3,8 @@ const userNotification = require('../../models/notification'); // Replace with y
 // List all items
 const listItems = async (req, res) => {
     try {
-        const items = await userNotification.find();
+        // Fetch notifications sorted by createdAt in descending order
+        const items = await userNotification.find().sort({ createdAt: -1 });
         res.json(items);
     } catch (error) {
         console.error('Error listing items:', error);
@@ -11,67 +12,87 @@ const listItems = async (req, res) => {
     }
 };
 
-// View a specific item by ID
-const viewItem = async (req, res) => {
-    try {
-        const item = await userNotification.findById(req.params.id);
-        if (!item) {
-           return res.status(404).send('Item not found'); 
-        } 
-        res.json(item);
-    } catch (error) {
-        console.error('Error viewing item:', error);
-        res.status(500).send('Error retrieving item');
-    }
-};
 
 // Create a new item
 const createItem = async (req, res) => {
     try {
-        // Create a new item from the request body
-        const newItem = new userNotification(req.body);
+        const { participants, eventDetails } = req.body; // Assume you send participants and event details
+        const newItem = new userNotification({
+            ...req.body,
+            userNotifications: participants.map(userId => ({
+                userId,
+                status: 'unread',
+                readAt: null
+            }))
+        });
 
-        // Save the item to the database
         await newItem.save();
-
         res.status(201).json({ message: 'Item created successfully', newItem });
     } catch (error) {
         console.error('Error creating item:', error);
-
-        // Send a detailed error message for debugging
         res.status(500).json({ message: 'Error creating item', error: error.message });
     }
 };
 
 
-// Update an existing item
-const updateItem = async (req, res) => {
+
+const updateNotificationStatus = async (req, res) => {
     try {
-        const updatedItem = await userNotification.findByIdAndUpdate(req.params.id, req.body, { new: true });
-        if (!updatedItem) return res.status(404).send('Item not found');
-        res.json(updatedItem);
+        const { id } = req.params; // Notification ID
+        const { userId } = req.body; // User ID from request body
+
+        // Update the notification for the specific user
+        const updatedNotification = await userNotification.findOneAndUpdate(
+            { _id: id, "userNotifications.userId": userId },
+            {
+                $set: {
+                    "userNotifications.$.status": "read",
+                    "userNotifications.$.readAt": new Date()
+                }
+            },
+            { new: true }
+        );
+
+        if (!updatedNotification) return res.status(404).send("Notification not found");
+        res.json({ message: "Notification marked as read", updatedNotification });
     } catch (error) {
-        console.error('Error updating item:', error);
-        res.status(500).send('Error updating item');
+        console.error("Error updating notification status:", error);
+        res.status(500).send("Error updating notification status");
     }
 };
 
-// Delete an item
-const deleteItem = async (req, res) => {
+const removeNotification = async (req, res) => {
     try {
-        const deletedItem = await userNotification.findByIdAndDelete(req.params.id);
-        if (!deletedItem) return res.status(404).send('Item not found');
-        res.json({ message: 'Item deleted successfully' });
+        const { id } = req.params;
+        const { userId } = req.body; // Get userId from the request body
+
+        // Find the notification and update the user-specific removedStatus and removedAt field
+        const updatedNotification = await userNotification.findOneAndUpdate(
+            { _id: id, "userNotifications.userId": userId },
+            { 
+                $set: {
+                    "userNotifications.$.removedStatus": true,
+                    "userNotifications.$.removedAt": new Date(), // Set removedAt to current timestamp
+                }
+            },
+            { new: true }
+        );
+
+        if (!updatedNotification) {
+            console.log("Notification or user not found with ID:", id);
+            return res.status(404).send('Notification or user not found');
+        }
+
+        res.json({ message: 'Notification removed', updatedNotification });
     } catch (error) {
-        console.error('Error deleting item:', error);
-        res.status(500).send('Error deleting item');
+        console.error('Error removing notification:', error);
+        res.status(500).send('Error removing notification');
     }
 };
 
 module.exports = {
     listItems,
-    viewItem,
     createItem,
-    updateItem,
-    deleteItem,
+    updateNotificationStatus,
+    removeNotification
 };
