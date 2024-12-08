@@ -6,13 +6,14 @@ import { faBell } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
+import { use } from 'react';
 
 const Topbar = () => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
     const [user, setUser] = useState({ name: '', profilePicture: '', role: '', email: '' });
     const [notifications, setNotifications] = useState([]);
-
+    const [events, setEvents] = useState([]);
     const toggleDropdown = () => {
         setIsDropdownOpen(!isDropdownOpen);
     };
@@ -23,57 +24,78 @@ const Topbar = () => {
 
 
     useEffect(() => {
-    const token = sessionStorage.getItem('authToken');
-    if (token) {
-        const decoded = jwtDecode(token);
-        setUser({
-            name: decoded.name,
-            email: decoded.email,
-            profilePicture: decoded.profilePicture,
-            role: decoded.role,
-            department: decoded.department
-        });
-
-        // Fetch notifications from the server
-        axios.get('http://localhost:3000/a/notification/items', {
-            headers: { Authorization: `Bearer ${token}` },
-        })
-            .then((response) => {
-                // Filter notifications for the current user and exclude removed ones
-                const filteredNotifications = response.data.map((notification) => {
-                    const relevantUserNotifications = notification.userNotifications?.filter(
-                        (userNotif) => {
-                            // Check if the participant group is "all" or if it is for the current user
-                            const isForAllUsers = notification.participantGroup === "all";
-                            return (isForAllUsers || userNotif.userId === decoded.id) && !userNotif.removedStatus;
-                        }
-                    );
-
-                    return relevantUserNotifications.length > 0
-                        ? { ...notification, userNotifications: relevantUserNotifications }
-                        : null;
-                }).filter(Boolean); // Remove null entries
-
-                setNotifications(filteredNotifications);
-            })
-            .catch((error) => {
-                console.error('Error fetching notifications:', error);
-            });
-    }
-}, []);
-
-
-    const handleViewEvent = async (notificationId, eventId) => {
-        const token = sessionStorage.getItem("authToken");
+        const fetchEvents = async () => {
+            try {
+                const response = await axios.get('http://localhost:3000/a/events', {
+                    headers: { Authorization: `Bearer ${sessionStorage.getItem('authToken')}` },
+                });
+                setEvents(response.data);
+            } catch (error) {
+                console.error('Error fetching events:', error);
+            }
+        };
     
+        fetchEvents();
+    }, []);
+    
+    useEffect(() => {
+        const token = sessionStorage.getItem('authToken');
         if (token) {
             const decoded = jwtDecode(token);
-            const userId = decoded.id; // Get the user's ID from the decoded token
+            setUser({
+                name: decoded.name,
+                email: decoded.email,
+                profilePicture: decoded.profilePicture,
+                role: decoded.role,
+                department: decoded.department,
+            });
     
+            // Fetch notifications
+            axios
+                .get('http://localhost:3000/a/notification/items', {
+                    headers: { Authorization: `Bearer ${token}` },
+                })
+                .then((response) => {
+                    const filteredNotifications = response.data.map((notification) => {
+                        const relevantUserNotifications = notification.userNotifications?.filter(
+                            (userNotif) => {
+                                const isForAllUsers = notification.participantGroup === 'all';
+                                return (isForAllUsers || userNotif.userId === decoded.id) && !userNotif.removedStatus;
+                            }
+                        );
+    
+                        return relevantUserNotifications.length > 0
+                            ? { ...notification, userNotifications: relevantUserNotifications }
+                            : null;
+                    }).filter(Boolean);
+    
+                    // Map events to notifications
+                    const notificationsWithImages = filteredNotifications.map((notification) => {
+                        const event = events.find((e) => e._id === notification.eventId);
+                        return {
+                            ...notification,
+                            eventPicture: event ? event.eventPicture : null,
+                        };
+                    });
+    
+                    setNotifications(notificationsWithImages);
+                })
+                .catch((error) => {
+                    console.error('Error fetching notifications:', error);
+                });
+        }
+    }, [events]); // Re-run this effect whenever events change
+    
+
+    const handleViewEvent = async (notificationId, eventId) => {
+        const token = sessionStorage.getItem('authToken');
+        const decoded = jwtDecode(token);
+    
+        if (token) {
             try {
                 const response = await axios.put(
                     `http://localhost:3000/a/notification/update/${notificationId}`,
-                    { userId },
+                    { userId: decoded.id },
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -82,13 +104,14 @@ const Topbar = () => {
                 );
     
                 if (response.status === 200) {
+                    // Update the notification state
                     setNotifications((prevNotifications) =>
                         prevNotifications.map((notification) => {
                             if (notification._id === notificationId) {
                                 return {
                                     ...notification,
                                     userNotifications: notification.userNotifications.map((userNotif) =>
-                                        userNotif.userId === userId && !userNotif.removedStatus
+                                        userNotif.userId === decoded.id
                                             ? { ...userNotif, status: 'read', readAt: new Date() }
                                             : userNotif
                                     ),
@@ -98,14 +121,15 @@ const Topbar = () => {
                         })
                     );
     
-                    // Navigate to the event page
+                    // Redirect to the event page
                     window.location.href = `/u/events/${eventId}`;
                 }
             } catch (error) {
-                console.error("Error marking notification as read:", error);
+                console.error('Error marking notification as read:', error);
             }
         }
     };
+    
 
     const handleRemoveNotification = async (notificationId) => {
         const token = sessionStorage.getItem('authToken');
@@ -141,10 +165,11 @@ const Topbar = () => {
         <div className="topbar">
             <div className="search-admin"></div>
             <div className="user-info">
-                <div className="notification" onClick={toggleNotificationModal} style={{ cursor: 'pointer' }}>
-                    <FontAwesomeIcon icon={faBell} size="lg" />
-                    {hasUnreadNotifications && <div className="unread-circle"></div>}
-                </div>
+            <div className="notification" onClick={toggleNotificationModal} style={{ cursor: 'pointer', position: 'relative' }}>
+                <FontAwesomeIcon icon={faBell} size="lg" />
+                {hasUnreadNotifications && <div className="unread-circle"></div>}
+            </div>
+
                 <div className="profile">
                     <img src={user.profilePicture || Profile} alt="Admin Profile" />
                 </div>
@@ -169,33 +194,59 @@ const Topbar = () => {
                 <div className="notification-modal">
                     <div className="notification-header">
                         <h4>Notifications</h4>
-                        <button onClick={toggleNotificationModal} className="close-btn">X</button>
+                        <button onClick={toggleNotificationModal} className="close-btn"><i className="fas fa-times"></i></button>
                     </div>
                     <ul className="notification-list">
-                        {notifications.map((notification) => (
-                            <li key={notification._id} className="notification-item">
-                                <strong>{notification.title}</strong>
-                                <p>{notification.message}</p>
+                        {notifications.map((notification) => {
+                            const isUnread = notification.userNotifications?.some(
+                                (userNotif) => userNotif.status === 'unread'
+                            );
+
+                            return (
                                 <Link
                                     to={`/u/events/${notification.eventId}`}
                                     className="view-event-link"
                                     onClick={() => handleViewEvent(notification._id, notification.eventId)}
+                                    key={notification._id}
                                 >
-                                    View Event
+                                    <li
+                                        className={`notification-item ${isUnread ? 'unread' : 'read'}`}
+                                    >
+                                        <div className="item-img">
+                                            <img
+                                                src={`http://localhost:3000/eventPictures/${notification.eventPicture}`}
+                                                alt={notification.title}
+                                                className="event-image"
+                                                onError={(e) => (e.target.src = '/src/assets/default-eventPicture.jpg')}
+                                            />
+                                        </div>
+                                        <div className="item-content">
+                                            <strong>{notification.title}</strong>
+                                            <p>{notification.message}</p>
+                                            {isUnread ? (
+                                                <span className="unread-badge"></span>
+                                            ) : (
+                                                <span className="read-text"></span>
+                                            )}
+                                        </div>
+                                        <div className="item-setting">
+                                            <button
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    handleRemoveNotification(notification._id);
+                                                }}
+                                                className="remove-notification-btn"
+                                            >
+                                                <i className="fas fa-times"></i> {/* FontAwesome X icon */}
+                                            </button>
+                                        </div>
+
+                                    </li>
                                 </Link>
-
-                                {notification.userNotifications && notification.userNotifications.some(userNotif => userNotif.status === 'unread')
-                                    ? <span className="unread-text">Unread</span>
-                                    : <span className="read-text">Read</span>
-                                }
-
-                                {/* Add a Remove Button */}
-                                <button onClick={() => handleRemoveNotification(notification._id)} className="remove-notification-btn">
-                                    Remove
-                                </button>
-                            </li>
-                        ))}
+                            );
+                        })}
                     </ul>
+
                 </div>
             )}
         </div>

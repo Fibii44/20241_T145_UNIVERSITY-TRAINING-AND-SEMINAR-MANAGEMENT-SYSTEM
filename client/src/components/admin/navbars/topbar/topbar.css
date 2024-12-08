@@ -78,7 +78,7 @@
   position: absolute;
   top: 50px;
   right: 20px;
-  width: 300px;
+  width: 30rem;
   background-color: white;
   border: 1px solid #ddd;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
@@ -105,6 +105,9 @@
   padding: 8px;
   border-bottom: 1px solid #f0f0f0;
   cursor: pointer;
+  height: 7rem;
+  overflow: hidden;
+  display: flex;
 }
 
 .notification-item:hover {
@@ -129,4 +132,79 @@
   color: green;
   font-size: 12px;
   margin-left: 10px;
+}
+.item-img {
+  margin: 10px;
+  max-width: 5rem;
+  max-height: 5rem;
+}
+.item-img img {
+  border-radius: 1000px;
+  height: 5rem;
+  width: 5rem;;
+}
+.item-content p {
+  height: 50px;
+  overflow: hidden;
+  text-decoration: none; /* Removes the underline */
+  color: inherit;        /* Ensures the text color is inherited */
+  cursor: default;       /* Optional: Sets the cursor to default if it's styled as a link */
+}
+.view-event-link {
+  text-decoration: none; /* Remove the underline */
+  color: inherit;        /* Ensure it takes the default text color */
+}
+.notification-item.read {
+  font-weight: lighter;
+  color: #2d2d2d;
+  background-color: #d3d3d3; /* Light gray for unread notifications */
+}
+
+.notification-item.unread {
+  font-weight: normal;
+  background-color: white;
+}
+.remove-notification-btn {
+  background: none;
+  border: none;
+  color: #353232; /* Red color for the icon */
+  font-size: 16px; /* Adjust size */
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+}
+
+.remove-notification-btn:hover {
+  color: #ff1a1a; /* Darker red on hover */
+}
+.unread-circle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  background-color: red;
+  border-radius: 50%;
+  border: 2px solid white; /* Adds a white border for contrast */
+  pointer-events: none; /* Prevent interaction */
+  transform: translate(50%, -50%);
+}
+
+
+
+
+@media (max-width: 768px) {
+  .topbar {
+      flex-direction: column;
+      height: auto;
+  }
+  .search-admin {
+      width: 100%;
+  }
+  .notification-modal {
+      width: 90%;
+  }
 }
