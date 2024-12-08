@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCamera, faMapMarkerAlt, faTimes } from '@fortawesome/free-solid-svg-icons';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './createEvent.css';
+import TimePicker from 'react-bootstrap-time-picker';
 import { jwtDecode } from 'jwt-decode';
 
 const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEventData = null }) => {
@@ -245,8 +246,8 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
   
     console.log("Event Picture before save:", eventPicture);
   
-     // Prepare event data
-     const eventData = {
+    // Prepare event data
+    const eventData = {
       title,
       date,
       eventPicture,
@@ -265,8 +266,24 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
     try {
       // Save the event
       await onSave(eventData);
+      
+      // Send notifications
+      const notificationData = {
+        title: `Invitation to ${title}`,
+        message: `You are invited to attend the event: "${title}" on ${date} at ${location}.`,
+        customParticipants: cleanedParticipants,
+
+      };
+  
+      await axios.post('http://localhost:3000/a/notification/items', notificationData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      console.log('Notifications sent successfully');
     } catch (error) {
-      console.error('Error saving event:', error);
+      console.error('Error saving event or sending notifications:', error);
     }
   
     onClose();
@@ -309,7 +326,6 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
   return (
     <div className={`modal-overlay ${isOpen ? 'show' : ''}`} onClick={onClose}>
       <div className={`modal ${isOpen ? 'show' : ''}`} style={{ display: isOpen ? 'block' : 'none' }} onClick={(e) => e.stopPropagation()}>
-        <div className="modal-content">
           <div className="modal-header">
             <h5 className="modal-title">Event Details</h5>
             <button type="button" className="close" onClick={onClose}>
@@ -317,68 +333,84 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
             </button>
           </div>
           <div className="modal-body">
-            <div className="upload-photo">
-              <label htmlFor="file-upload" className="camera-icon-label">
-                <FontAwesomeIcon icon={faCamera} className="camera-icon" />
-              </label>
-              <input
-                id="file-upload"
-                type="file"
-                accept="image/*"
-                name="eventPicture"
-                onChange={handleImageChange}
-                style={{ display: 'none' }} // Hide default input
-              />
-              <p>Upload Photo</p>
-              {eventPicture && <p>Image Selected: {eventPicture.name}</p>}
-            </div>
-            <form className="event-form" onSubmit={handleSaveDetails}>
-              <input type="text" placeholder="Event Title" value={title} onChange={(e) => setTitle(e.target.value)} className="form-control mb-3" />
-              <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="form-control mb-3" />
-              <input type="time" value={startTime} onChange={(e) => setStartTime(e.target.value)} className="form-control mb-3" />
-              <input type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} className="form-control mb-3" />
-              <textarea placeholder="Enter event description" value={description} onChange={(e) => setDescription(e.target.value)} className="form-control mb-3"></textarea>
-
-              <div className="reminder-section mb-3">
-                <div className="reminder-options">
-                  {['None', '1 hour before', '1 day before', '1 week before'].map((reminder) => (
-                    <button
-                      key={reminder}
-                      type="button"
-                      className={`btn btn-sm ${activeReminder === reminder ? 'active' : ''}`}
-                      onClick={() => handleReminderClick(reminder)}
-                    >
-                      {reminder}
-                    </button>
-                  ))}
+            <form className="event-form fo" onSubmit={handleSaveDetails}>
+              <div className="event-row"> {/* Added a row container */}
+                <div className="col-md-5"> {/* Assigned columns for side-by-side layout */}
+                  <div className="upload-photo">
+                    <label htmlFor="file-upload">
+                      {eventPicture ? (
+                        <img src={URL.createObjectURL(eventPicture)} alt="Selected Image" />
+                      ) : (
+                        <FontAwesomeIcon icon={faCamera} className="camera-icon" />
+                      )}
+                    </label>
+                    <input
+                      id="file-upload"
+                      type="file"
+                      accept="image/*"
+                      name="eventPicture"
+                      onChange={handleImageChange}
+                      style={{ display: 'none' }} // Hide default input
+                    />
+                  </div>
+                </div>
+                <div className="col-md-7"> {/* Assigned columns for side-by-side layout */}
+                  <div className="event-details" style={{paddingTop: '0px'}}> {/* Added a container for better styling */}
+                      <input className="event-name form-control mb-3" type="text" placeholder="Event Title" value={title} onChange={(e) => setTitle(e.target.value)} />
+                    <div className="event-inputs">
+                      <input className="event-date form-control mb-3" type="date" placeholder="Event Date" value={date} onChange={(e) => setDate(e.target.value)} />
+                      <input className="form-control mb-3" type="time" value={startTime} onChange={(e) => setStartTime(e.target.value)} />
+                      <input className="form-control mb-3" type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} />
+                    </div>
+                    <textarea className="event-description form-control mb-3" placeholder="Enter event description" value={description} onChange={(e) => setDescription(e.target.value)}></textarea>
+                    <div className="location-input mb-4">
+                      <input type="text" placeholder="Enter location" value={location} onChange={(e) => setLocation(e.target.value)} className="form-control" />
+                      <FontAwesomeIcon icon={faMapMarkerAlt} className="location-icon" />
+                    </div>
+                    <div className="reminder-section">
+                    <h6 style={{color: "gray"}}>Set Reminder for Participants</h6>
+                      <select className="form-select" value={activeReminder} onChange={(e) => handleReminderClick(e.target.value)}>
+                        <option value="None">None</option>
+                        <option value="1 hour before">1 hour before</option>
+                        <option value="1 day before">1 day before</option>
+                        <option value="1 week before">1 week before</option>
+                      </select>
+                    </div>
+                  </div>
                 </div>
               </div>
+              
 
-              <div className="additional-options mb-3">
-                <div className="location-input">
-                  <input type="text" placeholder="Enter location" value={location} onChange={(e) => setLocation(e.target.value)} className="form-control" />
-                  <FontAwesomeIcon icon={faMapMarkerAlt} className="location-icon" />
-                </div>
+            
 
-                <div className="form-section mb-3">
-                  <h4>Post-Event Settings</h4>
-                  <p>Enter the Google Form link for respondent form.</p>
-                  <input 
-                    type="text" 
-                    placeholder="Google Form Link" 
-                    value={formLink} 
-                    onChange={handleFormLinkChange} 
-                    className="form-control mb-2"
-                  />
-                  <p>Enter the Google Form Link with Edit Access</p>
-                  <input 
-                    type="text" 
-                    placeholder="Google Form ID" 
-                    value={formId} 
-                    onChange={handleFormIdChange} 
-                    className="form-control mb-2"
-                  />
-                </div>
+
+                <div className="additional-options mb-3">
+                <hr />  <div className="google-form-section mb-3">
+                  <h4><strong>Post-Event Settings</strong></h4>
+                  <div className="google-form-row">
+                    
+                    <div className="col-md-5">
+                      <p>Enter the Google Form link for respondent form.</p>
+                      <input 
+                        type="text" 
+                        placeholder="Google Form Link" 
+                        value={formLink} 
+                        onChange={handleFormLinkChange} 
+                        className="google-form-control mb-3"
+                      />
+                    </div>
+                    <div className="col-md-5">
+                      <p>Enter the Google Form Link with Edit Access</p>
+                      <input 
+                        type="text" 
+                        placeholder="Google Form ID" 
+                        value={formId} 
+                        onChange={handleFormIdChange} 
+                        className="form-control mb-2"
+                      />
+                    </div>
+                    </div>
+                  </div>
 
 
                 <button type="button" className="invite-participants-btn" onClick={toggleFilterVisibility}>
@@ -413,15 +445,15 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
                         </div>
                       </div>
 
-                      <div className="search-input mb-1">
+                    
                         <input
                           type="text"
-                          placeholder="Search participants by email"
+                          placeholder="Invite Participants by Email"
                           value={searchTerm}
                           onChange={handleSearch}
-                          className="form-control"
+                          className="form-control mb-3"
                         />
-                      </div>
+                
 
                       {searchTerm && (
                         <div className="participants-list">
@@ -472,8 +504,8 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
           </div>
         </div>
       </div>
-    </div>
   );
 };
 
 export default EventModal;
+    

@@ -13,8 +13,8 @@
 
 .modal {
   background: white;
-  border-radius: 8px;
-  width: 600px;
+  border-radius: 1rem;
+  width: 60rem;
   max-height: 90%;
   overflow-y: auto;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
@@ -47,10 +47,27 @@
   color: #b02a2a;
 }
 
+.event-row{
+  display: flex;
+} 
+
+.google-form-row{
+  justify-content: start;
+  display: flex;
+  gap: 1rem;
+  width: 60rem;
+}
+
+hr {
+  margin: 1rem; /* Adjust margin as needed */
+}
+
 .event-form {
   display: flex;
   flex-direction: column;
   gap: 5px;
+  box-shadow: none;
+  background-color: white;
 }
 
 .event-form label {
@@ -67,6 +84,27 @@
   border-radius: 5px;
   box-sizing: border-box;
 }
+
+
+input[type="time"] {
+  /* Customize appearance as needed */
+  width: 100px; /* Adjust width */
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.event-inputs {
+  display: flex;
+  gap: 1rem;
+}
+
+.event-inputs input {
+  width: 50%;
+ 
+}
+
+
 
 .custom-form-control {
   padding: 10px;
@@ -101,9 +139,9 @@
 }
 
 .event-buttons {
-  display: inline-flex;
-  justify-content: flex-start;
-  gap: 10px;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
 }
 
 .event-close-button,
@@ -138,13 +176,12 @@
 
 .reminder-options {
   justify-content: center;
-  display: flex;
-  gap: 5px;
+  display:flex;
   flex-wrap: wrap;
-}
+  gap: 5px;
+} 
 
 .reminder-options button {
-  padding: 5px 10px;
   background-color: #f5f5f5;
   color: #333;
   border: 1px solid #ccc;
@@ -186,9 +223,20 @@
 
 .upload-photo {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  margin-bottom: 20px;
+  justify-content: center;
+  width: 20rem; /* Define the width */
+  height: 15rem; /* Define the height */
+  border: 1px solid #ddd; /* Optional border */
+  border-radius: 1rem;
+}
+
+.upload-photo img {
+  object-fit: cover; /* Maintain aspect ratio and fill container */
+  padding: .5rem;
+  max-width: 100%; /* Ensure image doesn't overflow container */
+  max-height: 200px; /* Set a maximum height */
+  
 }
 
 .camera-icon {
