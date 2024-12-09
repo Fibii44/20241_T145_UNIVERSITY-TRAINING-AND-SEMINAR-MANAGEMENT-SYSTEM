@@ -1,10 +1,10 @@
 const bcrypt = require('bcrypt');
 const User = require('../../models/user');
 const crypto = require('crypto');
-// const DeletedUser = require('../../models/archivedUser');
 const { emitNewActivity } = require('../../config/socketConfig')
 const multer = require('multer');
 const sendEmail = require('../../utils/sendEmail');
+const userNotification = require('../../models/notification');
 
 // Multer configuration for file uploads
 const storage = multer.diskStorage({
@@ -164,38 +164,6 @@ const editUser = async (req, res) => {
 };
 
 
-// const deleteUser = async (req, res) => {
-//     const userId = req.params.id;
-//     const archivedBy = req.body.archivedBy; 
-
-//     try {
-//         const user = await User.findById(userId);
-//         if (!user) {
-//             return res.status(404).json({ message: 'User not found' });
-//         }
-
-//         // Create a new DeletedUser document
-//         const deletedUser = new DeletedUser({
-//             userId: user._id,
-//             name: user.name,
-//             email: user.email,
-//             role: user.role,
-//             position: user.position,
-//             department: user.department,
-//             phoneNumber: user.phoneNumber,
-//             archivedBy: archivedBy, 
-//             archivedAt: new Date() 
-//         });
-
-//         await deletedUser.save(); 
-//         await User.findByIdAndDelete(userId); // Delete the user from users collection
-
-//         res.status(200).json({ message: 'User archived successfully', deletedUser });
-//     } catch (error) {
-//         res.status(500).json({ message: error.message });
-//     }
-// };
-
 const fetchEventParticipants = async (req, res) => {
   try{
     const { college } = req.query;
@@ -210,13 +178,34 @@ const fetchEventParticipants = async (req, res) => {
   }
 }
 
+// Create a new item
+const createNotificationItem = async (req, res) => {
+  try {
+      const { participants, eventDetails } = req.body; // Assume you send participants and event details
+      const newItem = new userNotification({
+          ...req.body,
+          userNotifications: participants.map(userId => ({
+              userId,
+              status: 'unread',
+              readAt: null
+          }))
+      });
+
+      await newItem.save();
+      res.status(201).json({ message: 'Item created successfully', newItem });
+  } catch (error) {
+      console.error('Error creating item:', error);
+      res.status(500).json({ message: 'Error creating item', error: error.message });
+  }
+};
+
 
 module.exports = {
   renderPersonnelPage,
   addPersonnelAccount,
   editUser,
   renderUserTable,
-  // deleteUser,
   upload,
-  fetchEventParticipants
+  fetchEventParticipants,
+  createNotificationItem
 };

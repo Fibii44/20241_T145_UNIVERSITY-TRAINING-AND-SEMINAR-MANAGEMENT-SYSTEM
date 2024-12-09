@@ -26,7 +26,7 @@ const Topbar = () => {
     useEffect(() => {
         const fetchEvents = async () => {
             try {
-                const response = await axios.get('http://localhost:3000/a/events', {
+                const response = await axios.get('http://localhost:3000/u/events', {
                     headers: { Authorization: `Bearer ${sessionStorage.getItem('authToken')}` },
                 });
                 setEvents(response.data);
@@ -52,7 +52,7 @@ const Topbar = () => {
     
             // Fetch notifications
             axios
-                .get('http://localhost:3000/a/notification/items', {
+                .get('http://localhost:3000/u/notification/items', {
                     headers: { Authorization: `Bearer ${token}` },
                 })
                 .then((response) => {
@@ -94,7 +94,7 @@ const Topbar = () => {
         if (token) {
             try {
                 const response = await axios.put(
-                    `http://localhost:3000/a/notification/update/${notificationId}`,
+                    `http://localhost:3000/u/notification/update/${notificationId}`,
                     { userId: decoded.id },
                     {
                         headers: {
@@ -138,7 +138,7 @@ const Topbar = () => {
         if (token) {
             try {
                 const response = await axios.put(
-                    `http://localhost:3000/a/notification/remove/${notificationId}`,
+                    `http://localhost:3000/u/notification/remove/${notificationId}`,
                     { userId: decoded.id }, // Send userId as part of the request
                     {
                         headers: { Authorization: `Bearer ${token}` },

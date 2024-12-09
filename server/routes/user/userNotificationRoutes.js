@@ -4,16 +4,13 @@ const authenticateJWT = require('../../middleware/auth');
 const userNewFeatureService = require('../../services/user/userNotificationService');
 
 // List all notification
-userNotification.get('/a/notification/items', userNewFeatureService.listItems);
-
-// Create a new  notification item
-userNotification.post('/a/notification/items',  userNewFeatureService.createItem);
+userNotification.get('/u/notification/items',authenticateJWT, userNewFeatureService.listItems);
 
 // Update exisiting notification item details
-userNotification.put('/a/notification/update/:id',  userNewFeatureService. updateNotificationStatus);
+userNotification.put('/u/notification/update/:id', authenticateJWT, userNewFeatureService. updateNotificationStatus);
 
 // Update exisiting notification item removestatus
-userNotification.put('/a/notification/remove/:id',  userNewFeatureService. removeNotification);
+userNotification.put('/u/notification/remove/:id',authenticateJWT,  userNewFeatureService. removeNotification);
 
 
 module.exports = userNotification;

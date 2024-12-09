@@ -112,9 +112,6 @@ if (participantGroup && participantGroup.college) {
 // Perform the query with OR logic based on the conditions
 const users = await User.find({ $or: conditions });
 
-// Log fetched users for debugging
-console.log("Fetched Users:", users);
-
 // Create userNotifications array
 const userNotifications = users.map(user => ({
   userId: user._id,
@@ -122,8 +119,6 @@ const userNotifications = users.map(user => ({
   status: 'unread', // Set status as unread initially
 }));
 
-// Log userNotifications for debugging
-console.log("User Notifications:", userNotifications);
 
 // Create notification for the event
 const notification = {
@@ -142,7 +137,6 @@ const notification = {
 
 // Log notification before saving
 console.log("Notification Object:", notification);
-
 await Notification.create(notification);
 
 
