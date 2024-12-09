@@ -7,10 +7,10 @@ const userNewFeatureService = require('../../services/user/userNotificationServi
 userNotification.get('/u/notification/items',authenticateJWT, userNewFeatureService.listItems);
 
 // Update exisiting notification item details
-userNotification.put('/u/notification/update/:id', authenticateJWT, userNewFeatureService. updateNotificationStatus);
+userNotification.patch('/u/notification/update/:id', authenticateJWT, userNewFeatureService. updateNotificationStatus);
 
 // Update exisiting notification item removestatus
-userNotification.put('/u/notification/remove/:id',authenticateJWT,  userNewFeatureService. removeNotification);
+userNotification.patch('/u/notification/remove/:id',authenticateJWT,  userNewFeatureService. removeNotification);
 
 
 module.exports = userNotification;

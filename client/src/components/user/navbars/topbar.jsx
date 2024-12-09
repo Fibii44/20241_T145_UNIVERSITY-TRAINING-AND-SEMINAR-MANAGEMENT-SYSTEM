@@ -93,7 +93,7 @@ const Topbar = () => {
     
         if (token) {
             try {
-                const response = await axios.put(
+                const response = await axios.patch(
                     `http://localhost:3000/u/notification/update/${notificationId}`,
                     { userId: decoded.id },
                     {
@@ -137,7 +137,7 @@ const Topbar = () => {
     
         if (token) {
             try {
-                const response = await axios.put(
+                const response = await axios.patch(
                     `http://localhost:3000/u/notification/remove/${notificationId}`,
                     { userId: decoded.id }, // Send userId as part of the request
                     {
