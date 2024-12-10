@@ -98,7 +98,7 @@ function EventGrid() {
     };
 
     return (
-            <div>
+            <div className='user-events-content'>
                 {/* Search Bar */}
                 <div className="search-container">
                     <input
@@ -251,6 +251,8 @@ function EventGrid() {
 
 
             {/* Events Grid */}
+
+            
             <div className="user-events-grid" style={{ contentAlign: 'center', margin: '0 auto' }}>
                 {currentEvents.map((event) => (
                     <Link to={`/u/events/${event._id}`} key={event._id} className="event-link">

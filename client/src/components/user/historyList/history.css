@@ -1,5 +1,7 @@
 .userHistory-container {
   background-color: #f5f6fa;
+  height: 40rem;
+  max-height: 100rem;
 }
 
 .kanban-board {

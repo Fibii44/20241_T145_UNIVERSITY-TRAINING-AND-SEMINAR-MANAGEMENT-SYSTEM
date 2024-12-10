@@ -1,0 +1,13 @@
+footer {
+    background-color: #f8f9fa; /* Optional styling */
+    text-align: center;
+    padding: 10px 0;
+    width: 100%; /* Ensure the footer spans the full width */
+    bottom: 0; /* Pin the footer to the bottom of the page */
+}
+
+.dashboard-container {
+    position: relative; /* Set the parent container to relative */
+    min-height: 100vh; /* Ensure it spans the full viewport height */
+    padding-bottom: 50px; /* Add padding equal to the footer height to prevent overlap */
+}

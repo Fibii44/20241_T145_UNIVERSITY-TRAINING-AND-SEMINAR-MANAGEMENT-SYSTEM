@@ -4,7 +4,7 @@ import Sidebar from '../../components/user/navbars/sidebar.jsx';
 import Topbar from '../../components/user/navbars/topbar.jsx';
 import EventOpen from '../../components/user/eventDetails/eventDetails.jsx';
 import '@fortawesome/fontawesome-free/css/all.min.css';
-
+import "./css.css"
 const eventPage = () => {
 
   const [isCollapsed, setIsCollapsed] = useState(false);
