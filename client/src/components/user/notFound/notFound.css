@@ -1,0 +1,42 @@
+/* Center the content */
+.not-found-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f8f9fa; /* Light gray background */
+    font-family: Arial, sans-serif;
+}
+
+/* Style the heading */
+.not-found-container h1 {
+    font-size: 3rem;
+    color: #343a40; /* Dark gray */
+    margin-bottom: 1rem;
+    font-weight: bold;
+}
+
+/* Style the paragraph */
+.not-found-container p {
+    font-size: 1.25rem;
+    color: #6c757d; /* Medium gray */
+    margin-bottom: 1.5rem;
+}
+
+/* Style the link */
+.not-found-container a {
+    font-size: 1rem;
+    color: #007bff; /* Bootstrap blue */
+    text-decoration: none;
+    border: 2px solid #007bff;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* Hover effect for the link */
+.not-found-container a:hover {
+    background-color: #007bff;
+    color: #ffffff; /* White text on hover */
+}

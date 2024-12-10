@@ -24,6 +24,8 @@
     "express": "^4.21.1",
     "gapi-script": "^1.2.0",
     "googleapis": "^105.0.0",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^2.5.2",
     "jwt-decode": "^4.0.0",
     "mdb-react-ui-kit": "^9.0.0",
     "moment": "^2.30.1",

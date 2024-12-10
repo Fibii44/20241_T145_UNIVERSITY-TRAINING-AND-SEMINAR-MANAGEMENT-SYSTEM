@@ -7,7 +7,7 @@ import Certificates from '../pages/user/certificates'
 import History from '../pages/user/historyList'
 import Profile from '../pages/user/profile'
 import EventDetails from '../pages/user/eventDetails';
-
+import NotFound from '../pages/user/notFound';
 
 
 function User() {
@@ -22,6 +22,7 @@ function User() {
           <Route path="certificates" element={<Certificates />} />
           <Route path="history" element={<History />} />
           <Route path="profile" element={<Profile />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
   );

@@ -8,6 +8,7 @@ import AddUser from '../pages/admin/addPersonnelPage';
 import Calendar from '../pages/admin/calendar'
 import Table from '../pages/admin/usersTable';
 import Logs from '../pages/admin/activityLogPage'
+import NotFound from '../pages/admin/notFound';
 // import Login from '../pages/login/Login'
 // import LoginSuccess from '../pages/login/LoginSuccess';
 // import CalendarA from '../../pages/adminpages/calendarA'; 
@@ -26,6 +27,7 @@ function Admin() {
           <Route path="events" element={<Events />} />
           <Route path='activity-logs' element={<Logs />} />
           {/* <Route path="/calendar" element={<CalendarA />} />  */}
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
   );

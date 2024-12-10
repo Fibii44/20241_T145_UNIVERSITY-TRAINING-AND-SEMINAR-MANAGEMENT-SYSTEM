@@ -12,6 +12,9 @@ import {
     ResponsiveContainer,
 } from 'recharts';
 import './eventHistoryDetails.css';
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
+import Logo from "../../../assets/buksu-logo.png"
 
 // StatCard Component
 const StatCard = ({ title, count, icon, color }) => (
@@ -171,6 +174,104 @@ const EventDetails = () => {
         setLoading(false);
     }, [id]);
 
+    const downloadPDF = async () => {
+        const { jsPDF } = await import("jspdf");
+        const { html2canvas } = await import("html2canvas"); // For chart rendering
+        const pdf = new jsPDF();
+    
+        // Add Logo
+        const logoURL = Logo; // Replace with your logo URL or base64 string
+        const logo = await fetch(logoURL).then((res) => res.blob()).then((blob) => URL.createObjectURL(blob));
+        pdf.addImage(logo, "PNG", 10, 5, 30, 15); // Adjust size and position as needed
+    
+        // Title
+        pdf.setFontSize(18);
+        pdf.text("Event Report", 50, 15);
+    
+        // Event Details with Formatted Date
+        const formatDate = (dateStr, format = "YYYY-MM-DD") => {
+            const date = new Date(dateStr);
+            if (isNaN(date.getTime())) return "N/A"; // Handle invalid date
+            const options =
+                format === "Month DD, YYYY"
+                    ? { year: "numeric", month: "long", day: "numeric" }
+                    : { year: "numeric", month: "2-digit", day: "2-digit" };
+            return new Intl.DateTimeFormat("en-US", options).format(date);
+        };
+    
+        pdf.setFontSize(14);
+        pdf.text(`Event: ${eventDetail?.title || "N/A"}`, 10, 30);
+        pdf.text(`Date: ${formatDate(eventDetail?.eventDate, "Month DD, YYYY")}`, 10, 40);
+        pdf.text(`Location: ${eventDetail?.location || "N/A"}`, 10, 50);
+        
+        // Summary Data
+        pdf.setFontSize(12);
+        const totalAttendees = attendedList.length || 0;
+        const totalRegistrations = users.length || 0;
+        const avgRating = (
+            attendedList.reduce((sum, attended) => sum + (attended.eventRating || 0), 0) /
+            (totalAttendees || 1)
+        ).toFixed(2);
+        
+        let summaryY = 60;
+        pdf.text(`Total Attendees: ${totalAttendees}`, 10, summaryY);
+        pdf.text(`Total Registrations: ${totalRegistrations}`, 10, summaryY + 10);
+        pdf.text(`Average Rating: ${avgRating}`, 10, summaryY + 20);
+        pdf.text(`Description: ${eventDetail?.description || "N/A"}`, 10, summaryY + 30)
+        // Render Chart (if applicable)
+        const chartElement = document.getElementById("chart-container"); // Replace with your chart container's ID
+        if (chartElement) {
+            const chartCanvas = await html2canvas(chartElement);
+            const chartData = chartCanvas.toDataURL("image/png");
+            pdf.addImage(chartData, "PNG", 10, summaryY + 30, 180, 80); // Adjust size and position
+            summaryY += 90; // Adjust Y position for the next section
+        }
+    
+        // Table Heading
+        pdf.setFontSize(12);
+        const tableStartY = summaryY + 40;
+        const tableHeaders = ["ID", "Name", "Email", "Phone", "Role", "Rating"];
+        let y = tableStartY;
+        const lineHeight = 10;
+    
+        pdf.setFontSize(10);
+        pdf.text(tableHeaders.join(" | "), 10, y);
+        pdf.line(10, y + 2, 200, y + 2); // Line under header
+        y += lineHeight;
+    
+        // Table Rows
+        const matchedUsers = attendedList
+            .map((attended) => {
+                const user = users.find((u) => u._id === attended.userId);
+                return user ? { ...user, eventRating: attended.eventRating } : null;
+            })
+            .filter(Boolean);
+    
+        matchedUsers.forEach((user) => {
+            const row = [
+                user.userId || "N/A",
+                user.name || "N/A",
+                user.email || "N/A",
+                user.phoneNumber || "N/A",
+                user.role || "N/A",
+                user.eventRating || "N/A",
+            ];
+            pdf.text(row.join(" | "), 10, y);
+            y += lineHeight;
+    
+            // Handle page overflow
+            if (y > 280) {
+                pdf.addPage();
+                y = 10;
+            }
+        });
+    
+        // Save the PDF
+        pdf.save(`${eventDetail?.title || "event-report"}.pdf`);
+    };
+    
+    
+
     if (loading) {
         return <div>Loading...</div>;
     }
@@ -240,12 +341,14 @@ const UsersTable = ({ attendedList = [], users = [] }) => {
         <div className="dashboard-container">
             <div className="event-container">
             <h2 className="dashboard-heading">Event Report</h2>
+            <button onClick={downloadPDF} className="download-btn">Download PDF</button>
                     <div className="card-wrapper">
                         <div className="details-section">
                             <img
                                 src={`http://localhost:3000/eventPictures/${eventDetail?.eventPicture}`}
                                 alt={`${eventDetail?.title || 'No'} image`}
                                 className="history-event-img"
+                                onError={(e) => (e.target.src = '/src/assets/default-eventPicture.jpg')}
                             />
                             <h3 className="title-heading">{eventDetail?.title}</h3>
                             <p className="description-text">{eventDetail?.description}</p>

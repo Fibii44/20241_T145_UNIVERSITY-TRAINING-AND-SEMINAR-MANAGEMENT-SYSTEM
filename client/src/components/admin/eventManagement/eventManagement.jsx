@@ -365,10 +365,9 @@ const EventM = ({ userRole, userCollege }) => {
           onClose={() => setIsDeleteModalOpen(false)}
           onConfirmDelete={confirmDelete}
         />
-{/* Sorting Dropdown */}
-<div className="sort-container">
+    {/* Sorting Dropdown */}
+    <div className="sort-container">
           <label className='sort-label' htmlFor="sort">Sort By:</label>
-          <br />
           <select
             id="sort"
             value={sortOption}
@@ -379,7 +378,7 @@ const EventM = ({ userRole, userCollege }) => {
             <option value="titleAsc">Title (A-Z)</option>
             <option value="titleDesc">Title (Z-A)</option>
           </select>
-        </div>
+    </div>
 
 {/* Events */}
 <div className="context-card">

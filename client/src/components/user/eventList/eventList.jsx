@@ -36,52 +36,52 @@ function EventGrid() {
     const handleSort = (option) => {
         setSortOption(option);
         const sortedEvents = [...filteredEvents];
+
         if (option === 'dateAsc') {
             sortedEvents.sort((a, b) => new Date(a.startTime) - new Date(b.startTime));
         } else if (option === 'dateDesc') {
             sortedEvents.sort((a, b) => new Date(b.startTime) - new Date(a.startTime));
-        } else if (option === 'titleAsc') {
-            sortedEvents.sort((a, b) => a.title.localeCompare(b.title));
-        } else if (option === 'titleDesc') {
-            sortedEvents.sort((a, b) => b.title.localeCompare(a.title));
+        } else if (option === 'collegeAsc') {
+            sortedEvents.sort((a, b) => {
+                const collegeA = a.participantGroup?.college || '';
+                const collegeB = b.participantGroup?.college || '';
+                return collegeA.localeCompare(collegeB);
+            });
+        } else if (option === 'collegeDesc') {
+            sortedEvents.sort((a, b) => {
+                const collegeA = a.participantGroup?.college || '';
+                const collegeB = b.participantGroup?.college || '';
+                return collegeB.localeCompare(collegeA);
+            });
         }
+
         setFilteredEvents(sortedEvents);
-        setCurrentPage(1); // Reset to first page
+        setCurrentPage(1);
+    };
+
+    const handleFilter = (option) => {
+        setFilterOption(option);
+        if (option === 'all') {
+            setFilteredEvents(events);
+        } else {
+            setFilteredEvents(
+                events.filter((event) => event.participantGroup?.college === option)
+            );
+        }
+        setCurrentPage(1);
     };
 
     const handleSearch = (query) => {
         setSearchQuery(query);
         const lowerQuery = query.toLowerCase();
-        const results = events.filter(
-            (event) =>
+        setFilteredEvents(
+            events.filter((event) =>
                 event.title.toLowerCase().includes(lowerQuery) ||
                 event.description.toLowerCase().includes(lowerQuery)
+            )
         );
-        setFilteredEvents(results);
-        setCurrentPage(1); // Reset to first page
+        setCurrentPage(1);
     };
-
-    const handleFilter = (option) => {
-        setFilterOption(option);
-        const today = new Date();
-        let filtered;
-    
-        if (option === 'all') {
-            filtered = events;
-        } else if (option === 'upcoming') {
-            filtered = events.filter(
-                (event) => new Date(event.eventDate).setHours(0, 0, 0, 0) >= today.setHours(0, 0, 0, 0)
-            );
-        } else if (option === 'past') {
-            filtered = events.filter(
-                (event) => new Date(event.eventDate).setHours(0, 0, 0, 0) < today.setHours(0, 0, 0, 0)
-            );
-        }
-    
-        setFilteredEvents(filtered);
-        setCurrentPage(1); // Reset to first page
-    };
-    
 
     // Pagination
     const indexOfLastEvent = currentPage * eventsPerPage;
@@ -98,62 +98,154 @@ function EventGrid() {
     };
 
     return (
-        <div>
-            {/* Search Bar */}
-            <div className="search-container">
-                <input
-                    type="text"
-                    className="search-bar"
-                    placeholder="Search events..."
-                    value={searchQuery}
-                    onChange={(e) => handleSearch(e.target.value)}
-                />
-               
-                 {/* Sort Dropdown */}
-        <div className="event-sort-container">
-            
-            <br />
-            <select
-                className="event-sort"
-                id="sort"
-                value={sortOption}
-                onChange={(e) => {
-                    const selectedOption = e.target.value;
-                    if (selectedOption === 'all') {
-                        setFilteredEvents(events); // Show all events
-                    } else if (selectedOption === 'upcoming') {
-                        const today = new Date();
-                        setFilteredEvents(
-                            events.filter(event => new Date(event.eventDate) >= today)
-                        ); // Show upcoming events
-                    } else if (selectedOption === 'past') {
-                        const today = new Date();
-                        setFilteredEvents(
-                            events.filter(event => new Date(event.eventDate) < today)
-                        ); // Show past events
-                    } else {
-                        handleSort(selectedOption); // Handle sorting
-                    }
-                    setSortOption(selectedOption);
-                    setCurrentPage(1); // Reset to first page
-                }}
-            >
-                {/* Filter Options */}
-                <optgroup label="Filters">
-                    <option value="all">All Events</option>
-                    <option value="upcoming">Upcoming Events</option>
-                    <option value="past">Today's Events</option>
-                </optgroup>
-                {/* Sort Options */}
-                <optgroup label="Sort By">
-                    <option value="dateAsc">Date (Ascending)</option>
-                    <option value="dateDesc">Date (Descending)</option>
-                    <option value="titleAsc">Title (A-Z)</option>
-                    <option value="titleDesc">Title (Z-A)</option>
-                </optgroup>
-            </select>
-        </div>
-            </div>
+            <div>
+                {/* Search Bar */}
+                <div className="search-container">
+                    <input
+                        type="text"
+                        className="search-bar"
+                        placeholder="Search events..."
+                        value={searchQuery}
+                        onChange={(e) => handleSearch(e.target.value)}
+                    />
+                
+                    {/* Sort Dropdown */}
+                    <div className="event-sort-container">
+        <br />
+        <select
+            className="event-sort"
+            id="sort"
+            value={sortOption}
+            onChange={(e) => {
+                const selectedOption = e.target.value;
+
+                if (selectedOption === 'all') {
+                    setFilteredEvents(events); // Show all events
+                } else if (selectedOption === 'upcoming') {
+                    const today = new Date();
+                    setFilteredEvents(
+                        events.filter((event) => new Date(event.eventDate) >= today)
+                    ); // Show upcoming events
+                } else if (selectedOption === 'past') {
+                    const today = new Date();
+                    setFilteredEvents(
+                        events.filter((event) => new Date(event.eventDate) < today)
+                    ); // Show past events
+                } else if (selectedOption === 'CAS') {
+                    setFilteredEvents(
+                        events.filter((event) => event.participantGroup?.college === 'College of Arts and Sciences')
+                    ); // Show events for CAS
+                } else if (selectedOption === 'COB') {
+                    setFilteredEvents(
+                        events.filter((event) => event.participantGroup?.college === 'College of Business')
+                    ); // Show events for COB
+                } else if (selectedOption === 'COE') {
+                    setFilteredEvents(
+                        events.filter((event) => event.participantGroup?.college === 'College of Education')
+                    ); // Show events for COE
+                } else if (selectedOption === 'COL') {
+                    setFilteredEvents(
+                        events.filter((event) => event.participantGroup?.college === 'College of Law')
+                    ); // Show events for COL
+                } else if (selectedOption === 'CPAG') {
+                    setFilteredEvents(
+                        events.filter((event) => event.participantGroup?.college === 'College of Public Administration and Governance')
+                    ); // Show events for CPAG
+                } else if (selectedOption === 'CON') {
+                    setFilteredEvents(
+                        events.filter((event) => event.participantGroup?.college === 'College of Nursing')
+                    ); // Show events for CON
+                } else if (selectedOption === 'COT') {
+                    setFilteredEvents(
+                        events.filter((event) => event.participantGroup?.college === 'College of Technologies')
+                    ); // Show events for COT
+                } else {
+                    handleSort(selectedOption); // Handle sorting for other options
+                }
+
+                setSortOption(selectedOption);
+                setCurrentPage(1); // Reset to first page
+            }}
+        >
+            {/* Filter Options */}
+            <optgroup label="Filters">
+                <option value="all">All Events</option>
+                <option value="upcoming">Upcoming Events</option>
+                <option value="past">Past Events</option>
+                <option value="CAS">College of Arts and Sciences</option>
+                <option value="COB">College of Business</option>
+                <option value="COE">College of Education</option>
+                <option value="COL">College of Law</option>
+                <option value="CPAG">College of Public Administrative and Governance</option>
+                <option value="CON">College of Nursing</option>
+                <option value="COT">College of Technologies</option>
+            </optgroup>
+        </select>
+        <select
+            className="event-sort"
+            id="sort"
+            value={sortOption}
+            onChange={(e) => {
+                const selectedOption = e.target.value;
+
+                if (selectedOption === 'all') {
+                    setFilteredEvents(events); // Show all events
+                } else if (selectedOption === 'upcoming') {
+                    const today = new Date();
+                    setFilteredEvents(
+                        events.filter((event) => new Date(event.eventDate) >= today)
+                    ); // Show upcoming events
+                } else if (selectedOption === 'past') {
+                    const today = new Date();
+                    setFilteredEvents(
+                        events.filter((event) => new Date(event.eventDate) < today)
+                    ); // Show past events
+                } else if (selectedOption === 'CAS') {
+                    setFilteredEvents(
+                        events.filter((event) => event.participantGroup?.college === 'College of Arts and Sciences')
+                    ); // Show events for CAS
+                } else if (selectedOption === 'COB') {
+                    setFilteredEvents(
+                        events.filter((event) => event.participantGroup?.college === 'College of Business')
+                    ); // Show events for COB
+                } else if (selectedOption === 'COE') {
+                    setFilteredEvents(
+                        events.filter((event) => event.participantGroup?.college === 'College of Education')
+                    ); // Show events for COE
+                } else if (selectedOption === 'COL') {
+                    setFilteredEvents(
+                        events.filter((event) => event.participantGroup?.college === 'College of Law')
+                    ); // Show events for COL
+                } else if (selectedOption === 'CPAG') {
+                    setFilteredEvents(
+                        events.filter((event) => event.participantGroup?.college === 'College of Public Administration and Governance')
+                    ); // Show events for CPAG
+                } else if (selectedOption === 'CON') {
+                    setFilteredEvents(
+                        events.filter((event) => event.participantGroup?.college === 'College of Nursing')
+                    ); // Show events for CON
+                } else if (selectedOption === 'COT') {
+                    setFilteredEvents(
+                        events.filter((event) => event.participantGroup?.college === 'College of Technologies')
+                    ); // Show events for COT
+                } else {
+                    handleSort(selectedOption); // Handle sorting for other options
+                }
+
+                setSortOption(selectedOption);
+                setCurrentPage(1); // Reset to first page
+            }}
+        >
+            {/* Filter Options */}       
+            <optgroup label="Sort By">
+                <option value="dateAsc">Date (Ascending)</option>
+                <option value="dateDesc">Date (Descending)</option>
+                <option value="titleAsc">Title (A-Z)</option>
+                <option value="titleDesc">Title (Z-A)</option>
+            </optgroup>
+        </select>
+    </div>
+</div>
             
            
 
