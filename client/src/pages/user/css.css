@@ -8,6 +8,5 @@ footer {
 
 .dashboard-container {
     position: relative; /* Set the parent container to relative */
-    min-height: 100vh; /* Ensure it spans the full viewport height */
-    padding-bottom: 50px; /* Add padding equal to the footer height to prevent overlap */
+   
 }
