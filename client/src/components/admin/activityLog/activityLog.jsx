@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
 import io from 'socket.io-client';
 import axios from 'axios';
 import moment from 'moment';
@@ -6,11 +7,37 @@ import './activityLog.css';
 
 const ActivityLog = () => {
     const [logs, setLogs] = useState([]);
+    const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const logsPerPage = 8;
+
+    
+    useEffect(() => {
+        // Check if user has access to this page
+        const checkAccess = async () => {
+            try {
+                const token = sessionStorage.getItem("authToken");
+                const response = await fetch("http://localhost:3000/a/activity-logs", {
+                    method: "GET",
+                        headers: {
+                          Authorization: `Bearer ${token}`,
+                        },
+                    });
+            
+                    if (response.status === 403) {
+                        // Redirect to a different page if access is denied
+                        navigate("/a/dashboard"); // Change this to your desired redirect path
+                    }
+                    } catch (error) {
+                        console.error("Access check failed:", error);
+                    }
+                };
+        checkAccess();
+    }, []);
+
 
     useEffect(() => {
         // Fetch initial logs
@@ -29,6 +56,7 @@ const ActivityLog = () => {
                 setLoading(false);
             }
         };
+
 
         fetchLogs();
 

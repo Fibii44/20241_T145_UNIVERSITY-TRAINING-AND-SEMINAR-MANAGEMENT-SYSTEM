@@ -1,7 +1,7 @@
 const User = require('../../models/user');
 const Registration = require('../../models/registration');
 const { emitNewActivity } = require('../../config/socketConfig')
-// db connection
+
 // Render user profile page
 const renderProfilePage = async (req, res) => {
     try {
@@ -34,7 +34,7 @@ const updateUserProfile = async (req, res) => {
         const updatedUser = await user.save();
         await emitNewActivity(user._id, 'Updated User Profile', {userName: user.name})
 
-        res.json(updatedUser);  // Return the updated user data to the client without sensitive details in the logs
+        res.status(200).json(updatedUser);  // Return the updated user data to the client without sensitive details in the logs
     } catch (error) {
         console.error('Error updating profile:', error);  // Log error but avoid logging sensitive info
         res.status(500).send(`Error updating profile: ${error.message}`);
@@ -44,7 +44,7 @@ const updateUserProfile = async (req, res) => {
 const listCertificates = async (req, res) => {
     try {
         const certificates = await Certificate.find({ userId: req.user.id });
-        res.json(certificates);
+        res.status(200).json(certificates);
     } catch (error) {
         res.status(500).send('Error retrieving certificates');
     }
@@ -55,7 +55,7 @@ const viewCertificate = async (req, res) => {
     try {
         const certificate = await Certificate.findById(req.params.certificateID);
         if (!certificate) return res.status(404).send('Certificate not found');
-        res.json(certificate);
+        res.status(200).json(certificate);
     } catch (error) {
         res.status(500).send('Error retrieving certificate');
     }
@@ -70,7 +70,7 @@ const renderHistoryPage = async (req, res) => {
             .map(reg => reg.eventId)
             .filter(event => event); // Filter out any null or invalid events
 
-        res.json(events || []); // Always send an array
+        res.status(200).json(events || []); // Always send an array
     } catch (err) {
         console.error("Error fetching registered events", err);
         res.status(500).json([]);
@@ -82,7 +82,7 @@ const viewEventHistory = async (req, res) => {
     try {
         const eventHistory = await EventHistory.findById(req.params.eventID);
         if (!eventHistory) return res.status(404).send('Event history not found');
-        res.json(eventHistory);
+        res.status(200).json(eventHistory);
     } catch (error) {
         res.status(500).send('Error retrieving event history');
     };
@@ -91,7 +91,7 @@ const viewEventHistory = async (req, res) => {
 const listProfileEvents = async (req, res) => {
     try {
         const events = await Event.find();
-        res.json(events);
+        res.status(200).json(events);
     } catch (error) {
         res.status(500).send('Error retrieving events');
     }

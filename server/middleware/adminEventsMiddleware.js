@@ -29,7 +29,7 @@ const canEditEvent = async (req, res, next) => {
   // Clear lock after saving or closing event
   const clearEventLock = async (req, res, next) => {
     const user = req.user;
-    if (user.role === 'general_admin') {
+    if (user.role === 'admin') {
       await Event.updateMany({ lockedBy: user.id }, { $set: { isLocked: false, lockedBy: null } });
     }
     next();
@@ -42,7 +42,7 @@ const canEditEvent = async (req, res, next) => {
     const user = req.user;
     const { id } = req.params;
   
-    if (user.role === 'general_admin' || 'departmental_admin') {
+    if (user.role === 'admin' || 'departmental_admin') {
       const event = await Event.findById(id);
   
       // If locked by another user, deny access
@@ -62,7 +62,7 @@ const canEditEvent = async (req, res, next) => {
     const user = req.user;
     const { id } = req.params;
   
-    if (user.role === 'general_admin' || 'departmental-admin') {
+    if (user.role === 'admin' || 'departmental-admin') {
       await Event.findByIdAndUpdate(id, { isLocked: false, lockedBy: null });
     }
     next();

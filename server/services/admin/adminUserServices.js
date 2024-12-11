@@ -172,7 +172,7 @@ const fetchEventParticipants = async (req, res) => {
       query.department = college;
     }
     const users = await User.find(query).select('-password');
-    res.json(users);
+    res.status(200).json(users);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

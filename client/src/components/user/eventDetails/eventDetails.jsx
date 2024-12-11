@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useDebugValue } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
@@ -186,30 +186,6 @@ function Event() {
         </button>
     );
 
-    // Download certificate
-    const downloadCertificate = async () => {
-        try {
-            const token = sessionStorage.getItem('authToken');
-            const response = await axios.get(`http://localhost:3000/u/events/${id}/certificate`, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                },
-                responseType: 'blob'
-            });
-
-            const url = window.URL.createObjectURL(new Blob([response.data]));
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', `${event.title}-certificate.pdf`);
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
-            window.URL.revokeObjectURL(url);
-        } catch (error) {
-            console.error('Error downloading certificate:', error);
-            alert('Error downloading certificate. Please try again later.');
-        }
-    };
 
     useEffect(() => {
         const fetchEventAndData = async () => {
@@ -218,7 +194,8 @@ function Event() {
                 const token = sessionStorage.getItem('authToken');
 
                 // First fetch event details
-                const eventResponse = await axios.get(`http://localhost:3000/u/events/${id}`);
+                console.log("Fetching event with ID:", id);
+                const eventResponse = await axios.get(`http://localhost:3000/u/events/${id}`, {headers: { Authorization: `Bearer ${token}` }});
                 setEvent(eventResponse.data);
 
                 if (token) {
@@ -281,6 +258,30 @@ function Event() {
     }, [event]);
 
 
+    useEffect(() => {
+        const checkCertificateStatus = async () => {
+            try {
+                const token = sessionStorage.getItem('authToken');
+                const response = await axios.get(
+                    `http://localhost:3000/u/events/${id}/certificate-status`,
+                    { headers: { Authorization: `Bearer ${token}` } }
+                );
+        
+                if (response.data.status === 'generated') {
+                    setCertificateStatus('generated');
+                    showToast('Your certificate is ready!', 'success');
+                } else {
+                    setTimeout(checkCertificateStatus, 10000);
+                }
+            } catch (error) {
+                console.error('Error checking certificate status:', error);
+                showToast('Error checking certificate status. Please try again.', 'error');
+            }
+        };
+    
+        checkCertificateStatus();
+    }, [id]);
+
     const handleRegistration = async () => {
         const token = sessionStorage.getItem('authToken');
         try {
@@ -304,8 +305,8 @@ function Event() {
                 { headers: { Authorization: `Bearer ${token}` } }
             );
 
-            if (response.data.status === 'generated') {
-                setCertificateStatus('generated');
+            if (response.data.status === 'issued') {
+                setCertificateStatus('issued');
                 showToast('Your certificate is ready!', 'success');
             } else {
                 setTimeout(checkCertificateStatus, 10000);

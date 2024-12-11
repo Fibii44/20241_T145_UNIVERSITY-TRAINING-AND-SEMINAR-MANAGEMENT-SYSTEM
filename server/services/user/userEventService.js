@@ -19,7 +19,10 @@ const listEvents = async (req, res) => {
 // View a specific event by ID
 const viewEvent = async (req, res) => {
     try {
+        console.log("Viewing event with ID:", req.params.id);
         const event = await Event.findById(req.params.id);
+        console.log("Event found:", event);
+        
         if (!event) {
             return res.status(404).send('Event not found');
         }

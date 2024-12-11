@@ -210,11 +210,10 @@ const checkCertificateStatus = async (req, res) => {
         const certificate = await Certificate.findOne({ 
             eventId, 
             userId,
-            status: 'issued'
         });
 
         res.json({
-            status: certificate ? 'generated' : 'pending'
+            status: certificate.status ? 'issued' : 'pending'
         });
     } catch (error) {
         console.error('Error checking certificate status:', error);

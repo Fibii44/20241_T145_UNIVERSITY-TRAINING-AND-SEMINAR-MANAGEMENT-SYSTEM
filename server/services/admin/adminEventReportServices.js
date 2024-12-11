@@ -80,7 +80,7 @@ const getRegisteredUsers = async (req, res) => {
             status: reg.status,
             registrationDate: reg.registrationDate,
         }));
-        res.json(registeredUsers);
+        res.status(200).json(registeredUsers);
     } catch (error) {
         console.error('Error fetching registered users:', error);
         res.status(500).json({ error: error.message });
@@ -89,7 +89,7 @@ const getRegisteredUsers = async (req, res) => {
 const formSubmissions = async (req, res) => {
     try {
         const forms = await Forms.find();
-        res.json(forms);
+        res.status(200).json(forms);
     } catch (error) {
         res.status(500).send('Error retrieving events');
     }
@@ -129,7 +129,7 @@ const formSubmissionsEvent = async (req, res) => {
         });
         
 
-        res.json(userForms); // Send the formatted response
+        res.status(200).json(userForms); // Send the formatted response
     } catch (error) {
         console.error('Error fetching forms:', error.message);
         res.status(500).json({ error: 'An error occurred while fetching forms.' });

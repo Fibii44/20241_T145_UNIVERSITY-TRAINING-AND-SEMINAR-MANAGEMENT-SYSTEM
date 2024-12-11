@@ -28,7 +28,7 @@ function LoginSuccess() {
       if (userRole === "faculty_staff") {
         navigate("/u"); 
       } else if (
-        userRole === "general_admin" ||
+        userRole === "admin" ||
         userRole === "departmental_admin"
       ) {
         navigate("/a"); 

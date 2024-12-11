@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const encrypt = require('mongoose-encryption');
+require('dotenv').config({ path: '../.env' });
 
 // Form Submission Schema
 const formSubmissionSchema = new mongoose.Schema({
@@ -41,6 +43,16 @@ const formSubmissionSchema = new mongoose.Schema({
     verifiedAt: {
         type: Date
     }
+});
+
+console.log('encryptionKey: ', process.env.MONGODB_ENCRYPTION_KEY);
+console.log('signingKey: ', process.env.MONGODB_SIGNING_KEY);
+
+// Encryption
+formSubmissionSchema.plugin(encrypt, {
+    encryptionKey: process.env.MONGODB_ENCRYPTION_KEY,   
+    signingKey: process.env.MONGODB_SIGNING_KEY,
+    excludeFromEncryption: ['eventId', 'userId', 'registrationId']
 });
 
 module.exports = mongoose.model('FormSubmission', formSubmissionSchema);
