@@ -1,14 +1,14 @@
 let isAccountCreationLocked = false;
 
 const verifyGeneralAdmin = (req, res, next) => {
-  if (req.user.role !== 'general_admin') {
+  if (req.user.role !== 'admin') {
     return res.status(403).json({ message: 'Access denied. Only general admins can create accounts.' });
   }
   next();
 };
 
 const verifyAdmins = (req, res, next) => {
-  if (req.user.role !== 'general_admin' && req.user.role !== 'departmental_admin') {
+  if (req.user.role !== 'admin' && req.user.role !== 'departmental_admin') {
     return res.status(403).json({ message: 'Access denied. Only general admins and departmental admins can access these resources.' });
   }
   next();

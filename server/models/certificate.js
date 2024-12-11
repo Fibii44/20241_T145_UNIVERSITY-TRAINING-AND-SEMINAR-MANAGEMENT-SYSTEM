@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const encrypt = require('mongoose-encryption');
+require('dotenv').config({ path: '../.env' });
 
 const certificateSchema = new mongoose.Schema({
     userId: {
@@ -30,5 +32,15 @@ const certificateSchema = new mongoose.Schema({
         default: 'issued'
     }
 }, { timestamps: true });
+
+
+console.log('encryptionKey: ', process.env.MONGODB_ENCRYPTION_KEY);
+console.log('signingKey: ', process.env.MONGODB_SIGNING_KEY);
+
+certificateSchema.plugin(encrypt, { 
+    encryptionKey: process.env.MONGODB_ENCRYPTION_KEY, 
+    signingKey: process.env.MONGODB_SIGNING_KEY,
+    excludeFromEncryption: ['userId', 'eventId', 'submissionId'],
+});
 
 module.exports = mongoose.model('Certificate', certificateSchema);

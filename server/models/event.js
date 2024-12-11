@@ -1,5 +1,7 @@
 // eventSchema.js
 const mongoose = require('mongoose');
+const encrypt = require('mongoose-encryption');
+require('dotenv').config({path: '../.env'});
 
 const EventSchema = new mongoose.Schema({
     title: {
@@ -154,5 +156,15 @@ EventSchema.post('findOne', async function (event, next) {
         next(error);
     }
 });
+
+console.log('Event Schema: ', process.env.MONGODB_ENCRYPTION_KEY);
+console.log('Event Schema: ', process.env.MONGODB_SIGNING_KEY);
+
+EventSchema.plugin(encrypt, {
+    encryptionKey: process.env.MONGODB_ENCRYPTION_KEY,
+    signingKey: process.env.MONGODB_SIGNING_KEY,
+    excludeFromEncryption: ['status', 'isLocked', 'lockedBy', 'lockTimestamp'],
+});
+
 
 module.exports = mongoose.model('Event', EventSchema);

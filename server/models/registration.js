@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const encrypt = require('mongoose-encryption');
+require('dotenv').config({path: '../.env'});
 
 const registrationSchema = new mongoose.Schema({
   eventId: {
@@ -25,6 +27,12 @@ const registrationSchema = new mongoose.Schema({
     default: 'registered'
   }
 }, { timestamps: true });
+
+registrationSchema.plugin(encrypt, {
+  encryptionKey: process.env.MONGODB_ENCRYPTION_KEY,
+  signingKey: process.env.MONGODB_SIGNING_KEY,
+  excludeFromEncryption: ['eventId', 'userId'],
+});
 
 
 module.exports = mongoose.model('Registration', registrationSchema);

@@ -17,7 +17,8 @@ function EventGrid() {
     useEffect(() => {
         const fetchEvents = async () => {
             try {
-                const response = await axios.get(`http://localhost:3000/u/events`);
+                const token = sessionStorage.getItem("authToken");
+                const response = await axios.get(`http://localhost:3000/u/events`, {headers: { Authorization: `Bearer ${token}` }});
                 setEvents(response.data);
                 setFilteredEvents(response.data); // Initialize filtered events
             } catch (err) {

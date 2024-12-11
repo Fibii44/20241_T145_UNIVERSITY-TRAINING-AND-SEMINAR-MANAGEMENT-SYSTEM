@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const encrypt = require('mongoose-encryption');
+require('dotenv').config({path: '../.env'});
 
 const DeletedEventSchema = new mongoose.Schema({
     
@@ -11,6 +13,12 @@ const DeletedEventSchema = new mongoose.Schema({
   deletedByName: String, 
   deletedByRole: String,
 }, {timestamps: true});
+
+DeletedEventSchema.plugin(encrypt, {
+    encryptionKey: process.env.MONGODB_ENCRYPTION_KEY,
+    signingKey: process.env.MONGODB_SIGNING_KEY,
+    excludeFromEncryption: ['deletedByName', 'deletedByRole'],
+});
 
 const DeletedEvent = mongoose.model('DeletedEvent', DeletedEventSchema);
 

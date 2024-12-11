@@ -56,14 +56,8 @@ const Sidebar = ({ activePage }) => {
         </li>
         
         {/* Conditionally render Personnel and Users menu items for general_admin */}
-        {role === 'general_admin' && (
+        {role === 'admin' && (
           <>
-            {/*<li className={activePage === 'personnel' ? 'active' : ''}>
-              <Link to="/a/personnel">
-                <span className="icon"><FontAwesomeIcon icon={faClock} size="lg" /></span>
-                {!isCollapsed && <span className='list-name'>Personnel</span>}
-              </Link>
-            </li>*/}
             <li className={activePage === 'users' ? 'active' : ''}>
               <Link to="/a/users">
                 <span className="icon"><FontAwesomeIcon icon={faUsers} size="lg" /></span>
@@ -85,12 +79,16 @@ const Sidebar = ({ activePage }) => {
             {!isCollapsed && <span className='list-name'>Events</span>}
           </Link>
         </li>
-        <li className={activePage === 'activity-logs' ? 'active' : ''}>
-          <Link to="/a/activity-logs">
-            <span className="icon"><FontAwesomeIcon icon={faClipboardCheck} size="lg" /></span>
-            {!isCollapsed && <span className='list-name'>Activity Logs</span>}
-          </Link>
-        </li>
+        {role === 'admin' && (
+          <>
+            <li className={activePage === 'activity-logs' ? 'active' : ''}>
+              <Link to="/a/activity-logs">
+              <span className="icon"><FontAwesomeIcon icon={faClipboardCheck} size="lg" /></span>
+              {!isCollapsed && <span className='list-name'>Activity Logs</span>}
+              </Link>
+            </li>
+          </>
+        )}
       </ul>
 
       <ul className="sidebar-footer"> 

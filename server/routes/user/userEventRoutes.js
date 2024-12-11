@@ -5,10 +5,10 @@ const authenticateJWT = require('../../middleware/auth');
 const userEventService = require('../../services/user/userEventService');
 
 // Events Listing
-userEventRoutes.get('/u/events', userEventService.listEvents);
+userEventRoutes.get('/u/events', authenticateJWT, userEventService.listEvents);
 
 // Open an Event by ID
-userEventRoutes.get('/u/events/:id', userEventService.viewEvent);
+userEventRoutes.get('/u/events/:id', authenticateJWT, userEventService.viewEvent);
 
 // POST request for registration
 userEventRoutes.post('/u/events', authenticateJWT, userEventService.registration);

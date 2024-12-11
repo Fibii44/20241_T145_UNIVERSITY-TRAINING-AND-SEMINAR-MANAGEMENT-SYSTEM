@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
+const encrypt = require('mongoose-encryption');
 const bcrypt = require('bcrypt');
+require('dotenv').config({ path: '../.env' });
 
 const UserSchema = new mongoose.Schema({
     name: {
@@ -25,7 +27,7 @@ const UserSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ['general_admin', 'departmental_admin', 'faculty_staff'],
+        enum: ['admin', 'departmental_admin', 'faculty_staff'],
         required: true
     },
     position: {
@@ -79,4 +81,11 @@ UserSchema.methods.isValidPassword = async function (password) {
     return await bcrypt.compare(password, this.password);
 };
 
+UserSchema.plugin(encrypt, {
+    encryptionKey: process.env.MONGODB_ENCRYPTION_KEY,
+    signingKey: process.env.MONGODB_SIGNING_KEY,
+    excludeFromEncryption: ['password', 'email', 'status'],
+});
+
 module.exports = mongoose.model('User', UserSchema);
+

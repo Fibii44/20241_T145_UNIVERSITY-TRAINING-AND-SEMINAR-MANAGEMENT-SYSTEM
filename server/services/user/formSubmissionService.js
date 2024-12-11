@@ -198,25 +198,19 @@ const recordFormSubmission = async (req, res) => {
             const submissionTimestamp = new Date(userResponse[0]);
 
             // Record the submission with response data
-            const submission = await FormSubmission.findOneAndUpdate(
-                {
-                    eventId,
-                    userId,
-
-                },
-                {
-                    $set: {
-                        status: 'approved',
-                        submittedAt: submissionTimestamp || new Date(),
-                        formLink: event.formLink,
-                        spreadsheetId,
-                        verifiedAt: new Date(),
-                        responses: formattedResponse, // Store the formatted response
-                        registrationId: registration._id
-                    }
-                },
-                { upsert: true, new: true }
-            );
+            const submission = new FormSubmission({
+                eventId,
+                userId,
+                registrationId: registration._id,
+                formLink: event.formLink,
+                spreadsheetId,
+                responses: formattedResponse,
+                status: 'approved',
+                submittedAt: submissionTimestamp || new Date(),
+                verifiedAt: new Date()
+            });
+            
+            await submission.save();
 
             console.log('Form submission recorded: ', submission._id);
             await emitNewActivity(userId, 'Completed Form Submission', {eventId: eventId, eventTitle: event.title})
