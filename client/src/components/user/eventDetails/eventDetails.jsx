@@ -365,8 +365,8 @@ function Event() {
                         onClick={() => setShowImage(true)} // Show overlay on click
                         onError={(e) => (e.target.src = '/src/assets/default-eventPicture.jpg')}
                     />
-                    <div className='college-department' style={{ backgroundColor: event.color }}>
-                        <p>{event.participantGroup?.college || 'This is a Custom Event'}</p>
+                    <div className='college-department' style={{  backgroundColor: event.participantGroup?.college ? event.color : '#9e1414' }}>
+                        <p>{event.participantGroup?.college || 'Exclusive'}</p>
                     </div>
                     {showImage && ( // Overlay div
                         <div className="event-image-overlay" onClick={() => setShowImage(false)}>

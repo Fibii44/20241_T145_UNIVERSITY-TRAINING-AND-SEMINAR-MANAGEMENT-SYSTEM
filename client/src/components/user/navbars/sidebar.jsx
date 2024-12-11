@@ -32,7 +32,7 @@ const Sidebar = ({ activePage }) => {
   const closeLogoutModal = () => setShowLogoutModal(false);
 
     return (
-        <div className={`sidebar ${isCollapsed ? 'collapsed' : ''} d-none d-md-flex`}>
+        <div className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
             <div className="sidebar-header">
                 <button className="menu-toggle" onClick={toggleSidebar}>
                     <FontAwesomeIcon icon={faBars} />

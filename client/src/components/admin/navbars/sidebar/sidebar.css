@@ -277,3 +277,67 @@
   .sidebar.collapsed ul li span {
     display: none;
   }
+  @media screen and (max-width: 360px) and (max-height: 740px) {
+  /* Adjust sidebar width and padding */
+  .sidebar {
+    width: 180px; /* Reduced for smaller screens */
+    padding: 10px;
+  }
+
+  .sidebar.collapsed {
+    width: 60px; /* Adjusted collapsed width for mobile */
+  }
+
+  /* Sidebar Header */
+  .sidebar-header {
+    padding: 10px;
+  }
+
+  .sidebar-title h2 {
+    font-size: 18px; /* Smaller font size */
+  }
+
+  /* Menu Items */
+  .menu-items li {
+    width: 100%; /* Full width for smaller screens */
+    padding: 10px 12px;
+  }
+
+  .menu-items li a {
+    font-size: 12px; /* Reduce text size */
+  }
+
+  .menu-items li .icon {
+    margin-right: 16px; /* Adjust icon spacing */
+    height: 20px;
+    width: 20px;
+  }
+
+  .menu-items li.active {
+    width: 100%; /* Ensure active items fit within the reduced width */
+  }
+
+  .menu-items li.active::before {
+    left: -10px; /* Adjust for smaller sidebar */
+  }
+
+  /* Sidebar Footer */
+  .sidebar-footer {
+    padding: 10px;
+  }
+
+  .sidebar-footer-item a {
+    font-size: 12px; /* Adjust footer item text */
+    padding: 10px;
+  }
+
+  .sidebar-footer-item span {
+    font-size: 12px; /* Reduce footer span text size */
+  }
+
+  /* Menu Toggle */
+  .menu-toggle {
+    padding: 8px;
+    font-size: 1rem; /* Adjust size for mobile */
+  }
+}

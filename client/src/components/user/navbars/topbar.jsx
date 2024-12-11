@@ -130,7 +130,20 @@ const Topbar = () => {
         }
     };
     
-
+    const timeAgo = (timestamp) => {
+        const now = new Date();
+        const createdAt = new Date(timestamp);
+        const differenceInSeconds = Math.floor((now - createdAt) / 1000);
+    
+        if (differenceInSeconds < 60) return `${differenceInSeconds} seconds ago`;
+        const differenceInMinutes = Math.floor(differenceInSeconds / 60);
+        if (differenceInMinutes < 60) return `${differenceInMinutes} minutes ago`;
+        const differenceInHours = Math.floor(differenceInMinutes / 60);
+        if (differenceInHours < 24) return `${differenceInHours} hours ago`;
+        const differenceInDays = Math.floor(differenceInHours / 24);
+        return `${differenceInDays} days ago`;
+    };
+    
     const handleRemoveNotification = async (notificationId) => {
         const token = sessionStorage.getItem('authToken');
         const decoded = jwtDecode(token);
@@ -223,11 +236,8 @@ const Topbar = () => {
                                         <div className="item-content">
                                             <strong>{notification.title}</strong>
                                             <p>{notification.message}</p>
-                                            {isUnread ? (
-                                                <span className="unread-badge"></span>
-                                            ) : (
-                                                <span className="read-text"></span>
-                                            )}
+                                            <strong>{timeAgo(notification.createdAt)}</strong>
+
                                         </div>
                                         <div className="item-setting">
                                             <button

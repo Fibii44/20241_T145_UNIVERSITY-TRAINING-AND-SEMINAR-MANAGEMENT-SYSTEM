@@ -144,7 +144,7 @@
   width: 5rem;;
 }
 .item-content p {
-  height: 50px;
+  height: 45px;
   overflow: hidden;
   text-decoration: none; /* Removes the underline */
   color: inherit;        /* Ensures the text color is inherited */

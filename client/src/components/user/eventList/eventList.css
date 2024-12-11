@@ -132,14 +132,27 @@
 .pagination-controls button:hover:not(:disabled) {
     background-color: #feb800;
 }
-
-.event-sort-container .event-sort{
+.event-sort-container {
     display: flex;
+    flex-direction: row;
+    margin-left: 27rem;
+}
+.event-sort {
+    height: 40px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    padding: 8px 12px;
+    background-color: #f9f9f9;
+    font-size: 14px;
+    color: #333;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+.event-sort-container .event-sort{
+
     border-radius: .5rem;
     font-size: 14px;
     margin: 5px;
-    transform: translateY(-30px);
-    margin-left: 27rem;
+    
 }
 .page-number.active {
     background-color: #feb800;
