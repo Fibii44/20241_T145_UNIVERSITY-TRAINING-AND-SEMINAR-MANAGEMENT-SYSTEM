@@ -104,7 +104,6 @@ if (participantGroup && participantGroup.college) {
     conditions.push({ 
       department: participantGroup.college, 
       role: "faculty_staff",
-      status: "active" 
     });
   }
 }
@@ -118,7 +117,6 @@ const userNotifications = users.map(user => ({
   name: user.name,
   status: 'unread', // Set status as unread initially
 }));
-
 
 // Create notification for the event
 const notification = {
@@ -138,7 +136,6 @@ const notification = {
 // Log notification before saving
 console.log("Notification Object:", notification);
 await Notification.create(notification);
-
 
     await emitNewActivity(user.id, 'Created New Event', { eventId: newEvent._id, eventTitle: newEvent.title });
     res.status(201).json({ message: 'Event added successfully', newEvent });
@@ -161,6 +158,7 @@ const getSpecificEvent = async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error', error: error.message });
   }
 };
+
 const updateEvent = async (req, res) => {
   try {
     const eventId = req.params.id;
@@ -170,52 +168,49 @@ const updateEvent = async (req, res) => {
     console.log('Starting event update for eventId:', eventId);
     console.log('Update data:', updates);
 
-    // Fetch the event from the database
-    const event = await Event.findById(eventId);
-    if (!event) {
-      return res.status(404).json({ message: 'Event not found' });
+    // Fetch the existing event
+    const existingEvent = await Event.findById(eventId);
+    if (!existingEvent) {
+        return res.status(404).json({ message: 'Event not found' });
     }
-
-    // If the event is locked by another user, prevent editing
-    if (event.isLocked && event.lockedBy.toString() !== userId) {
-      return res.status(403).json({ message: 'Event is currently being edited by another admin.' });
-    }
-
-    // Lock the event for the current user
-    await Event.findByIdAndUpdate(eventId, { isLocked: true, lockedBy: userId });
 
     // Ensure the 'createdBy' field is not modified
-    if (!event.createdBy) {
-      event.createdBy = userId;
+    if (!existingEvent.createdBy) {
+      existingEvent.createdBy = userId; // Set createdBy only if it is not already set
     }
+     existingEvent.editedBy = req.user.id; // Set editedBy to current user
 
-    // Allow 'editedBy' to be updated
-    updates.editedBy = userId;
 
     // Handle image update logic
-    if (req.file) {
-      // Delete the old image file if it exists
-      const oldImagePath = path.join(__dirname, `../../uploads/eventPictures/${event.eventPicture}`);
-      if (event.eventPicture && fs.existsSync(oldImagePath)) {
-        fs.unlinkSync(oldImagePath); // Delete the old image
+    if (req.file) { // Check if a new file has been uploaded
+      const oldImagePath = path.join(__dirname, `../../uploads/eventPictures/${existingEvent.eventPicture}`);
+      if (existingEvent.eventPicture && fs.existsSync(oldImagePath)) {
+          fs.unlinkSync(oldImagePath); // Delete old image file
       }
-
-      updates.eventPicture = req.file.filename; // Set the new image filename
-    }
-
+      existingEvent.eventPicture = req.file.filename; // Update to new image filename
+  }
     // Remove 'createdBy' from updates to prevent it from being overwritten
     delete updates.createdBy;
 
-    // Update the event, with 'createdBy' fixed and 'editedBy' updated
-    const updatedEvent = await Event.findByIdAndUpdate(eventId, updates, { new: true });
+      // Update fields while preserving createdBy
+      Object.assign(existingEvent, updates);
+
+     const updatedEvent = await existingEvent.save();
     if (!updatedEvent) {
-      return res.status(404).json({ message: 'Event not found' });
+      return res.status(404).json({ message: 'Event not found after update attempt' });
     }
+
     console.log('Event updated in database:', updatedEvent);
 
-    const updatedReminders = (updates.reminders || updatedEvent.reminders).map(reminder => { const { _id, __parentArray, $_parent, ...cleanedReminder } = reminder.toObject ? reminder.toObject() : reminder; return cleanedReminder; });
+    // Process reminders
+    const updatedReminders = (updates.reminders || updatedEvent.reminders).map(reminder => {
+      const { _id, __parentArray, $_parent, ...cleanedReminder } = reminder.toObject ? reminder.toObject() : reminder;
+      return cleanedReminder;
+    });
+
     console.log(updatedReminders);
 
+    // Fetch registrations related to this event
     const registrations = await Registration.find({ eventId: eventId }).populate('userId');
     console.log(`Found ${registrations.length} registrations for this event`);
 
@@ -226,44 +221,42 @@ const updateEvent = async (req, res) => {
     );
 
     for (const registration of registrations) {
-        try {
+      try {
+        console.log('\nProcessing registration:', registration._id);
+        console.log('GoogleEventId:', registration.googleEventId);
 
-          console.log('\nProcessing registration:', registration._id);
-          console.log('GoogleEventId:', registration.googleEventId);
-          // Get the user with their tokens
-          const registeredUser = registration.userId; // Now contains the populated user data
-          
-          if (!registeredUser.accessToken) {
-            console.log(`No access token for user ${registeredUser._id}`);
-            continue; // Skip this user if no access token
-          }
+        const registeredUser = registration.userId; // Populated user data
 
-          oauth2Client.setCredentials({
-            access_token: registeredUser.accessToken,
-            refresh_token: registeredUser.refreshToken,
-          });
+        if (!registeredUser.accessToken) {
+          console.log(`No access token for user ${registeredUser._id}`);
+          continue; // Skip this user if no access token
+        }
+
+        oauth2Client.setCredentials({
+          access_token: registeredUser.accessToken,
+          refresh_token: registeredUser.refreshToken,
+        });
 
         const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
 
         const findClosestColorId = (hexColor) => {
           const GOOGLE_CALENDAR_COLORS = {
-            '1': '#7986cb',  // Lavender
-            '2': '#33b679',  // Green
-            '3': '#8e24aa',  // Purple
-            '4': '#e67c73',  // Red
-            '5': '#f6bf26',  // Yellow
-            '6': '#f4511e',  // Orange
-            '7': '#039be5',  // Turquoise
-            '8': '#616161',  // Gray
-            '9': '#3f51b5',  // Bold Blue
+            '1': '#7986cb', // Lavender
+            '2': '#33b679', // Green
+            '3': '#8e24aa', // Purple
+            '4': '#e67c73', // Red
+            '5': '#f6bf26', // Yellow
+            '6': '#f4511e', // Orange
+            '7': '#039be5', // Turquoise
+            '8': '#616161', // Gray
+            '9': '#3f51b5', // Bold Blue
             '10': '#0b8043', // Bold Green
             '11': '#d50000'  // Bold Red
           };
 
-          if(!hexColor) return '1';
+          if (!hexColor) return '1'; // Default color if none provided
 
           const hex = hexColor.replace('#', '');
-
           const r = parseInt(hex.slice(0, 2), 16);
           const g = parseInt(hex.slice(2, 4), 16);
           const b = parseInt(hex.slice(4, 6), 16);
@@ -284,7 +277,7 @@ const updateEvent = async (req, res) => {
               Math.pow(b - googleRGB.b, 2)
             );
 
-            if(distance < minDistance) {
+            if (distance < minDistance) {
               minDistance = distance;
               closestColorId = colorId;
             }
@@ -297,14 +290,8 @@ const updateEvent = async (req, res) => {
           summary: updatedEvent.title,
           location: updatedEvent.location,
           description: updatedEvent.description,
-          start: {
-            dateTime: updatedEvent.startTime,
-            timeZone: 'Asia/Manila',
-          },
-          end: {
-            dateTime: updatedEvent.endTime,
-            timeZone: 'Asia/Manila',
-          },
+          start: { dateTime: updatedEvent.startTime, timeZone: 'Asia/Manila' },
+          end: { dateTime: updatedEvent.endTime, timeZone: 'Asia/Manila' },
           reminders: {
             useDefault: false,
             overrides: updatedReminders.map(reminder => ({
@@ -323,83 +310,58 @@ const updateEvent = async (req, res) => {
             eventId: registration.googleEventId,
             requestBody: calendarEvent,
           });
+          
           console.log('Successfully updated calendar event:', result.data);
         } catch (calendarError) {
-          console.error('Google Calendar API Error:', {
-            message: calendarError.message,
-            code: calendarError.code,
-            response: calendarError.response?.data,
-            stack: calendarError.stack
-          });
+          console.error('Google Calendar API Error:', { message: calendarError.message });
           
-          // If it's an authentication error, try to refresh the token
-          if (calendarError.code === 401) {
+          if (calendarError.code === 401) { 
             console.log('Attempting to refresh token...');
+            
             try {
-              const oauth2Client = new google.auth.OAuth2(
-                process.env.GOOGLE_CLIENT_ID,
-                process.env.GOOGLE_CLIENT_SECRET,
-                'http://localhost:3000/auth/google/callback'
-              );
-
-              oauth2Client.setCredentials({
-                refresh_token: registeredUser.refreshToken
-              });
-
+              oauth2Client.setCredentials({ refresh_token: registeredUser.refreshToken });
               const { tokens } = await oauth2Client.refreshAccessToken();
+              
               console.log('New tokens received:', tokens);
-
-              // Update user's access token in database
-              await User.findByIdAndUpdate(registeredUser._id, {
-                accessToken: tokens.access_token
-              });
-
-              // Retry the calendar update with new token
-              const retryResult = await calendar.events.patch({
+              
+              await User.findByIdAndUpdate(registeredUser._id, { accessToken: tokens.access_token });
+              
+              await calendar.events.patch({
                 calendarId: 'primary',
                 eventId: registration.googleEventId,
                 requestBody: calendarEvent,
               });
-              console.log('Successfully updated calendar event after token refresh:', retryResult.data);
+              
+              console.log('Successfully updated calendar event after token refresh');
             } catch (refreshError) {
               console.error('Token refresh failed:', refreshError);
             }
           }
         }
-      }catch (userError) {
+      } catch (userError) {
         console.error(`Error updating event ${registration.googleEventId} in calendar:`, userError);
       }
     }
+
     // Unlock the event after updating
     await Event.findByIdAndUpdate(eventId, { isLocked: false, lockedBy: null });
 
-       // Update notifications
-    const updatedNotificationMessage = `The event titled "${updatedEvent.title}" has been updated. Check the updated details and join us again on ${new Date(updatedEvent.eventDate).toLocaleDateString('en-PH', { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
-    })} at ${updatedEvent.location}.`;
+    // Update notifications about the event update
+    const updatedNotificationMessage = `The event titled "${updatedEvent.title}" has been updated. Check the updated details and join us again on ${new Date(updatedEvent.eventDate).toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric' })} at ${updatedEvent.location}.`;
 
     await Notification.updateMany(
-      { eventId: eventId },
-      { 
-        $set: { 
-          "message": updatedNotificationMessage,
-          "title": updatedEvent.title, 
-          "customParticipants": updatedEvent.customParticipants,
-          "participantGroup": updatedEvent.participantGroup
-        }
-      }
+      { eventId },
+      { $set: { message: updatedNotificationMessage, title: updatedEvent.title } }
     );
 
-    await emitNewActivity(userId, 'Updated Event', {eventId: eventId, eventTitle: event.title, })
+    await emitNewActivity(userId, 'Updated Event', { eventId, eventTitle: updatedEvent.title });
 
     res.status(200).json({ message: 'Event updated successfully', event: updatedEvent });
+    
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 };
-
 const deleteEvent = async (req, res) => {
   try {
     const eventId = req.params.id;
