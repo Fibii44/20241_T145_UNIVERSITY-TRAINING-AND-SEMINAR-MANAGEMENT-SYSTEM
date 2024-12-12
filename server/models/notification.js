@@ -1,11 +1,10 @@
 const mongoose = require('mongoose');
+const encrypt = require('mongoose-encryption');
 const { v4: uuidv4 } = require('uuid');
+require('dotenv').config({ path: '../.env' });
 
 
-const NotificationSchema = new mongoose.Schema(
-    {
-        notificationId: { type: String, unique: true, default: uuidv4 },
-
+const NotificationSchema = new mongoose.Schema({
         eventId: { 
             type: mongoose.Schema.Types.ObjectId, 
             ref: 'Event', // Reference to the Event model
@@ -67,5 +66,13 @@ const NotificationSchema = new mongoose.Schema(
         timestamps: true, // Adds createdAt and updatedAt fields
     }
 );
+
+
+NotificationSchema.plugin(encrypt, { 
+    encryptionKey: process.env.MONGODB_ENCRYPTION_KEY,
+    signingKey: process.env.MONGODB_SIGNING_KEY,
+    excludeFromEncryption: ['eventId', 'userNotifications', 'createdAt', 'updatedAt'],
+});
+
 
 module.exports = mongoose.model('Notification', NotificationSchema);

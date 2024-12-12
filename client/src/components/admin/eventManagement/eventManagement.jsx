@@ -35,7 +35,7 @@ const EventM = ({ userRole, userCollege }) => {
   const fetchEvents = async () => {
   try {
     setLoading(true);
-    const response = await axios.get('http://localhost:3000/a/events');
+    const response = await axios.get('http://localhost:3000/a/active-events');
 
     const formattedEvents = response.data.map(event => ({
       ...event,

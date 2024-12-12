@@ -18,14 +18,16 @@ const HistoryM = () => {
         const fetchEvents = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get('http://localhost:3000/a/events');
-                const formattedEvents = response.data.map(event => ({
+                const response = await axios.get('http://localhost:3000/a/event-history');
+                const formattedEvents = response.data.events.map(event => ({
                     ...event,
                     eventDate: new Date(event.eventDate),
                 }));
+                console.log(response.data);
                 setEvents(formattedEvents);
             } catch (error) {
                 console.error('Error fetching events:', error.message);
+                console.log("full error", error.response?.data || error.message);
             } finally {
                 setLoading(false);
             }

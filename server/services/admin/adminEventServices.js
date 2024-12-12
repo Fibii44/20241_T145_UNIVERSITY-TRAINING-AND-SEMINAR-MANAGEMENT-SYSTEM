@@ -57,6 +57,14 @@ const renderEventsPage = async (req, res) => {
   }
 };
 
+const renderActiveEventsPage = async (req, res) => {
+  try {
+    const events = await Event.find({status: "active"});
+    res.status(200).json(events);
+  } catch (error) {
+    res.status(500).json({ message: "Internal Server Error", error: error.message });
+  }
+};
 
 const addEvent = async (req, res) => {
   try {
@@ -96,17 +104,33 @@ if (newEvent.customParticipants && newEvent.customParticipants.length > 0) {
 
 // If college is provided in participantGroup
 if (participantGroup && participantGroup.college) {
-  if (participantGroup.college.toLowerCase() === "all") {
-    // Include all users with the role "faculty_staff" and status "active" across all departments
-    conditions.push({ role: "faculty_staff", status: "active" });
-  } else {
-    // Include users from a specific department with the role "faculty_staff" and status "active"
-    conditions.push({ 
-      department: participantGroup.college, 
-      role: "faculty_staff",
-    });
-  }
+  // Query all users with the status "active"
+  const activeUsers = await User.find({ status: "active" });
+
+  // Filter users based on their decrypted role and department
+  const relevantUsers = activeUsers.filter((user) => {
+    // Access the decrypted fields directly
+    const userRole = user.role; // Automatically decrypted by Mongoose Encryption
+    const userDepartment = user.department; // Automatically decrypted by Mongoose Encryption
+
+    // Check if the user's role is "faculty_staff"
+    if (userRole !== "faculty_staff") return false;
+
+    // If college is "all", include all faculty_staff users
+    if (participantGroup.college.toLowerCase() === "all") {
+      return true;
+    }
+
+    // Otherwise, include only users from the specific department
+    return userDepartment === participantGroup.college;
+  });
+
+  // Map relevant users to conditions for notifications
+  relevantUsers.forEach((user) => {
+    conditions.push({ _id: user._id });
+  });
 }
+
 
 // Perform the query with OR logic based on the conditions
 const users = await User.find({ $or: conditions });
@@ -171,31 +195,31 @@ const updateEvent = async (req, res) => {
     // Fetch the existing event
     const existingEvent = await Event.findById(eventId);
     if (!existingEvent) {
-        return res.status(404).json({ message: 'Event not found' });
+      return res.status(404).json({ message: 'Event not found' });
     }
 
     // Ensure the 'createdBy' field is not modified
     if (!existingEvent.createdBy) {
       existingEvent.createdBy = userId; // Set createdBy only if it is not already set
     }
-     existingEvent.editedBy = req.user.id; // Set editedBy to current user
-
+    existingEvent.editedBy = req.user.id; // Set editedBy to current user
 
     // Handle image update logic
     if (req.file) { // Check if a new file has been uploaded
       const oldImagePath = path.join(__dirname, `../../uploads/eventPictures/${existingEvent.eventPicture}`);
       if (existingEvent.eventPicture && fs.existsSync(oldImagePath)) {
-          fs.unlinkSync(oldImagePath); // Delete old image file
+        fs.unlinkSync(oldImagePath); // Delete old image file
       }
       existingEvent.eventPicture = req.file.filename; // Update to new image filename
-  }
+    }
+
     // Remove 'createdBy' from updates to prevent it from being overwritten
     delete updates.createdBy;
 
-      // Update fields while preserving createdBy
-      Object.assign(existingEvent, updates);
+    // Update fields while preserving createdBy
+    Object.assign(existingEvent, updates);
 
-     const updatedEvent = await existingEvent.save();
+    const updatedEvent = await existingEvent.save();
     if (!updatedEvent) {
       return res.status(404).json({ message: 'Event not found after update attempt' });
     }
@@ -310,28 +334,28 @@ const updateEvent = async (req, res) => {
             eventId: registration.googleEventId,
             requestBody: calendarEvent,
           });
-          
+
           console.log('Successfully updated calendar event:', result.data);
         } catch (calendarError) {
           console.error('Google Calendar API Error:', { message: calendarError.message });
-          
-          if (calendarError.code === 401) { 
+
+          if (calendarError.code === 401) {
             console.log('Attempting to refresh token...');
-            
+
             try {
               oauth2Client.setCredentials({ refresh_token: registeredUser.refreshToken });
               const { tokens } = await oauth2Client.refreshAccessToken();
-              
+
               console.log('New tokens received:', tokens);
-              
+
               await User.findByIdAndUpdate(registeredUser._id, { accessToken: tokens.access_token });
-              
+
               await calendar.events.patch({
                 calendarId: 'primary',
                 eventId: registration.googleEventId,
                 requestBody: calendarEvent,
               });
-              
+
               console.log('Successfully updated calendar event after token refresh');
             } catch (refreshError) {
               console.error('Token refresh failed:', refreshError);
@@ -349,19 +373,36 @@ const updateEvent = async (req, res) => {
     // Update notifications about the event update
     const updatedNotificationMessage = `The event titled "${updatedEvent.title}" has been updated. Check the updated details and join us again on ${new Date(updatedEvent.eventDate).toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric' })} at ${updatedEvent.location}.`;
 
-    await Notification.updateMany(
-      { eventId },
-      { $set: { message: updatedNotificationMessage, title: updatedEvent.title } }
-    );
+    // Fetch notifications linked to the event
+    const notifications = await Notification.find({ eventId });
+
+    // Update each notification document
+    for (const notification of notifications) {
+      notification.message = updatedNotificationMessage; // Update the message field
+      notification.title = updatedEvent.title; // Update the title field
+      notification.updatedAt = new Date(); // Update the timestamp
+
+      // Update user notifications array
+      notification.userNotifications.forEach((userNotification) => {
+        userNotification.status = 'unread'; // Reset status to unread
+        userNotification.readAt = null; // Clear the readAt field
+      });
+
+      // Save the updated notification (this triggers encryption)
+      await notification.save();
+    }
 
     await emitNewActivity(userId, 'Updated Event', { eventId, eventTitle: updatedEvent.title });
 
     res.status(200).json({ message: 'Event updated successfully', event: updatedEvent });
-    
+
   } catch (error) {
+    console.error('Error updating event:', error);
     res.status(400).json({ message: error.message });
   }
 };
+
+
 const deleteEvent = async (req, res) => {
   try {
     const eventId = req.params.id;
@@ -418,6 +459,7 @@ const deleteEvent = async (req, res) => {
 
 module.exports = {
   renderEventsPage,
+  renderActiveEventsPage,
   addEvent,
   updateEvent,
   deleteEvent,

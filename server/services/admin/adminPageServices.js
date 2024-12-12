@@ -72,9 +72,27 @@ const getLogs = async (req, res) => {
             .populate('userId', 'name email profilePicture')
             .sort({ timestamp: -1 });
 
-        res.status(200).json(logs);
+        console.log(logs);
+        
+        const decryptedLogs = await Promise.all(
+            logs.map(async log => {
+                if (log.userId) {
+                    try {
+                        const user = await User.findById(log.userId._id);
+                        log.userId = user; // Replace the populated user with decrypted user
+                        console.log(user);
+                    } catch (error) {
+                        console.error(`Error fetching/decrypting userId for log ${log._id}:`, error.message);
+                    }
+                }
+                return log;
+            })
+        );
+
+        res.status(200).json(decryptedLogs);
     } catch (error) {
         res.status(500).json({ message: error.message });
+        console.log(error);
     }
 };
 

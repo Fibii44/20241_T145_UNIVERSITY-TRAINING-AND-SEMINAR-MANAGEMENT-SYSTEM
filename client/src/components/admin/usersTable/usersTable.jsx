@@ -272,15 +272,17 @@ const Table = () => {
   const [departmentFilter, setDepartmentFilter] = useState('all');
   const [roleFilter, setRoleFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('active');
-  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]); // Default to an empty array
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage] = useState(10);
-  const [currentUser, setCurrentUser] = useState(null); // Step 1: Define state for current user
+  const [currentUser, setCurrentUser] = useState(null);
   const [selectAllChecked, setSelectAllChecked] = useState(false);
+
 
   useEffect(() => {
 
     const token = sessionStorage.getItem("authToken");
+
     const checkAccess = async () => {
       try {
         const response = await fetch('http://localhost:3000/a/users', {
@@ -291,30 +293,36 @@ const Table = () => {
         });
 
         if (response.status === 403) {
-          // Redirect to a different page if access is denied
-          navigate('/a/dashboard'); // Change this to your desired redirect path
+          navigate('/a/dashboard');
         }
       } catch (error) {
         console.error("Access check failed:", error);
       }
-    }
+    };
     
      
     const fetchStats = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/a/dashboard');
-        setStats(response.data);
-        setFilteredUsers(response.data.users);
+        const response = await axios.get('http://localhost:3000/a/users', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = response.data;
+
+        // Ensure stats.users is always an array
+        setStats({ users: data.users || [] });
+        setFilteredUsers(data.users || []); // Default to an empty array if undefined
       } catch (err) {
         console.log(err);
       }
     };
+
+
     checkAccess();
     fetchStats();
-  }, []);
+  }, [navigate]);
 
   useEffect(() => {
-    const filtered = stats.users.filter(user => {
+    const filtered = (stats.users || []).filter(user => {
       const matchesDepartment = departmentFilter === 'all' || user.department === departmentFilter;
       const matchesRole = roleFilter === 'all' || user.role === roleFilter;
       const matchesStatus = user.status === statusFilter;
@@ -323,14 +331,7 @@ const Table = () => {
     setFilteredUsers(filtered);
   }, [departmentFilter, roleFilter, statusFilter, stats.users]);
 
-  // Retrieve the name of the in session user
-  useEffect(() => {
-    const token = sessionStorage.getItem('authToken');
-    if (token) {
-      const decoded = jwtDecode(token);
-      setCurrentUser(decoded.name);
-    }
-  }, []);
+
 
 
   useEffect(() => {
@@ -362,15 +363,15 @@ const Table = () => {
 
   
 
-  // Pagination Logic
+
+  // Pagination logic
+
   const indexOfLastUser = currentPage * rowsPerPage;
   const indexOfFirstUser = indexOfLastUser - rowsPerPage;
-
-  // Paginate filtered users (those that are filtered by status)
-  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+  const currentUsers = (filteredUsers || []).slice(indexOfFirstUser, indexOfLastUser);
 
   const onSelectAllChange = () => setSelectAllChecked(!selectAllChecked);
-  const totalPages = Math.ceil(filteredUsers.length / rowsPerPage);
+  const totalPages = Math.ceil((filteredUsers?.length || 0) / rowsPerPage);
 
   const getCurrentPageData = () => {
     const startIndex = (currentPage - 1) * rowsPerPage;

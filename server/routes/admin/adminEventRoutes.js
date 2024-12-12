@@ -15,6 +15,10 @@ eventRoutes.get('/a/events/:id/check-lock', checkLockStatus);
 
 // Events Page - Render all events
 eventRoutes.get('/a/events', adminService.renderEventsPage);
+
+// Get all active events
+eventRoutes.get('/a/active-events', adminService.renderActiveEventsPage);
+
 // Get Specific Event
 eventRoutes.get('/a/events/:id', adminService.getSpecificEvent );
 // Add a new event

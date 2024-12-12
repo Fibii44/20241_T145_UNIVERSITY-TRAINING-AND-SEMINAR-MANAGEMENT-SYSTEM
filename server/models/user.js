@@ -84,8 +84,9 @@ UserSchema.methods.isValidPassword = async function (password) {
 UserSchema.plugin(encrypt, {
     encryptionKey: process.env.MONGODB_ENCRYPTION_KEY,
     signingKey: process.env.MONGODB_SIGNING_KEY,
-    excludeFromEncryption: ['password', 'email', 'status'],
+    excludeFromEncryption: ['password', 'email', 'status', 'createdAt'],
 });
+
 
 module.exports = mongoose.model('User', UserSchema);
 

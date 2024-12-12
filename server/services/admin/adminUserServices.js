@@ -139,30 +139,42 @@ const addPersonnelAccount = async (req, res) => {
 const renderUserTable = async (req, res) => {
   try {
     const users = await User.find().select('-password'); // Exclude password field
-    res.json(users);
+    console.log(users);
+    res.status(200).json({ users });
     
   } catch (error) {
     res.status(500).json({ message: error.message });
+    console.log(error);
   }
 };
 
 
 // Function to edit user details
 const editUser = async (req, res) => {
-  const userId = req.params.id; 
-  const updatedData = req.body; 
+  const userId = req.params.id; // Get user ID from route params
+  const updatedData = req.body; // Data to update
 
   try {
-      const updatedUser = await User.findByIdAndUpdate(userId, updatedData, { new: true, runValidators: true });
-      if (!updatedUser) {
-          return res.status(404).json({ message: 'User not found' });
-      }
-      res.json(updatedUser);
+    // Step 1: Find the user by ID
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Step 2: Update the user's fields (unencrypted in memory)
+    Object.keys(updatedData).forEach((field) => {
+      user[field] = updatedData[field];
+    });
+
+    // Step 3: Save the user (triggers encryption)
+    const updatedUser = await user.save();
+
+    // Step 4: Respond with the updated user
+    res.status(200).json({ updatedUser });
   } catch (error) {
-      res.status(500).json({ message: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
-
 
 const fetchEventParticipants = async (req, res) => {
   try{

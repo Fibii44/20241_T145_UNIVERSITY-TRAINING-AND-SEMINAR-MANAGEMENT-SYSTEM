@@ -1,8 +1,10 @@
 const express = require('express');
 const adminReportRoutes = express.Router();
 const adminService = require('../../services/admin/adminEventReportServices');
+const adminReportService = require('../../services/admin/adminReportServices');
 const authenticateJWT = require('../../middleware/auth');
 
+adminReportRoutes.get('/a/event-history', adminReportService.renderEventHistory);
 // GET request for registration
 adminReportRoutes.get('/a/event/registrations', authenticateJWT, adminService.registration);
 //GET all registered users in the specific eventId

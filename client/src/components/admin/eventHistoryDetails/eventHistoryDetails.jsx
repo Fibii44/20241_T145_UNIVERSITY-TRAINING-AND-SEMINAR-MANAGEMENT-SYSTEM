@@ -129,11 +129,12 @@ const EventDetails = () => {
                     eventRating: item.eventRating, // Convert rating to number if needed
                 }));
                 console.log(chartData);
-                
+                console.log("fetchAttended", data);
                 setChartData(chartData); // Set chart data
-                setAttendedList(data);
+                setAttendedList(Array.isArray(data) ? data : []);
             } catch (error) {
                 console.error('Error fetching participants:', error);
+                setAttendedList([]);
             }
         };
         // const fetchAggregatedAttendees = async () => {
@@ -156,9 +157,11 @@ const EventDetails = () => {
                     });
                     if (response.ok) {
                         const data = await response.json();
-                        setUsers(data); // Store the fetched users
+                        console.log("Users data:", data); // In fetchUsers
+                        setUsers(Array.isArray(data) ? data : []); // Store the fetched users
                     } else if (response.status === 403) {
                         navigate('/a/dashboard'); // Redirect if access is denied
+                        setUsers([]);
                     }
                 } catch (error) {
                     console.error("Error fetching users:", error);
@@ -290,13 +293,12 @@ const UsersTable = ({ attendedList = [], users = [] }) => {
     // Match attendedList to users by userId
     const matchedUsers = attendedList
     .map((attended) => {
-        const user = users.find((u) => {
-            // console.log("Comparing:", attended.userId, u._id);
-            return u._id === attended.userId;
-        });
+        const user = users.find((u) => u._id === attended.userId);
         return user ? { ...user, eventRating: attended.eventRating } : null;
     })
     .filter(Boolean);
+
+    console.log("matchedUsers", matchedUsers);
 
     return (
         <div className="table-container">

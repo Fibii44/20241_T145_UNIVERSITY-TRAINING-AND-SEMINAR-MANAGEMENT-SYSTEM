@@ -1,9 +1,9 @@
-// mongodb event model
+const Event = require('../../models/event');
 
 const renderEventHistory = async (req, res) => {
     try {
-        const events = await Event.find().sort({ date: -1 }); // Sort by latest events
-        res.render('adminEventHistoryPage', { events });
+        const events = await Event.find({"status": "completed"}).sort({ date: -1 }); // Sort by latest events
+        res.status(200).json({ events});
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
