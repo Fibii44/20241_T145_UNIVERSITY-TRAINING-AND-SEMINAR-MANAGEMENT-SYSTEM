@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
+import { Document, Page } from 'react-pdf';
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 import {
   faSort,
   faSortUp,
@@ -14,33 +17,41 @@ import {
 import "./certificate.css";
 
 function CertificateGrid() {
-  const [events, setEvents] = useState([]);
+  const [certificates, setCertificates] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [sortBy, setSortBy] = useState({ field: "date", direction: "asc" });
   const [viewMode, setViewMode] = useState("grid");
   const [searchQuery, setSearchQuery] = useState(""); // State for search query
-  const eventsPerPage = 15;
+  const certificatePerPage = 15;
 
+ 
   useEffect(() => {
-    const fetchEvents = async () => {
+    const fetchCertificates = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/u/events`);
-        setEvents(response.data);
+        const token = sessionStorage.getItem('authToken');
+        const response = await axios.get('http://localhost:3000/u/certificates', { headers: { Authorization: `Bearer ${token}` } }); // Replace with your actual API endpoint
+        const updatedCertificates = response.data.map((certificate) => {
+          return {
+            ...certificate,
+            previewImageUrl: `http://localhost:3000/certificates/${certificate.fileName}/preview` // Replace with your actual preview image endpoint
+          };
+        });
+        setCertificates(updatedCertificates);
       } catch (err) {
-        console.error("Failed to fetch events", err);
+        console.error("Failed to fetch certificates", err);
       }
     };
 
-    fetchEvents();
+    fetchCertificates();
   }, []);
 
   // Filter events based on search query
-  const filteredEvents = events.filter((event) =>
-    event.title.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredCertificates = certificates.filter((certificate) =>
+    certificate.fileName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   // Sort events
-  const sortedEvents = [...filteredEvents].sort((a, b) => {
+  const sortedCertificates = [...filteredCertificates].sort((a, b) => {
     if (sortBy.field === "date") {
       const dateA = new Date(a.eventDate);
       const dateB = new Date(b.eventDate);
@@ -53,15 +64,15 @@ function CertificateGrid() {
         : titleB.localeCompare(titleA);
     }
   });
-
+  
   // Pagination
-  const indexOfLastEvent = currentPage * eventsPerPage;
-  const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
-  const currentEvents = sortedEvents.slice(indexOfFirstEvent, indexOfLastEvent);
+  const indexOfLastCertificate = currentPage * certificatePerPage;
+  const indexOfFirstCertificate = indexOfLastCertificate - certificatePerPage;
+  const currentCertificate = sortedCertificates.slice(indexOfFirstCertificate, indexOfLastCertificate);
 
   // Handle page navigation
   const handleNextPage = () => {
-    if (currentPage < Math.ceil(sortedEvents.length / eventsPerPage)) {
+    if (currentPage < Math.ceil(sortedCertificates.length / certificatePerPage)) {
       setCurrentPage(currentPage + 1);
     }
   };
@@ -142,8 +153,8 @@ function CertificateGrid() {
           viewMode === "grid" ? "certificates-grid" : "certificates-list"
         }
       >
-        {currentEvents.map((event) => (
-          <div key={event._id} className="certificates-link">
+        {currentCertificate.map((certificate) => (
+          <div key={certificate.fileName} className="certificates-link">
             <div
               className={
                 viewMode === "grid"
@@ -154,91 +165,96 @@ function CertificateGrid() {
               {/* Render based on view mode */}
               {viewMode === "list" ? (
                 <div className="list-view-container">
-                  <img
-                    src={`http://localhost:3000/eventPictures/${event.eventPicture}`}
-                    alt={event.title}
-                    className="list-view-image"
-                  />
-                  <div className="column-first">
-                    <h3 style={{ color: "#011c39" }}>{event.title}</h3>
-                    <p className="date">
-                      {new Date(event.eventDate).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })}
-                    </p>
-                  </div>
-                  <div className="download-column">
-                    <a
-                      href={`http://localhost:3000/eventPictures/${event.eventPicture}`}
-                      download={event.title + ".jpg"}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
+                    {currentCertificate.map((certificate) => (
+                      <div key={certificate.fileName} className="certificates-link">
+                        <div className="certificates-list-item">
+                          <div className="column-first">
+                            <h3 style={{ color: "#011c39" }}>{certificate.fileName}</h3>
+                            <p className="date">
+                            {new Date(certificate.issueDate).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
+                            </p>
+                          </div>
+                          <div className="pdf-viewer">
+                            <Document file={`http://localhost:3000/certificates/${certificate.fileName}`}>
+                              <Page pageNumber={1} />
+                            </Document>
+                          </div>
+                          <div className="download-column">
+                            <a
+                              href={`http://localhost:3000/certificates/${certificate.fileName}`}
+                              download={certificate.fileName + ".jpg"}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
 
-                        const link = document.createElement("a");
-                        link.href = `http://localhost:3000/eventPictures/${event.eventPicture}`;
-                        link.setAttribute(
-                          "download",
-                          event.title + ".jpg"
-                        );
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-                      }}
-                    >
-                      <div className="download-icon">
-                        <FontAwesomeIcon icon={faDownload} />
+                                const link = document.createElement("a");
+                                link.href = `http://localhost:3000/certificates/${certificate.fileName}`;
+                                link.setAttribute(
+                                  "download",
+                                  certificate.fileName + ".jpg"
+                                );
+                                document.body.appendChild(link);
+                                link.click();
+                                document.body.removeChild(link);
+                              }}
+                            >
+                              <div className="download-icon">
+                                <FontAwesomeIcon icon={faDownload} />
+                              </div>
+                            </a>
+                          </div>
+                        </div>
                       </div>
-                    </a>
-                  </div>
+                    ))}
                 </div>
               ) : (
                 <>
-                  <img
-                    src={`http://localhost:3000/eventPictures/${event.eventPicture}`}
-                    alt={event.title}
-                    className={`certificate-image ${
-                      viewMode === "list" ? "list-view-image" : ""
-                    }`}
-                  />
-                  <div className="card-content">
-                    <div className="column-first">
-                      <h3 style={{ color: "#011c39" }}>{event.title}</h3>
-                      <p className="date">
-                        {new Date(event.eventDate).toLocaleDateString("en-US", {
-                          year: "numeric",
-                          month: "long",
-                          day: "numeric",
-                        })}
-                      </p>
-                    </div>
-                    <div className="column-last">
-                      <a
-                        href={`http://localhost:3000/eventPictures/${event.eventPicture}`}
-                        download={event.title + ".jpg"}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
+                    {currentCertificate.map((certificate) => (
+                      <div key={certificate.fileName} className="certificates-link">
+                        <div className="certificates-list-item">
+                          <div className="column-first">
+                            <h3 style={{ color: "#011c39" }}>{certificate.fileName}</h3>
+                            <p className="date">
+                              {new Date(certificate.issueDate).toLocaleDateString("en-US", {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                              })}
+                            </p>
+                          </div>
+                          <div className="pdf-viewer">
+                            <Document file={`http://localhost:3000/certificates/${certificate.fileName}`}>
+                              <Page pageNumber={1} />
+                            </Document>
+                          </div>
+                          <div className="download-column">
+                            <a
+                              href={`http://localhost:3000/certificates/${certificate.fileName}`}
+                              download={certificate.fileName + ".jpg"}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
 
-                          const link = document.createElement("a");
-                          link.href = `http://localhost:3000/eventPictures/${event.eventPicture}`;
-                          link.setAttribute(
-                            "download",
-                            event.title + ".jpg"
-                          );
-                          document.body.appendChild(link);
-                          link.click();
-                          document.body.removeChild(link);
-                        }}
-                      >
-                        <div className="download-icon">
-                          <FontAwesomeIcon icon={faDownload} />
+                                const link = document.createElement("a");
+                                link.href = `http://localhost:3000/certificates/${certificate.fileName}`;
+                                link.setAttribute(
+                                  "download",
+                                  certificate.fileName + ".jpg"
+                                );
+                                document.body.appendChild(link);
+                                link.click();
+                                document.body.removeChild(link);
+                              }}
+                            >
+                              <div className="download-icon">
+                                <FontAwesomeIcon icon={faDownload} />
+                              </div>
+                            </a>
+                          </div>
                         </div>
-                      </a>
-                    </div>
-                  </div>
+                      </div>
+                    ))}
+
                 </>
               )}
             </div>
@@ -252,7 +268,7 @@ function CertificateGrid() {
           ❮ Prev
         </button>
         {Array.from(
-          { length: Math.ceil(filteredEvents.length / eventsPerPage) },
+          { length: Math.ceil(filteredCertificates.length / certificatePerPage) },
           (_, index) => (
             <button
               key={index + 1}
@@ -269,7 +285,7 @@ function CertificateGrid() {
           onClick={handleNextPage}
           disabled={
             currentPage ===
-            Math.ceil(filteredEvents.length / eventsPerPage)
+            Math.ceil(filteredCertificates.length / certificatePerPage)
           }
         >
           Next ❯
