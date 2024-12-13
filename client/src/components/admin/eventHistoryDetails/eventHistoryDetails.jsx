@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom'; // For route parameters
+import { useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUsers, faCalendarCheck, faClock, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import {
@@ -12,9 +12,9 @@ import {
     ResponsiveContainer,
 } from 'recharts';
 import './eventHistoryDetails.css';
-import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
-import Logo from "../../../assets/buksu-logo.png"
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+import Logo from '../../../assets/buksu-logo.png';
 
 // StatCard Component
 const StatCard = ({ title, count, icon, color }) => (
@@ -28,21 +28,17 @@ const StatCard = ({ title, count, icon, color }) => (
         </div>
     </div>
 );
+
 const calculateEventDuration = (startTime, endTime) => {
     const start = new Date(startTime);
     const end = new Date(endTime);
-
-    const durationInMs = end - start; // Difference in milliseconds
-    const durationInMinutes = Math.floor(durationInMs / (1000 * 60)); // Convert to total minutes
-
-    const hours = Math.floor(durationInMinutes / 60); // Calculate hours
-    const minutes = durationInMinutes % 60; // Calculate remaining minutes
-
+    const durationInMs = end - start;
+    const hours = Math.floor(durationInMs / (1000 * 60 * 60));
+    const minutes = Math.floor((durationInMs % (1000 * 60 * 60)) / (1000 * 60));
     return `${hours > 0 ? `${hours} hr${hours > 1 ? 's' : ''}` : ''} ${
         minutes > 0 ? `${minutes} min${minutes > 1 ? 's' : ''}` : ''
-    }`.trim(); // Construct and return the string
+    }`.trim();
 };
-
 
 const Chart = ({ chartData }) => (
     <div className="chart">
@@ -56,224 +52,124 @@ const Chart = ({ chartData }) => (
                     </linearGradient>
                 </defs>
                 <XAxis dataKey="name" />
-                <YAxis domain={[1, 5]} /> {/* Set the domain to 1-5 for ratings */}
+                <YAxis domain={[1, 5]} />
                 <CartesianGrid strokeDasharray="3 3" />
                 <Tooltip />
-                <Area
-                    type="monotone"
-                    dataKey="eventRating"
-                    stroke="#4caf50"
-                    fillOpacity={1}
-                    fill="url(#colorRating)"
-                />
+                <Area type="monotone" dataKey="eventRating" stroke="#4caf50" fillOpacity={1} fill="url(#colorRating)" />
             </AreaChart>
         </ResponsiveContainer>
     </div>
 );
 
-
-
 const EventDetails = () => {
     const { id } = useParams();
     const [eventDetail, setEventDetail] = useState(null);
-    const [registeredCount, setregisteredCount] = useState(0);
+    const [registeredCount, setRegisteredCount] = useState(0);
     const [attendedCount, setAttendedCount] = useState(0);
-    const [attendedList, setAttendedList] = useState([])
+    const [attendedList, setAttendedList] = useState([]);
     const [users, setUsers] = useState([]);
-    const [chartData, setChartData] = useState({
-        eventRating: 0
-    });
+    const [chartData, setChartData] = useState([]);
     const [loading, setLoading] = useState(true);
 
     // Fetch event details
     useEffect(() => {
-        const fetchEvent = async () => {
+        const fetchData = async () => {
             try {
-                const response = await fetch(`http://localhost:3000/a/events/${id}`);
-                const data = await response.json();
-                setEventDetail(data);
+                const eventResponse = await fetch(`http://localhost:3000/a/events/${id}`);
+                const eventData = await eventResponse.json();
+                setEventDetail(eventData);
+
+                const registeredResponse = await fetch(`http://localhost:3000/a/event/registrations/${id}`);
+                const registeredData = await registeredResponse.json();
+                setRegisteredCount(registeredData.length || 0);
+
+                const attendedResponse = await fetch(`http://localhost:3000/a/event/form-submissions/${id}`);
+                const attendedData = await attendedResponse.json();
+                setAttendedList(attendedData);
+                setAttendedCount(attendedData.length || 0);
+
+                const chartData = attendedData.map((item, index) => ({
+                    name: `User ${index + 1}`,
+                    eventRating: item.eventRating,
+                }));
+                setChartData(chartData);
+
+                const token = sessionStorage.getItem('authToken');
+                const usersResponse = await fetch('http://localhost:3000/a/users', {
+                    method: 'GET',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                const usersData = await usersResponse.json();
+                setUsers(usersData.users || []);
             } catch (error) {
-                console.error('Error fetching event:', error);
+                console.error('Error fetching data:', error);
             } finally {
                 setLoading(false);
             }
         };
 
-        const fetchregisteredCount = async () => {
-            try {
-                const response = await fetch(`http://localhost:3000/a/event/registrations/${id}`);
-                const data = await response.json();
-                setregisteredCount(data.length || 0);
-            } catch (error) {
-                console.error('Error fetching attendees count:', error);
-            }
-        };
-        //Participants who attended
-        const fetchAttendedUsersCount = async () => {
-            try {
-                const response = await fetch(`http://localhost:3000/a/event/form-submissions/${id}`);
-                const data = await response.json();
-                setAttendedCount(data.length || 0);
-            } catch (error) {
-                console.error('Error fetching participants:', error);
-            }
-        };
-        const fetchAttended = async () => {
-            try {
-                const response = await fetch(`http://localhost:3000/a/event/form-submissions/${id}`);
-                const data = await response.json();
-        
-                // Extract eventRating for the chart
-                const chartData = data.map((item, index) => ({
-                    name: `User ${index + 1}`,
-                    eventRating: item.eventRating, // Convert rating to number if needed
-                }));
-                console.log(chartData);
-                console.log("fetchAttended", data);
-                setChartData(chartData); // Set chart data
-                setAttendedList(Array.isArray(data) ? data : []);
-            } catch (error) {
-                console.error('Error fetching participants:', error);
-                setAttendedList([]);
-            }
-        };
-        // const fetchAggregatedAttendees = async () => {
-        //     try {
-        //         const response = await fetch(`http://localhost:3000/a/event/attendees/${id}`);
-        //         const data = await response.json();
-        //         setUsers(data); // Set the aggregated data
-        //     } catch (error) {
-        //         console.error('Error fetching aggregated attendees:', error);
-        //     }
-        // };
-        const token = sessionStorage.getItem("authToken");
-        const fetchUsers = async () => {
-                try {
-                    const response = await fetch('http://localhost:3000/a/users', {
-                        method: 'GET',
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    });
-                    if (response.ok) {
-                        const data = await response.json();
-                        console.log("Users data:", data); // In fetchUsers
-                        setUsers(Array.isArray(data) ? data : []); // Store the fetched users
-                    } else if (response.status === 403) {
-                        navigate('/a/dashboard'); // Redirect if access is denied
-                        setUsers([]);
-                    }
-                } catch (error) {
-                    console.error("Error fetching users:", error);
-                }
-            };
-        
-        // fetchAggregatedAttendees()
-        fetchUsers();
-        fetchEvent();
-        fetchAttended();
-        fetchregisteredCount();
-        fetchAttendedUsersCount();
-        setLoading(false);
+        fetchData();
     }, [id]);
 
     const downloadPDF = async () => {
-        const { jsPDF } = await import("jspdf");
-        const { html2canvas } = await import("html2canvas"); // For chart rendering
         const pdf = new jsPDF();
-    
+
         // Add Logo
-        const logoURL = Logo; // Replace with your logo URL or base64 string
-        const logo = await fetch(logoURL).then((res) => res.blob()).then((blob) => URL.createObjectURL(blob));
-        pdf.addImage(logo, "PNG", 10, 5, 30, 15); // Adjust size and position as needed
-    
+        const logo = await fetch(Logo).then((res) => res.blob()).then((blob) => URL.createObjectURL(blob));
+        pdf.addImage(logo, 'PNG', 10, 5, 30, 15);
+
         // Title
         pdf.setFontSize(18);
-        pdf.text("Event Report", 50, 15);
-    
-        // Event Details with Formatted Date
-        const formatDate = (dateStr, format = "YYYY-MM-DD") => {
-            const date = new Date(dateStr);
-            if (isNaN(date.getTime())) return "N/A"; // Handle invalid date
-            const options =
-                format === "Month DD, YYYY"
-                    ? { year: "numeric", month: "long", day: "numeric" }
-                    : { year: "numeric", month: "2-digit", day: "2-digit" };
-            return new Intl.DateTimeFormat("en-US", options).format(date);
-        };
-    
+        pdf.text('Event Report', 50, 15);
+
+        // Event Details
         pdf.setFontSize(14);
-        pdf.text(`Event: ${eventDetail?.title || "N/A"}`, 10, 30);
-        pdf.text(`Date: ${formatDate(eventDetail?.eventDate, "Month DD, YYYY")}`, 10, 40);
-        pdf.text(`Location: ${eventDetail?.location || "N/A"}`, 10, 50);
-        
+        pdf.text(`Event: ${eventDetail?.title || 'N/A'}`, 10, 30);
+        pdf.text(`Date: ${new Date(eventDetail.eventDate).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })} ` || 'N/A', 10, 40);
+        pdf.text(`Location: ${eventDetail?.location || 'N/A'}`, 10, 50);
+
         // Summary Data
-        pdf.setFontSize(12);
-        const totalAttendees = attendedList.length || 0;
-        const totalRegistrations = users.length || 0;
-        const avgRating = (
-            attendedList.reduce((sum, attended) => sum + (attended.eventRating || 0), 0) /
-            (totalAttendees || 1)
-        ).toFixed(2);
-        
-        let summaryY = 60;
-        pdf.text(`Total Attendees: ${totalAttendees}`, 10, summaryY);
-        pdf.text(`Total Registrations: ${totalRegistrations}`, 10, summaryY + 10);
-        pdf.text(`Average Rating: ${avgRating}`, 10, summaryY + 20);
-        pdf.text(`Description: ${eventDetail?.description || "N/A"}`, 10, summaryY + 30)
-        // Render Chart (if applicable)
-        const chartElement = document.getElementById("chart-container"); // Replace with your chart container's ID
+        pdf.text(`Total Registrations: ${registeredCount}`, 10, 60);
+        pdf.text(`Participants Attended: ${attendedCount}`, 10, 70);
+        pdf.text(`Participants Absent: ${registeredCount - attendedCount}`, 10, 80);
+
+        // Chart Screenshot
+        const chartElement = document.querySelector('.chart');
         if (chartElement) {
             const chartCanvas = await html2canvas(chartElement);
-            const chartData = chartCanvas.toDataURL("image/png");
-            pdf.addImage(chartData, "PNG", 10, summaryY + 30, 180, 80); // Adjust size and position
-            summaryY += 90; // Adjust Y position for the next section
+            const chartImage = chartCanvas.toDataURL('image/png');
+            pdf.addImage(chartImage, 'PNG', 10, 90, 180, 60);
         }
-    
-        // Table Heading
-        pdf.setFontSize(12);
-        const tableStartY = summaryY + 40;
-        const tableHeaders = ["ID", "Name", "Email", "Phone", "Role", "Rating"];
-        let y = tableStartY;
-        const lineHeight = 10;
-    
-        pdf.setFontSize(10);
-        pdf.text(tableHeaders.join(" | "), 10, y);
-        pdf.line(10, y + 2, 200, y + 2); // Line under header
-        y += lineHeight;
-    
-        // Table Rows
+
+        // Users Table
         const matchedUsers = attendedList
             .map((attended) => {
-                const user = users.find((u) => u._id === attended.userId);
+                const user = users.find((u) => u._id.toString() === attended.userId.toString());
                 return user ? { ...user, eventRating: attended.eventRating } : null;
             })
             .filter(Boolean);
-    
-        matchedUsers.forEach((user) => {
-            const row = [
-                user.userId || "N/A",
-                user.name || "N/A",
-                user.email || "N/A",
-                user.phoneNumber || "N/A",
-                user.role || "N/A",
-                user.eventRating || "N/A",
-            ];
-            pdf.text(row.join(" | "), 10, y);
-            y += lineHeight;
-    
-            // Handle page overflow
-            if (y > 280) {
-                pdf.addPage();
-                y = 10;
-            }
+
+        let y = 160;
+        pdf.setFontSize(12);
+        pdf.text('Participants Details:', 10, y);
+        y += 10;
+        matchedUsers.forEach((user, index) => {
+            pdf.text(
+                `${index + 1}. ${user.name || 'N/A'} | ${user.email || 'N/A'} | Rating: ${
+                    user.eventRating || 'N/A'
+                }`,
+                10,
+                y
+            );
+            y += 10;
         });
-    
-        // Save the PDF
-        pdf.save(`${eventDetail?.title || "event-report"}.pdf`);
+
+        // Save PDF
+        pdf.save(`${eventDetail?.title || 'Event_Report'}.pdf`);
     };
-    
-    
+
 
     if (loading) {
         return <div>Loading...</div>;
@@ -282,132 +178,114 @@ const EventDetails = () => {
     if (!eventDetail) {
         return <div>No event details available for this ID.</div>;
     }
-    
-// UsersTable Component
-const UsersTable = ({ attendedList = [], users = [] }) => {
-    if (!Array.isArray(attendedList) || !Array.isArray(users)) {
-        console.error("Invalid data: 'attendedList' or 'users' is not an array");
-        return null;
-    }
 
-    // Match attendedList to users by userId
-    const matchedUsers = attendedList
-    .map((attended) => {
-        const user = users.find((u) => u._id === attended.userId);
-        return user ? { ...user, eventRating: attended.eventRating } : null;
-    })
-    .filter(Boolean);
+    const UsersTable = ({ attendedList = [], users = [] }) => {
+        const matchedUsers = attendedList
+            .map((attended) => {
+                const user = users.find((u) => u._id.toString() === attended.userId.toString());
+                return user ? { ...user, eventRating: attended.eventRating } : null;
+            })
+            .filter(Boolean);
 
-    console.log("matchedUsers", matchedUsers);
-
-    return (
-        <div className="table-container">
-            <h2 className="users-heading">Registered Participants Attended</h2>
-            <table className="table table-striped">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Phone Number</th>
-                        <th>Role</th>
-                        <th>Rating</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {matchedUsers.length > 0 ? (
-                        matchedUsers.map((user) => (
-                            <tr key={user.userId}>
-                                <td>{user.userId}</td>
-                                <td>{user.name || "N/A"}</td>
-                                <td>{user.email || "N/A"}</td>
-                                <td>{user.phoneNumber || "N/A"}</td>
-                                <td>{user.role || "N/A"}</td>
-                                <td>{user.eventRating || "N/A"}</td>
-                            </tr>
-                        ))
-                    ) : (
+        return (
+            <div className="table-container">
+                <h2 className="users-heading">Registered Participants Attended</h2>
+                <table className="table table-striped">
+                    <thead>
                         <tr>
-                            <td colSpan="6">No matching users found</td>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone Number</th>
+                            <th>Role</th>
+                            <th>Rating</th>
                         </tr>
-                    )}
-                </tbody>
-            </table>
-        </div>
-    );
-};
+                    </thead>
+                    <tbody>
+                        {matchedUsers.length > 0 ? (
+                            matchedUsers.map((user) => (
+                                <tr key={user._id}>
+                                    <td>{user._id}</td>
+                                    <td>{user.name || 'N/A'}</td>
+                                    <td>{user.email || 'N/A'}</td>
+                                    <td>{user.phoneNumber || 'N/A'}</td>
+                                    <td>{user.role || 'N/A'}</td>
+                                    <td>{user.eventRating || 'N/A'}</td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan="6">No matching users found</td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
+            </div>
+        );
+    };
 
-    
-    
+    const eventDuration = calculateEventDuration(eventDetail.startTime, eventDetail.endTime);
+    const formatTime = (date) => {
+        return new Date(date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+    };
+
     return (
         <div className="dashboard-container">
             <div className="event-container">
-            <h2 className="dashboard-heading">Event Report</h2>
-            <button onClick={downloadPDF} className="download-btn">Download PDF</button>
-                    <div className="card-wrapper">
-                        <div className="details-section">
-                            <img
-                                src={`http://localhost:3000/eventPictures/${eventDetail?.eventPicture}`}
-                                alt={`${eventDetail?.title || 'No'} image`}
-                                className="history-event-img"
-                                onError={(e) => (e.target.src = '/src/assets/default-eventPicture.jpg')}
-                            />
-                            <h3 className="title-heading">{eventDetail?.title}</h3>
-                            <p className="description-text">{eventDetail?.description}</p>
-                            <div className="info-container">
-                                <span>
-                                    <FontAwesomeIcon icon={faCalendarCheck} /> {eventDetail?.eventDate}
-                                </span>
-                                <span>
-                                    <FontAwesomeIcon icon={faClock} /> {eventDetail?.startTime}
-                                </span>
-                                <span>
-                                    <FontAwesomeIcon icon={faMapMarkerAlt} /> {eventDetail?.location}
-                                </span>
-                            </div>
-                        </div>
+                <h2 className="dashboard-heading">Event Report</h2>
+                <button onClick={downloadPDF} className="download-btn">Download PDF</button>
+                <div className="details-section">
+                    <img
+                        src={`http://localhost:3000/eventPictures/${eventDetail?.eventPicture}`}
+                        alt="Event"
+                        className="history-event-img"
+                    />
+                    <h3>{eventDetail?.title}</h3>
+                    <p>{eventDetail?.description}</p>
+                    <div className="info-container">
+                        <span>
+                            <FontAwesomeIcon icon={faCalendarCheck} /> {new Date(eventDetail.eventDate).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
+                        </span>
+                        <span>
+                            <FontAwesomeIcon icon={faClock} /> {formatTime(eventDetail?.startTime)} - {formatTime(eventDetail?.endTime)}
+                        </span>
+                        <span>
+                            <FontAwesomeIcon icon={faMapMarkerAlt} /> {eventDetail?.location}
+                        </span>
                     </div>
-                </div>
-
-        
-                
-                <div className="content">
-                    <div className="dashboard">
-                        <StatCard
-                            title="Attendees Registered"
-                            count={registeredCount}
-                            icon={<FontAwesomeIcon icon={faUsers} size="2x" />}
-                            color="#4a90e2"
-                        />
-                        <StatCard
-                            title="Participants Attended"
-                            count={attendedCount}
-                            icon={<FontAwesomeIcon icon={faUsers} size="2x" />}
-                            color="#9b51e0"
-                        />
-                        <StatCard
-                            title="Participants Absent"
-                            count={registeredCount - attendedCount}
-                            icon={<FontAwesomeIcon icon={faUsers} size="2x" />}
-                            color="#F08080"
-                        />
-                        <StatCard
-                            title="Event Duration"
-                            count={
-                                eventDetail.startTime && eventDetail.endTime
-                                    ? calculateEventDuration(eventDetail.startTime, eventDetail.endTime)
-                                    : 'N/A'
-                            }
-                            icon={<FontAwesomeIcon icon={faClock} size="2x" />}
-                            color="#ff3b30"
-                        />
-                    </div>
-                    
-                    <Chart chartData={chartData} />
-                    <UsersTable attendedList={attendedList} users={users} />
                 </div>
             </div>
-    
+            <div className="content">
+                <div className="dashboard">
+                    <StatCard
+                        title="Attendees Registered"
+                        count={registeredCount}
+                        icon={<FontAwesomeIcon icon={faUsers} size="2x" />}
+                        color="#4a90e2"
+                    />
+                    <StatCard
+                        title="Participants Attended"
+                        count={attendedCount}
+                        icon={<FontAwesomeIcon icon={faUsers} size="2x" />}
+                        color="#9b51e0"
+                    />
+                    <StatCard
+                        title="Participants Absent"
+                        count={registeredCount - attendedCount}
+                        icon={<FontAwesomeIcon icon={faUsers} size="2x" />}
+                        color="#F08080"
+                    />
+                    <StatCard
+                        title="Event Duration"
+                        count={eventDuration}
+                        icon={<FontAwesomeIcon icon={faClock} size="2x" />}
+                        color="#ff3b30"
+                    />
+                </div>
+                <Chart chartData={chartData} />
+                <UsersTable attendedList={attendedList} users={users} />
+            </div>
+        </div>
     );
 };
 

@@ -34,9 +34,6 @@ const certificateSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 
-console.log('encryptionKey: ', process.env.MONGODB_ENCRYPTION_KEY);
-console.log('signingKey: ', process.env.MONGODB_SIGNING_KEY);
-
 certificateSchema.plugin(encrypt, { 
     encryptionKey: process.env.MONGODB_ENCRYPTION_KEY, 
     signingKey: process.env.MONGODB_SIGNING_KEY,
