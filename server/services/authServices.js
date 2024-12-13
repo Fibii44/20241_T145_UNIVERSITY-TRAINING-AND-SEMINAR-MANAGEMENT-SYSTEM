@@ -55,16 +55,17 @@ const manualLogin = async (req, res) => {
 
     const user = await User.findOne({ email });
 
+    if (user.email !== email) {
+      return res.status(404).json({ success: false, message: 'Invalid email or password' });
+    }
+
     console.log('Login attempt with:', {
       email,
       providedPassword: password,
       storedSalt: user.salt
     });
 
-    if (!user) {
-      return res.status(401).json({ success: false, message: 'Invalid email or password' });
-    }
-
+    
     // Follow exact same steps as creation
     const initialHash = await bcrypt.hash(password, 10);
     console.log("Initial hash:", initialHash);
@@ -78,7 +79,7 @@ const manualLogin = async (req, res) => {
    
     const isPasswordValid = bcrypt.compare(finalHash, user.password);
 
-    if (!isPasswordValid)   
+    if (!isPasswordValid)   
  {
       return res.status(401).json({ success: false, message: 'Invalid email or password' });
     }
@@ -86,7 +87,7 @@ const manualLogin = async (req, res) => {
     const token = jwt.sign(
       { 
         id: user._id, 
-        role: user.role,   
+        role: user.role,   
         name: user.name, 
         email: user.email, 
         position: user.position,

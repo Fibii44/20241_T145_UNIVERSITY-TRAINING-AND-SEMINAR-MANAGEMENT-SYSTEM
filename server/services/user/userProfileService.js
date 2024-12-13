@@ -1,5 +1,6 @@
 const User = require('../../models/user');
 const Registration = require('../../models/registration');
+const Certificate = require('../../models/certificate');
 const { emitNewActivity } = require('../../config/socketConfig')
 
 // Render user profile page

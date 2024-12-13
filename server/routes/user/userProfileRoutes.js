@@ -9,8 +9,8 @@ userProfileRoutes.get('/u/profile', userProfileService.renderProfilePage);
 userProfileRoutes.patch('/u/profile',authenticateJWT, userProfileService.updateUserProfile);
 
 // Certificates
-userProfileRoutes.get('/u/profile/certificates', userProfileService.listCertificates);
-userProfileRoutes.get('/u/profile/certificates/:certificateID', userProfileService.viewCertificate);
+userProfileRoutes.get('/u/certificates', authenticateJWT, userProfileService.listCertificates);
+userProfileRoutes.get('/u/certificates/:certificateID', authenticateJWT, userProfileService.viewCertificate);
 
 //History
 userProfileRoutes.get('/u/history', authenticateJWT, userProfileService.renderHistoryPage);

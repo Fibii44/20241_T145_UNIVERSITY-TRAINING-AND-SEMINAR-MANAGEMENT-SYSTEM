@@ -31,7 +31,7 @@ const authRoutes = require('./routes/authRoutes');
 const corsOptions = {
   origin: 'http://localhost:5000',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-  credentials: true,
+  credentials: true
 };
 
 // Initialize Socket.IO
@@ -52,11 +52,31 @@ app.locals.sseClients = []; // Array to store SSE clients
 
 // Static file serving
 app.use('/eventPictures', express.static(path.join(__dirname, 'uploads', 'eventPictures')));
+app.use('/certificates', express.static(path.join(__dirname, 'uploads', 'certificates')));
 
 // Event pictures download route
 app.get('/eventPictures/:filename', (req, res) => {
   const filename = req.params.filename;
   const imagePath = path.join(__dirname, 'uploads', 'eventPictures', filename);
+  console.log("Trying to access file:", imagePath);
+  res.download(imagePath, filename, (err) => {
+    if (err) {
+      console.error("Error downloading file:", err);
+      res.status(404).send('File not found');
+    }
+  });
+});
+
+app.use('/certificates', (req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*'); // Allow all origins or specify your client's URL
+  res.header('Access-Control-Allow-Methods', 'GET, POST');
+  next();
+});
+
+
+app.get('/certificates/:filename', (req, res) => {
+  const filename = req.params.filename;
+  const imagePath = path.join(__dirname, 'uploads', 'certificates', filename);
   console.log("Trying to access file:", imagePath);
   res.download(imagePath, filename, (err) => {
     if (err) {
@@ -96,3 +116,11 @@ process.on('SIGTERM', () => {
     console.log('Server terminated');
   });
 });
+
+app.use(express.static('public', {
+  setHeaders: (res, path) => {
+      if (path.endsWith('.mjs')) {
+          res.setHeader('Content-Type', 'application/javascript');
+      }
+  }
+}));
