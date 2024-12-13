@@ -129,7 +129,9 @@ const generateAndEmailCertificate = async (submissionId) => {
             issuedDate: new Date(),
             status: 'issued',
         });
-
+    
+    const admin = await User.findOne({email: process.env.GMAIL_USER})
+    console.log('admin: ', admin);
         // Prepare and send email
         const emailContent = `
 Dear ${user.name},
@@ -152,8 +154,8 @@ BukSU Engage Team
                 `Certificate of Completion - ${event.title}`,
                 emailContent,
                 {   
-                    accessToken: process.env.GMAIL_ACCESS_TOKEN,
-                    refreshToken: process.env.GMAIL_REFRESH_TOKEN,
+                    accessToken: admin.accessToken,
+                    refreshToken: admin.refreshToken,
                     attachments: [
                         {
                             filename: fileName,

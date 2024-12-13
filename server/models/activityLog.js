@@ -20,8 +20,6 @@ const activityLogSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 
-console.log('encryptionKey: ', process.env.MONGODB_ENCRYPTION_KEY);
-console.log('signingKey: ', process.env.MONGODB_SIGNING_KEY);
 // Encryption
 activityLogSchema.plugin(encrypt, {
   encryptionKey: process.env.MONGODB_ENCRYPTION_KEY,

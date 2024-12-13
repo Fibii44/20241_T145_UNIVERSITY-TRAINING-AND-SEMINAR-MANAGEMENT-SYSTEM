@@ -55,28 +55,17 @@ const manualLogin = async (req, res) => {
 
     const user = await User.findOne({ email });
 
+    if(!user){
+      return res.status(404).json({ success: false, message: 'Invalid email or password' });
+    }
+
     console.log('Login attempt with:', {
       email,
       providedPassword: password,
-      storedSalt: user.salt
     });
-
-    if (!user) {
-      return res.status(401).json({ success: false, message: 'Invalid email or password' });
-    }
-
-    // Follow exact same steps as creation
-    const initialHash = await bcrypt.hash(password, 10);
-    console.log("Initial hash:", initialHash);
-
-    const saltedHash = `${initialHash}:${user.salt}`;
-    console.log("Salted hash:", saltedHash);
-
-    const finalHash = await bcrypt.hash(saltedHash, 10);
-    console.log("Final hash:", finalHash);
-    console.log("Stored hash:", user.password);
    
-    const isPasswordValid = bcrypt.compare(finalHash, user.password);
+    const isPasswordValid = await user.isValidPassword(password);
+    console.log("isPasswordValid", isPasswordValid);
 
     if (!isPasswordValid)   
  {
@@ -134,19 +123,12 @@ const changePassword = async (req, res) => {
     const user = await User.findById(userId);
 
     if (!user) {
-      return res.status(401).json({ message: 'User not found' });
+      return res.status(404).json({ message: 'User not found' });
     }
 
-    const initialHash = await bcrypt.hash(newPassword, 10);
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-    const salt = await bcrypt.genSalt(10);
-    const saltedPassword = initialHash + salt;
-
-    const finalHashedPassword = await bcrypt.hash(saltedPassword, 10);
-    console.log(finalHashedPassword);
-
-    user.password = finalHashedPassword;
-    user.salt = salt;
+    user.password = hashedPassword;
     user.mustChangePassword = false;
     await user.save();
     await emitNewActivity(userId, 'Password Changed', {userName: user.name})

@@ -48,8 +48,6 @@
                 return res.status(200).json([]);
             }
 
-            console.log("Attendees data:", attendees); // In aggregateUserForms
-
             res.status(200).json(attendees);
         } catch (error) {
             console.error('Error fetching attendees:', error);
@@ -74,9 +72,10 @@ const getRegisteredUsers = async (req, res) => {
                     return res.status(404).json({ message: 'No registrations found for this event.' });
                 }
 
-            registrations.forEach((reg) => {
-                if(reg.userId && typeof reg.userId.decrypt === 'function'){
-                    reg.userId.decrypt();
+            registrations.forEach(async (reg) => {
+                if(reg.userId){
+                    const user = await User.findById(reg.userId._id);
+                    reg.userId = user;
                 }
             });
 
@@ -86,10 +85,11 @@ const getRegisteredUsers = async (req, res) => {
                 userId: reg.userId?._id,
                 eventId: id,
                 name: reg.userId?.name,
-                email: reg.userId.email,
+                email: reg.userId?.email,
                 status: reg.status,
                 registrationDate: reg.registrationDate,
             }));
+
 
             console.log("registeredUsers", registeredUsers);
             
@@ -141,8 +141,7 @@ const getRegisteredUsers = async (req, res) => {
                     submittedAt: form.submittedAt,
                 };
             });
-            
-            console.log("userForms", userForms);
+
 
             res.status(200).json(userForms); // Send the formatted response
         } catch (error) {

@@ -57,20 +57,13 @@ const addPersonnelAccount = async (req, res) => {
     const tempPassword = crypto.randomBytes(8).toString('hex'); 
     console.log("Temporary password:", tempPassword);
 
-    const initialHash = await bcrypt.hash(tempPassword, 10);
-
-    const salt = await bcrypt.genSalt(10);
-    const saltedPassword = initialHash + salt;
-
-    const finalHashedPassword = await bcrypt.hash(saltedPassword, 10);
-    console.log(finalHashedPassword);
+    const hashedPassword = await bcrypt.hash(tempPassword, 10);
 
 
     const newUser = new User({
       name,
       email,
-      password: finalHashedPassword,
-      salt: salt,
+      password: hashedPassword,
       role,
       phoneNumber,
       department,
