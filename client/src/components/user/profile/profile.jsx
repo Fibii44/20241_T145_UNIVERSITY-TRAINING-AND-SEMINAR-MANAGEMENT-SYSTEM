@@ -12,7 +12,7 @@ const Profile = ({ token }) => {
 
     // Decode JWT token to extract user details
     useEffect(() => {
-        const token = sessionStorage.getItem('authToken');
+        const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken');
         if (token) {
             const storedUser = JSON.parse(sessionStorage.getItem('userData'));
             if (storedUser) {
@@ -46,7 +46,8 @@ const Profile = ({ token }) => {
     const handleSave = async () => {
         setShowConfirmModal(false); // Close modal after confirming
 
-        const token = sessionStorage.getItem('authToken');
+        const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken');
+        const stayLoggedIn = localStorage.getItem('stayLoggedIn') === 'true';
         if (!token) return;
 
         try {
@@ -56,6 +57,7 @@ const Profile = ({ token }) => {
                     phoneNumber: user.phoneNumber,
                     department: user.department,
                     position: user.position,
+                    stayLoggedIn: stayLoggedIn,
                 },
                 {
                     headers: {
@@ -65,15 +67,16 @@ const Profile = ({ token }) => {
             );
 
             if (response.status === 200) {
-                const updatedUser = {
-                    ...user,
-                    phoneNumber: response.data.phoneNumber,
-                    department: response.data.department,
-                    position: response.data.position,
-                };
+                const updatedUser = response.data.user;
+                const newToken = response.data.token;
 
-                sessionStorage.setItem('authToken', token);
-                sessionStorage.setItem('userData', JSON.stringify(updatedUser));
+                if (stayLoggedIn) {
+                    localStorage.setItem('authToken', newToken);
+                    localStorage.setItem('userData', JSON.stringify(updatedUser));
+                } else {
+                    sessionStorage.setItem('authToken', newToken);
+                    sessionStorage.setItem('userData', JSON.stringify(updatedUser));
+                }
 
                 setUser(updatedUser);
                 setIsEditing(false);

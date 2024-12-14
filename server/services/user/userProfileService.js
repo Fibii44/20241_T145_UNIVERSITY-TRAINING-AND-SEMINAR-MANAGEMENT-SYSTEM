@@ -1,4 +1,7 @@
 const User = require('../../models/user');
+const jwt = require('jsonwebtoken');
+const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_EXPIRES_IN = '1h';
 const Registration = require('../../models/registration');
 const Certificate = require('../../models/certificate');
 const { emitNewActivity } = require('../../config/socketConfig')
@@ -18,9 +21,9 @@ const renderProfilePage = async (req, res) => {
 // Update user profile
 const updateUserProfile = async (req, res) => {
     try {
-        const { phoneNumber, department, position } = req.body;
+        const { phoneNumber, department, position, stayLoggedIn } = req.body;
 
-      
+        const tokenExpiry = stayLoggedIn ? '90d' : JWT_EXPIRES_IN;
 
         const user = await User.findById(req.user.id);
         if (!user) {
@@ -31,11 +34,35 @@ const updateUserProfile = async (req, res) => {
         user.phoneNumber = phoneNumber;
         user.department = department;
         user.position = position;
+        
 
         const updatedUser = await user.save();
+
+        const token = jwt.sign(
+            {
+                id: updatedUser._id,
+                role: updatedUser.role,
+                name: updatedUser.name,
+                email: updatedUser.email,
+                position: updatedUser.position,
+                department: updatedUser.department,
+                phoneNumber: updatedUser.phoneNumber,
+                profilePicture: updatedUser.profilePicture,
+                accessToken: updatedUser.accessToken,
+                refreshToken: updatedUser.refreshToken,
+                mustChangePassword: updatedUser.mustChangePassword,
+                status: updatedUser.status
+            },
+            JWT_SECRET,
+            { expiresIn: tokenExpiry }
+        );
+
+        console.log(updatedUser)
+        console.log(token)
+
         await emitNewActivity(user._id, 'Updated User Profile', {userName: user.name})
 
-        res.status(200).json(updatedUser);  // Return the updated user data to the client without sensitive details in the logs
+        res.status(200).json({user: updatedUser, token});  // Return the updated user data to the client without sensitive details in the logs
     } catch (error) {
         console.error('Error updating profile:', error);  // Log error but avoid logging sensitive info
         res.status(500).send(`Error updating profile: ${error.message}`);

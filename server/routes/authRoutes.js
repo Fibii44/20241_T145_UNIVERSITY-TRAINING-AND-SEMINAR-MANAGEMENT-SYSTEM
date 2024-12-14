@@ -5,7 +5,7 @@ const authRoutes = express.Router();
 const authService = require('../services/authServices');
 
 //Google Login
-authRoutes.get('/auth/google', passport.authenticate('google', { accessType: 'offline', prompt: 'consent', callbackURL: 'http://localhost:3000/auth/google/callback' }));
+authRoutes.get('/auth/google', authService.googleLogin);
 authRoutes.get('/auth/google/callback', authService.googleOAuthCallback); 
 
 //Manual Login

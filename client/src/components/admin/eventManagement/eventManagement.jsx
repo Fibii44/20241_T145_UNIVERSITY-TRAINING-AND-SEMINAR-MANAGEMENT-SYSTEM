@@ -98,7 +98,8 @@ const EventM = ({ userRole, userCollege }) => {
   
 
   const handleEdit = async (event) => {
-    const token = sessionStorage.getItem('authToken');
+    const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken');
+
     if (!token) {
       showToast('User is not authenticated. Please log in.', 'error');
       return;
@@ -131,7 +132,7 @@ const EventM = ({ userRole, userCollege }) => {
   };
 
   const confirmDelete = async () => {
-    const token = sessionStorage.getItem('authToken');
+    const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken');
     try {
       await axios.delete(`http://localhost:3000/a/events/${eventToDelete}`, {
         headers: { Authorization: `Bearer ${token}` }
@@ -147,7 +148,7 @@ const EventM = ({ userRole, userCollege }) => {
   const handleCancelEdit = async () => {
     // Unlock event if it was locked for editing
     if (selectedEvent) {
-      const token = sessionStorage.getItem('authToken');
+      const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken');
       try {
         await axios.put(`http://localhost:3000/a/events/${selectedEvent._id}/unlock`, {}, {
           headers: { Authorization: `Bearer ${token}` }
@@ -176,7 +177,7 @@ const EventM = ({ userRole, userCollege }) => {
       return;
     }
 
-    const token = sessionStorage.getItem('authToken');
+    const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken');
     if (!token) {
       showToast('User is not authenticated. Please log in.', 'error');
       return;
@@ -303,7 +304,7 @@ const EventM = ({ userRole, userCollege }) => {
   useEffect(() => {
     const lockedEventId = sessionStorage.getItem('lockedEventId');
   if (lockedEventId) {
-    const token = sessionStorage.getItem('authToken');
+    const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken');
     if (token) {
       // Check if the event is locked by another admin
       axios.get(`http://localhost:3000/a/events/${lockedEventId}`, {

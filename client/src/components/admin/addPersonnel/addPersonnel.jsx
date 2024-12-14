@@ -19,7 +19,7 @@ const AddPersonnelModal = ({ show, onClose }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = sessionStorage.getItem("authToken");
+    const token = sessionStorage.getItem("authToken") || localStorage.getItem("authToken");
 
     // Check if user has access to this page
     const checkAccess = async () => {

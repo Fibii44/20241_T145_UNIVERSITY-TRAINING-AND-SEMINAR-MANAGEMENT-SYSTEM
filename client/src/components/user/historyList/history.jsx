@@ -27,7 +27,7 @@ function userHistoryList() {
 useEffect(() => {
     const fetchEvents = async () => {
         try {
-            const token = sessionStorage.getItem('authToken');
+            const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken');
 
             const response = await axios.get('http://localhost:3000/u/history', {
                 headers: { Authorization: `Bearer ${token}` },

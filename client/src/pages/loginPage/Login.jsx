@@ -17,7 +17,7 @@ import Logo from '../../assets/buksu-logo.png';
 function Login() {
   const navigate = useNavigate();
   const { executeRecaptcha } = useGoogleReCaptcha();
-
+  const [stayLoggedIn, setStayLoggedIn] = useState(false);
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [errorMessage, setErrorMessage] = useState(''); // State for error message
 
@@ -34,8 +34,14 @@ function Login() {
     }
   };
 
-  const handleGoogleLogin = () => {
-    window.location.href = 'http://localhost:3000/auth/google';
+  const handleStayLoggedIn = (event) => {
+    setStayLoggedIn(event.target.checked);
+  }
+
+  const handleGoogleLogin = async () => {
+    console.log(stayLoggedIn);
+    window.location.href = `http://localhost:3000/auth/google?stayLoggedIn=${stayLoggedIn}`;
+
   };
 
   const handleManualLogin = async () => {
@@ -50,7 +56,8 @@ function Login() {
         body: JSON.stringify({ 
           email: formData.email, 
           password: formData.password, 
-          recaptchaToken 
+          recaptchaToken,
+          stayLoggedIn: document.getElementById('flexCheckDefault').checked
         }),
       });
 
@@ -62,13 +69,9 @@ function Login() {
       }
 
       const data = await response.json();
-      if (data.success) {
-        sessionStorage.setItem('authToken', data.token);
-        console.log("Token:", data.token);
-        navigate(`/login/success?token=${data.token}`); // Redirect to success 
-      } else {
-        setErrorMessage(data.message); // Show error message from response
-      }
+      console.log("token", data.token);
+
+      navigate(`/login/success?token=${data.token}&stayLoggedIn=${document.getElementById('flexCheckDefault').checked}`);
     } catch (error) {
       console.error("Error during login:", error);
       setErrorMessage('An error occurred during login. Please try again.'); // Show generic error message
@@ -115,7 +118,7 @@ function Login() {
               />
 
               <div  style={{ magin: '0'}} className="login-form-check">
-                <input className="form-check-input" type="checkbox" id="flexCheckDefault"/>
+                <input className="form-check-input" type="checkbox" id="flexCheckDefault" checked={stayLoggedIn} onChange={handleStayLoggedIn}/>
                 <label className="form-check-label" htmlFor="flexCheckDefault">
                   Stay logged in
                 </label>

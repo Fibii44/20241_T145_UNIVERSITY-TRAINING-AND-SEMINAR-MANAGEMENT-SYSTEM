@@ -15,7 +15,7 @@
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${sessionStorage.getItem('authToken')}`
+            'Authorization': `Bearer ${sessionStorage.getItem('authToken') || localStorage.getItem('authToken')}`
           }
         });
         if (response.ok) {
@@ -43,7 +43,8 @@
       deleteGoogleCookies();
 
       sessionStorage.clear();	
-
+      localStorage.clear();
+      
       if (window.gapi && window.gapi.auth2) {
         const auth2 = window.gapi.auth2.getAuthInstance();
         if (auth2.isSignedIn.get()) {

@@ -28,7 +28,7 @@ function CertificateGrid() {
   useEffect(() => {
     const fetchCertificates = async () => {
       try {
-        const token = sessionStorage.getItem('authToken');
+        const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken');
         const response = await axios.get('http://localhost:3000/u/certificates', { headers: { Authorization: `Bearer ${token}` } }); // Replace with your actual API endpoint
         const updatedCertificates = response.data.map((certificate) => {
           return {

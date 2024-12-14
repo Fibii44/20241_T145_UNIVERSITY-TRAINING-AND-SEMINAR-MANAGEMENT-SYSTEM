@@ -89,7 +89,7 @@
         }, []);
     
         useEffect(() => {
-            const token = sessionStorage.getItem('authToken');
+            const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken');
             if (token) {
                 const decoded = jwtDecode(token);
                 setUser({

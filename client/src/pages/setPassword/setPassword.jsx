@@ -47,7 +47,7 @@ const ChangePassword = () => {
     }
 
     try {
-      const token = sessionStorage.getItem('authToken');
+      const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken');
       const response = await fetch('http://localhost:3000/auth/change-password', {
         method: 'POST',
         headers: {

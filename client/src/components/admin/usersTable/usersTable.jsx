@@ -281,7 +281,7 @@ const Table = () => {
 
   useEffect(() => {
 
-    const token = sessionStorage.getItem("authToken");
+    const token = sessionStorage.getItem("authToken") || localStorage.getItem("authToken");
 
     const checkAccess = async () => {
       try {

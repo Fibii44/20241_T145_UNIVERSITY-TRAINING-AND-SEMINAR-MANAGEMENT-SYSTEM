@@ -19,7 +19,7 @@ const ActivityLog = () => {
         // Check if user has access to this page
         const checkAccess = async () => {
             try {
-                const token = sessionStorage.getItem("authToken");
+                const token = sessionStorage.getItem("authToken") || localStorage.getItem("authToken");
                 const response = await fetch("http://localhost:3000/a/activity-logs", {
                     method: "GET",
                         headers: {

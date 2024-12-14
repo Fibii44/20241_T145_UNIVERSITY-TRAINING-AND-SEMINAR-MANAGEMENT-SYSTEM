@@ -94,7 +94,7 @@ const EventDetails = () => {
                 }));
                 setChartData(chartData);
 
-                const token = sessionStorage.getItem('authToken');
+                const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken');
                 const usersResponse = await fetch('http://localhost:3000/a/users', {
                     method: 'GET',
                     headers: {

@@ -9,8 +9,8 @@ const Sidebar = ({ activePage }) => {
   const [isCollapsed, setIsCollapsed] = useState(() => {
     return sessionStorage.getItem('isSidebarCollapsed') === 'true';
   });
-  const [role, setRole] = useState(sessionStorage.getItem('userRole') || ''); // Retrieve role from session storage
-
+  const [role, setRole] = useState(sessionStorage.getItem('userRole') || localStorage.getItem('userRole') || ''); // Retrieve role 
+  
   const toggleSidebar = () => {
     setIsCollapsed((prevState) => {
       const newState = !prevState;

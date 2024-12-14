@@ -63,7 +63,7 @@ function Event() {
     // Check form status
     const checkFormStatus = async () => {
         try {
-            const token = sessionStorage.getItem('authToken');
+            const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken');
             if (!token) {
                 console.log('No token found');
                 return;
@@ -105,7 +105,7 @@ function Event() {
             setSubmissionMessage('Verifying your form submission...');
             setIsLoading(true);
 
-            const token = sessionStorage.getItem('authToken');
+            const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken');
             if (!token) {
                 throw new Error('Please log in to submit the form');
             }
@@ -191,7 +191,7 @@ function Event() {
         const fetchEventAndData = async () => {
             try {
                 setLoading(true);
-                const token = sessionStorage.getItem('authToken');
+                const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken');
 
                 // First fetch event details
                 console.log("Fetching event with ID:", id);
@@ -261,7 +261,7 @@ function Event() {
     useEffect(() => {
         const checkCertificateStatus = async () => {
             try {
-                const token = sessionStorage.getItem('authToken');
+                const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken');
                 const response = await axios.get(
                     `http://localhost:3000/u/events/${id}/certificate-status`,
                     { headers: { Authorization: `Bearer ${token}` } }
@@ -283,7 +283,7 @@ function Event() {
     }, [id]);
 
     const handleRegistration = async () => {
-        const token = sessionStorage.getItem('authToken');
+        const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken');
         try {
             const response = await axios.post(
                 'http://localhost:3000/u/events/',
@@ -299,7 +299,7 @@ function Event() {
     };
     const checkCertificateStatus = async () => {
         try {
-            const token = sessionStorage.getItem('authToken');
+            const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken');
             const response = await axios.get(
                 `http://localhost:3000/u/events/${id}/certificate-status`,
                 { headers: { Authorization: `Bearer ${token}` } }
@@ -318,7 +318,7 @@ function Event() {
     };
 
     const handleCancellation = async () => {
-        const token = sessionStorage.getItem('authToken');
+        const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken');
         try {
             if (!googleEventId) {
                 showToast('No Google Calendar event found to cancel.', 'error');

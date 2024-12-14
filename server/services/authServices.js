@@ -8,13 +8,30 @@ const { Timestamp } = require('mongodb');
 const JWT_SECRET = process.env.JWT_SECRET; 
 const JWT_EXPIRES_IN = '1h'; 
 
+const googleLogin = async (req, res, next) => {
+  const { stayLoggedIn } = req.query;
+
+  const state = JSON.stringify({ stayLoggedIn });
+
+  passport.authenticate('google', {
+    accessType: 'offline',
+    prompt: 'consent',
+    callbackURL: 'http://localhost:3000/auth/google/callback',
+    state
+  })(req, res, next);
+};
+
 const googleOAuthCallback = (req, res, next) => {
+  const { state } = req.query;
+  const { stayLoggedIn } = JSON.parse(state);
+  console.log(stayLoggedIn);
+  const tokenExpiry = stayLoggedIn ? '90d' : JWT_EXPIRES_IN;
   passport.authenticate('google', async (error, user, info) => {
     if (error) {
       return res.status(500).json({ message: 'Authentication failed', error: error.message });
     }
     if (!user) {
-      return res.status(401).json({ message: 'User not found' });
+      return res.status(404).json({ message: 'User not found' });
     }
 
     // Generate JWT token for authenticated user
@@ -30,23 +47,25 @@ const googleOAuthCallback = (req, res, next) => {
         profilePicture: user.profilePicture,
         accessToken: user.accessToken,
         refreshToken: user.refreshToken,
-        mustChangePassword: user.mustChangePassword
+        mustChangePassword: user.mustChangePassword,
+        status: user.status
       },
       JWT_SECRET,
-      { expiresIn: JWT_EXPIRES_IN }
+      { expiresIn: tokenExpiry }
     );
 
      await emitNewActivity(user._id, 'Login', {userName: user.name} )
 
     // Redirect to frontend with the token
-    return res.status(200).redirect(`http://localhost:5000/login/success?token=${token}`);
+    return res.status(200).redirect(`http://localhost:5000/login/success?token=${token}&stayLoggedIn=${stayLoggedIn}`);
   })(req, res, next);
 };
 // Manual login with reCAPTCHA
 const manualLogin = async (req, res) => {
-  const { email, password, recaptchaToken } = req.body;
-
+  const { email, password, recaptchaToken, stayLoggedIn } = req.body;
+  const tokenExpiry = stayLoggedIn ? '90d' : JWT_EXPIRES_IN;
   try {
+    console.log("Recaptcha Token:", recaptchaToken);
     const isRecaptchaValid = await verifyRecaptcha(recaptchaToken);
     console.log("reCAPTCHA Response:", isRecaptchaValid); 
     if (!isRecaptchaValid) {
@@ -84,10 +103,11 @@ const manualLogin = async (req, res) => {
         profilePicture: user.profilePicture,
         accessToken: user.accessToken,
         refreshToken: user.refreshToken,
-        mustChangePassword: user.mustChangePassword
+        mustChangePassword: user.mustChangePassword,
+        status: user.status
       }, 
       JWT_SECRET, 
-      { expiresIn: JWT_EXPIRES_IN }
+      { expiresIn: tokenExpiry }
     );
     
     await emitNewActivity(user._id, 'Login', {userName: user.name})
@@ -122,10 +142,6 @@ const changePassword = async (req, res) => {
     const userId = req.user.id;
     const user = await User.findById(userId);
 
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
     user.password = hashedPassword;
@@ -140,6 +156,7 @@ const changePassword = async (req, res) => {
 };
 
 module.exports = {
+  googleLogin,
   googleOAuthCallback,
   manualLogin,
   logout,

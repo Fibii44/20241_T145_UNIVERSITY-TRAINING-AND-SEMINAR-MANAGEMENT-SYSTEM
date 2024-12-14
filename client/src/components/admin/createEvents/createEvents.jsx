@@ -43,7 +43,7 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
 
   const fetchParticipants = async () => {
     try {
-      const token = sessionStorage.getItem('authToken');
+      const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken');
       if (!token) {
         console.error('No auth token found');
         return;

@@ -27,7 +27,7 @@ const Topbar = () => {
         const fetchEvents = async () => {
             try {
                 const response = await axios.get('http://localhost:3000/u/events', {
-                    headers: { Authorization: `Bearer ${sessionStorage.getItem('authToken')}` },
+                    headers: { Authorization: `Bearer ${sessionStorage.getItem('authToken') || localStorage.getItem('authToken')}` },
                 });
                 setEvents(response.data);
             } catch (error) {
@@ -39,7 +39,7 @@ const Topbar = () => {
     }, []);
     
     useEffect(() => {
-        const token = sessionStorage.getItem('authToken');
+        const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken');
         if (token) {
             const decoded = jwtDecode(token);
             setUser({
@@ -88,7 +88,7 @@ const Topbar = () => {
     
 
     const handleViewEvent = async (notificationId, eventId) => {
-        const token = sessionStorage.getItem('authToken');
+        const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken');
         const decoded = jwtDecode(token);
     
         if (token) {
@@ -145,7 +145,7 @@ const Topbar = () => {
     };
     
     const handleRemoveNotification = async (notificationId) => {
-        const token = sessionStorage.getItem('authToken');
+        const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken');
         const decoded = jwtDecode(token);
     
         if (token) {
