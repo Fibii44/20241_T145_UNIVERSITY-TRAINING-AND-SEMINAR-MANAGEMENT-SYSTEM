@@ -390,10 +390,10 @@ function Event() {
                                     ) : (
                                         isEventCompleted() ? (
                                             // Show form section if event is completed
-                                            <div>
+                                            <div className="post-event-section">
                                                 {canAccessForm() && (
-                                                    <div className="post-event-section">
-                                                        <h4>Post-Event Survey</h4>
+                                                    <div>
+                                                        <h4>Event Survey</h4>
                                                         <p>Please complete the survey to receive your certificate.</p>
                                                         <div className="form-link-container">
                                                             <a
@@ -403,7 +403,7 @@ function Event() {
                                                                 className="form-link"
                                                                 onClick={handleFormLinkClick}
                                                             >
-                                                                Click here to access the survey form
+                                                                Survey Form
                                                             </a>
 
                                                             {submissionStatus !== 'idle' && (
@@ -427,6 +427,7 @@ function Event() {
                                                                         <button
                                                                             onClick={handleFormSubmission}
                                                                             disabled={isLoading}
+                                                                            className="verify-submission-btn"
                                                                         >
                                                                             Try Verifying Again
                                                                         </button>
@@ -437,7 +438,10 @@ function Event() {
                                                     </div>
                                                 )}
                                                 {!hasSubmittedForm && (
-                                                    <p>Please submit the form to receive your certificate.</p>
+                                                    <div className='msg'>
+                                                        <p>Please submit the form to receive your certificate.</p>
+                                                    </div>
+                                                    
                                                 )}
 
                                                 {/* Certificate Section */}

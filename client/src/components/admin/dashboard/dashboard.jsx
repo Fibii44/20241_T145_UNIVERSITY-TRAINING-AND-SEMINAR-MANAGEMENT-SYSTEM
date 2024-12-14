@@ -141,7 +141,6 @@ const UsersTable = ({ users }) => {
 };
 
 const Dashboard = () => {
-  
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [stats, setStats] = useState({
     totalUsers: 0,
@@ -150,7 +149,7 @@ const Dashboard = () => {
     successfulEvents: 0,
     canceledEvents: 0,
     users: [],
-    monthlyUserData: []
+    dailyUserData: [] // Update to daily data
   });
 
   useEffect(() => {
@@ -174,6 +173,11 @@ const Dashboard = () => {
     const monthIndex = parseInt(month) - 1; // Convert string month to zero-based index
     return `${monthNamesShort[monthIndex]} ${year}`; // Format as "Month Year"
   };
+  // Format the date for daily data (e.g., "MM/DD" or "MM/DD/YYYY")
+  const formatDate = (date) => {
+    const options = { month: 'short', day: 'numeric' }; // e.g., "Dec 13"
+    return new Date(date).toLocaleDateString(undefined, options);
+  };
 
   return (
     <div className="dashboards-container">
@@ -186,12 +190,13 @@ const Dashboard = () => {
           <StatCard Route="/a/events" title="Successful Events" count={stats.successfulEvents || 0} icon={<FontAwesomeIcon icon={faCalendarCheck} size="2x" />} color="#34c759" />
           <StatCard Route="/a/events" title="Canceled Events" count={stats.canceledEvents} icon={<FontAwesomeIcon icon={faBan} size="2x" />} color="#ff3b30" />
         </div>
-        
+
+        {/* Pass daily data to the Chart */}
         <Chart 
-          data={stats.monthlyUserData.map(({ month, totalUsers, activeUsers }) => ({
-              name: formatMonthYearShort(month), // Short format
-              TotalUsers: totalUsers,
-              ActiveUsers: activeUsers
+          data={stats.dailyUserData.map(({ date, totalUsers, activeUsers }) => ({
+            name: formatDate(date), // Format date to short format
+            TotalUsers: totalUsers,
+            ActiveUsers: activeUsers
           }))} 
         />
         <UsersTable users={stats.users} />
@@ -199,6 +204,5 @@ const Dashboard = () => {
     </div>
   );
 };
-
 
 export default Dashboard;

@@ -1,11 +1,10 @@
 .user-events-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 24px; /* Space between cards */
+    display: flex;
     padding: 20px;
+    gap: 30px;
     background-color: #f5f6fa;
     margin: 2rem auto; /* Center grid horizontally */
-    width: 88rem; /* Set max width for the grid */
+    width: 80rem; /* Set max width for the grid */
 }
 
 .user-event-card h3 {
@@ -31,7 +30,7 @@
 
 .user-event-card {
     cursor: pointer;
-    width: 20rem;
+    width: 18rem;
     text-align: left;
     background-color: white;
     padding: 30px;
@@ -41,7 +40,7 @@
     display: flex;
     flex-direction: column;
     align-items: left;
-    height: 100%;/* Make each card take full height in its grid cell */
+    height: 90%;/* Make each card take full height in its grid cell */
 }
 
 .user-event-card:hover {
@@ -135,7 +134,7 @@
 .event-sort-container {
     display: flex;
     flex-direction: row;
-    margin-left: 27rem;
+    margin-left: 7rem;
 }
 .event-sort {
     height: 40px;

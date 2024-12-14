@@ -2,16 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { Button, Form, Image, Container, Row, Col } from 'react-bootstrap';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
+import Confirm from '../../modals/saveProfile/saveProfile';
+import './profile.css';
 
 const Profile = ({ token }) => {
     const [user, setUser] = useState({});
     const [isEditing, setIsEditing] = useState(false);
+    const [showConfirmModal, setShowConfirmModal] = useState(false); // Manage modal visibility
 
     // Decode JWT token to extract user details
     useEffect(() => {
         const token = sessionStorage.getItem('authToken');
         if (token) {
-            const storedUser = JSON.parse(sessionStorage.getItem('userData'));  // Get the updated user data
+            const storedUser = JSON.parse(sessionStorage.getItem('userData'));
             if (storedUser) {
                 setUser(storedUser);
             } else {
@@ -23,17 +26,15 @@ const Profile = ({ token }) => {
                     profileImage: decoded.profilePicture,
                     role: decoded.role,
                     phoneNumber: decoded.phoneNumber || '',
-                    department: decoded.department || '',  
-                    position: decoded.position || '',  
+                    department: decoded.department || '',
+                    position: decoded.position || '',
                 });
             }
         }
     }, []);
 
-    // Toggle edit mode
     const handleEditToggle = () => setIsEditing(!isEditing);
 
-    // Handle form input changes
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setUser((prevUser) => ({
@@ -42,19 +43,13 @@ const Profile = ({ token }) => {
         }));
     };
 
-    // Confirm and save updates with PATCH request
     const handleSave = async () => {
-        const confirmSave = window.confirm("Are you sure you want to save changes?");
-        if (!confirmSave) return;
-    
+        setShowConfirmModal(false); // Close modal after confirming
+
         const token = sessionStorage.getItem('authToken');
-        if (!token) {
-            // Optionally handle the case where the token is not found
-            return;
-        }
-    
+        if (!token) return;
+
         try {
-            // Avoid logging the Authorization header
             const response = await axios.patch(
                 'http://localhost:3000/u/profile',
                 {
@@ -64,11 +59,11 @@ const Profile = ({ token }) => {
                 },
                 {
                     headers: {
-                        Authorization: `Bearer ${token}`,  // This sends the token without logging it
+                        Authorization: `Bearer ${token}`,
                     },
                 }
             );
-    
+
             if (response.status === 200) {
                 const updatedUser = {
                     ...user,
@@ -76,24 +71,29 @@ const Profile = ({ token }) => {
                     department: response.data.department,
                     position: response.data.position,
                 };
-    
-                // Save the updated data to sessionStorage
-                sessionStorage.setItem('authToken', token);  
-                sessionStorage.setItem('userData', JSON.stringify(updatedUser));  
-    
+
+                sessionStorage.setItem('authToken', token);
+                sessionStorage.setItem('userData', JSON.stringify(updatedUser));
+
                 setUser(updatedUser);
                 setIsEditing(false);
             }
         } catch (error) {
-            // Handle error silently without logging sensitive information
             console.error("Error while saving profile:", error);
         }
     };
+
     return (
+        <div>
+            
         <Container>
+             {/* Confirmation Modal */}
+             
             <Row className="justify-content-center">
+                
                 <Col md={6}>
                     <div className="text-center">
+                        
                         <Image
                             src={user.profileImage}
                             roundedCircle
@@ -106,6 +106,7 @@ const Profile = ({ token }) => {
                     <p className="text-center text-muted">{user.email}</p>
 
                     <Form>
+                        
                         <Form.Group controlId="formEmail">
                             <Form.Label>Email</Form.Label>
                             <Form.Control
@@ -155,12 +156,16 @@ const Profile = ({ token }) => {
                         </Form.Group>
 
                         {!isEditing ? (
-                            <Button variant="outline-primary" onClick={handleEditToggle} className="mt-3">
+                            <Button variant="outline-primary" onClick={handleEditToggle} className="edit mt-3">
                                 Edit Profile
                             </Button>
                         ) : (
-                            <div>
-                                <Button variant="primary" onClick={handleSave} className="mt-3">
+                            <div className='save-btns'>
+                                <Button
+                                    variant="primary"
+                                    onClick={() => setShowConfirmModal(true)} // Show modal on save
+                                    className="save mt-3"
+                                >
                                     Save Changes
                                 </Button>
                                 <Button variant="secondary" onClick={handleEditToggle} className="mt-3">
@@ -171,7 +176,15 @@ const Profile = ({ token }) => {
                     </Form>
                 </Col>
             </Row>
+
+            <Confirm
+                show={showConfirmModal}
+                onHide={() => setShowConfirmModal(false)}
+                onConfirm={handleSave}
+                message="Are you sure you want to save changes?"
+            />
         </Container>
+        </div>
     );
 };
 

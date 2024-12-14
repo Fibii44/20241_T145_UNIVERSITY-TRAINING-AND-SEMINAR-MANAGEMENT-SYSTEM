@@ -7,6 +7,8 @@
     import { jwtDecode } from 'jwt-decode';
 
     const Calendar = () => {
+        const [calendarWidth, setCalendarWidth] = useState(75); // Width in percentage
+        const [isResizing, setIsResizing] = useState(false);
         const [events, setEvents] = useState([]);
         const [user, setUser] = useState({ name: '', profilePicture: '', role: '', id: '' });
         const [registeredEvents, setRegisteredEvents] = useState([]);
@@ -39,6 +41,38 @@
         const formatTime = (date) => {
             return new Date(date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
         };
+        const handleMouseDown = () => {
+            setIsResizing(true);
+        };
+    
+        const handleMouseMove = (e) => {
+            if (!isResizing) return;
+    
+            // Calculate new width based on mouse position
+            const newWidth = (e.clientX / window.innerWidth) * 100;
+            if (newWidth > 20 && newWidth < 80) { // Restrict width between 20% and 80%
+                setCalendarWidth(newWidth);
+            }
+        };
+    
+        const handleMouseUp = () => {
+            setIsResizing(false);
+        };
+    
+        useEffect(() => {
+            if (isResizing) {
+                window.addEventListener('mousemove', handleMouseMove);
+                window.addEventListener('mouseup', handleMouseUp);
+            } else {
+                window.removeEventListener('mousemove', handleMouseMove);
+                window.removeEventListener('mouseup', handleMouseUp);
+            }
+    
+            return () => {
+                window.removeEventListener('mousemove', handleMouseMove);
+                window.removeEventListener('mouseup', handleMouseUp);
+            };
+        }, [isResizing]);
     
         useEffect(() => {
             const fetchEvents = async () => {
@@ -678,12 +712,15 @@ const renderMonthView = () => {
         return (
             <div className="calendar-container">
                 {/* Calendar Section */}
-                <div className="calendar-section">
+                <div className="calendar-section" style={{ width: `${calendarWidth}%` }}>
                     {renderCalendar()}
                 </div>
-    
+                <div
+                className="divider"
+                onMouseDown={handleMouseDown}
+                />
                 {/* Event List Sidebar */}
-                <div className="event-list">
+                <div className="event-list" style={{ width: `${100 - calendarWidth}%` }}>
                     {renderUpcomingEvents()}
                 </div>
             </div>

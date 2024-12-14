@@ -1,0 +1,17 @@
+.save-btns {
+    display: flex;
+    flex-direction: row;
+}
+.save-btns .save {
+    background-color:#FEB800;
+    border: #FEB800;
+    color: #011c39;
+}
+.save-btns .save:hover {
+    background-color:#805b00;
+}
+.edit {
+    background-color:#FEB800;
+    border: #FEB800;
+    color: #011c39;
+}

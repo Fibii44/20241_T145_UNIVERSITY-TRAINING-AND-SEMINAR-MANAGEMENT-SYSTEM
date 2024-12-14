@@ -4,10 +4,14 @@ import React, { useState, useEffect } from 'react';
 import './calendar.css';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import { jwtDecode } from 'jwt-decode';
 
 const Calendar = () => {
+    const [calendarWidth, setCalendarWidth] = useState(75); // Width in percentage
+    const [isResizing, setIsResizing] = useState(false);
     const [events, setEvents] = useState([]);
+    const [user, setUser] = useState({ name: '', profilePicture: '', role: '', id: '' });
+    const [registeredEvents, setRegisteredEvents] = useState([]);
     const [currentView, setCurrentView] = useState('month');
     const [currentDate, setCurrentDate] = useState(new Date());
     const [showOverlay, setShowOverlay] = useState(false);
@@ -15,11 +19,13 @@ const Calendar = () => {
     const [selectedDate, setSelectedDate] = useState(null);
     const [selectedCollege, setSelectedCollege] = useState('');
     const today = new Date();
+    const loggedInUserId = user.id;
     const colleges = [
-                        'College of Arts and Sciences', 'College of Business', 'College of Education',
+                       'College of Arts and Sciences', 'College of Business', 'College of Education',
                         'College of Law', 'College of Public Administration and Governance', 
                         'College of Nursing', 'College of Technologies'
                      ];
+                     
                     // Function to open the overlay for a selected day
     const openOverlay = (date, events) => {
         setSelectedDate(date);
@@ -35,11 +41,43 @@ const Calendar = () => {
     const formatTime = (date) => {
         return new Date(date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
     };
+    const handleMouseDown = () => {
+        setIsResizing(true);
+    };
+
+    const handleMouseMove = (e) => {
+        if (!isResizing) return;
+
+        // Calculate new width based on mouse position
+        const newWidth = (e.clientX / window.innerWidth) * 100;
+        if (newWidth > 20 && newWidth < 80) { // Restrict width between 20% and 80%
+            setCalendarWidth(newWidth);
+        }
+    };
+
+    const handleMouseUp = () => {
+        setIsResizing(false);
+    };
+
+    useEffect(() => {
+        if (isResizing) {
+            window.addEventListener('mousemove', handleMouseMove);
+            window.addEventListener('mouseup', handleMouseUp);
+        } else {
+            window.removeEventListener('mousemove', handleMouseMove);
+            window.removeEventListener('mouseup', handleMouseUp);
+        }
+
+        return () => {
+            window.removeEventListener('mousemove', handleMouseMove);
+            window.removeEventListener('mouseup', handleMouseUp);
+        };
+    }, [isResizing]);
 
     useEffect(() => {
         const fetchEvents = async () => {
             try {
-                const response = await axios.get('http://localhost:3000/a/events');
+                const response = await axios.get('http://localhost:3000/u/events');
                 console.log('Fetched events:', response.data);
                 setEvents(response.data);
             } catch (error) {
@@ -49,6 +87,34 @@ const Calendar = () => {
     
         fetchEvents();
     }, []);
+
+    useEffect(() => {
+        const token = sessionStorage.getItem('authToken');
+        if (token) {
+            const decoded = jwtDecode(token);
+            setUser({
+                name: decoded.name,
+                email: decoded.email,
+                profilePicture: decoded.profilePicture,
+                role: decoded.role,
+                id: decoded.id
+            });
+        }
+    }, []);
+
+    useEffect(() => {
+        const fetchRegisteredEvents = async () => {
+            try {
+                const response = await axios.get('http://localhost:3000/u/calendar');
+                console.log('Fetched registered events:', response.data); // Debugging
+                setRegisteredEvents(response.data);
+            } catch (error) {
+                console.error('Error fetching registered events:', error);
+            }
+        };
+        fetchRegisteredEvents();
+    }, []);
+    
 
     function hexToRgb(hex) {
         hex = hex.replace('#', '');
@@ -65,12 +131,10 @@ const Calendar = () => {
         .slice(0, 5);
 
     const renderUpcomingEvents = () => (
-        
         <div className="upcoming-events">
             <h3>Upcoming Events</h3>
             <ul>
                 {upcomingEvents.map(event => (
-                <Link to={`/u/events/${event._id}`} key={event._id} className="event-link">
                     <li key={event._id} style={{ borderLeft: `5px solid ${event.color}`, paddingLeft: '8px', marginBottom: '10px' }}>
                         <strong>{event.title}</strong>
                         <br />
@@ -78,7 +142,6 @@ const Calendar = () => {
                             {new Date(event.eventDate).toLocaleDateString()} | {formatTime(event.startTime)} - {formatTime(event.endTime)}
                         </small>
                     </li>
-                </Link>
                 ))}
             </ul>
             <div className='legends'>
@@ -177,9 +240,7 @@ const Calendar = () => {
         }
     };
 
-    const renderMonthView = () => {
-        
-
+const renderMonthView = () => {
         const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
         const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
         const daysInMonth = endOfMonth.getDate();
@@ -199,18 +260,31 @@ const Calendar = () => {
         );
     
         const allDays = [...daysFromPrevMonth, ...daysThisMonth, ...daysFromNextMonth];
+
         const filterEventsByCollege = (events) => {
-            if (!selectedCollege) return events; // If no college is selected, show all events
+            if (selectedCollege === 'Registered Events') {
+                return events.filter(event =>
+                    registeredEvents.some(registration =>
+                        registration.eventId === event._id && registration.userId === loggedInUserId
+                    )
+                );
+            }
         
-            return events.filter(event => {
-                if (!event.participantGroup) {
-                    console.warn("Event missing participantGroup:", event);
-                    return false;
-                }
-                return event.participantGroup.college === selectedCollege;
-            });
+            if (selectedCollege) {
+                return events.filter(event => {
+                    if (!event.participantGroup) return false;
+                    return event.participantGroup.college === selectedCollege;
+                });
+            }
+        
+            return events; // Default: Return all events if no filter is selected
         };
 
+        const filteredEvents = filterEventsByCollege(events);
+        
+        console.log('Logged-in User ID:', loggedInUserId);
+        console.log('Registered Events:', registeredEvents);
+        console.log('Filtered Events:', filteredEvents);
         return (
             <>
                 <div className="calendar-header">
@@ -237,8 +311,11 @@ const Calendar = () => {
                         // Convert to locale date to avoid timezone issues
                         const formattedDate = date.toLocaleDateString('en-CA'); // Format as YYYY-MM-DD
                         const dayNumber = date.getDate();
-                        const eventsForDay = filterEventsByCollege(getEventsForDay(formattedDate));
-                        const isToday = date.toDateString() === today.toDateString();
+                        const eventsForDay = filteredEvents.filter(event => {
+                        const eventDate = new Date(event.eventDate).toISOString().split('T')[0];
+                            return eventDate === formattedDate;
+                        });
+                    const isToday = date.toDateString() === today.toDateString();
 
                         return (
                             <div
@@ -331,132 +408,103 @@ const Calendar = () => {
                 });
             };
 
-            return (
-                <>
-                    <div className="container">
-                        {/* Header Section */}
-                        <div className="calendar-header">
-                            <button className="prev-next" onClick={goToPrevious}>
-                                <FontAwesomeIcon icon={faChevronLeft} />
-                            </button>
-                            <h2>{weekHeader}</h2>
-                            <button className="prev-next" onClick={goToNext}>
-                                <FontAwesomeIcon icon={faChevronRight} />
-                            </button>
-                            {renderViewButtons()}
-                            <select
-                                value={selectedCollege}
-                                onChange={(e) => setSelectedCollege(e.target.value)}
-                                className="college-filter-dropdown"
+        return (
+            <>
+                <div className="calendar-header">
+                    <button className="prev-next" onClick={goToPrevious}><FontAwesomeIcon icon={faChevronLeft} /></button>
+                    <h2>{weekHeader}</h2>
+                    <button className="prev-next" onClick={goToNext}><FontAwesomeIcon icon={faChevronRight} /></button>
+                    {renderViewButtons()}
+                    <select
+                        value={selectedCollege}
+                        onChange={(e) => setSelectedCollege(e.target.value)}
+                        className="college-filter-dropdown"
+                        >
+                        <option value="">All Events</option>
+                        {colleges.map(college => (
+                            <option key={college} value={college}>{college}</option>
+                        ))}
+                    </select>
+                </div>
+                <div className="calendar-grid">
+                    {daysOfWeek.map(day => (
+                        <div key={day} className="calendar-day-header">{day}</div>
+                    ))}
+                    {Array.from({ length: 7 }, (_, index) => {
+                        const date = new Date(startOfWeek);
+                        date.setDate(startOfWeek.getDate() + index);
+                        const formattedDate = date.toISOString().split('T')[0];
+                        const dayNumber = date.getDate();
+                        const eventsForDay = filterEventsByCollege(getEventsForDay(formattedDate));
+                        const isToday = date.toDateString() === today.toDateString();
+                        
+                        return (
+                            <div
+                                key={index}
+                                className="calendar-day"
+                                style={isToday ? { border: '2px solid' } : {}}
+                                onClick={() => openOverlay(formattedDate, eventsForDay)}
                             >
-                                <option value="">All Events</option>
-                                {colleges.map((college) => (
-                                    <option key={college} value={college}>
-                                        {college}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-            
-                        {/* Calendar Grid */}
-                        <div className="calendar-grid">
-                            {daysOfWeek.map((day) => (
-                                <div key={day} className="calendar-day-header">
-                                    {day}
+                                <div className="date-number" style={{ opacity: date.getMonth() !== currentDate.getMonth() ? 0.5 : 1 }}>
+                                    {dayNumber}
                                 </div>
-                            ))}
-                            {Array.from({ length: 7 }, (_, index) => {
-                                const date = new Date(startOfWeek);
-                                date.setDate(startOfWeek.getDate() + index);
-                                const formattedDate = date.toISOString().split('T')[0];
-                                const dayNumber = date.getDate();
-                                const eventsForDay = filterEventsByCollege(getEventsForDay(formattedDate));
-                                const isToday = date.toDateString() === today.toDateString();
-            
-                                return (
-                                    <div
-                                        key={index}
-                                        className="calendar-day"
-                                        style={isToday ? { border: '2px solid' } : {}}
-                                        onClick={() => openOverlay(formattedDate, eventsForDay)}
-                                    >
-                                        <div
-                                            className="date-number"
-                                            style={{ opacity: date.getMonth() !== currentDate.getMonth() ? 0.5 : 1 }}
-                                        >
-                                            {dayNumber}
-                                        </div>
-                                        <div className="events-for-day grid-container">
-                                            {eventsForDay.map((event) => (
-                                                <Link to={`/u/events/${event._id}`} key={event._id} className="event-link">
-                                                    <div
-                                                        className="event grid-item"
-                                                        style={{ backgroundColor: event.color }}
-                                                    >
-                                                        <span
-                                                            style={{
-                                                                color: event.color,
-                                                                fontWeight: 'bold',
-                                                                fontSize: '14px',
-                                                            }}
-                                                        >
-                                                            {event.title}
-                                                        </span>
-                                                    </div>
-                                                </Link>
-                                            ))}
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
-            
-                        {/* Overlay Section */}
-                        {showOverlay && (
-                            <div className="calendar-overlay">
-                                <div className="overlay-content">
-                                    <div className="overlay-header">
-                                        <h2>{weekHeader}</h2>
-                                        <button onClick={closeOverlay} className="close-button">
-                                            Close
-                                        </button>
-                                    </div>
-                                    <div className="events-list">
-                                        {selectedEvents.length > 0 ? (
-                                            selectedEvents.map((event) => (
-                                                <div
-                                                    key={event._id}
-                                                    className="event-detail"
-                                                    style={{
-                                                        backgroundColor: `rgba(${hexToRgb(event.color)}, 0.25)`,
-                                                        borderLeft: `5px solid ${event.color}`,
-                                                    }}
-                                                >
-                                                    <span
-                                                        style={{
-                                                            color: event.color,
-                                                            fontWeight: 'bold',
-                                                            fontSize: '14px',
-                                                        }}
-                                                    >
-                                                        {event.title}
-                                                    </span>
-                                                    <p>
-                                                        {formatTime(event.startTime)} - {formatTime(event.endTime)}
-                                                    </p>
-                                                </div>
-                                            ))
-                                        ) : (
-                                            <p>No events for this day.</p>
-                                        )}
-                                    </div>
+                                <div className="events-for-day grid-container">
+                                    {eventsForDay.map(event => (
+                                        <Link to={`/u/events/${event._id}`} key={event._id} className="event-link">
+                                            <div 
+                                                className="event grid-item" 
+                                                style={{ backgroundColor: event.color }}
+                                            >
+                                                <span style={{ color: event.color, fontWeight: 'bold', fontSize: '14px' }}>
+                                                    {event.title}
+                                                </span>
+                                            </div>
+                                        </Link>
+                                    ))}
                                 </div>
                             </div>
-                        )}
+                        );
+                    })}
+                </div>
+                {showOverlay && (
+                    <div className="calendar-overlay">
+                        <div className="overlay-content">
+                            <div className='overlay-header'>
+                            <h2>{weekHeader}</h2>
+                                <button onClick={closeOverlay} className="close-button">Close</button>
+                            </div>
+                            <div className="events-list">
+                                {selectedEvents.length > 0 ? (
+                                    selectedEvents.map(event => (
+                                        <div key={event._id} className="event-detail" 
+                                        style={{ 
+                                            backgroundColor: `rgba(${hexToRgb(event.color)}, 0.25)`,
+                                            borderLeft: `5px solid ${event.color}`,
+                                            
+                                        }}
+                                        >
+                                            <span 
+                                                style={{ 
+                                                    color: event.color,    // Keep title color fully opaque
+                                                    fontWeight: 'bold', 
+                                                    fontSize: '14px'
+                                                }}
+                                            >
+                                            {event.title}
+                                        </span>
+                                            
+                                        <p>{formatTime(event.startTime)} - {formatTime(event.endTime)}</p>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p>No events for this day.</p>
+                                )}
+                            </div>
+                        </div>
                     </div>
-                </>
-            );
-            
+                )}
+            </>
+        );
     };
    // Year View
     const renderYearView = () => {
@@ -556,7 +604,7 @@ const Calendar = () => {
     // Day View =========================================================================================================================================================================
     const renderDayView = () => {
 
-        
+    
         const months = Array.from({ length: 12 }, (_, i) => new Date(currentDate.getFullYear(), i, 1));
         const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
         const today = new Date();
@@ -664,12 +712,15 @@ const Calendar = () => {
     return (
         <div className="calendar-container">
             {/* Calendar Section */}
-            <div className="calendar-section">
+            <div className="calendar-section" style={{ width: `${calendarWidth}%` }}>
                 {renderCalendar()}
             </div>
-
+            <div
+            className="divider"
+            onMouseDown={handleMouseDown}
+            />
             {/* Event List Sidebar */}
-            <div className="event-list">
+            <div className="event-list" style={{ width: `${100 - calendarWidth}%` }}>
                 {renderUpcomingEvents()}
             </div>
         </div>

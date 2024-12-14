@@ -76,7 +76,7 @@
   }
 
   .download-btn {
-    background-color: #4caf50;
+    background-color: #feb800;
     color: white;
     padding: 10px 20px;
     border: none;
@@ -84,6 +84,7 @@
     cursor: pointer;
     font-size: 16px;
     margin-bottom: 20px;
+    margin-left: 30px;
 }
 
 .download-btn:hover {

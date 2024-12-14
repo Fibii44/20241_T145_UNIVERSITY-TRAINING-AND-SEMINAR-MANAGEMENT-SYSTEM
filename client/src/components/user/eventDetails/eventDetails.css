@@ -133,12 +133,14 @@ body {
     border: 1px solid grey;
     border-radius: 130px;
     height: 3rem;
-    padding: 0 75px;
+    width: 200px;
     cursor: pointer;
     transition: background-color 0.3s ease, color 0.3s ease;
     content: right;         /* Center the button horizontally */
     align-items: center;     /* Center the button horizontally */ 
-    transform: translateX(20px);
+    transform: translate(20px, -20px);
+
+
   }
   
   .register-button:hover {
@@ -146,11 +148,11 @@ body {
   }
 
   .post-event-section {
-    margin-top: 2rem;
-    padding: 1.5rem;
     background-color: #f8f9fa;
     border-radius: 0.5rem;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-left: 12rem;
+    padding: 20px;
 }
 
 .post-event-section h4 {
@@ -161,18 +163,33 @@ body {
 .form-link-container {
     margin-top: 1rem;
     text-align: center;
+    border: 1px solid black;
+    border-radius: 20px;
+    padding: 5px 10px;
+    transition: 0.3s ease;
 }
-
+.form-link-container:hover {
+  background-color: #FEB800;
+}
+.verify-submission-btn {
+  background-color: white;
+  border: 1px solid black;
+  border-radius: 20px;
+  padding: 10px;
+  transition: 0.3s ease;
+}
+.verify-submission-btn:hover {
+  background-color: #FEB800;
+}
 .form-link {
-    color: #007bff;
-    text-decoration: underline;
+    color: #000000;
+    text-decoration: none;
     cursor: pointer;
     transition: color 0.3s ease;
 }
-
-.form-link:hover {
-    color: #0056b3;
-    text-decoration: underline;
+.msg {
+ width: 20rem;
+ padding: 20px;
 }
 
 .submission-status {
@@ -234,7 +251,7 @@ body {
   box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
 }
 .left-details {
-  width: 16rem;
+  width: 50rem;
 }
 .right-details {
   display: flex;
