@@ -104,7 +104,7 @@ width: 100%;
   align-items: center; /* Aligns the label and the filter vertically */
 }
 
-.filter-role, .filter-department, .filter-status {
+.filter-role, .filter-department, .filter-college, .filter-status {
   background-color: transparent;
   border: none;
   font-size: 14px;
@@ -125,7 +125,7 @@ width: 100%;
   border-color: #FF5722; /* Orange border for status filter */
 }
 
-.filter-role:focus, .filter-department:focus, .filter-status:focus {
+.filter-role:focus, .filter-department:focus, .filter-college:focus, .filter-status:focus {
   border-color: transparent; /* Or choose any color you prefer */
   outline: none; /* Optional: Removes the default outline */
 }

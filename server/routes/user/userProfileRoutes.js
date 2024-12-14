@@ -5,7 +5,7 @@ const userProfileService = require('../../services/user/userProfileService');
 const authenticateJWT = require('../../middleware/auth'); 
 
 // User Profile Page
-userProfileRoutes.get('/u/profile', userProfileService.renderProfilePage);
+userProfileRoutes.get('/u/profile',authenticateJWT, userProfileService.renderProfilePage);
 userProfileRoutes.patch('/u/profile',authenticateJWT, userProfileService.updateUserProfile);
 
 // Certificates
