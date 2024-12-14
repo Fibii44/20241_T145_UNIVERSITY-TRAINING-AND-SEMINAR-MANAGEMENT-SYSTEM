@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./addPersonnelModal.css"; // Create this CSS file for styling
+import "./addPersonnelModal.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useNavigate } from "react-router-dom";
 import { faCamera } from "@fortawesome/free-solid-svg-icons";
@@ -10,6 +10,8 @@ const AddPersonnelModal = ({ show, onClose }) => {
     name: "",
     email: "",
     phoneNumber: "",
+    college: "",
+    department: "",
     gender: "",
     position: "",
     role: "",
@@ -20,7 +22,6 @@ const AddPersonnelModal = ({ show, onClose }) => {
   useEffect(() => {
     const token = sessionStorage.getItem("authToken");
 
-    // Check if user has access to this page
     const checkAccess = async () => {
       try {
         const response = await fetch("http://localhost:3000/a/personnel", {
@@ -31,8 +32,7 @@ const AddPersonnelModal = ({ show, onClose }) => {
         });
 
         if (response.status === 403) {
-          // Redirect to a different page if access is denied
-          navigate("/a/dashboard"); // Change this to your desired redirect path
+          navigate("/a/dashboard");
         }
       } catch (error) {
         console.error("Access check failed:", error);
@@ -42,15 +42,53 @@ const AddPersonnelModal = ({ show, onClose }) => {
     checkAccess();
   }, [navigate]);
 
-  const departments = [
-    "None",
+  const colleges = [
     "College of Arts and Sciences",
     "College of Business",
     "College of Education",
+    "College of Law",
+    "College of Public Administration and Governance",
     "College of Nursing",
     "College of Technologies",
-    "College of Public Administration and Governance",
   ];
+
+  const departments = {
+    "College of Arts and Sciences": [
+      "Social Sciences",
+      "Sociology",
+      "Philosophy",
+      "Biology",
+      "Environmental Science",
+      "Mathematics",
+      "English",
+      "Economics",
+      "Communication",
+      "Social Work",
+    ],
+    "College of Business": [
+      "Accountancy",
+      "Business Administration",
+      "Hospitality Management",
+      "Management",
+    ],
+    "College of Education": [
+      "Secondary Education",
+      "Early Childhood Education",
+      "Elementary Education",
+      "Physical Education",
+      "English Language and Literature",
+    ],
+    "College of Law": ["Juris Doctor"],
+    "College of Public Administration and Governance": [],
+    "College of Nursing": [],
+    "College of Technologies": [
+      "Information Technology",
+      "Electronics Technology",
+      "Automotive Technology",
+      "Food Science and Technology",
+      "Electronics and Communications Engineering",
+    ],
+  };
 
   const roles = ["departmental_admin", "faculty_staff"];
 
@@ -60,6 +98,15 @@ const AddPersonnelModal = ({ show, onClose }) => {
       ...formData,
       [name]: value,
     });
+
+    // Clear the department field when the college changes
+    if (name === "college") {
+      setFormData({
+        ...formData,
+        college: value,
+        department: "", // Reset department
+      });
+    }
   };
 
   const handleFileChange = (e) => {
@@ -75,19 +122,19 @@ const AddPersonnelModal = ({ show, onClose }) => {
       name: "",
       email: "",
       phoneNumber: "",
+      college: "",
       department: "",
       gender: "",
       position: "",
       role: "",
     });
     setError("");
-    onClose(); // Close the modal
+    onClose();
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Retrieve token from localStorage just before the request
     const token = sessionStorage.getItem("authToken");
     if (!token) {
       setError("No authentication token found. Please log in.");
@@ -95,20 +142,15 @@ const AddPersonnelModal = ({ show, onClose }) => {
     }
 
     const data = new FormData();
-    data.append("profilePicture", formData.profilePicture);
-    data.append("name", formData.name);
-    data.append("email", formData.email);
-    data.append("phoneNumber", formData.phoneNumber);
-    data.append("department", formData.department);
-    data.append("gender", formData.gender);
-    data.append("position", formData.position);
-    data.append("role", formData.role);
+    Object.keys(formData).forEach((key) => {
+      data.append(key, formData[key]);
+    });
 
     try {
       const response = await fetch("http://localhost:3000/a/personnel", {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`, // Set token if available
+          Authorization: `Bearer ${token}`,
         },
         body: data,
       });
@@ -118,7 +160,7 @@ const AddPersonnelModal = ({ show, onClose }) => {
         setError(errorResponse.message);
       } else {
         console.log("User added successfully");
-        handleCancel(); // Close modal after successful submission
+        handleCancel();
       }
     } catch (err) {
       setError("Failed to create account. Please try again.");
@@ -128,13 +170,13 @@ const AddPersonnelModal = ({ show, onClose }) => {
   if (!show) return null;
 
   return (
-    <div className="addPersonnel modal-overlay" onClick={onClose}> 
+    <div className="addPersonnel modal-overlay" onClick={onClose}>
       <div
         className="add-personnel-modal shadow-md"
-        onClick={(e) => e.stopPropagation()} 
+        onClick={(e) => e.stopPropagation()}
       >
         <div className="personnel-modal-content">
-        <form className="add-personnel-form" onSubmit={handleSubmit}>
+          <form className="add-personnel-form" onSubmit={handleSubmit}>
             <h3>Add User Account</h3>
 
             <label className="profile-picture-label">
@@ -183,19 +225,38 @@ const AddPersonnelModal = ({ show, onClose }) => {
             </label>
 
             <label>
-              College Department:
+              College:
+              <select
+                name="college"
+                value={formData.college}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Select College</option>
+                {colleges.map((college) => (
+                  <option key={college} value={college}>
+                    {college}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label>
+              Department:
               <select
                 name="department"
                 value={formData.department}
                 onChange={handleChange}
                 required
+                disabled={!formData.college}
               >
                 <option value="">Select Department</option>
-                {departments.map((dept) => (
-                  <option key={dept} value={dept}>
-                    {dept}
-                  </option>
-                ))}
+                {formData.college &&
+                  departments[formData.college].map((dept) => (
+                    <option key={dept} value={dept}>
+                      {dept}
+                    </option>
+                  ))}
               </select>
             </label>
 
@@ -228,7 +289,14 @@ const AddPersonnelModal = ({ show, onClose }) => {
             </label>
 
             {error && <p className="error-message">{error}</p>}
-            <div className="personnel-modal-buttons"  style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
+            <div
+              className="personnel-modal-buttons"
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
               <button type="submit">Add User</button>
               <button
                 type="button"

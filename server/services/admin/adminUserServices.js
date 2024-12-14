@@ -45,7 +45,7 @@ const renderPersonnelPage = async (req, res) => {
 
 const addPersonnelAccount = async (req, res) => {
   try {
-    const { name, email, role, phoneNumber, department, position } = req.body;
+    const { name, email, role, phoneNumber, college, department, position } = req.body;
     const profilePicture = req.file ? req.file.filename : null;
 
     const existingUser = await User.findOne({ email });
@@ -66,7 +66,8 @@ const addPersonnelAccount = async (req, res) => {
       password: hashedPassword,
       role,
       phoneNumber,
-      department,
+      college,
+      department,    
       position,
       profilePicture,
       mustChangePassword: true

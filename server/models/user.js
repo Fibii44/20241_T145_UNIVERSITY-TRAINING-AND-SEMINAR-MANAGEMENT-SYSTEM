@@ -33,6 +33,10 @@ const UserSchema = new mongoose.Schema({
     position: {
         type: String
     },
+    college: {
+        type: String,
+        required: true
+    },
     department: {
         type: String // Optional field for departmental admins and staff
     },
@@ -84,9 +88,7 @@ UserSchema.methods.isValidPassword = async function (password) {
 UserSchema.plugin(encrypt, {
     encryptionKey: process.env.MONGODB_ENCRYPTION_KEY,
     signingKey: process.env.MONGODB_SIGNING_KEY,
-    excludeFromEncryption: ['password', 'email', 'status', 'createdAt'],
+    excludeFromEncryption: ['password', 'email', 'status', 'createdAt', 'college', 'department'],
 });
 
-
 module.exports = mongoose.model('User', UserSchema);
-

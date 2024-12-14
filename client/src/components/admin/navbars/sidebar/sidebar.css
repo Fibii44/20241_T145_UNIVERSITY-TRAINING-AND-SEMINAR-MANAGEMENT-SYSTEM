@@ -267,6 +267,8 @@
   .sidebar-footer-item:hover {
     background-color: #1e316b;
     border-radius: 10px;
+    width: 200px;
+    
   }
 
   .sidebar.collapsed ul li .icon {
