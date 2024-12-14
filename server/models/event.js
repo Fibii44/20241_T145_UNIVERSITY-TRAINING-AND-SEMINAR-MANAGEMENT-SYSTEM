@@ -157,9 +157,6 @@ EventSchema.post('findOne', async function (event, next) {
     }
 });
 
-console.log('Event Schema: ', process.env.MONGODB_ENCRYPTION_KEY);
-console.log('Event Schema: ', process.env.MONGODB_SIGNING_KEY);
-
 EventSchema.plugin(encrypt, {
     encryptionKey: process.env.MONGODB_ENCRYPTION_KEY,
     signingKey: process.env.MONGODB_SIGNING_KEY,

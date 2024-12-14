@@ -45,9 +45,6 @@ const formSubmissionSchema = new mongoose.Schema({
     }
 });
 
-console.log('encryptionKey: ', process.env.MONGODB_ENCRYPTION_KEY);
-console.log('signingKey: ', process.env.MONGODB_SIGNING_KEY);
-
 // Encryption
 formSubmissionSchema.plugin(encrypt, {
     encryptionKey: process.env.MONGODB_ENCRYPTION_KEY,   

@@ -45,7 +45,7 @@ const UsersTable = ({
                 <option value="all">All</option>
                 <option value="faculty_staff">Faculty Staff</option>
                 <option value="departmental_admin">Departmental Admin</option>
-                <option value="general_admin">General Admin</option>
+                <option value="admin">Admin</option>
               </select>
             </div>
           </th>
@@ -193,7 +193,7 @@ const UserRow = ({ user, onUpdate, selectAllChecked, showInactive }) => {
             >
               <option value="faculty_staff">Faculty Staff</option>
               <option value="departmental_admin">Departmental Admin</option>
-              <option value="general_admin">General Admin</option>
+              <option value="admin">Admin</option>
             </select>
           </td>
           <td><input className="form-control" type="text" value={formData.position} onChange={(e) => setFormData({ ...formData, position: e.target.value })} /></td>
