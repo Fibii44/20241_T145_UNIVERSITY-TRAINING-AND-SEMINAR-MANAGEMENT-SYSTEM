@@ -127,6 +127,7 @@ useEffect(() => {
                                         src={`http://localhost:3000/eventPictures/${event.eventPicture}`}
                                         alt={event.title}
                                         className="list-view-image"
+                                        onError={(e) => (e.target.src = '/src/assets/default-eventPicture.jpg')}
                                     />
                                 </div>
                                 <div className="event-details">

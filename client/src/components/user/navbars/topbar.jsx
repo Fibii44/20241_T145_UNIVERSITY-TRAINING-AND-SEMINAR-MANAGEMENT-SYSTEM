@@ -173,6 +173,17 @@ const Topbar = () => {
         notification.userNotifications &&
         notification.userNotifications.some(userNotif => userNotif.status === 'unread')
     );
+    // Compute user role dynamically
+    const getRoleDisplay = (role) => {
+        switch (role) {
+            case 'faculty_staff':
+                return 'Staff';
+            case 'admin':
+                return 'Administrator';
+            default:
+                return 'User'; // Fallback for unknown roles
+        }
+    };
 
     return (
         <div className="topbar">
@@ -182,15 +193,16 @@ const Topbar = () => {
                 <FontAwesomeIcon icon={faBell} size="lg" />
                 {hasUnreadNotifications && <div className="unread-circle"></div>}
             </div>
-
+                <Link to={`/u/profile`}>
                 <div className="profile">
                     <img src={user.profilePicture || Profile} alt="Admin Profile" />
                 </div>
+                </Link>
                 <div className="user-details">
                     <span className="name" onClick={toggleDropdown} style={{ cursor: 'pointer' }}>
                         {user.name}
                     </span>
-                    <span className="role">{user.role}</span>
+                    <span className="role">{getRoleDisplay(user.role)}</span>
                 </div>
                 {isDropdownOpen && (
                     <div className="dropdown-menu">

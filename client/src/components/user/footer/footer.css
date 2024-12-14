@@ -68,6 +68,7 @@ footer::before {
     justify-content: space-between;
     flex-wrap: wrap;
     width: 100%;
+    padding-left: 20px;
 }
 
 /* Logo styling */
@@ -122,6 +123,7 @@ footer::before {
 .footer-left-bottom {
     margin-top: 10px;
     text-align: left;
+    padding-left: 30px;
 }
 
 .footer-left-bottom h3 {

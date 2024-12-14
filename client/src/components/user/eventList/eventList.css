@@ -134,7 +134,7 @@
 .event-sort-container {
     display: flex;
     flex-direction: row;
-    margin-left: 7rem;
+    margin-right: 2rem;
 }
 .event-sort {
     height: 40px;

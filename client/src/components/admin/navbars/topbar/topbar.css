@@ -43,13 +43,14 @@
   width: 50px; /* Set width for the container */
   height: 50px; /* Set height for the container */
   overflow: hidden; /* Hide overflow to maintain the circular shape */
-  border-radius: 200%; /* Make it a circle */
+  
 }
 
 .profile img {
   width: 100%; /* Make the image fill the container */
   height: 100%; /* Keep aspect ratio */
   object-fit: cover; /* Ensure the image fits within the circle */
+  border-radius: 200px;
 }
 .notification {
   margin-right: 30px; /* Adjust as necessary */

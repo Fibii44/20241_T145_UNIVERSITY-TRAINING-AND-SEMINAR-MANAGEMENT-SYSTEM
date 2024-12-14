@@ -22,15 +22,16 @@
 }
 
 .kanban-column:nth-child(1) .column-header { /* Upcoming column */
-  background-color:  #0096cc9f; /* Light blue */
+  background-color:  #011c39; /* Light blue */
+  color: #ffffff;
 }
 
 .kanban-column:nth-child(2) .column-header { /* In Progress column */
-  background-color: #ffb70090 ; /* Light yellow */
+  background-color: #feb800 ; /* Light yellow */
 }
 
 .kanban-column:nth-child(3) .column-header { /* Completed column */
-  background-color: #A5D6A7; /* Light cyan */
+  background-color: #75ba75; /* Light cyan */
 }
 
 .date i{

@@ -9,7 +9,7 @@ function EventGrid() {
     const [events, setEvents] = useState([]);
     const [filteredEvents, setFilteredEvents] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const [sortOption, setSortOption] = useState('dateAsc');
+    const [sortOption, setSortOption] = useState('upcoming'); // Default to upcoming events
     const [searchQuery, setSearchQuery] = useState('');
     const [filterOption, setFilterOption] = useState('all'); // New state for filtering
     const eventsPerPage = 4;
@@ -19,11 +19,19 @@ function EventGrid() {
             try {
                 const response = await axios.get(`http://localhost:3000/u/events`);
                 const today = new Date();
-                const filtered = response.data.filter(
-                    (event) => new Date(event.eventDate).setHours(0, 0, 0, 0) >= today.setHours(0, 0, 0, 0)
+    
+                // Filter upcoming events
+                const upcomingEvents = response.data.filter(
+                    (event) => new Date(event.eventDate) >= today
                 );
-                setEvents(filtered);
-                setFilteredEvents(filtered); // Initialize filtered events
+    
+                // Sort events by date (ascending)
+                const sortedEvents = upcomingEvents.sort(
+                    (a, b) => new Date(a.eventDate) - new Date(b.eventDate)
+                );
+    
+                setEvents(response.data); // Save all events
+                setFilteredEvents(sortedEvents); // Initialize filtered events
             } catch (err) {
                 console.error("Failed to fetch events", err);
             }
@@ -31,6 +39,8 @@ function EventGrid() {
     
         fetchEvents();
     }, []);
+    
+    
     
 
     const handleSort = (option) => {
@@ -128,10 +138,12 @@ function EventGrid() {
                                 ); // Show upcoming events
                             } else if (selectedOption === 'past') {
                                 const today = new Date();
+                                today.setHours(0, 0, 0, 0); // Set time to midnight for accurate comparison
                                 setFilteredEvents(
-                                    events.filter((event) => new Date(event.eventDate) < today)
-                                ); // Show past events
-                            } else if (selectedOption === 'CAS') {
+                                    events.filter((event) => new Date(event.eventDate).setHours(0, 0, 0, 0) < today)
+                                );
+                            }
+                             else if (selectedOption === 'CAS') {
                                 setFilteredEvents(
                                     events.filter((event) => event.participantGroup?.college === 'College of Arts and Sciences')
                                 ); // Show events for CAS
@@ -169,7 +181,6 @@ function EventGrid() {
                     >
                         {/* Filter Options */}
                         <optgroup label="Filters">
-                            <option value="all">All Events</option>
                             <option value="upcoming">Upcoming Events</option>
                             <option value="past">Past Events</option>
                             <option value="CAS">College of Arts and Sciences</option>

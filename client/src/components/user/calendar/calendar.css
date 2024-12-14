@@ -377,8 +377,8 @@
 .month h3 {
     text-align: center;
     padding: 10px;
-    background-color: #cccccc;
-    color: rgb(128, 128, 128);
+    background-color: #feb800;
+    color: #011c39;
     margin: 0;
     font-size: 18px;
 }
@@ -394,7 +394,8 @@
 .calendar-day-header {
     text-align: center;
     font-weight: bold;
-    color: #555;
+    color: #011c39;
+    background-color: #feb800;
     padding: 5px;
 
 }
