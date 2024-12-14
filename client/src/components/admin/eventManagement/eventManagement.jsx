@@ -97,16 +97,18 @@ const EventM = ({ userRole, userCollege }) => {
 
   
 
+  //When edit button was clicked
   const handleEdit = async (event) => {
     const token = sessionStorage.getItem('authToken');
+
     if (!token) {
-      showToast('User is not authenticated. Please log in.', 'error');
+      showToast('User is not authenticated. Please log in.','error');
       return;
     }
 
     const formattedSelectedEvent = event ? {
       ...event,
-      eventDate: (event.eventDate instanceof Date ? event.eventDate : new Date(event.eventDate)).toISOString().split("T")[0],
+      eventDate: (event.eventDate instanceof Date ? event.eventDate : new Date(event.eventDate)).toISOString().split("T")[0], // format as YYYY-MM-DD
       startTime: (event.startTime instanceof Date ? event.startTime : new Date(event.startTime)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
       endTime: (event.endTime instanceof Date ? event.endTime : new Date(event.endTime)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
     } : null;
@@ -114,16 +116,20 @@ const EventM = ({ userRole, userCollege }) => {
     setSelectedEvent(formattedSelectedEvent);
     setIsModalOpen(true);
 
+    // Lock the event for editing by this user
     try {
       await axios.put(`http://localhost:3000/a/events/${event._id}/lock`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      sessionStorage.setItem('lockedEventId', event._id); // Store lock status in session
+      // Event is successfully locked, proceed with editing
     } catch (error) {
       showToast('Failed to lock event for editing: ' + error.message, 'error');
+      // If locking fails, revert the lock status in the UI
+      setEvents(prevEvents => prevEvents.map(ev =>
+        ev._id === event._id ? { ...ev, isLocked: false } : ev
+      ));
     }
   };
-
 
   const handleDelete = (eventId) => {
     setEventToDelete(eventId);
@@ -144,21 +150,21 @@ const EventM = ({ userRole, userCollege }) => {
     }
   };
 
+  //Unlock the event when user click cancel button
   const handleCancelEdit = async () => {
-    // Unlock event if it was locked for editing
+    // If editing an event, unlock it
     if (selectedEvent) {
       const token = sessionStorage.getItem('authToken');
       try {
         await axios.put(`http://localhost:3000/a/events/${selectedEvent._id}/unlock`, {}, {
           headers: { Authorization: `Bearer ${token}` }
         });
-        sessionStorage.removeItem('lockedEventId'); // Remove lock status from session
       } catch (error) {
-        console.error('Failed to unlock event:', error);
+       
       }
     }
     setIsModalOpen(false);
-    setSelectedEvent(null);
+    setSelectedEvent(null); // Reset selected event
   };
 
   const handleSaveEventDetails = async (eventDetails) => {
@@ -299,30 +305,12 @@ const EventM = ({ userRole, userCollege }) => {
     setEvents(sortedEvents);
   };
   
-  //Fetch Events
   useEffect(() => {
-    const lockedEventId = sessionStorage.getItem('lockedEventId');
-  if (lockedEventId) {
-    const token = sessionStorage.getItem('authToken');
-    if (token) {
-      // Check if the event is locked by another admin
-      axios.get(`http://localhost:3000/a/events/${lockedEventId}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      }).then(response => {
-        const event = response.data;
-        if (event.lockedBy && event.lockedBy !== jwtDecode(token).id) {
-        } else {
-          // Proceed with unlocking event
-          axios.put(`http://localhost:3000/a/events/${lockedEventId}/unlock`, {}, {
-            headers: { Authorization: `Bearer ${token}` }
-          }).catch(error => console.error('Error unlocking event:', error));
-        }
-      }).catch(error => console.error('Error fetching event lock status:', error));
-    }
-  }
     fetchEvents();
+
     // Setup SSE
     const eventSource = new EventSource('http://localhost:3000/a/events/stream');
+
     // Listen for messages from the server
     eventSource.onmessage = (event) => {
       const data = JSON.parse(event.data);
@@ -331,31 +319,13 @@ const EventM = ({ userRole, userCollege }) => {
         ev._id === data.eventId ? { ...ev, isLocked: data.isLocked } : ev
       ));
     };
+
     // Cleanup when component unmounts
     return () => {
+
       eventSource.close();
     };
   }, []);
-
-    // Set up activity detection and timeout for inactivity
-    useEffect(() => {
-      const resetInactivityTimer = () => {
-        clearTimeout(inactivityTimer);
-        inactivityTimer = setTimeout(() => {
-          handleCancelEdit(); // Automatically cancel the edit after inactivity
-        }, 60000); // 1 minute of inactivity
-      };
-  
-      let inactivityTimer;
-      window.addEventListener('mousemove', resetInactivityTimer);
-      window.addEventListener('keydown', resetInactivityTimer);
-  
-      return () => {
-        clearTimeout(inactivityTimer);
-        window.removeEventListener('mousemove', resetInactivityTimer);
-        window.removeEventListener('keydown', resetInactivityTimer);
-      };
-    }, [selectedEvent]);
 
   return (
     <div className="dashboard-container">

@@ -212,12 +212,7 @@ const updateEvent = async (req, res) => {
       }
       existingEvent.eventPicture = req.file.filename; // Update to new image filename
     }
-      // Process reminders
-      const updatedReminders = (updates.reminders || updatedEvent.reminders).map(reminder => {
-        const { _id, __parentArray, $_parent, ...cleanedReminder } = reminder.toObject ? reminder.toObject() : reminder;
-        return cleanedReminder;
-      });
-      console.log(updatedReminders);
+    
 
     // Remove 'createdBy' from updates to prevent it from being overwritten
     delete updates.createdBy;
@@ -229,10 +224,14 @@ const updateEvent = async (req, res) => {
     if (!updatedEvent) {
       return res.status(404).json({ message: 'Event not found after update attempt' });
     }
-
     console.log('Event updated in database:', updatedEvent);
 
-  
+    // Process reminders
+    const updatedReminders = (updates.reminders || updatedEvent.reminders).map(reminder => {
+      const { _id, __parentArray, $_parent, ...cleanedReminder } = reminder.toObject ? reminder.toObject() : reminder;
+      return cleanedReminder;
+    });
+    console.log(updatedReminders);
 
     // Fetch registrations related to this event
     const registrations = await Registration.find({ eventId: eventId }).populate('userId');
