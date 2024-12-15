@@ -21,7 +21,7 @@ const renderProfilePage = async (req, res) => {
 // Update user profile
 const updateUserProfile = async (req, res) => {
     try {
-        const { phoneNumber, department, position, stayLoggedIn } = req.body;
+        const { phoneNumber, department, college, position, stayLoggedIn } = req.body;
 
         const tokenExpiry = stayLoggedIn ? '90d' : JWT_EXPIRES_IN;
 
@@ -30,10 +30,11 @@ const updateUserProfile = async (req, res) => {
             return res.status(404).send('User not found');
         }
 
-        // Update user data
         user.phoneNumber = phoneNumber;
+        user.college = college;
         user.department = department;
         user.position = position;
+       
         
 
         const updatedUser = await user.save();
@@ -45,6 +46,7 @@ const updateUserProfile = async (req, res) => {
                 name: updatedUser.name,
                 email: updatedUser.email,
                 position: updatedUser.position,
+                college: updatedUser.college,
                 department: updatedUser.department,
                 phoneNumber: updatedUser.phoneNumber,
                 profilePicture: updatedUser.profilePicture,

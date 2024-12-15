@@ -5,6 +5,56 @@ import axios from 'axios';
 import Confirm from '../../modals/saveProfile/saveProfile';
 import './profile.css';
 
+// College and Department Data
+const colleges = [
+    "College of Arts and Sciences",
+    "College of Business",
+    "College of Education",
+    "College of Law",
+    "College of Public Administration and Governance",
+    "College of Nursing",
+    "College of Technologies",
+];
+
+const departments = {
+    "College of Arts and Sciences": [
+        "Social Sciences",
+        "Sociology",
+        "Philosophy",
+        "Biology",
+        "Environmental Science",
+        "Mathematics",
+        "English",
+        "Economics",
+        "Communication",
+        "Social Work",
+    ],
+    "College of Business": [
+        "Accountancy",
+        "Business Administration",
+        "Hospitality Management",
+        "Management",
+    ],
+    "College of Education": [
+        "Secondary Education",
+        "Early Childhood Education",
+        "Elementary Education",
+        "Physical Education",
+        "English Language and Literature",
+    ],
+    "College of Law": ["Juris Doctor"],
+    "College of Public Administration and Governance": [],
+    "College of Nursing": [],
+    "College of Technologies": [
+        "Information Technology",
+        "Electronics Technology",
+        "Automotive Technology",
+        "Food Science and Technology",
+        "Electronics and Communications Engineering",
+    ],
+};
+
+
 const Profile = ({ token }) => {
     const [user, setUser] = useState({});
     const [isEditing, setIsEditing] = useState(false);
@@ -26,9 +76,11 @@ const Profile = ({ token }) => {
                     profileImage: decoded.profilePicture,
                     role: decoded.role,
                     phoneNumber: decoded.phoneNumber || '',
+                    college: decoded.college || '',
                     department: decoded.department || '',
                     position: decoded.position || '',
                 });
+                
             }
         }
     }, []);
@@ -55,6 +107,7 @@ const Profile = ({ token }) => {
                 'http://localhost:3000/u/profile',
                 {
                     phoneNumber: user.phoneNumber,
+                    college: user.college,
                     department: user.department,
                     position: user.position,
                     stayLoggedIn: stayLoggedIn,
@@ -67,9 +120,11 @@ const Profile = ({ token }) => {
             );
 
             if (response.status === 200) {
-                const updatedUser = response.data.user;
+                const updatedUser = {
+                    ...response.data.user,
+                    profileImage: user.profileImage || response.data.user.profileImage, // Preserve profileImage
+                };
                 const newToken = response.data.token;
-
                 if (stayLoggedIn) {
                     localStorage.setItem('authToken', newToken);
                     localStorage.setItem('userData', JSON.stringify(updatedUser));
@@ -88,105 +143,122 @@ const Profile = ({ token }) => {
 
     return (
         <div>
-            
-        <Container>
-             {/* Confirmation Modal */}
-             
-            <Row className="justify-content-center">
-                
-                <Col md={6}>
-                    <div className="text-center">
-                        
-                        <Image
-                            src={user.profileImage}
-                            roundedCircle
-                            width="150"
-                            height="150"
-                            alt="Profile"
-                        />
-                    </div>
-                    <h2 className="text-center mt-3">{user.name}</h2>
-                    <p className="text-center text-muted">{user.email}</p>
 
-                    <Form>
-                        
-                        <Form.Group controlId="formEmail">
-                            <Form.Label>Email</Form.Label>
-                            <Form.Control
-                                type="email"
-                                name="email"
-                                value={user.email}
-                                disabled
+            <Container>
+                {/* Confirmation Modal */}
+
+                <Row className="justify-content-center">
+
+                    <Col md={6}>
+                        <div className="text-center">
+
+                            <Image
+                                src={user.profileImage}
+                                roundedCircle
+                                width="150"
+                                height="150"
+                                alt="Profile"
                             />
-                        </Form.Group>
+                        </div>
+                        <h2 className="text-center mt-3">{user.name}</h2>
+                        <p className="text-center text-muted">{user.email}</p>
 
-                        <Form.Group controlId="formPhoneNumber">
-                            <Form.Label>Phone Number</Form.Label>
-                            <Form.Control
-                                type="tel"
-                                name="phoneNumber"
-                                value={user.phoneNumber}
-                                onChange={handleInputChange}
-                                disabled={!isEditing}
-                            />
-                        </Form.Group>
-
-                        <Form.Group controlId="formDepartment">
-                            <Form.Label>Department</Form.Label>
-                            <Form.Select
-                                name="department"
-                                value={user.department}
-                                onChange={handleInputChange}
-                                disabled={!isEditing}
-                            >
-                                <option value="College of Arts and Sciences">College of Arts and Sciences</option>
-                                <option value="College of Technologies">College of Technologies</option>
-                                <option value="College of Nursing">College of Nursing</option>
-                                <option value="College of Business">College of Business</option>
-                                <option value="College of Education">College of Education</option>
-                            </Form.Select>
-                        </Form.Group>   
-
-                        <Form.Group controlId="formPosition">
-                            <Form.Label>Position</Form.Label>
-                            <Form.Control
-                                type="text"
-                                name="position"
-                                value={user.position}
-                                onChange={handleInputChange}
-                                disabled={!isEditing}
-                            />
-                        </Form.Group>
-
-                        {!isEditing ? (
-                            <Button variant="outline-primary" onClick={handleEditToggle} className="edit mt-3">
-                                Edit Profile
-                            </Button>
-                        ) : (
-                            <div className='save-btns'>
-                                <Button
-                                    variant="primary"
-                                    onClick={() => setShowConfirmModal(true)} // Show modal on save
-                                    className="save mt-3"
+                        <Form>
+                            <Form.Group controlId="formCollege">
+                                <Form.Label>College</Form.Label>
+                                <Form.Select
+                                    name="college"
+                                    value={user.college}
+                                    onChange={(e) => {
+                                        handleInputChange(e); // Update the selected college
+                                        setUser((prevUser) => ({
+                                            ...prevUser,
+                                            department: "", // Reset department when college changes
+                                        }));
+                                    }}
+                                    disabled={!isEditing}
                                 >
-                                    Save Changes
-                                </Button>
-                                <Button variant="secondary" onClick={handleEditToggle} className="mt-3">
-                                    Cancel
-                                </Button>
-                            </div>
-                        )}
-                    </Form>
-                </Col>
-            </Row>
+                                    <option value="">Select a College</option>
+                                    {colleges.map((college) => (
+                                        <option key={college} value={college}>
+                                            {college}
+                                        </option>
+                                    ))}
+                                </Form.Select>
+                            </Form.Group>
 
-            <Confirm
-                show={showConfirmModal}
-                onHide={() => setShowConfirmModal(false)}
-                onConfirm={handleSave}
-                message="Are you sure you want to save changes?"
-            />
-        </Container>
+                            <Form.Group controlId="formDepartment">
+                                <Form.Label>Department</Form.Label>
+                                <Form.Select
+                                    name="department"
+                                    value={user.department}
+                                    onChange={handleInputChange}
+                                    disabled={!isEditing || !user.college}
+                                >
+                                    <option value="">Select a Department</option>
+                                    {(departments[user.college] || []).map((department) => (
+                                        <option key={department} value={department}>
+                                            {department}
+                                        </option>
+                                    ))}
+                                </Form.Select>
+                            </Form.Group>
+
+
+
+                            <Form.Group controlId="formPhoneNumber">
+                                <Form.Label>Phone Number</Form.Label>
+                                <Form.Control
+                                    type="tel"
+                                    name="phoneNumber"
+                                    value={user.phoneNumber}
+                                    onChange={handleInputChange}
+                                    disabled={!isEditing}
+                                />
+                            </Form.Group>
+
+
+
+                            <Form.Group controlId="formPosition">
+                                <Form.Label>Position</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    name="position"
+                                    value={user.position}
+                                    onChange={handleInputChange}
+                                    disabled={!isEditing}
+                                />
+                            </Form.Group>
+
+                            {!isEditing ? (
+                                <Button variant="outline-primary" onClick={handleEditToggle} className="edit mt-3">
+                                    Edit Profile
+                                </Button>
+                            ) : (
+                                <div className='save-btns'>
+                                    <Button
+                                        variant="primary"
+                                        onClick={() => setShowConfirmModal(true)} // Show modal on save
+                                        className="save mt-3"
+                                    >
+                                        Save Changes
+                                    </Button>
+                                    <Button variant="secondary" onClick={handleEditToggle} className="mt-3">
+                                        Cancel
+                                    </Button>
+                                </div>
+                            )}
+                        </Form>
+                    </Col>
+                </Row>
+
+                <Confirm
+                    show={showConfirmModal}
+                    onHide={() => setShowConfirmModal(false)}
+                    onConfirm={handleSave}
+                    message="Are you sure you want to save changes?"
+                />
+            </Container>
         </div>
     );
 };

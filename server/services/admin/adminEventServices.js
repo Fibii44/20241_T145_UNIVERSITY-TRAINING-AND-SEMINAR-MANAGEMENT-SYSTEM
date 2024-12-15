@@ -94,46 +94,55 @@ const addEvent = async (req, res) => {
     console.log(newEvent);
     await newEvent.save();
 
-// Create an array of conditions to check for participants
+  // Ensure conditions are added properly
 const conditions = [];
 
-// If customParticipants are provided, add them to the conditions
-if (newEvent.customParticipants && newEvent.customParticipants.length > 0) {
+// Add customParticipants to conditions
+if (newEvent.customParticipants?.length > 0) {
   conditions.push({ email: { $in: newEvent.customParticipants } });
 }
 
-// If college is provided in participantGroup
+
 if (participantGroup && participantGroup.college) {
-  // Query all users with the status "active"
   const activeUsers = await User.find({ status: "active" });
 
-  // Filter users based on their decrypted role and department
   const relevantUsers = activeUsers.filter((user) => {
-    // Access the decrypted fields directly
-    const userRole = user.role; // Automatically decrypted by Mongoose Encryption
-    const userDepartment = user.department; // Automatically decrypted by Mongoose Encryption
+    const { role, college, department } = user; // Decrypted automatically
 
-    // Check if the user's role is "faculty_staff"
-    if (userRole !== "faculty_staff") return false;
+    // Ensure only faculty_staff are considered
+    if (role !== "faculty_staff") return false;
 
-    // If college is "all", include all faculty_staff users
+    // If "all colleges" is selected, include all faculty_staff users
     if (participantGroup.college.toLowerCase() === "all") {
       return true;
     }
 
-    // Otherwise, include only users from the specific department
-    return userDepartment === participantGroup.college;
+    // If a specific college is selected
+    if (college === participantGroup.college) {
+      // If "all departments" is selected, include all users in the college
+      if (
+        !participantGroup.department || 
+        participantGroup.department.toLowerCase() === "all departments"
+      ) {
+        return true;
+      }
+
+      // Otherwise, match the specific department
+      return department === participantGroup.department;
+    }
+
+    // Exclude users not matching the college
+    return false;
   });
 
-  // Map relevant users to conditions for notifications
-  relevantUsers.forEach((user) => {
-    conditions.push({ _id: user._id });
-  });
+  // Add relevant users to the conditions
+  if (relevantUsers.length > 0) {
+    conditions.push({ _id: { $in: relevantUsers.map((user) => user._id) } });
+  }
 }
 
-
-// Perform the query with OR logic based on the conditions
-const users = await User.find({ $or: conditions });
+// Perform query only if conditions are valid
+const users = conditions.length > 0 ? await User.find({ $or: conditions }) : [];
 
 // Create userNotifications array
 const userNotifications = users.map(user => ({

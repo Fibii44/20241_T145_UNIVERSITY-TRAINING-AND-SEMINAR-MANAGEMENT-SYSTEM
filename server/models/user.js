@@ -35,7 +35,6 @@ const UserSchema = new mongoose.Schema({
     },
     college: {
         type: String,
-        required: true
     },
     department: {
         type: String // Optional field for departmental admins and staff
