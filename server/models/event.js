@@ -60,6 +60,10 @@ const EventSchema = new mongoose.Schema({
         type: String,
         required: false
     },
+    googleEventId: {
+        type: String,
+        required: false
+    },
     participantGroup: {
         college: {
             type: String,
