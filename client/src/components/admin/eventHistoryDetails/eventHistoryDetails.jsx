@@ -193,7 +193,7 @@ const EventDetails = () => {
                 <table className="table table-striped">
                     <thead>
                         <tr>
-                            <th>ID</th>
+                            <th></th>
                             <th>Name</th>
                             <th>Email</th>
                             <th>Phone Number</th>
@@ -202,23 +202,34 @@ const EventDetails = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {matchedUsers.length > 0 ? (
-                            matchedUsers.map((user) => (
-                                <tr key={user._id}>
-                                    <td>{user._id}</td>
-                                    <td>{user.name || 'N/A'}</td>
-                                    <td>{user.email || 'N/A'}</td>
-                                    <td>{user.phoneNumber || 'N/A'}</td>
-                                    <td>{user.role || 'N/A'}</td>
-                                    <td>{user.eventRating || 'N/A'}</td>
-                                </tr>
-                            ))
-                        ) : (
-                            <tr>
-                                <td colSpan="6">No matching users found</td>
+                    {matchedUsers.length > 0 ? (
+                        matchedUsers.map((user) => (
+                            <tr key={user._id}>
+                                <td>
+                                    {user.profilePicture ? (
+                                        <img
+                                            src={user.profilePicture}
+                                            alt={`${user.name}'s profile`}
+                                            style={{ width: '50px', height: '50px', borderRadius: '50%' }}
+                                        />
+                                    ) : (
+                                        'No Image'
+                                    )}
+                                </td>
+                                <td>{user.name || 'N/A'}</td>
+                                <td>{user.email || 'N/A'}</td>
+                                <td>{user.phoneNumber || 'N/A'}</td>
+                                <td>{user.role || 'N/A'}</td>
+                                <td>{user.eventRating || 'N/A'}</td>
                             </tr>
-                        )}
-                    </tbody>
+                        ))
+                    ) : (
+                        <tr>
+                            <td colSpan="6">No matching users found</td>
+                        </tr>
+                    )}
+                </tbody>
+
                 </table>
             </div>
         );

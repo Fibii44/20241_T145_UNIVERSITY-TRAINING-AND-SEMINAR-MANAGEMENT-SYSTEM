@@ -73,11 +73,28 @@ const UsersTable = ({
   selectedCollege,
   selectedDepartment,
 }) => {
+  const [searchTerm, setSearchTerm] = useState(""); // State for the search bar
+
   // Filter department options based on the selected college
   const departmentOptions = selectedCollege ? departments[selectedCollege] || [] : [];
 
+  // Filtered Users based on Search Term
+  const filteredUsers = users.filter((user) =>
+    `${user.name} ${user.email}`.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="user-table-container">
+      {/* Search Bar */}
+      <div className="search-bar">
+        <input
+          type="text"
+          className="form-control"
+          placeholder="Search by name or email..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
       <div className="personnel-table-responsive">
         <table className="personnel-table">
           <thead className="thead-dark">
@@ -160,7 +177,7 @@ const UsersTable = ({
             </tr>
           </thead>
           <tbody>
-            {users.map((user) => (
+            {filteredUsers.map((user) => (
               <UserRow
                 key={user._id}
                 user={user}

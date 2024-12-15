@@ -360,7 +360,7 @@ const EventM = ({ userRole, userCollege }) => {
 
   return (
     <div className="dashboard-container">
-      <div className="content">
+      <div className="event-content">
         <div className="dashboard-inline">        
           <h2 className="dashboard-heading">Events</h2>
           <input
@@ -370,6 +370,20 @@ const EventM = ({ userRole, userCollege }) => {
             value={searchQuery}
             onChange={handleSearch}
           />
+           {/* Sorting Dropdown */}
+    <div className="sort-container">
+          <label className='sort-label' htmlFor="sort">Sort By:</label>
+          <select
+            id="sort"
+            value={sortOption}
+            onChange={(e) => handleSort(e.target.value)}
+          >
+            <option value="dateAsc">Date (Ascending)</option>
+            <option value="dateDesc">Date (Descending)</option>
+            <option value="titleAsc">Title (A-Z)</option>
+            <option value="titleDesc">Title (Z-A)</option>
+          </select>
+    </div>
           <button className="dashboard-button" onClick={() => {
             setSelectedEvent(null); // Clear previous event data
             setIsModalOpen(true);
@@ -396,20 +410,7 @@ const EventM = ({ userRole, userCollege }) => {
           onClose={() => setIsDeleteModalOpen(false)}
           onConfirmDelete={confirmDelete}
         />
-    {/* Sorting Dropdown */}
-    <div className="sort-container">
-          <label className='sort-label' htmlFor="sort">Sort By:</label>
-          <select
-            id="sort"
-            value={sortOption}
-            onChange={(e) => handleSort(e.target.value)}
-          >
-            <option value="dateAsc">Date (Ascending)</option>
-            <option value="dateDesc">Date (Descending)</option>
-            <option value="titleAsc">Title (A-Z)</option>
-            <option value="titleDesc">Title (Z-A)</option>
-          </select>
-    </div>
+   
 
 {/* Events */}
 <div className="context-card">
@@ -450,7 +451,7 @@ const EventM = ({ userRole, userCollege }) => {
           </div>
 {/* Pagination */}
 <div className="pagination">
-            <button onClick={prevPage} disabled={currentPage === 1}>
+            <button className='prev-next' onClick={prevPage} disabled={currentPage === 1}>
               <FontAwesomeIcon icon={faChevronLeft} />
             </button>
             {Array.from({ length: visiblePagesEnd - visiblePagesStart + 1 }, (_, idx) => {
@@ -466,6 +467,7 @@ const EventM = ({ userRole, userCollege }) => {
               );
             })}
             <button
+              className='prev-next'
               onClick={nextPage}
               disabled={currentPage === totalPages}
             >

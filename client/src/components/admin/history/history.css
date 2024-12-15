@@ -27,17 +27,20 @@
     width: 100%;
     margin: 0rem auto; /* Center grid horizontally */
 }
+.history-content {
+  width: 100%;
+}
 .history-context-card {
   align-items: center;
 }
 .history-events-grid {
-  display: grid;
+  display: flex;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px; /* Space between cards */
+  background-color: #f5f6fa;
   margin: 0rem auto; /* Center grid horizontally */
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 20px; /* Margin between cards */
-  width: 100%;
-  max-width: 1600px;
-  margin: 0 auto; /* Center horizontally */
+  width: 72rem; /* Set max width for the grid */
+  height: 40rem;
 }
 .history-event-card {
   cursor: pointer;

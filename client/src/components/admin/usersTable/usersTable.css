@@ -82,8 +82,11 @@ text-align: left;
 align-items: center; /* Vertically center the content */
 table-layout: fixed; 
 }
-
+.personnel-table row-selected {
+  height: 10px;
+}
 .personnel-table td {
+  font-size: 12px;
 padding: 15px;
 text-align: left;
 vertical-align: top;
@@ -169,11 +172,12 @@ width: 100%;
 .profile-container {
   align-items: center;    /* Vertically align the image and text */
   white-space: nowrap;    /* Prevent the content from wrapping */
+
 }
 .profile-image {
   margin-right: 10px;    /* Adjust spacing between image and text */
-  width: 30px;           /* Adjust image size as needed */
-  height: 30px;          /* Adjust image size as needed */
+  width: 25px;
+  height: 25px;         /* Adjust image size as needed */
   border-radius: 50%;    /* Make the image circular (optional) */
   object-fit: cover;     /* Ensure the image covers the area */
 }  /* Ensure the image covers the area */
@@ -238,7 +242,6 @@ width: 100%;
 .table_restore:hover {
   background-color: rgb(39, 143, 94);
 }
-
 
 
 .add-personnel-button svg{ 

@@ -5,7 +5,7 @@ import { faUser, faCalendarCheck, faBan, faChevronLeft, faChevronRight} from '@f
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Link } from 'react-router-dom';
 import "./dashboard.css";
-
+import Profile from "../../../assets/default-profile.png"
 const StatCard = ({ title, count, icon, color, Route }) => (
 
   <Link to={Route} className="dashboard__card"> {/* Updated class name for specificity */}
@@ -116,7 +116,7 @@ const UsersTable = ({ users }) => {
         <table className="table table-striped">
           <thead className="thead-dark">
             <tr>
-              <th>ID</th>
+              <th></th>
               <th>Name</th>
               <th>Email</th>
               <th>Role</th>
@@ -126,7 +126,21 @@ const UsersTable = ({ users }) => {
           <tbody>
             {currentUsers.map((user, index) => (
               <tr key={user._id || index}>
-                <td>{user._id}</td>
+                <td>
+                    {user.profilePicture ? (
+                        <img
+                            src={user.profilePicture}
+                            alt={`${user.name}'s profile`}
+                            style={{ width: '25px', height: '25px', borderRadius: '50%' }}
+                        />
+                    ) : (
+                      <img
+                      src={Profile}
+                      alt={`${user.name}'s profile`}
+                      style={{ width: '25px', height: '25px', borderRadius: '50%' }}
+                  />
+                    )}
+                </td>
                 <td>{user.name}</td>
                 <td>{user.email}</td>
                 <td>{user.role}</td>

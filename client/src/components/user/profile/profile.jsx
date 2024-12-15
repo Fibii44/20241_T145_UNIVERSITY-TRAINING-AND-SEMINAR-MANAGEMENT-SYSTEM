@@ -4,7 +4,7 @@ import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import Confirm from '../../modals/saveProfile/saveProfile';
 import './profile.css';
-
+import ProfilePic from "../../../assets/default-profile.png";
 // College and Department Data
 const colleges = [
     "College of Arts and Sciences",
@@ -153,7 +153,7 @@ const Profile = ({ token }) => {
                         <div className="text-center">
 
                             <Image
-                                src={user.profileImage}
+                                src={user.profileImage || ProfilePic}
                                 roundedCircle
                                 width="150"
                                 height="150"

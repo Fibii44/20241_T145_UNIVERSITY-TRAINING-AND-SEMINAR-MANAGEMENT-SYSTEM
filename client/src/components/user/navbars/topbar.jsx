@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../../../components/admin/navbars/topbar/topbar.css';
-import Profile from "../../../assets/userProfile.png";
+import Profile from "../../../assets/default-profile.png";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBell } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
@@ -195,7 +195,12 @@ const Topbar = () => {
             </div>
                 <Link to={`/u/profile`}>
                 <div className="profile">
-                    <img src={user.profilePicture || Profile} alt="Admin Profile" />
+                    <img
+                        src={user.profilePicture || Profile}
+                        onError={(e) => {
+                            e.target.src = '/src/assets/profile.png';
+                        }}
+                    />
                 </div>
                 </Link>
                 <div className="user-details">
@@ -249,23 +254,23 @@ const Topbar = () => {
                                             <strong>{notification.title}</strong>
                                             <p>{notification.message}</p>
                                             <strong>{timeAgo(notification.createdAt)}</strong>
-
                                         </div>
                                         <div className="item-setting">
                                             <button
                                                 onClick={(e) => {
-                                                    e.preventDefault();
-                                                    handleRemoveNotification(notification._id);
+                                                    e.preventDefault(); // Prevent button's default behavior
+                                                    e.stopPropagation(); // Stop the event from propagating to the <Link>
+                                                    handleRemoveNotification(notification._id); // Call the removal handler
                                                 }}
                                                 className="remove-notification-btn"
                                             >
                                                 <i className="fas fa-times"></i> {/* FontAwesome X icon */}
                                             </button>
                                         </div>
-
                                     </li>
                                 </Link>
                             );
+                            
                         })}
                     </ul>
 

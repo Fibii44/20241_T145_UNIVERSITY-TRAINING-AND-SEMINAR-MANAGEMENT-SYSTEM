@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './topbar.css';
-import Profile from "../../../../assets/adminProfile.png"; // Imported Profile image
+import Profile from "../../../../assets/default-profile.png";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBell } from '@fortawesome/free-solid-svg-icons';
 import { jwtDecode } from 'jwt-decode';
@@ -46,7 +46,7 @@ const Topbar = () => {
                     <FontAwesomeIcon icon={faBell} size="lg" />
                 </div>
                 <div className="profile">
-                    <img src={user.profilePicture} alt="Admin Profile" />
+                    <img src={user.profilePicture || Profile} alt="Admin Profile" />
                 </div>
                 <div className="user-details">
                     <span className="name" onClick={toggleDropdown} style={{ cursor: 'pointer' }}>

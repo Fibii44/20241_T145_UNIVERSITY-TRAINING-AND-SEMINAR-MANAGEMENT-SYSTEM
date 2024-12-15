@@ -1,4 +1,11 @@
 /*EvenetM*/
+.event-content {
+  height: 100%;
+  width: 100%;
+}
+.dashboard-container {
+  width: 100%;
+}
 .dashboard-inline {
   display: flex;
   padding: 8px;
@@ -31,21 +38,22 @@
   max-width: 100%; 
   margin-left: 40px;
   border: 1px solid #c2c2c2;
- 
+  height: 110%;
 } 
 
 .admin-event-list {
-  display: grid;
+  display: flex;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 24px; /* Space between cards */
   background-color: #f5f6fa;
   margin: 0rem auto; /* Center grid horizontally */
-  width: 88rem; /* Set max width for the grid */
+  width: 72rem; /* Set max width for the grid */
+  height: 40rem;
 }
 
 .admin-event-card {
   cursor: pointer;
-  width: 20rem;
+  width: 17rem;
   text-align: left;
   background-color: white;
   padding: 30px;
@@ -168,7 +176,9 @@ overflow: hidden;
   height: auto;
   object-fit: cover;
 }
-
+.pagination .prev-next {
+  width: 45px;
+}
 /* Sort Container ====================================== */
 .sort-label {
 font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;

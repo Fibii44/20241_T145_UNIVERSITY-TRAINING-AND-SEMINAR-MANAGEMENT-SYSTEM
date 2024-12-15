@@ -54,7 +54,7 @@ const HistoryM = () => {
 
     return (
         <div className="dashboard-container">
-            <div className="content">
+            <div className="history-content">
                 <h2 className="dashboard-heading">Past Events</h2>
                 
                 {/* Search Bar */}
