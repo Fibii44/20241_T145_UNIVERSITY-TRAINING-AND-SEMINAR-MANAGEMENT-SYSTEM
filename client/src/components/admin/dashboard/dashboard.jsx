@@ -144,7 +144,20 @@ const UsersTable = ({ users }) => {
                 <td>{user.name}</td>
                 <td>{user.email}</td>
                 <td>{user.role}</td>
-                <td>{user.status}</td>
+                <td>
+                  <span
+                    style={{
+                      display: "inline-block",
+                      width: "10px",
+                      height: "10px",
+                      borderRadius: "50%",
+                      backgroundColor: user.status.toLowerCase() === "active" ? "green" : "red",
+                      marginRight: "8px",
+                    }}
+                  ></span>
+                  {user.status}
+                </td>
+
               </tr>
             ))}
           </tbody>

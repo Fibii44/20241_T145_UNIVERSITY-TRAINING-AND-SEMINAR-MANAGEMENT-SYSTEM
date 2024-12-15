@@ -350,7 +350,20 @@ return (
           <td>{user.position}</td>
           <td>{user.college}</td>
           <td>{user.department}</td>
-          <td>{user.status}</td>
+          <td>
+            <span
+              style={{
+                display: "inline-block",
+                width: "10px",
+                height: "10px",
+                borderRadius: "50%",
+                backgroundColor: user.status.toLowerCase() === "active" ? "green" : "red",
+                marginRight: "8px",
+              }}
+            ></span>
+            {user.status}
+          </td>
+
         </>
       )}
        <td className="button-actions">
