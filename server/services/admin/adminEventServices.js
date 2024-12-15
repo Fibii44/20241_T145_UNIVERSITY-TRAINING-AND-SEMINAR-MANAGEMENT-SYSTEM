@@ -95,54 +95,54 @@ const addEvent = async (req, res) => {
     await newEvent.save();
 
   // Ensure conditions are added properly
-const conditions = [];
+  const conditions = [];
 
-// Add customParticipants to conditions
-if (newEvent.customParticipants?.length > 0) {
-  conditions.push({ email: { $in: newEvent.customParticipants } });
-}
-
-
-if (participantGroup && participantGroup.college) {
-  const activeUsers = await User.find({ status: "active" });
-
-  const relevantUsers = activeUsers.filter((user) => {
-    const { role, college, department } = user; // Decrypted automatically
-
-    // Ensure only faculty_staff are considered
-    if (role !== "faculty_staff") return false;
-
-    // If "all colleges" is selected, include all faculty_staff users
-    if (participantGroup.college.toLowerCase() === "all") {
-      return true;
-    }
-
-    // If a specific college is selected
-    if (college === participantGroup.college) {
-      // If "all departments" is selected, include all users in the college
-      if (
-        !participantGroup.department || 
-        participantGroup.department.toLowerCase() === "all departments"
-      ) {
+  // Add customParticipants to conditions
+  if (newEvent.customParticipants?.length > 0) {
+    conditions.push({ email: { $in: newEvent.customParticipants } });
+  }
+  
+  
+  if (participantGroup && participantGroup.college) {
+    const activeUsers = await User.find({ status: "active" });
+  
+    const relevantUsers = activeUsers.filter((user) => {
+      const { role, college, department } = user; // Decrypted automatically
+  
+      // Ensure only faculty_staff are considered
+      if (role !== "faculty_staff") return false;
+  
+      // If "all colleges" is selected, include all faculty_staff users
+      if (participantGroup.college.toLowerCase() === "all") {
         return true;
       }
-
-      // Otherwise, match the specific department
-      return department === participantGroup.department;
+  
+      // If a specific college is selected
+      if (college === participantGroup.college) {
+        // If "all departments" is selected, include all users in the college
+        if (
+          participantGroup.department.toLowerCase() === "all" || 
+          !participantGroup.department
+        ) {
+          return true;
+        }
+  
+        // Otherwise, match the specific department
+        return department === participantGroup.department;
+      }
+  
+      // Exclude users not matching the college
+      return false;
+    });
+  
+    // Add relevant users to the conditions
+    if (relevantUsers.length > 0) {
+      conditions.push({ _id: { $in: relevantUsers.map((user) => user._id) } });
     }
-
-    // Exclude users not matching the college
-    return false;
-  });
-
-  // Add relevant users to the conditions
-  if (relevantUsers.length > 0) {
-    conditions.push({ _id: { $in: relevantUsers.map((user) => user._id) } });
   }
-}
-
-// Perform query only if conditions are valid
-const users = conditions.length > 0 ? await User.find({ $or: conditions }) : [];
+  
+  // Perform query only if conditions are valid
+  const users = conditions.length > 0 ? await User.find({ $or: conditions }) : [];
 
 // Create userNotifications array
 const userNotifications = users.map(user => ({

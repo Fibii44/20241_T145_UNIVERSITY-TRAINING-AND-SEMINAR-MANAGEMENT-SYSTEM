@@ -156,7 +156,7 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
     const selectedDepartment = e.target.value;
     setParticipants(prev => ({
       ...prev,
-      department: selectedDepartment === "" ? "All Departments" : selectedDepartment
+      department: selectedDepartment === "" ? "All" : selectedDepartment
     }));
   };
 
