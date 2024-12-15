@@ -28,8 +28,8 @@ const certificateSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['issued', 'revoked'],
-        default: 'issued'
+        enum: ['generated', 'revoked'],
+        default: 'generated'
     }
 }, { timestamps: true });
 

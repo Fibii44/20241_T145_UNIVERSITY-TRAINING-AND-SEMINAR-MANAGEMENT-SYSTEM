@@ -127,7 +127,7 @@ const generateAndEmailCertificate = async (submissionId) => {
             submissionId: submission._id,
             fileName: fileName,
             issuedDate: new Date(),
-            status: 'issued',
+            status: 'generated',
         });
     
     const admin = await User.findOne({email: process.env.GMAIL_USER})
@@ -214,9 +214,7 @@ const checkCertificateStatus = async (req, res) => {
             userId,
         });
 
-        res.json({
-            status: certificate.status ? 'issued' : 'pending'
-        });
+        res.json({certificate});
     } catch (error) {
         console.error('Error checking certificate status:', error);
         res.status(500).json({ message: 'Error checking certificate status' });
