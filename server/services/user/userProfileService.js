@@ -118,14 +118,6 @@ const viewEventHistory = async (req, res) => {
     };
 }
 
-const listProfileEvents = async (req, res) => {
-    try {
-        const events = await Event.find();
-        res.status(200).json(events);
-    } catch (error) {
-        res.status(500).send('Error retrieving events');
-    }
-};
 
 module.exports = {
     renderProfilePage,
@@ -133,6 +125,5 @@ module.exports = {
     viewCertificate,
     renderHistoryPage,
     viewEventHistory,
-    listProfileEvents,
     updateUserProfile
 };

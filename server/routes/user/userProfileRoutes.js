@@ -15,7 +15,5 @@ userProfileRoutes.get('/u/certificates/:certificateID', authenticateJWT, userPro
 //History
 userProfileRoutes.get('/u/history', authenticateJWT, userProfileService.renderHistoryPage);
 
-//Profile Events
-userProfileRoutes.get('/u/profile/events', userProfileService.listProfileEvents)
 
 module.exports = userProfileRoutes;

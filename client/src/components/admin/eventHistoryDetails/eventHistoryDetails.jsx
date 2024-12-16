@@ -75,15 +75,17 @@ const EventDetails = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const eventResponse = await fetch(`http://localhost:3000/a/events/${id}`);
+                const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken');
+                console.log(token);
+                const eventResponse = await fetch(`http://localhost:3000/a/events/${id}`, { headers: { Authorization: `Bearer ${token}` } });
                 const eventData = await eventResponse.json();
                 setEventDetail(eventData);
 
-                const registeredResponse = await fetch(`http://localhost:3000/a/event/registrations/${id}`);
+                const registeredResponse = await fetch(`http://localhost:3000/a/event/registrations/${id}`, { headers: { Authorization: `Bearer ${token}` } });
                 const registeredData = await registeredResponse.json();
                 setRegisteredCount(registeredData.length || 0);
 
-                const attendedResponse = await fetch(`http://localhost:3000/a/event/form-submissions/${id}`);
+                const attendedResponse = await fetch(`http://localhost:3000/a/event/form-submissions/${id}`, { headers: { Authorization: `Bearer ${token}` } });
                 const attendedData = await attendedResponse.json();
                 setAttendedList(attendedData);
                 setAttendedCount(attendedData.length || 0);
@@ -94,7 +96,6 @@ const EventDetails = () => {
                 }));
                 setChartData(chartData);
 
-                const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken');
                 const usersResponse = await fetch('http://localhost:3000/a/users', {
                     method: 'GET',
                     headers: {
