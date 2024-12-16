@@ -25,7 +25,6 @@ const EventM = ({ userRole, userCollege }) => {
     setToast({ message, type });
   };
   
-
   // Function to format time for display in 12-hour format
   const formatTime = (dateString) => {
     const date = new Date(dateString);
@@ -95,9 +94,8 @@ const EventM = ({ userRole, userCollege }) => {
     }
   };
 
-  
-
   const handleEdit = async (event) => {
+  
     const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken');
 
     if (!token) {
@@ -114,17 +112,19 @@ const EventM = ({ userRole, userCollege }) => {
 
     setSelectedEvent(formattedSelectedEvent);
     setIsModalOpen(true);
-
+    
     try {
       await axios.put(`http://localhost:3000/a/events/${event._id}/lock`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       sessionStorage.setItem('lockedEventId', event._id); // Store lock status in session
     } catch (error) {
-      showToast('Failed to lock event for editing: ' + error.message, 'error');
+      // Check if the event is locked
+  if (event.isLock) {
+    return res.status(403).json({ message: 'This event is locked and cannot be edited.' });
+    }
     }
   };
-
 
   const handleDelete = (eventId) => {
     setEventToDelete(eventId);
@@ -207,10 +207,15 @@ const EventM = ({ userRole, userCollege }) => {
       formData.append('participantGroup[department]', participants.department || "All");
       }
     }
-
-    if(customParticipants.length > 0) {
-      customParticipants.forEach((email, index) => formData.append(`customParticipants[${index}]`, email.trim()));
-    }
+  // If no customParticipants and selectedParticipants are empty, clear customParticipants
+  if (customParticipants.length === 0 && (!participants || !participants.selectedParticipants || participants.selectedParticipants.length === 0)) {
+    formData.append('customParticipants', []);
+  } else if (customParticipants.length > 0) {
+    customParticipants.forEach((email, index) => formData.append(`customParticipants[${index}]`, email.trim()));
+  } else if (participants) {
+    formData.append('participantGroup[college]', participants.college || "All");
+    formData.append('participantGroup[department]', participants.department || "All");
+  }
 
     if(formLink) { formData.append('formLink', formLink); }
     if(formId){ formData.append('formId', formId); }
@@ -410,6 +415,8 @@ const EventM = ({ userRole, userCollege }) => {
           onClose={() => setIsDeleteModalOpen(false)}
           onConfirmDelete={confirmDelete}
         />
+
+      
    
 
 {/* Events */}
@@ -449,8 +456,8 @@ const EventM = ({ userRole, userCollege }) => {
               </div>
             ))}
           </div>
-{/* Pagination */}
-<div className="pagination">
+      {/* Pagination */}
+         <div className="pagination">
             <button className='prev-next' onClick={prevPage} disabled={currentPage === 1}>
               <FontAwesomeIcon icon={faChevronLeft} />
             </button>
