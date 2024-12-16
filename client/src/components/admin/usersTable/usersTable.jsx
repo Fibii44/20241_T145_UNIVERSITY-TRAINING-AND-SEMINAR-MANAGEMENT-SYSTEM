@@ -86,7 +86,7 @@ const UsersTable = ({
   return (
     <div className="user-table-container">
       {/* Search Bar */}
-      <div className="search-bar">
+      <div className="usertable-search-bar">
         <input
           type="text"
           className="form-control"
