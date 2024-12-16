@@ -78,16 +78,14 @@ const renderDashboard = async (req, res) => {
     }
 };
 
-const renderCalendarPage = async (req, res) => {
+const renderCalendar = async (req, res) => {
     try {
-        // Logic for rendering the calendar page with events
-        const events = []; // Fetch events data
-        res.send('Welcome to Calendar');
+        const registrations = await Registration.find();
+        res.status(200).json(registrations);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).send('Error retrieving events');
     }
 };
-
 const getLogs = async (req, res) => {
     try {
         const logs = await ActivityLog.find()
@@ -117,6 +115,6 @@ const getLogs = async (req, res) => {
 
 module.exports = {
     renderDashboard,
-    renderCalendarPage,
+    renderCalendar,
     getLogs
 };

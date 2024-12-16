@@ -20,7 +20,6 @@ const adminReportRoutes = require('./routes/admin/adminEventReportRoutes');
 
 // user routes
 const formSubmissionRoutes = require('./routes/user/formSubmissionRoutes');
-const userPageRoutes = require('./routes/user/userPageRoutes');
 const userEventRoutes = require('./routes/user/userEventRoutes');
 const userProfileRoutes = require('./routes/user/userProfileRoutes');
 const userNotification = require('./routes/user/userNotificationRoutes');
@@ -100,7 +99,6 @@ app.use("/", adminEventRoutes);
 app.use("/", adminUserRoutes);
 app.use("/", adminReportRoutes);
 app.use("/", formSubmissionRoutes);
-app.use("/", userPageRoutes);
 app.use("/", userEventRoutes);
 app.use("/", userProfileRoutes);
 app.use("/", userNotification);

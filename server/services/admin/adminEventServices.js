@@ -106,8 +106,16 @@ const renderEventsPage = async (req, res) => {
 
 const renderActiveEventsPage = async (req, res) => {
   try {
-    const events = await Event.find({status: "active"});
-    res.status(200).json(events);
+    const user = req.user;
+
+
+    if(user.role === 'admin'){
+      const events = await Event.find({status: "active"});
+      res.status(200).json(events);
+    }else{
+      const events = await Event.find({status: "active"});
+      res.status(200).json(events.filter(event => event.createdBy.equals(user.id)));
+    }
   } catch (error) {
     res.status(500).json({ message: "Internal Server Error", error: error.message });
   }

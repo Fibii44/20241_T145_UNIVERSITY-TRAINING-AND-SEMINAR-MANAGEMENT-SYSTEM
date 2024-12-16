@@ -64,7 +64,7 @@ const ChangePassword = () => {
       }
 
       const data = await response.json();
-      navigate('/');
+      navigate('/login');
       alert('Password updated successfully!');
     } catch (error) {
       setError('Failed to update password');

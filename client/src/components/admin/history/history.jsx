@@ -17,8 +17,9 @@ const HistoryM = () => {
     useEffect(() => {
         const fetchEvents = async () => {
             try {
+                const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken');
                 setLoading(true);
-                const response = await axios.get('http://localhost:3000/a/event-history');
+                const response = await axios.get('http://localhost:3000/a/event-history', { headers: { Authorization: `Bearer ${token}` } });
                 const formattedEvents = response.data.events.map(event => ({
                     ...event,
                     eventDate: new Date(event.eventDate),

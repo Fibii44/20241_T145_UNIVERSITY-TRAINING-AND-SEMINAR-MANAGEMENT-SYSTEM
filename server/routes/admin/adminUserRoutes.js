@@ -7,10 +7,9 @@ const { verifyGeneralAdmin, verifyAdmins, concurrencyControl } = require('../../
 userRoutes.get('/a/personnel', authenticateJWT, verifyGeneralAdmin, adminService.renderPersonnelPage);
 userRoutes.post('/a/personnel', authenticateJWT, verifyGeneralAdmin, adminService.upload.single('profilePicture'), adminService.addPersonnelAccount);
 userRoutes.get('/a/users', authenticateJWT, verifyGeneralAdmin, adminService.renderUserTable);
-userRoutes.get('/a/event-participants/', authenticateJWT, verifyGeneralAdmin, adminService.fetchEventParticipants);
+userRoutes.get('/a/event-participants', authenticateJWT, verifyGeneralAdmin, adminService.fetchEventParticipants);
 userRoutes.put('/a/users/:id', adminService.editUser);
 // Create a new  notification item
-userRoutes.post('/a/notification/items',  adminService.createNotificationItem);
 
 
 module.exports = userRoutes;

@@ -77,7 +77,7 @@ const Calendar = () => {
     useEffect(() => {
         const fetchEvents = async () => {
             try {
-                const response = await axios.get('http://localhost:3000/u/events');
+                const response = await axios.get('http://localhost:3000/a/events');
                 console.log('Fetched events:', response.data);
                 setEvents(response.data);
             } catch (error) {
@@ -105,7 +105,7 @@ const Calendar = () => {
     useEffect(() => {
         const fetchRegisteredEvents = async () => {
             try {
-                const response = await axios.get('http://localhost:3000/u/calendar');
+                const response = await axios.get('http://localhost:3000/a/calendar');
                 console.log('Fetched registered events:', response.data); // Debugging
                 setRegisteredEvents(response.data);
             } catch (error) {
