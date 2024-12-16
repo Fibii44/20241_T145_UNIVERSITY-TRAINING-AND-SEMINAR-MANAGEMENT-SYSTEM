@@ -320,6 +320,7 @@ return (
               <option value="College of Education">College of Education</option>
               <option value="College of Law">College of Law</option>
               <option value="College of Nursing">College of Nursing</option>
+              <option value="College of Public Administration and Governance">College of Public Administration and Governance</option>
               <option value="College of Technologies">College of Technologies</option>
             </select>
           </td>

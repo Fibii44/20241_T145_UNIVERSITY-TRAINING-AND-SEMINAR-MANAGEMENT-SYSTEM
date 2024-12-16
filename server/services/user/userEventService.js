@@ -221,6 +221,7 @@ const cancelRegistration = async (req, res) => {
     oauth2Client.setCredentials({ access_token: token });
 
     const calendar = google.calendar({ version: 'v3', auth: oauth2Client }); // Re-initialize calendar here
+    const user = await User.findById(userId);
 
     try {
         const registration = await Registration.findOne({ eventId, userId });
@@ -238,7 +239,30 @@ const cancelRegistration = async (req, res) => {
                 console.log(`Event with ID ${registration.googleEventId} deleted from Google Calendar`);
             } catch (error) {
                 console.error('Error deleting Google Calendar event:', error);
-                return res.status(500).json({ message: 'Failed to delete event from Google Calendar', details: error.message });
+
+                if(error.code === 401){
+                    console.log('Attempting to refresh token...');
+                }
+
+                try{
+                    oauth2Client.setCredentials({ refresh_token: user.refreshToken });
+                    const { tokens } = await oauth2Client.refreshAccessToken();
+
+                    console.log('New tokens received:', tokens);
+                    user.accessToken = tokens.access_token;
+
+                    await user.save();
+
+                    await calendar.events.delete({
+                        calendarId: 'primary',
+                        eventId: registration.googleEventId,
+                    });
+
+                    return res.status(500).json({ message: 'Failed to delete event from Google Calendar', details: error.message });
+                } catch(error){
+                    console.error('Error deleting calendar event:', error);
+                    return res.status(500).json({ message: 'Failed to delete event from Google Calendar', details: error.message });
+                }
             }
         }
 

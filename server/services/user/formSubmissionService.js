@@ -223,7 +223,7 @@ const recordFormSubmission = async (req, res) => {
                 console.error('Error sending email:', error);
             }
 
-            return res.json({
+            return res.status(200).json({
                 message: 'Form submission verified and recorded',
                 hasSubmittedForm: true,
                 submittedAt: submissionTimestamp || new Date(),
@@ -385,14 +385,16 @@ const getFormSubmissionStatus = async (req, res) => {
 
         const submission = await FormSubmission.findOne({ eventId, userId })
             .select('status submittedAt responses');
+            
 
         if (!submission) {
             return res.status(404).json({ message: 'No form submission found' });
         }
 
-        res.json({
+        res.status(200).json({
             status: submission.status,
             submittedAt: submission.submittedAt,
+            certificateGenerated: "generated",
             hasSubmittedForm: true
         });
     } catch (error) {

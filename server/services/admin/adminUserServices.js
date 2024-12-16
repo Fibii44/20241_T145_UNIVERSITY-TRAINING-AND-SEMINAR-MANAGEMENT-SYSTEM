@@ -133,7 +133,7 @@ const addPersonnelAccount = async (req, res) => {
 const renderUserTable = async (req, res) => {
   try {
     const users = await User.find().select('-password'); // Exclude password field
-    console.log(users);
+
     res.status(200).json({ users });
     
   } catch (error) {

@@ -1,52 +1,38 @@
-// PrivateRoute.jsx
-import { useEffect, useState } from 'react';
+import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 
+// Utility function to check token expiry
+const isTokenExpired = (token) => {
+  try {
+    const decoded = jwtDecode(token);
+    const currentTime = Math.floor(Date.now() / 1000);
+    return decoded.exp < currentTime; // Token is expired if 'exp' < current time
+  } catch (error) {
+    console.error("Token validation error:", error);
+    return true; // Treat invalid tokens as expired
+  }
+};
+
 const PrivateRoute = ({ children, allowedRoles }) => {
-  const [isChecking, setIsChecking] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [hasAccess, setHasAccess] = useState(false);
+  const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
 
-  useEffect(() => {
-    const token = sessionStorage.getItem("authToken") || localStorage.getItem("authToken");
-    if (token) {
-      try {
-        const decoded = jwtDecode(token); // Decode the JWT token
-        const userRole = decoded.role;   // Extract the user's role
-        console.log(`User Role: ${userRole}`);
-
-        // Check if the user's role is allowed
-        if (allowedRoles.includes(userRole)) {
-          setIsAuthenticated(true);
-          setHasAccess(true);
-        } else {
-          setIsAuthenticated(true);
-          setHasAccess(false);
-        }
-      } catch (error) {
-        console.error("Error decoding token:", error);
-        setIsAuthenticated(false);
-      }
-    } else {
-      setIsAuthenticated(false);
-    }
-    setIsChecking(false);  // Indicate that the check is complete
-  }, [allowedRoles]);
-
-  if (isChecking) {
-    return <div>Loading...</div>;  // Show a loading state while checking
+  if (!token || isTokenExpired(token)) {
+    // Clear token and redirect to login
+    localStorage.removeItem('authToken');
+    sessionStorage.removeItem('authToken');
+    console.warn("Token expired or missing. Redirecting to login...");
+    return <Navigate to="/login" replace />;
   }
 
-  if (!isAuthenticated) {
-    return <Navigate to="/" />;
+  // Decode token to verify user role
+  const decoded = jwtDecode(token);
+  if (!allowedRoles.includes(decoded.role)) {
+    console.warn("Unauthorized access. Redirecting to login...");
+    return <Navigate to="/login" replace />;
   }
 
-  if (!hasAccess) {
-    return <Navigate to="/" />;  // Redirect to home if user doesn't have access
-  }
-
-  return children;  // Render the child component if authenticated and has access
+  return children; // Render protected content
 };
 
 export default PrivateRoute;
