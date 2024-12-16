@@ -4,20 +4,17 @@ const adminService = require('../../services/admin/adminEventServices');
 const authenticateJWT = require('../../middleware/auth');
 const sseService = require('../../utils/sse');
 const lockingService = require('../../services/admin/eventLockService');
-const { checkLockStatus, concurrencyLock, clearConcurrencyLock } = require('../../middleware/adminEventsMiddleware');
+const { canEditEvent, concurrencyLock, clearConcurrencyLock } = require('../../middleware/adminEventsMiddleware');
 
 
 // SSE Endpoint
 eventRoutes.get('/a/events/stream', sseService.setupSSE);
-  
-// Check lock status for editing
-eventRoutes.get('/a/events/:id/check-lock', checkLockStatus);
 
 // Events Page - Render all events
 eventRoutes.get('/a/events', adminService.renderEventsPage);
 
 // Get all active events
-eventRoutes.get('/a/active-events', adminService.renderActiveEventsPage);
+eventRoutes.get('/a/active-events', authenticateJWT, adminService.renderActiveEventsPage);
 
 // Get Specific Event
 eventRoutes.get('/a/events/:id', adminService.getSpecificEvent );
@@ -31,7 +28,7 @@ eventRoutes.put('/a/events/:id', authenticateJWT,  adminService.upload.single('e
 eventRoutes.delete('/a/events/:id', authenticateJWT,  adminService.deleteEvent);
 
 // Lock an event
-eventRoutes.put('/a/events/:id/lock', authenticateJWT, concurrencyLock, lockingService.lockEvent);
+eventRoutes.put('/a/events/:id/lock', authenticateJWT, canEditEvent, concurrencyLock, lockingService.lockEvent);
   
 // Unlock an event
 eventRoutes.put('/a/events/:id/unlock', authenticateJWT, clearConcurrencyLock, lockingService.unlockEvent);

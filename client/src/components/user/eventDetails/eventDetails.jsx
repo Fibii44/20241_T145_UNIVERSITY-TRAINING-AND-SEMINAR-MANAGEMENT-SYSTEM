@@ -336,7 +336,7 @@ function Event() {
             window.location.reload();
         } catch (err) {
             console.error('Error handling registration:', err);
-            showToast('Failed to update registration', 'error');
+            showToast('Failed to register please login with your google account', 'error');
         }
     };
 

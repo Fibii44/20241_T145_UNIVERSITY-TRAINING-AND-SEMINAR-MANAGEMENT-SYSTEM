@@ -1,15 +1,4 @@
-const checkLockStatus = async (req, res) => {
-  const { id } = req.params;
-  try {
-    const event = await Event.findById(id);
-    if (event.isLocked) {
-      return res.status(403).json({ message: 'Event is currently being edited by another admin.' });
-    }
-    res.status(200).json({ isLocked: false });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
+const Event = require('../models/event');
 
 const canEditEvent = async (req, res, next) => {
   const user = req.user;
@@ -34,8 +23,6 @@ const canEditEvent = async (req, res, next) => {
     }
     next();
   };
-
-  const Event = require('../models/event');
 
   // Middleware to handle concurrency lock for general admins
   const concurrencyLock = async (req, res, next) => {
@@ -68,4 +55,4 @@ const canEditEvent = async (req, res, next) => {
     next();
   };
   
-module.exports = { checkLockStatus, canEditEvent, clearEventLock, concurrencyLock, clearConcurrencyLock };
+module.exports = { canEditEvent, clearEventLock, concurrencyLock, clearConcurrencyLock };

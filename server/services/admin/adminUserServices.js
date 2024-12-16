@@ -184,28 +184,6 @@ const fetchEventParticipants = async (req, res) => {
   }
 }
 
-// Create a new item
-const createNotificationItem = async (req, res) => {
-  try {
-      const { participants, eventDetails } = req.body; // Assume you send participants and event details
-      const newItem = new userNotification({
-          ...req.body,
-          userNotifications: participants.map(userId => ({
-              userId,
-              status: 'unread',
-              readAt: null
-          }))
-      });
-
-      await newItem.save();
-      res.status(201).json({ message: 'Item created successfully', newItem });
-  } catch (error) {
-      console.error('Error creating item:', error);
-      res.status(500).json({ message: 'Error creating item', error: error.message });
-  }
-};
-
-
 module.exports = {
   renderPersonnelPage,
   addPersonnelAccount,
@@ -213,5 +191,4 @@ module.exports = {
   renderUserTable,
   upload,
   fetchEventParticipants,
-  createNotificationItem
 };

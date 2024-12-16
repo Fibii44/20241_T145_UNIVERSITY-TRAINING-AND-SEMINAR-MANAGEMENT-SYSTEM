@@ -1,68 +1,21 @@
-    const { google } = require('googleapis');
-    const Event = require('../../models/event');
-    const User = require('../../models/user');
-    const Registration = require('../../models/registration');
-    const Forms = require('../../models/formSubmission')
-    const { Types } = require('mongoose');
+const { google } = require('googleapis');
+const Event = require('../../models/event');
+const User = require('../../models/user');
+const Registration = require('../../models/registration');
+const Forms = require('../../models/formSubmission')
+const { Types } = require('mongoose');
 
-    const aggregateUserForms = async (req, res) => {
-        const { id } = req.params;
+const renderEventHistory = async (req, res) => {
+    try {
+        const events = await Event.find({"status": "completed"}).sort({ date: -1 }); // Sort by latest events
+        res.status(200).json({ events});
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
 
-        try {
-            const attendees = await Forms.aggregate([
-                {
-                    $match: {
-                        eventId: Types.ObjectId(id) // Ensure `id` is treated as an ObjectId
-                    }
-                },
-                {
-                    $lookup: {
-                        from: "users", // The users collection
-                        localField: "userId", // The field in Forms
-                        foreignField: "_id", // The field in users
-                        as: "userDetails"
-                    }
-                },
-                {
-                    $unwind: "$userDetails" // Flatten the array
-                },
-                {
-                    $project: {
-                        _id: 1,
-                        eventId: 1,
-                        userId: 1,
-                        formLink: 1,
-                        responses: 1,
-                        status: 1,
-                        submittedAt: 1,
-                        "userDetails.name": 1,
-                        "userDetails.email": 1,
-                        "userDetails.phoneNumber": 1,
-                        "userDetails.department": 1
-                    }
-                }
-            ]);
-
-            if (!attendees.length) {
-                console.log("No attendees found for this event.");
-                return res.status(200).json([]);
-            }
-
-            res.status(200).json(attendees);
-        } catch (error) {
-            console.error('Error fetching attendees:', error);
-            res.status(500).json({ error: 'Failed to fetch attendees' });
-        }
-    };
-    const registration = async (req, res) => {
-        try {
-            const registrations = await Registration.find();
-            res.status(200).json(registrations);
-        } catch (error) {
-            res.status(500).send('Error retrieving events');
-        }
-    };
-    // Fetch all registered users for a specific event
+   
+// Fetch all registered users for a specific event
 const getRegisteredUsers = async (req, res) => {
         const { id } = req.params; // Extract event ID from request parameters
         try {
@@ -99,14 +52,6 @@ const getRegisteredUsers = async (req, res) => {
             res.status(500).json({ error: error.message });
         }
 };
-    const formSubmissions = async (req, res) => {
-        try {
-            const forms = await Forms.find();
-            res.status(200).json(forms);
-        } catch (error) {
-            res.status(500).send('Error retrieving events');
-        }
-    }
     const formSubmissionsEvent = async (req, res) => {
         const { id } = req.params; // Extract event ID from request parameters
 
@@ -152,9 +97,7 @@ const getRegisteredUsers = async (req, res) => {
 
 
     module.exports = {
-        registration,
+        renderEventHistory,
         getRegisteredUsers,
-        formSubmissions,
         formSubmissionsEvent,
-        aggregateUserForms
     }

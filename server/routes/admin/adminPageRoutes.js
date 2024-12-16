@@ -9,7 +9,7 @@ const { verifyGeneralAdmin } = require('../../middleware/generalAdminMiddleware'
 pageRoutes.get('/a/dashboard', adminService.renderDashboard);
 
 // Calendar
-pageRoutes.get('/a/calendar', adminService.renderCalendarPage);
+pageRoutes.get('/a/calendar', adminService.renderCalendar);
 
 //Activity Logs
 pageRoutes.get('/a/activity-logs', authenticateJWT, verifyGeneralAdmin, adminService.getLogs);
