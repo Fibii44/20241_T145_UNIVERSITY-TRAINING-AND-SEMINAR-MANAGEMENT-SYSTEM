@@ -7,12 +7,21 @@ const { Types } = require('mongoose');
 
 const renderEventHistory = async (req, res) => {
     try {
-        const events = await Event.find({"status": "completed"}).sort({ date: -1 }); // Sort by latest events
-        res.status(200).json({ events});
+        const user = req.user;
+
+        if (user.role === 'admin') {
+            const events = await Event.find({ status: "completed" }).sort({ date: -1 });
+            res.status(200).json({ events }); // Always wrap in an object with 'events'
+        } else if (user.role === 'departmental_admin') {
+            const allEvents = await Event.find({ status: "completed" }).sort({ date: -1 });
+            const filteredEvents = allEvents.filter(event => event.createdBy.equals(user.id));
+            res.status(200).json({ events: filteredEvents }); // Always wrap in an object with 'events'
+        }
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
+
 
    
 // Fetch all registered users for a specific event

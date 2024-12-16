@@ -209,7 +209,7 @@ const EventM = ({ userRole, userCollege }) => {
       }
     }
 
-    if(customParticipants.length > 0) {
+    if (customParticipants.length > 0) {
       customParticipants.forEach((email, index) => formData.append(`customParticipants[${index}]`, email.trim()));
     }
 

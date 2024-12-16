@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarCheck, faClock, faMapMarkerAlt, faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import './history.css'; 
 import { Link } from 'react-router-dom';
-
+import Toast from '../../modals/successToast/toast'
 const HistoryM = () => {
     const navigate = useNavigate();
     const [events, setEvents] = useState([]);
@@ -15,27 +15,51 @@ const HistoryM = () => {
     const [filteredEvents, setFilteredEvents] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const eventsPerPage = 4;
+    const maxPageNumbers = 5; // Number of page numbers to display at a time
+    const [toast, setToast] = useState(null);
 
+    const showToast = (message, type = 'success') => {
+        setToast({ message, type });
+      };
+      
     useEffect(() => {
         const fetchEvents = async () => {
             try {
                 const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken');
                 setLoading(true);
                 const response = await axios.get('http://localhost:3000/a/event-history', { headers: { Authorization: `Bearer ${token}` } });
+                console.log('My data',response)
+                // Ensure compatibility with the backend response
                 const formattedEvents = response.data.events.map(event => ({
                     ...event,
-                    eventDate: new Date(event.eventDate),
+                    eventDate: new Date(event.eventDate), // Format event date
                 }));
+    
                 setEvents(formattedEvents);
-                setFilteredEvents(formattedEvents); // Initialize filtered events
+                setFilteredEvents(formattedEvents);
             } catch (error) {
-                console.error('Error fetching events:', error.message);
+                if (error.response) {
+                    showToast(
+                        `Error: ${error.response.status} - ${
+                            error.response.data?.message || "Failed to fetch events from the server."
+                        }`,
+                        'error'
+                    );
+                } else if (error.request) {
+                    showToast(
+                        "Error: Unable to fetch events. Please check your network connection or try again later.",
+                        'error'
+                    );
+                } else {
+                    showToast(`Error: ${error.message}`, 'error');
+                }
             } finally {
                 setLoading(false);
             }
         };
         fetchEvents();
     }, []);
+    
 
     const handleSort = (selectedOption) => {
         if (selectedOption === 'all') {
@@ -63,6 +87,10 @@ const HistoryM = () => {
     const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
     const currentEvents = filteredEvents.slice(indexOfFirstEvent, indexOfLastEvent);
     const totalPages = Math.ceil(filteredEvents.length / eventsPerPage);
+
+    // Calculate pagination range
+    const startPage = Math.max(1, Math.min(currentPage - Math.floor(maxPageNumbers / 2), totalPages - maxPageNumbers + 1));
+    const endPage = Math.min(totalPages, startPage + maxPageNumbers - 1);
 
     return (
         <div className="dashboard-container">
@@ -100,8 +128,6 @@ const HistoryM = () => {
                         }}
                     >
                         <option value="all">All Events</option>
-                        <option value="upcoming">Upcoming Events</option>
-                        <option value="past">Past Events</option>
                         <option value="College of Arts and Sciences">College of Arts and Sciences</option>
                         <option value="College of Business">College of Business</option>
                         <option value="College of Education">College of Education</option>
@@ -109,6 +135,7 @@ const HistoryM = () => {
                         <option value="College of Public Administration and Governance">College of Public Administration and Governance</option>
                         <option value="College of Nursing">College of Nursing</option>
                         <option value="College of Technologies">College of Technologies</option>
+                        <option value="College of Technologies">Others</option>
                     </select>
                 </div>
 
@@ -162,15 +189,18 @@ const HistoryM = () => {
                             >
                                 <FontAwesomeIcon icon={faChevronLeft} />
                             </button>
-                            {Array.from({ length: totalPages }, (_, index) => (
-                                <button
-                                    key={index}
-                                    className={`page-button ${currentPage === index + 1 ? 'active' : ''}`}
-                                    onClick={() => setCurrentPage(index + 1)}
-                                >
-                                    {index + 1}
-                                </button>
-                            ))}
+                            {Array.from({ length: endPage - startPage + 1 }, (_, index) => {
+                                const pageNumber = startPage + index;
+                                return (
+                                    <button
+                                        key={pageNumber}
+                                        className={`page-button ${currentPage === pageNumber ? 'active' : ''}`}
+                                        onClick={() => setCurrentPage(pageNumber)}
+                                    >
+                                        {pageNumber}
+                                    </button>
+                                );
+                            })}
                             <button
                                 className="page-btn"
                                 onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
@@ -181,6 +211,7 @@ const HistoryM = () => {
                         </div>
                     )}
                 </div>
+                {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
             </div>
         </div>
     );
