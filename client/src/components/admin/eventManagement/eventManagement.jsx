@@ -25,6 +25,7 @@ const EventM = ({ userRole, userCollege }) => {
     setToast({ message, type });
   };
   
+
   // Function to format time for display in 12-hour format
   const formatTime = (dateString) => {
     const date = new Date(dateString);
@@ -94,8 +95,9 @@ const EventM = ({ userRole, userCollege }) => {
     }
   };
 
-  const handleEdit = async (event) => {
   
+
+  const handleEdit = async (event) => {
     const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken');
 
     if (!token) {
@@ -112,19 +114,17 @@ const EventM = ({ userRole, userCollege }) => {
 
     setSelectedEvent(formattedSelectedEvent);
     setIsModalOpen(true);
-    
+
     try {
       await axios.put(`http://localhost:3000/a/events/${event._id}/lock`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       sessionStorage.setItem('lockedEventId', event._id); // Store lock status in session
     } catch (error) {
-      // Check if the event is locked
-  if (event.isLock) {
-    return res.status(403).json({ message: 'This event is locked and cannot be edited.' });
-    }
+      showToast('Failed to lock event for editing: ' + error.message, 'error');
     }
   };
+
 
   const handleDelete = (eventId) => {
     setEventToDelete(eventId);
@@ -207,7 +207,8 @@ const EventM = ({ userRole, userCollege }) => {
       formData.append('participantGroup[department]', participants.department || "All");
       }
     }
-  // If no customParticipants and selectedParticipants are empty, clear customParticipants
+
+      // If no customParticipants and selectedParticipants are empty, clear customParticipants
   if (customParticipants.length === 0 && (!participants || !participants.selectedParticipants || participants.selectedParticipants.length === 0)) {
     formData.append('customParticipants', []);
   } else if (customParticipants.length > 0) {
@@ -415,8 +416,6 @@ const EventM = ({ userRole, userCollege }) => {
           onClose={() => setIsDeleteModalOpen(false)}
           onConfirmDelete={confirmDelete}
         />
-
-      
    
 
 {/* Events */}
@@ -456,8 +455,8 @@ const EventM = ({ userRole, userCollege }) => {
               </div>
             ))}
           </div>
-      {/* Pagination */}
-         <div className="pagination">
+{/* Pagination */}
+<div className="pagination">
             <button className='prev-next' onClick={prevPage} disabled={currentPage === 1}>
               <FontAwesomeIcon icon={faChevronLeft} />
             </button>
