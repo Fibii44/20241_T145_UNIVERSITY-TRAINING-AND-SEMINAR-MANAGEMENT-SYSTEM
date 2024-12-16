@@ -25,7 +25,6 @@ const EventM = ({ userRole, userCollege }) => {
     setToast({ message, type });
   };
   
-
   // Function to format time for display in 12-hour format
   const formatTime = (dateString) => {
     const date = new Date(dateString);
@@ -33,38 +32,39 @@ const EventM = ({ userRole, userCollege }) => {
   };
 
   const fetchEvents = async () => {
-  try {
-    const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken');
-    setLoading(true);
-    const response = await axios.get('http://localhost:3000/a/active-events', { headers: { Authorization: `Bearer ${token}` } });
-
-    const formattedEvents = response.data.map(event => ({
-      ...event,
-      startTime: new Date(event.startTime),
-      endTime: new Date(event.endTime),
-    }));
-
-    setEvents(formattedEvents);
-  } catch (error) {
-    if (error.response) {
-      showToast(
-        `Error: ${error.response.status} - ${
-          error.response.data?.message || "Failed to fetch events from the server."
-        }`,
-        'error' // Pass 'error' for red color
-      );
-    } else if (error.request) {
-      showToast(
-        "Error: Unable to fetch events. Please check your network connection or try again later.",
-        'error'
-      );
-    } else {
-      showToast(`Error: ${error.message}`, 'error');
+    try {
+      const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken');
+      setLoading(true);
+      const response = await axios.get('http://localhost:3000/a/active-events', { headers: { Authorization: `Bearer ${token}` } });
+  
+      const formattedEvents = response.data.map(event => ({
+        ...event,
+        startTime: new Date(event.startTime),
+        endTime: new Date(event.endTime),
+      }));
+  
+      setEvents(formattedEvents);
+    } catch (error) {
+      if (error.response) {
+        showToast(
+          `Error: ${error.response.status} - ${
+            error.response.data?.message || "Failed to fetch events from the server."
+          }`,
+          'error' // Pass 'error' for red color
+        );
+      } else if (error.request) {
+        showToast(
+          "Error: Unable to fetch events. Please check your network connection or try again later.",
+          'error'
+        );
+      } else {
+        showToast(`Error: ${error.message}`, 'error');
+      }
+    } finally {
+      setLoading(false);
     }
-  } finally {
-    setLoading(false);
-  }
-};
+  };
+  
 
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
@@ -116,14 +116,12 @@ const EventM = ({ userRole, userCollege }) => {
     setSelectedEvent(formattedSelectedEvent);
     setIsModalOpen(true);
 
-
     try {
       await axios.put(`http://localhost:3000/a/events/${event._id}/lock`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       sessionStorage.setItem('lockedEventId', event._id); // Store lock status in session
     } catch (error) {
-      setIsModalOpen(false);
       showToast('Failed to lock event for editing: ' + error.message, 'error');
     }
   };
@@ -211,15 +209,9 @@ const EventM = ({ userRole, userCollege }) => {
       }
     }
 
-      // If no customParticipants and selectedParticipants are empty, clear customParticipants
-  if (customParticipants.length === 0 && (!participants || !participants.selectedParticipants || participants.selectedParticipants.length === 0)) {
-    formData.append('customParticipants', []);
-  } else if (customParticipants.length > 0) {
-    customParticipants.forEach((email, index) => formData.append(`customParticipants[${index}]`, email.trim()));
-  } else if (participants) {
-    formData.append('participantGroup[college]', participants.college || "All");
-    formData.append('participantGroup[department]', participants.department || "All");
-  }
+    if(customParticipants.length > 0) {
+      customParticipants.forEach((email, index) => formData.append(`customParticipants[${index}]`, email.trim()));
+    }
 
     if(formLink) { formData.append('formLink', formLink); }
     if(formId){ formData.append('formId', formId); }
