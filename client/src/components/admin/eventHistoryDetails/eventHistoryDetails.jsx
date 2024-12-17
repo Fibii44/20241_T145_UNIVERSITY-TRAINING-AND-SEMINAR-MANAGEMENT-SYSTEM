@@ -251,6 +251,7 @@ const EventDetails = () => {
                         src={`http://localhost:3000/eventPictures/${eventDetail?.eventPicture}`}
                         alt="Event"
                         className="history-event-img"
+                        onError={(e) => (e.target.src = '/src/assets/default-eventPicture.jpg')}
                     />
                     <h3>{eventDetail?.title}</h3>
                     <p>{eventDetail?.description}</p>
