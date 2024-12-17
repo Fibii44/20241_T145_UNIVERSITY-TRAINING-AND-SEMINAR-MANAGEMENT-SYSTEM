@@ -128,6 +128,7 @@ const ChangePassword = () => {
                        !passwordStrength.hasMinLength ||
                        !confirmPassword}>Change Password</button>
         </form>
+        {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
     </div>
   );
 };
