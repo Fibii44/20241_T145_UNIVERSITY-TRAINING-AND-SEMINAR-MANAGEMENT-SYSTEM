@@ -44,12 +44,12 @@ const ChangePassword = () => {
       !passwordStrength.hasNumber || 
       !passwordStrength.hasSpecial || 
       !passwordStrength.hasMinLength) {
-      setError('Password does not meet all requirements');
+      showToast('Password does not meet all requirements', 'error');
       return;
     }
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match');
+      showToast('Passwords do not match', 'error');
       return;
     }
 
@@ -74,7 +74,7 @@ const ChangePassword = () => {
       navigate('/login');
       showToast('Password updated successfully!');
     } catch (error) {
-      setError('Failed to update password');
+      showToast('Failed to update password', 'error');
     }
   };
 
