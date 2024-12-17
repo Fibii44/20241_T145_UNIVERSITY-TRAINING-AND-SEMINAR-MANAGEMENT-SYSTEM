@@ -3,11 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './setPassword.css';
 import Toast from "../../components/modals/successToast/toast"
 
-const [toast, setToast] = useState(null);
 
-  const showToast = (message, type = 'success') => {
-    setToast({ message, type });
-  };
   
 const ChangePassword = () => {
   const [password, setPassword] = useState('');
@@ -19,6 +15,11 @@ const ChangePassword = () => {
     hasSpecial: false,
     hasMinLength: false
   });
+  const [toast, setToast] = useState(null);
+
+  const showToast = (message, type = 'success') => {
+    setToast({ message, type });
+  };
   const navigate = useNavigate();
 
   const checkPasswordStrength = (password) => {
@@ -119,7 +120,7 @@ const ChangePassword = () => {
                 required
             />
             </label>
-
+            {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
             {error && <p className="error-message">{error}</p>}
 
             <button type="submit" disabled={!passwordStrength.hasCapital || 
@@ -128,7 +129,7 @@ const ChangePassword = () => {
                        !passwordStrength.hasMinLength ||
                        !confirmPassword}>Change Password</button>
         </form>
-        {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+        
     </div>
   );
 };
