@@ -35,7 +35,7 @@ const EventM = ({ userRole, userCollege }) => {
     try {
       const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken');
       setLoading(true);
-      const response = await axios.get('http://localhost:3000/a/active-events', { headers: { Authorization: `Bearer ${token}` } });
+      const response = await axios.get('http://localhost:3000/a/events', { headers: { Authorization: `Bearer ${token}` } });
   
       const formattedEvents = response.data.map(event => ({
         ...event,
@@ -70,12 +70,16 @@ const EventM = ({ userRole, userCollege }) => {
     setSearchQuery(e.target.value);
     setCurrentPage(1); // Reset to the first page when searching
   };
-  const filteredEvents = events?.filter(event => 
-    (event.title?.toLowerCase() || '').includes(searchQuery?.toLowerCase() || '') || 
-    (event.description?.toLowerCase() || '').includes(searchQuery?.toLowerCase() || '') || 
-    (event.location?.toLowerCase() || '').includes(searchQuery?.toLowerCase() || '')
-  ) || [];
+  const filteredEvents = events
+  ?.filter(
+    (event) =>
+      (event.title?.toLowerCase() || '').includes(searchQuery?.toLowerCase() || '') ||
+      (event.description?.toLowerCase() || '').includes(searchQuery?.toLowerCase() || '') ||
+      (event.location?.toLowerCase() || '').includes(searchQuery?.toLowerCase() || '')
+  )
+  .filter((event) => event.status === 'active') || [];
 
+  
   const indexOfLastEvent = currentPage * eventsPerPage;
   const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
   const currentEvents = filteredEvents.slice(indexOfFirstEvent, indexOfLastEvent);

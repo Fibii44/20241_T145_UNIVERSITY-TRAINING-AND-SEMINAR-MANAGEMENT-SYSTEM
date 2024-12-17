@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
+import Profile from "../../../assets/default-profile.png";
 import io from 'socket.io-client';
 import axios from 'axios';
 import moment from 'moment';
@@ -136,8 +137,11 @@ const ActivityLog = () => {
                 {currentLogs.map((log) => (
                     <li key={log._id} className="activity-log-item">
                         <img 
-                            src={log.userId?.profilePicture || '/default-profile.png'} 
+                            src={log.userId?.profilePicture || Profile} 
                             alt="Profile" 
+                            onError={(e) => {
+                                e.target.src = '/src/assets/profile.png';
+                            }}
                             className="log-profile-picture" 
                         />
                         <div className="activity-log-details">

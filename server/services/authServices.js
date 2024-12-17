@@ -99,6 +99,7 @@ const manualLogin = async (req, res) => {
         name: user.name, 
         email: user.email, 
         position: user.position,
+        college: user.college,
         department: user.department,
         phoneNumber: user.phoneNumber,
         profilePicture: user.profilePicture,
