@@ -266,7 +266,7 @@
     grid-template-columns: repeat(5, 1fr); /* Limits to 5 items per row */
     gap: 10px; /* Space between items */
     padding: 10px;
-    overflow: auto; /* Optional: add scroll if there are more than 5 */
+    overflow: hidden; /* Optional: add scroll if there are more than 5 */;
 }
 /* Event List ===================================================== */
 .event-list {
