@@ -50,6 +50,7 @@ const AddPersonnelModal = ({ show, onClose }) => {
     "College of Public Administration and Governance",
     "College of Nursing",
     "College of Technologies",
+    "Others"
   ];
 
   const departments = {
@@ -88,6 +89,7 @@ const AddPersonnelModal = ({ show, onClose }) => {
       "Food Science and Technology",
       "Electronics and Communications Engineering",
     ],
+    "Others": [],
   };
 
   const roles = ["departmental_admin", "faculty_staff"];

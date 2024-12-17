@@ -1,7 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './setPassword.css';
+import Toast from "../../components/modals/successToast/toast"
 
+const [toast, setToast] = useState(null);
+
+  const showToast = (message, type = 'success') => {
+    setToast({ message, type });
+  };
+  
 const ChangePassword = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -65,7 +72,7 @@ const ChangePassword = () => {
 
       const data = await response.json();
       navigate('/login');
-      alert('Password updated successfully!');
+      showToast('Password updated successfully!');
     } catch (error) {
       setError('Failed to update password');
     }
