@@ -41,7 +41,7 @@ function LoginSuccess() {
         navigate("/a"); 
       } else {
         console.error("Unknown user role:", userRole);
-        navigate("/"); // Redirect to login for unknown roles
+        navigate("/login"); // Redirect to login for unknown roles
       }
     } else {
       console.error("Token not found in query parameters");
