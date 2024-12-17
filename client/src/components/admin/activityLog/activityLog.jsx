@@ -116,7 +116,11 @@ const ActivityLog = () => {
     };
 
     if (loading) {
-        return <div className="loading">Loading activity logs...</div>;
+        return (
+            <div className="loading">
+                <div className="loader"></div>
+            </div>
+        );
     }
 
     if (error) {
