@@ -169,25 +169,38 @@ const EventM = ({ userRole, userCollege }) => {
 
   const handleSaveEventDetails = async (eventDetails) => {
     const { date, startTime, endTime, participants, customParticipants = [], eventPicture, reminders, formLink, formId, ...rest } = eventDetails;
-
-
+  
     // Ensure the date, startTime, and endTime are valid Date objects before calling toISOString
-    const formattedEventDate = date && !isNaN(new Date(date).getTime()) ? new Date(date).toISOString() : undefined;
-    const formattedStartTime = startTime && !isNaN(new Date(startTime).getTime()) ? new Date(startTime).toISOString() : undefined;
-    const formattedEndTime = endTime && !isNaN(new Date(endTime).getTime()) ? new Date(endTime).toISOString() : undefined;
-
-    // If any date is invalid, alert the user and return early
-    if (!formattedEventDate || !formattedStartTime || !formattedEndTime) {
-      showToast('Invalid date or time values. Please check the inputs.', 'error');
+    const currentDate = new Date();
+    const eventDate = date && new Date(date);
+  
+    if (!eventDate || isNaN(eventDate.getTime())) {
+      showToast('Invalid event date. Please provide a valid date.', 'error');
       return;
     }
-
+  
+    // Check if the event date is in the past
+    if (eventDate.setHours(0, 0, 0, 0) < currentDate.setHours(0, 0, 0, 0)) {
+      showToast('The event date cannot be in the past. Please select a valid date.', 'error');
+      return;
+    }
+  
+    const formattedEventDate = eventDate.toISOString();
+    const formattedStartTime = startTime && !isNaN(new Date(startTime).getTime()) ? new Date(startTime).toISOString() : undefined;
+    const formattedEndTime = endTime && !isNaN(new Date(endTime).getTime()) ? new Date(endTime).toISOString() : undefined;
+  
+    // If any date is invalid, alert the user and return early
+    if (!formattedStartTime || !formattedEndTime) {
+      showToast('Invalid time values. Please check the inputs.', 'error');
+      return;
+    }
+  
     const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken');
     if (!token) {
       showToast('User is not authenticated. Please log in.', 'error');
       return;
     }
-
+  
     let userId;
     try {
       const decodedToken = jwtDecode(token);
@@ -196,7 +209,7 @@ const EventM = ({ userRole, userCollege }) => {
       showToast('Invalid or expired token. Please log in again.', 'error');
       return;
     }
-
+  
     const formData = new FormData();
     formData.append('title', rest.title);
     formData.append('eventDate', formattedEventDate);
@@ -208,32 +221,31 @@ const EventM = ({ userRole, userCollege }) => {
     if (eventPicture) formData.append('eventPicture', eventPicture);
     if (!customParticipants.length) {
       if (participants) {
-      formData.append('participantGroup[college]', participants.college || "All");
-      formData.append('participantGroup[department]', participants.department || "All");
+        formData.append('participantGroup[college]', participants.college || "All");
+        formData.append('participantGroup[department]', participants.department || "All");
       }
     }
-
+  
     if (customParticipants.length > 0) {
       customParticipants.forEach((email, index) => formData.append(`customParticipants[${index}]`, email.trim()));
     }
-
-    if(formLink) { formData.append('formLink', formLink); }
-    if(formId){ formData.append('formId', formId); }
-    
+  
+    if (formLink) { formData.append('formLink', formLink); }
+    if (formId) { formData.append('formId', formId); }
+  
     if (reminders && reminders.length > 0) {
       reminders.forEach((reminder, index) => {
         formData.append(`reminders[${index}][method]`, reminder.method);
         formData.append(`reminders[${index}][minutesBefore]`, reminder.minutesBefore);
       });
     }
-
-
+  
     if (!selectedEvent) {
       formData.append('createdBy', userId);
     } else {
       formData.append('editedBy', userId);
     }
-
+  
     try {
       let response;
       if (selectedEvent) {
@@ -257,7 +269,7 @@ const EventM = ({ userRole, userCollege }) => {
         });
         showToast(response.data.message || 'Event created successfully');
       }
-
+  
       const updatedEvent = {
         ...response.data,
         startTime: new Date(response.data.startTime),
@@ -289,6 +301,7 @@ const EventM = ({ userRole, userCollege }) => {
       }
     }
   };
+  
 
   const handleSort = (option) => {
     setSortOption(option);
