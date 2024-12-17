@@ -93,7 +93,7 @@ const Sidebar = ({ activePage }) => {
 
       <ul className="sidebar-footer"> 
         <li className={`sidebar-footer-item ${activePage === 'settings' ? 'active' : ''}`}>
-          <Link to="/settings">
+          <Link to="/a/oqwidjoiqwj">
             <span className="icon"><FontAwesomeIcon icon={faCog} size="lg" /></span>
             {!isCollapsed && <span className='list-name'>Settings</span>}
           </Link>
