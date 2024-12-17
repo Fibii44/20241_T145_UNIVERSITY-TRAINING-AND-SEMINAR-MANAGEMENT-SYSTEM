@@ -12,6 +12,8 @@ eventRoutes.get('/a/events/stream', sseService.setupSSE);
 
 // Events Page - Render all events
 eventRoutes.get('/a/events', adminService.renderEventsPage);
+// Get all active events
+eventRoutes.get('/a/active-events', authenticateJWT, adminService.renderActiveEventsPage);
 
 // Get Specific Event
 eventRoutes.get('/a/events/:id', adminService.getSpecificEvent );

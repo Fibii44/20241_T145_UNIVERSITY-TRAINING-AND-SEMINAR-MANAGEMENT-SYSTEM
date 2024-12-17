@@ -35,7 +35,7 @@ const EventM = ({ userRole, userCollege }) => {
     try {
       const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken');
       setLoading(true);
-      const response = await axios.get('http://localhost:3000/a/events', { headers: { Authorization: `Bearer ${token}` } });
+      const response = await axios.get('http://localhost:3000/a/active-events', { headers: { Authorization: `Bearer ${token}` } });
   
       const formattedEvents = response.data.map(event => ({
         ...event,
