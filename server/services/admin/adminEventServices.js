@@ -127,6 +127,27 @@ const addEvent = async (req, res) => {
     const eventPicture = req.file ? req.file.filename : null // Set eventPicture 
     
     const user = req.user;
+    
+    // Check for duplicate events created by the same user in the last 5 seconds
+    const recentEvents = await Event.find({
+      createdBy: user.id,
+      title: title,
+      eventDate: eventDate,
+      startTime: startTime,
+      endTime: endTime,
+      location: location,
+      createdAt: { $gte: new Date(Date.now() - 5000) } // Events created in the last 5 seconds
+    });
+    
+    // If a similar event was recently created, return it instead of creating a new one
+    if (recentEvents.length > 0) {
+      console.log("Duplicate event detected, returning existing event");
+      return res.status(200).json({ 
+        message: "Event already created", 
+        event: recentEvents[0] 
+      });
+    }
+    
     const newEvent = new Event({
       title,
       eventDate,  
