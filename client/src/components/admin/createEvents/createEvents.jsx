@@ -26,8 +26,9 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
   const [selectedParticipants, setSelectedParticipants] = useState(initialEventData?.customParticipants || []);
   const [isFilterVisible, setIsFilterVisible] = useState(false); // Track filter visibility state
   const [searchTerm, setSearchTerm] = useState('');
-  const [ formLink, setFormLink] = useState('');
+  const [formLink, setFormLink] = useState('');
   const [formId, setFormId] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false); // Track if form is being submitted
 
   // Sample data for colleges and departments
   const colleges = ['College of Arts and Sciences', 'College of Business', 'College of Education', 'College of Law', 'College of Public Administration and Governance', 'College of Nursing', 'College of Technologies'];
@@ -191,6 +192,13 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
   
   const handleSaveDetails = async (e) => {
     e.preventDefault();
+    
+    // Prevent multiple submissions
+    if (isSubmitting) {
+      return;
+    }
+    
+    setIsSubmitting(true);
   
     // Get the user's timezone offset in minutes
     const timezoneOffset = new Date().getTimezoneOffset();
@@ -265,11 +273,11 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
     try {
       // Save the event
       await onSave(eventData);
+      onClose();
     } catch (error) {
       console.error('Error saving event:', error);
+      setIsSubmitting(false); // Reset submission state on error
     }
-  
-    onClose();
   };
   
   if (!isOpen) return null;
@@ -478,8 +486,19 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
               </div>
 
               <div className="event-buttons">
-                <button type="submit" className="btn btn-primary mr-2 event-save-button">Save Event</button>
-                <button type="button" className="btn btn-secondary event-close-button" onClick={onClose}>
+                <button 
+                  type="submit" 
+                  className="btn btn-primary mr-2 event-save-button"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? 'Saving...' : 'Save Event'}
+                </button>
+                <button 
+                  type="button" 
+                  className="btn btn-secondary event-close-button" 
+                  onClick={onClose}
+                  disabled={isSubmitting}
+                >
                   Cancel
                 </button>
               </div>
