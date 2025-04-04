@@ -188,9 +188,23 @@
         const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     
         const getEventsForDay = (date) => {
+            // If date is a string in YYYY-MM-DD format, convert it to a Date object
+            const targetDate = typeof date === 'string' ? new Date(date) : date;
+            
+            // Format the target date in YYYY-MM-DD format
+            const formattedTargetDate = targetDate.getFullYear() + '-' + 
+                                      String(targetDate.getMonth() + 1).padStart(2, '0') + '-' + 
+                                      String(targetDate.getDate()).padStart(2, '0');
+            
             return events.filter(event => {
-                const eventDate = new Date(event.eventDate).toISOString().split('T')[0];
-                return eventDate === date;
+                // Create a date object from the event date
+                const eventDateObj = new Date(event.eventDate);
+                // Format the event date in YYYY-MM-DD format while preserving the local date
+                const eventFormattedDate = eventDateObj.getFullYear() + '-' + 
+                                        String(eventDateObj.getMonth() + 1).padStart(2, '0') + '-' + 
+                                        String(eventDateObj.getDate()).padStart(2, '0');
+                
+                return eventFormattedDate === formattedTargetDate;
             });
         };
     
@@ -309,14 +323,13 @@ const renderMonthView = () => {
                             <div key={day} className="calendar-day-header">{day}</div>
                         ))}
                         {allDays.map((date, index) => {
-                            // Convert to locale date to avoid timezone issues
-                            const formattedDate = date.toLocaleDateString('en-CA'); // Format as YYYY-MM-DD
+                            // Format the date in YYYY-MM-DD format while preserving the local date
+                            const formattedDate = date.getFullYear() + '-' + 
+                                                String(date.getMonth() + 1).padStart(2, '0') + '-' + 
+                                                String(date.getDate()).padStart(2, '0');
                             const dayNumber = date.getDate();
-                            const eventsForDay = filteredEvents.filter(event => {
-                            const eventDate = new Date(event.eventDate).toISOString().split('T')[0];
-                                return eventDate === formattedDate;
-                            });
-                        const isToday = date.toDateString() === today.toDateString();
+                            const eventsForDay = getEventsForDay(date);
+                            const isToday = date.toDateString() === today.toDateString();
     
                             return (
                                 <div
@@ -436,12 +449,12 @@ const renderMonthView = () => {
                         {Array.from({ length: 7 }, (_, index) => {
                             const date = new Date(startOfWeek);
                             date.setDate(startOfWeek.getDate() + index);
-                            const formattedDate = date.toISOString().split('T')[0];
+                            // Format the date in YYYY-MM-DD format while preserving the local date
+                            const formattedDate = date.getFullYear() + '-' + 
+                                                String(date.getMonth() + 1).padStart(2, '0') + '-' + 
+                                                String(date.getDate()).padStart(2, '0');
                             const dayNumber = date.getDate();
-                            const eventsForDay = filteredEvents.filter(event => {
-                                const eventDate = new Date(event.eventDate).toISOString().split('T')[0];
-                                    return eventDate === formattedDate;
-                                });
+                            const eventsForDay = getEventsForDay(date);
                             const isToday = date.toDateString() === today.toDateString();
                             
                             return (
@@ -572,13 +585,13 @@ const renderMonthView = () => {
                                         <div key={day} className="year-calendar-day-header">{day}</div>
                                     ))}
                                     {allDays.map((date, dayIndex) => {
-                                        const formattedDate = date.toISOString().split('T')[0];
+                                        // Format the date in YYYY-MM-DD format while preserving the local date
+                                        const formattedDate = date.getFullYear() + '-' + 
+                                                            String(date.getMonth() + 1).padStart(2, '0') + '-' + 
+                                                            String(date.getDate()).padStart(2, '0');
                                         const isToday = date.toDateString() === today.toDateString();
                                         const isCurrentMonth = date.getMonth() === month.getMonth();
-                                        const eventsForDay = filteredEvents.filter(event => {
-                                            const eventDate = new Date(event.eventDate).toISOString().split('T')[0];
-                                                return eventDate === formattedDate;
-                                            });
+                                        const eventsForDay = getEventsForDay(date);
     
                                         return (
                                             <div 
@@ -613,7 +626,15 @@ const renderMonthView = () => {
             const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
             const today = new Date();
             const selectedDay = selectedDate ? new Date(selectedDate) : today;
-            const eventsForSelectedDay = getEventsForDay(selectedDay.toLocaleDateString('en-CA'));
+            const eventsForSelectedDay = getEventsForDay(selectedDay);
+        
+            // Format the date for display
+            const formattedDisplayDate = selectedDay.toLocaleDateString('default', { 
+                weekday: 'long', 
+                month: 'long', 
+                day: 'numeric', 
+                year: 'numeric' 
+            });
         
             return (
                 <>
@@ -623,12 +644,7 @@ const renderMonthView = () => {
                             <FontAwesomeIcon icon={faChevronLeft} />
                         </button>
                         <h2>
-                            {selectedDay.toLocaleDateString('default', {
-                                weekday: 'long',
-                                month: 'long',
-                                day: 'numeric',
-                                year: 'numeric',
-                            })}
+                            {formattedDisplayDate}
                         </h2>
                         <button className="prev-next" onClick={goToNext}>
                             <FontAwesomeIcon icon={faChevronRight} />
@@ -685,12 +701,7 @@ const renderMonthView = () => {
                             <div className="overlay-content">
                                 <div className="overlay-header">
                                     <h2>
-                                        {selectedDay.toLocaleDateString('default', {
-                                            weekday: 'long',
-                                            month: 'long',
-                                            day: 'numeric',
-                                            year: 'numeric',
-                                        })}
+                                        {formattedDisplayDate}
                                     </h2>
                                     <button onClick={closeOverlay} className="close-button">
                                         Close

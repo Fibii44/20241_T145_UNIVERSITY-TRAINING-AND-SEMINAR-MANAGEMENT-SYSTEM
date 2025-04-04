@@ -110,9 +110,18 @@ const EventM = ({ userRole, userCollege }) => {
       return;
     }
 
+    // Create a date object from the event date
+    const eventDateObj = event.eventDate instanceof Date ? event.eventDate : new Date(event.eventDate);
+    
+    // Format the date in YYYY-MM-DD format while preserving the local date
+    // This avoids timezone issues that cause the date to appear one day behind
+    const formattedDate = eventDateObj.getFullYear() + '-' + 
+                         String(eventDateObj.getMonth() + 1).padStart(2, '0') + '-' + 
+                         String(eventDateObj.getDate()).padStart(2, '0');
+
     const formattedSelectedEvent = event ? {
       ...event,
-      eventDate: (event.eventDate instanceof Date ? event.eventDate : new Date(event.eventDate)).toISOString().split("T")[0],
+      eventDate: formattedDate,
       startTime: (event.startTime instanceof Date ? event.startTime : new Date(event.startTime)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
       endTime: (event.endTime instanceof Date ? event.endTime : new Date(event.endTime)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
     } : null;
