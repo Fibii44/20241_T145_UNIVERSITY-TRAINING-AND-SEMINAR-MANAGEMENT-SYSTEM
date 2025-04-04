@@ -85,6 +85,10 @@ hr {
   box-sizing: border-box;
 }
 
+.error-outline {
+  border: 1px solid #dc3545 !important;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+}
 
 input[type="time"] {
   /* Customize appearance as needed */

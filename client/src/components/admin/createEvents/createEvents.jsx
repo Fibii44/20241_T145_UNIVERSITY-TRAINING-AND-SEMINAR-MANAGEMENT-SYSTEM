@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCamera, faMapMarkerAlt, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faCamera, faMapMarkerAlt, faTimes, faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './createEvent.css';
 import TimePicker from 'react-bootstrap-time-picker';
@@ -29,6 +29,7 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
   const [formLink, setFormLink] = useState('');
   const [formId, setFormId] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false); // Track if form is being submitted
+  const [validationErrors, setValidationErrors] = useState({}); // Track validation errors
 
   // Sample data for colleges and departments
   const colleges = ['College of Arts and Sciences', 'College of Business', 'College of Education', 'College of Law', 'College of Public Administration and Governance', 'College of Nursing', 'College of Technologies'];
@@ -161,6 +162,37 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
     }));
   };
 
+  // Function to reset all form fields
+  const resetForm = () => {
+    setTitle('');
+    setDate('');
+    setStartTime('');
+    setEndTime('');
+    setLocation('');
+    setDescription('');
+    setReminders([]);
+    setEventPicture(null);
+    setActiveReminder('None');
+    setColor('#65a8ff');
+    setParticipants({
+      college: '',
+      department: ''
+    });
+    setSelectedParticipants([]);
+    setIsFilterVisible(false);
+    setSearchTerm('');
+    setFormLink('');
+    setFormId('');
+    setIsSubmitting(false);
+    setValidationErrors({});
+  };
+
+  // Handle modal close with form reset
+  const handleClose = () => {
+    resetForm();
+    onClose();
+  };
+
   useEffect(() => {
     if (isOpen && initialEventData) {
       // Populate form fields when initialEventData changes
@@ -179,6 +211,9 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
       });
       setFormLink(initialEventData.formLink || '');
       setFormId(initialEventData.formId || '');
+    } else if (!isOpen) {
+      // Reset form when modal is closed
+      resetForm();
     }
   }, [isOpen, initialEventData]);
 
@@ -197,6 +232,42 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
     if (isSubmitting) {
       return;
     }
+    
+    // Validate required fields
+    const errors = {};
+    
+    if (!title.trim()) {
+      errors.title = 'Event title is required';
+    }
+    
+    if (!date) {
+      errors.date = 'Event date is required';
+    }
+    
+    if (!startTime) {
+      errors.startTime = 'Start time is required';
+    }
+    
+    if (!endTime) {
+      errors.endTime = 'End time is required';
+    }
+    
+    if (!location.trim()) {
+      errors.location = 'Location is required';
+    }
+    
+    if (!description.trim()) {
+      errors.description = 'Description is required';
+    }
+    
+    // Check if there are any validation errors
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors);
+      return; // Stop form submission if there are errors
+    }
+    
+    // Clear any previous validation errors
+    setValidationErrors({});
     
     setIsSubmitting(true);
   
@@ -315,11 +386,11 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
 
 
   return (
-    <div className={`modal-overlay ${isOpen ? 'show' : ''}`} onClick={onClose}>
+    <div className={`modal-overlay ${isOpen ? 'show' : ''}`} onClick={handleClose}>
       <div className={`modal ${isOpen ? 'show' : ''}`} style={{ display: isOpen ? 'block' : 'none' }} onClick={(e) => e.stopPropagation()}>
           <div className="modal-header">
             <h5 className="modal-title">Event Details</h5>
-            <button type="button" className="close" onClick={onClose}>
+            <button type="button" className="close" onClick={handleClose}>
               <span>&times;</span>
             </button>
           </div>
@@ -347,26 +418,123 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
                 </div>
                 <div className="col-md-7"> {/* Assigned columns for side-by-side layout */}
                   <div className="event-details" style={{paddingTop: '0px'}}> {/* Added a container for better styling */}
-                      <input className="event-name form-control mb-3" type="text" placeholder="Event Title" value={title} onChange={(e) => setTitle(e.target.value)} />
-                    <div className="event-inputs">
-                      <input className="event-date form-control mb-3" type="date" placeholder="Event Date" value={date} onChange={(e) => setDate(e.target.value)} />
-                      <input className="form-control mb-3" type="time" value={startTime} onChange={(e) => setStartTime(e.target.value)} />
-                      <input className="form-control mb-3" type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} />
-                    </div>
-                    <textarea className="event-description form-control mb-3" placeholder="Enter event description" value={description} onChange={(e) => setDescription(e.target.value)}></textarea>
-                    <div className="location-input mb-4">
-                      <input type="text" placeholder="Enter location" value={location} onChange={(e) => setLocation(e.target.value)} className="form-control" />
-                      <FontAwesomeIcon icon={faMapMarkerAlt} className="location-icon" />
-                    </div>
-                    <div className="reminder-section">
-                    <h6 style={{color: "gray"}}>Set Reminder for Participants</h6>
-                      <select className="form-select" value={activeReminder} onChange={(e) => handleReminderClick(e.target.value)}>
-                        <option value="None">None</option>
-                        <option value="1 hour before">1 hour before</option>
-                        <option value="1 day before">1 day before</option>
-                        <option value="1 week before">1 week before</option>
-                      </select>
-                    </div>
+                      <div className="input-group mb-3">
+                        <input 
+                          className={`event-name form-control ${validationErrors.title ? 'error-outline' : ''}`} 
+                          type="text" 
+                          placeholder="Event Title" 
+                          value={title} 
+                          onChange={(e) => setTitle(e.target.value)} 
+                        />
+                        {validationErrors.title && (
+                          <div className="input-group-append">
+                            <span className="input-group-text text-danger" title={validationErrors.title}>
+                              <FontAwesomeIcon icon={faExclamationCircle} />
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                      
+                      <div className="event-inputs">
+                        <div className="input-group mb-3">
+                          <input 
+                            className={`event-date form-control ${validationErrors.date ? 'error-outline' : ''}`} 
+                            type="date" 
+                            placeholder="Event Date" 
+                            value={date} 
+                            onChange={(e) => setDate(e.target.value)} 
+                          />
+                          {validationErrors.date && (
+                            <div className="input-group-append">
+                              <span className="input-group-text text-danger" title={validationErrors.date}>
+                                <FontAwesomeIcon icon={faExclamationCircle} />
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                        
+                        <div className="input-group mb-3">
+                          <input 
+                            className={`form-control ${validationErrors.startTime ? 'error-outline' : ''}`} 
+                            type="time" 
+                            value={startTime} 
+                            onChange={(e) => setStartTime(e.target.value)} 
+                          />
+                          {validationErrors.startTime && (
+                            <div className="input-group-append">
+                              <span className="input-group-text text-danger" title={validationErrors.startTime}>
+                                <FontAwesomeIcon icon={faExclamationCircle} />
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                        
+                        <div className="input-group mb-3">
+                          <input 
+                            className={`form-control ${validationErrors.endTime ? 'error-outline' : ''}`} 
+                            type="time" 
+                            value={endTime} 
+                            onChange={(e) => setEndTime(e.target.value)} 
+                          />
+                          {validationErrors.endTime && (
+                            <div className="input-group-append">
+                              <span className="input-group-text text-danger" title={validationErrors.endTime}>
+                                <FontAwesomeIcon icon={faExclamationCircle} />
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      
+                      <div className="input-group mb-3">
+                        <textarea 
+                          className={`event-description form-control ${validationErrors.description ? 'error-outline' : ''}`} 
+                          placeholder="Enter event description" 
+                          value={description} 
+                          onChange={(e) => setDescription(e.target.value)}
+                        ></textarea>
+                        {validationErrors.description && (
+                          <div className="input-group-append">
+                            <span className="input-group-text text-danger" title={validationErrors.description}>
+                              <FontAwesomeIcon icon={faExclamationCircle} />
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                      
+                      <div className="location-input mb-4">
+                        <div className="input-group">
+                          <div className="position-relative" style={{ flex: 1 }}>
+                            <input 
+                              type="text" 
+                              placeholder="Enter location" 
+                              value={location} 
+                              onChange={(e) => setLocation(e.target.value)} 
+                              className={`form-control ${validationErrors.location ? 'error-outline' : ''}`} 
+                              style={{ paddingRight: '40px' }}
+                            />
+                            <div className="position-absolute" style={{ right: '10px', top: '50%', transform: 'translateY(-50%)' }}>
+                              <FontAwesomeIcon icon={faMapMarkerAlt} className="location-icon" style={{ color: '#6c757d' }} />
+                            </div>
+                          </div>
+                          {validationErrors.location && (
+                            <div className="input-group-append">
+                              <span className="input-group-text text-danger" title={validationErrors.location}>
+                                <FontAwesomeIcon icon={faExclamationCircle} />
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      <div className="reminder-section">
+                      <h6 style={{color: "gray"}}>Set Reminder for Participants</h6>
+                        <select className="form-select" value={activeReminder} onChange={(e) => handleReminderClick(e.target.value)}>
+                          <option value="None">None</option>
+                          <option value="1 hour before">1 hour before</option>
+                          <option value="1 day before">1 day before</option>
+                          <option value="1 week before">1 week before</option>
+                        </select>
+                      </div>
                   </div>
                 </div>
               </div>
@@ -496,7 +664,7 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
                 <button 
                   type="button" 
                   className="btn btn-secondary event-close-button" 
-                  onClick={onClose}
+                  onClick={handleClose}
                   disabled={isSubmitting}
                 >
                   Cancel
