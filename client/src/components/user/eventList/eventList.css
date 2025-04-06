@@ -159,27 +159,56 @@
     font-weight: bold;
     border-radius: 4px;
 }
-/* Search */
-.search-container {
-    margin: 20px 0;
-    text-align: center;
-    padding-left: 2rem;
+/* Search Filter Container */
+.search-filter-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 2rem;
+    background-color: white;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    width: 100%;
 }
 
-.search-bar {
-    width: 80%;
-    max-width: 400px;
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    outline: none;
+.search-input {
+    width: 400px;
+    padding: 0.75rem 1rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 0.95rem;
 }
 
-.search-bar:focus {
-    border-color: #011c39;
-    box-shadow: 0 0 5px rgba(1, 28, 57, 0.5);
+/* Right side controls group */
+.filter-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
 }
+
+.sort-group {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    white-space: nowrap;
+}
+
+.sort-group label {
+    color: #6c757d;
+    font-size: 0.95rem;
+}
+
+.custom-select {
+    padding: 0.6rem 1rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    background-color: white;
+    font-size: 0.95rem;
+    color: #495057;
+    cursor: pointer;
+    min-width: 100px;
+}
+
 .event-college-department {
     transform: translateY(-3rem);
     display: inline-block; /* Allows the div to shrink to fit its content */

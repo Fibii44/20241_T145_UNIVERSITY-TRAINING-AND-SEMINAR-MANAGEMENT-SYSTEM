@@ -9,6 +9,7 @@ import {
   faTh,
   faList,
   faDownload,
+  faSearch,
 } from "@fortawesome/free-solid-svg-icons";
 import "./certificate.css";
 
@@ -81,22 +82,20 @@ function CertificateGrid() {
 
   return (
     <div className="certificates-container card">
-      {/* Controls for Sorting and Search */}
-      <div className="certificates-sort-container">
-        <div className="certificates-sort-options">
-          <div className="search-bar">
-            <input
-              type="text"
-              placeholder="Search by title..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="search-input"
-            />
-          </div>
+      <div className="search-filter-container">
+        {/* Search Bar */}
+        <input
+          type="text"
+          placeholder="Search certificates..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="search-input"
+        />
+
+        {/* Filter Controls */}
+        <div className="filter-controls">
           <div className="sort-group">
-            <span className="sort-icon">
-              <FontAwesomeIcon icon={faSort} />
-            </span>
+            <label>Sort by:</label>
             <select
               value={sortBy.field}
               onChange={(e) => setSortBy({ ...sortBy, field: e.target.value })}
@@ -105,13 +104,7 @@ function CertificateGrid() {
               <option value="date">Date</option>
               <option value="title">Title</option>
             </select>
-            <span className="sort-icon">
-              {sortBy.direction === "asc" ? (
-                <FontAwesomeIcon icon={faSortUp} />
-              ) : (
-                <FontAwesomeIcon icon={faSortDown} />
-              )}
-            </span>
+
             <select
               value={sortBy.direction}
               onChange={(e) => setSortBy({ ...sortBy, direction: e.target.value })}
@@ -121,15 +114,13 @@ function CertificateGrid() {
               <option value="desc">Descending</option>
             </select>
           </div>
+
           <button
             onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}
-            className="custom-button view-mode-button"
+            className={`view-mode-button ${viewMode === "grid" ? "active" : ""}`}
+            title={viewMode === "grid" ? "Grid View" : "List View"}
           >
-            {viewMode === "grid" ? (
-              <FontAwesomeIcon icon={faTh} />
-            ) : (
-              <FontAwesomeIcon icon={faList} />
-            )}
+            <FontAwesomeIcon icon={viewMode === "grid" ? faTh : faList} />
           </button>
         </div>
       </div>
