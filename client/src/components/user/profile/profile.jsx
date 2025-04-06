@@ -181,115 +181,117 @@ const Profile = ({ token }) => {
 
     return (
         <div className="profile-container">
-            <div className="profile-header">
-                <Image
-                    src={user.profileImage || ProfilePic}
-                    roundedCircle
-                    className="profile-image"
-                    alt="Profile"
+            <Container fluid>
+                <Row className="justify-content-center">
+                    <Col md={12}>
+                        <div className="profile-image-container text-center">
+                            <Image
+                                src={user.profileImage || ProfilePic}
+                                roundedCircle
+                                alt="Profile"
+                            />
+                            <h2 className="profile-name">{user.name}</h2>
+                            <p className="profile-email">{user.email}</p>
+                        </div>
+
+                        <Form className="profile-form">
+                            {/* First Row - College and Department */}
+                            <div className="form-row">
+                                <div className="form-group">
+                                    <Form.Label>College</Form.Label>
+                                    <Form.Select
+                                        name="college"
+                                        value={formData.college || ''}
+                                        onChange={(e) => {
+                                            handleInputChange(e);
+                                            setFormData(prev => ({
+                                                ...prev,
+                                                department: "",
+                                            }));
+                                        }}
+                                        disabled={!isEditing}
+                                    >
+                                        <option value="">Select a College</option>
+                                        {colleges.map((college) => (
+                                            <option key={college} value={college}>
+                                                {college}
+                                            </option>
+                                        ))}
+                                    </Form.Select>
+                                </div>
+                                <div className="form-group">
+                                    <Form.Label>Department</Form.Label>
+                                    <Form.Select
+                                        name="department"
+                                        value={formData.department || ''}
+                                        onChange={handleInputChange}
+                                        disabled={!isEditing || !formData.college}
+                                    >
+                                        <option value="">Select a Department</option>
+                                        {(departments[formData.college] || []).map((department) => (
+                                            <option key={department} value={department}>
+                                                {department}
+                                            </option>
+                                        ))}
+                                    </Form.Select>
+                                </div>
+                            </div>
+
+                            {/* Second Row - Phone Number and Position */}
+                            <div className="form-row">
+                                <div className="form-group">
+                                    <Form.Label>Phone Number</Form.Label>
+                                    <Form.Control
+                                        type="tel"
+                                        name="phoneNumber"
+                                        value={formData.phoneNumber || ''}
+                                        onChange={handleInputChange}
+                                        disabled={!isEditing}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <Form.Label>Position</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        name="position"
+                                        value={formData.position || ''}
+                                        onChange={handleInputChange}
+                                        disabled={!isEditing}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="button-container">
+                                {!isEditing ? (
+                                    <Button variant="outline-primary" onClick={handleEditToggle} className="edit">
+                                        Edit Profile
+                                    </Button>
+                                ) : (
+                                    <div className='save-btns'>
+                                        <Button
+                                            variant="primary"
+                                            onClick={() => setShowConfirmModal(true)}
+                                            className="save"
+                                        >
+                                            Save Changes
+                                        </Button>
+                                        <Button variant="secondary" onClick={handleEditToggle}>
+                                            Cancel
+                                        </Button>
+                                    </div>
+                                )}
+                            </div>
+                        </Form>
+                    </Col>
+                </Row>
+
+                <Confirm
+                    show={showConfirmModal}
+                    onHide={() => setShowConfirmModal(false)}
+                    onConfirm={handleSave}
+                    message="Are you sure you want to save changes?"
                 />
-                <h2 className="profile-name">{user.name}</h2>
-                <p className="profile-email">{user.email}</p>
-            </div>
-
-            <Form className="profile-form">
-                {/* First Row - College and Department */}
-                <div className="form-row">
-                    <Form.Group controlId="formCollege" className="profile-form-group">
-                        <Form.Label>College</Form.Label>
-                        <Form.Select
-                            name="college"
-                            value={formData.college || ''}
-                            onChange={(e) => {
-                                handleInputChange(e);
-                                setFormData(prev => ({
-                                    ...prev,
-                                    department: "",
-                                }));
-                            }}
-                            disabled={!isEditing}
-                            className="form-select"
-                        >
-                            <option value="">Select a College</option>
-                            {colleges.map((college) => (
-                                <option key={college} value={college}>
-                                    {college}
-                                </option>
-                            ))}
-                        </Form.Select>
-                    </Form.Group>
-
-                    <Form.Group controlId="formDepartment" className="profile-form-group">
-                        <Form.Label>Department</Form.Label>
-                        <Form.Select
-                            name="department"
-                            value={formData.department || ''}
-                            onChange={handleInputChange}
-                            disabled={!isEditing || !formData.college}
-                            className="form-select"
-                        >
-                            <option value="">Select a Department</option>
-                            {(departments[formData.college] || []).map((department) => (
-                                <option key={department} value={department}>
-                                    {department}
-                                </option>
-                            ))}
-                        </Form.Select>
-                    </Form.Group>
-                </div>
-
-                {/* Second Row - Phone Number and Position */}
-                <div className="form-row">
-                    <Form.Group controlId="formPhoneNumber" className="profile-form-group">
-                        <Form.Label>Phone Number</Form.Label>
-                        <Form.Control
-                            type="tel"
-                            name="phoneNumber"
-                            value={formData.phoneNumber || ''}
-                            onChange={handleInputChange}
-                            disabled={!isEditing}
-                            className="form-control"
-                            placeholder="Enter phone number"
-                        />
-                    </Form.Group>
-
-                    <Form.Group controlId="formPosition" className="profile-form-group">
-                        <Form.Label>Position</Form.Label>
-                        <Form.Control
-                            type="text"
-                            name="position"
-                            value={formData.position || ''}
-                            onChange={handleInputChange}
-                            disabled={!isEditing}
-                            className="form-control"
-                            placeholder="Enter position"
-                        />
-                    </Form.Group>
-                </div>
-
-                <div className="save-btns">
-                    {isEditing ? (
-                        <>
-                            <Button className="save" onClick={() => setShowConfirmModal(true)}>
-                                Save Changes
-                            </Button>
-                            <Button className="cancel-btn" onClick={handleEditToggle}>
-                                Cancel
-                            </Button>
-                        </>
-                    ) : (
-                        <Button className="edit" onClick={handleEditToggle}>
-                            Edit Profile
-                        </Button>
-                    )}
-                </div>
-            </Form>
-
-            <Confirm
-                show={showConfirmModal}
-                onHide={() => setShowConfirmModal(false)}
-                onConfirm={handleSave}
-            />
+            </Container>
         </div>
     );
 };

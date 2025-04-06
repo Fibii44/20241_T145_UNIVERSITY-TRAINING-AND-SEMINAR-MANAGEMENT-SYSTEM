@@ -244,7 +244,7 @@ const EventDetails = () => {
     return (
         <div className="dashboard-container">
             <div className="event-container">
-                <h2 className="dashboard-heading">Event Report</h2>
+                <h2 className="event-report-title">Event Report</h2>
                 <button onClick={downloadPDF} className="download-btn">Download PDF</button>
                 <div className="details-section">
                     <img

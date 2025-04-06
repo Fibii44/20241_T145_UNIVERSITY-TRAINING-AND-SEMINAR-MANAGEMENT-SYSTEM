@@ -319,24 +319,28 @@ function Event() {
     
     const handleRegistration = async () => {
         try {
+            setIsLoading(true); // Add loading state
             const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken');
             const headers = { Authorization: `Bearer ${token}` };
 
             if (isRegistered) {
                 // Cancel registration using DELETE method
                 await axios.delete(`http://localhost:3000/u/events/${id}/cancellation`, { headers });
+                setIsRegistered(false);
+                setRegistrationStatus('Register');
+                showToast('Registration cancelled');
             } else {
                 // Register using POST method
                 await axios.post(`http://localhost:3000/u/events`, {eventId: id}, { headers });
+                setIsRegistered(true);
+                setRegistrationStatus('Cancel Registration');
+                showToast('Registered successfully');
             }
-
-            setIsRegistered(!isRegistered);
-            setRegistrationStatus(isRegistered ? 'Register' : 'Cancel Registration');
-            showToast(isRegistered ? 'Registration cancelled' : 'Registered successfully');
-            window.location.reload();
         } catch (err) {
             console.error('Error handling registration:', err);
-            showToast('Failed to register please login with your google account', 'error');
+            showToast('Failed to register. Please try again.', 'error');
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -384,8 +388,12 @@ function Event() {
                             <div className="user-register-button" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                                 {canRegister ? (
                                     isEventActive ? (
-                                        <button className='register-button' onClick={handleRegistration}>
-                                            {registrationStatus}
+                                        <button 
+                                            className='register-button' 
+                                            onClick={handleRegistration}
+                                            disabled={isLoading}
+                                        >
+                                            {isLoading ? 'Processing...' : registrationStatus}
                                         </button>
                                     ) : (
                                         isEventCompleted() ? (

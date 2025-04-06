@@ -197,30 +197,27 @@ function EventGrid() {
                 </div>
             </div>
 
-            {/* Events Grid */}
-            <div className="user-events-grid" style={{ contentAlign: 'center', margin: '0 auto' }}>
+            <div className="user-events-grid">
                 {currentEvents.map((event) => (
-                    <Link to={`/u/events/${event._id}`} key={event._id} className="event-link">
+                    <Link to={`/u/events/${event._id}`} key={event._id} className="event-link" style={{ textDecoration: 'none' }}>
                         <div className="user-event-card">
-                        <div className="user-image">
-                            <img
-                                src={`http://localhost:3000/eventPictures/${event.eventPicture}`}
-                                alt={event.title}
-                                className="event-image"
-                                onError={(e) => (e.target.src = '/src/assets/default-eventPicture.jpg')}
-                            />
-                            <div
-                                className="event-college-department"
-                                style={{
-                                    backgroundColor: event.participantGroup?.college ? event.color : '#9e1414',
-                                }}
-                            >
-                                <p>{event.participantGroup?.college || 'Exclusive'}</p>
+                            <div className="user-image">
+                                <img
+                                    src={`http://localhost:3000/eventPictures/${event.eventPicture}`}
+                                    alt={event.title}
+                                    className="event-image"
+                                    onError={(e) => (e.target.src = '/src/assets/default-eventPicture.jpg')}
+                                />
+                                <div
+                                    className="event-college-department"
+                                    style={{
+                                        backgroundColor: event.participantGroup?.college ? event.color : '#9e1414',
+                                    }}
+                                >
+                                    <p>{event.participantGroup?.college || 'Exclusive'}</p>
+                                </div>
                             </div>
-                        </div>
-
-
-                            <h3 style={{ color: '#011c39' }}>{event.title}</h3>
+                            <h3>{event.title}</h3>
                             <p className="date">
                                 {new Date(event.eventDate).toLocaleDateString("en-US", {
                                     year: "numeric",
@@ -239,7 +236,6 @@ function EventGrid() {
                 ))}
             </div>
 
-            {/* Pagination Controls */}
             <div className="pagination-controls mb-3">
                 <button
                     className="page-btn"

@@ -1,109 +1,124 @@
 .user-events-grid {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
     padding: 20px;
-    gap: 30px;
     background-color: #f5f6fa;
-    margin: 2rem auto; /* Center grid horizontally */
-    width: 80rem; /* Set max width for the grid */
-}
-
-.user-event-card h3 {
-    padding-top: 12px;
-    font-size: 18px;
-    text-align: left;
-    overflow: hidden;
-    height: 3rem;
-    white-space: nowrap; /* Prevent wrapping */
-    text-overflow: ellipsis; /* Add '...' for long text */
-    display: block; /* Ensure ellipsis works */
-    width: 100%; /* Limit width for ellipsis */
-}
-@media (max-width: 768px) {
-    .user-event-card h3 {
-        font-size: 16px; /* Reduce font size on smaller screens */
-    }
-}
-
-.event-link {
-    text-decoration: none; /* Remove underline */
+    margin: 2rem auto;
+    width: calc(100% - 4rem);
+    max-width: 1400px;
 }
 
 .user-event-card {
     cursor: pointer;
-    width: 18rem;
-    text-align: left;
     background-color: white;
-    padding: 30px;
-    border-radius: 18px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
-    align-items: left;
-    height: 90%;/* Make each card take full height in its grid cell */
+    height: 100%;
 }
 
 .user-event-card:hover {
-    background-color: rgb(226, 241, 241);/* Zoom in effect */
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Slightly darker shadow on hover */
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
+
 .user-image {
-    height: 150px;
+    position: relative;
+    width: 100%;
+    height: 200px;
     overflow: hidden;
-    border-radius: 10px;
 }
-.user-image:hover {
-    transition: transform 0.3s ease
-}
+
 .event-image {
     width: 100%;
-    max-height: 200px;
-    overflow: hidden;
-    height: 100%; 
-    border-radius: 10px;/* Ensure the image fills the space without distortion */
-    margin-bottom: 12px;
-    transition: transform 0.3s ease
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
 }
+
+.user-event-card:hover .event-image {
+    transform: scale(1.05);
+}
+
+.event-college-department {
+    position: absolute;
+    left: 0;
+    bottom: 20px;
+    padding: 4px 12px;
+    border-radius: 0 20px 20px 0;
+    z-index: 1;
+}
+
+.event-college-department p {
+    margin: 0;
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.user-event-card h3 {
+    padding: 1rem;
+    margin: 0;
+    font-size: 1.1rem;
+    color: #011c39;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.user-event-card .date {
+    padding: 0 1rem;
+    margin: 0;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.event-description {
+    padding: 1rem;
+    flex-grow: 1;
+}
+
+.event-description p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #444;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.event-button {
+    padding: 1rem;
+}
+
+.event-button button {
+    width: 100%;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 8px;
+    background-color: #f5f6fa;
+    color: #011c39;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.user-event-card:hover .event-button button {
+    background-color: #feb800;
+    color: #011c39;
+}
+
 .user-event-card p {
     margin-top: 6px;
     font-size: 14px;
     color: #011c39;
     
 }
-
-.user-event-card .date {
-    color: grey;
-    font-size: 12px;
-    margin-bottom: 12px;
-    text-align: left;
-}
-
-.user-event-card button {
-    background-color: white;
-    color: #011c39;
-    border: 1px solid grey;
-    border-radius: 18px;
-    height: 2.5rem;
-    padding: 0 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    margin-top: auto; /* Push button to bottom of card */
-    width: 100%;
-}
-
-.user-event-card:hover button {
-    background-color: #feb800; /* Change button color to yellow */
-    color: #333; /* Optional: Change text color when button is hovered */
-}
-.user-event-card:hover .event-image {
-    transform: scale(1.05);
-}
-.user-event-card .event-description {
-    height: 15rem;
-    margin-bottom: 20px;
-    overflow: hidden;
-}
-
 
 .pagination-controls {
     display: flex;
@@ -209,27 +224,6 @@
     min-width: 100px;
 }
 
-.event-college-department {
-    transform: translateY(-3rem);
-    display: inline-block; /* Allows the div to shrink to fit its content */
-    padding: 0 10px; /* Add padding for spacing */
-    max-width: 100%; /* Prevent overflow for long text */
-    word-wrap: break-word; /* Ensures text wraps inside the container */
-    text-align: center; /* Centers the text inside the container */
-    background-color: #ffffff; /* Example background color, customizable */
-    border-radius: 0px 20px 20px 0px; /* Adds rounded corners */
-    box-shadow: 0 10px 100px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow */
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  .event-college-department:hover {
-    transform: translateY(-3rem) scale(1.05); /* Slightly zoom in the element */
-    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); /* Increase shadow for hover effect */
-  }
-  .event-college-department p {
-    margin-top: 10px;
-    color: white;
-    font-size: 10px;
-  }
-  .user-events-content {
+.user-events-content {
     height: 52rem;
-  }
+}

@@ -526,28 +526,25 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
                           )}
                         </div>
                       </div>
-                      <div className="reminder-section">
-                      <h6 style={{color: "gray"}}>Set Reminder for Participants</h6>
-                        <select className="form-select" value={activeReminder} onChange={(e) => handleReminderClick(e.target.value)}>
-                          <option value="None">None</option>
-                          <option value="1 hour before">1 hour before</option>
-                          <option value="1 day before">1 day before</option>
-                          <option value="1 week before">1 week before</option>
-                        </select>
-                      </div>
                   </div>
                 </div>
               </div>
-              
 
-            
+              <div className="reminder-section mb-4">
+                <h6 style={{color: "gray"}}>Set Reminder for Participants</h6>
+                <select className="form-select" value={activeReminder} onChange={(e) => handleReminderClick(e.target.value)}>
+                  <option value="None">None</option>
+                  <option value="1 hour before">1 hour before</option>
+                  <option value="1 day before">1 day before</option>
+                  <option value="1 week before">1 week before</option>
+                </select>
+              </div>
 
-
-                <div className="additional-options mb-3">
-                <hr />  <div className="google-form-section mb-3">
-                  <h4><strong>Post-Event Settings</strong></h4>
+              <div className="additional-options mb-3">
+                <hr style={{ margin: '2rem 0' }} />
+                <div className="google-form-section mb-3">
+                  <h4 style={{ marginBottom: '1.5rem' }}><strong>Post-Event Settings</strong></h4>
                   <div className="google-form-row">
-                    
                     <div className="col-md-5">
                       <p>Enter the Google Form link for respondent form.</p>
                       <input 
@@ -568,9 +565,8 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
                         className="form-control mb-2"
                       />
                     </div>
-                    </div>
                   </div>
-
+                </div>
 
                 <button type="button" className="invite-participants-btn" onClick={toggleFilterVisibility}>
                   + Invite Participants

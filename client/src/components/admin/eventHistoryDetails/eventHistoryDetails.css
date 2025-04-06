@@ -8,6 +8,7 @@
 }
 /* Container for the entire event section */
 .event-container {
+  padding: 1%;
   width: 30rem;
   max-width: 100%;
   box-sizing: border-box; 
@@ -32,6 +33,14 @@
     height: 40rem;
     border-radius: 20px;
   }
+
+  .details-section h3 {
+    color: #011c39;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 1rem 0;
+  }
+
   .history-event-img {
     height: 15rem;
     width: 25rem;
@@ -53,7 +62,7 @@
   
   .info-container {
     display: flex;
-    gap: 15px;
+    gap: 5px;
     font-size: 0.9em;
     color: #555;
     flex-direction: column;
@@ -72,7 +81,7 @@
     font-size: 20px;
   }
   .chart, .table-container{
-    margin: 20px;
+    margin: 2%;
   }
 
   .download-btn {
@@ -90,3 +99,27 @@
 .download-btn:hover {
     background-color: #45a049;
 }
+
+.event-report-title {
+  font-size: 2rem;
+  color: #011c39;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+  position: relative;
+  display: inline-block;
+  padding-bottom: 0.5rem;
+  margin-left: 1%;
+}
+
+.event-report-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 50%;
+  height: 4px;
+  background-color: #feb800;
+  border-radius: 2px;
+}
+
+/* Remove the dashboard-heading styles completely */

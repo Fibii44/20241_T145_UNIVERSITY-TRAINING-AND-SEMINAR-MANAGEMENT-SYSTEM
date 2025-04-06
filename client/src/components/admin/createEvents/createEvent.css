@@ -373,3 +373,26 @@ input[type="time"] {
 .participant-item .cancel-btn:hover {
   color: #d9534f;
 }
+
+.reminder-section {
+  width: 100%;
+  padding: 0 1rem;
+}
+
+.reminder-section select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: white;
+  cursor: pointer;
+}
+
+.reminder-section h6 {
+  margin-bottom: 0.5rem;
+}
+
+.google-form-section {
+  margin-top: 2rem;
+  width: 100%;
+}

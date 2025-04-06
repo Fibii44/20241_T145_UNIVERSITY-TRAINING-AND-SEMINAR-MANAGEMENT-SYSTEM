@@ -397,24 +397,27 @@ const EventM = ({ userRole, userCollege }) => {
             value={searchQuery}
             onChange={handleSearch}
           />
-           {/* Sorting Dropdown */}
-    <div className="sort-container">
-          <label className='sort-label' htmlFor="sort">Sort By:</label>
-          <select
-            id="sort"
-            value={sortOption}
-            onChange={(e) => handleSort(e.target.value)}
+          <div className="sort-container">
+            <label className="sort-label" htmlFor="sort">Sort By:</label>
+            <select
+              id="sort"
+              value={sortOption}
+              onChange={(e) => handleSort(e.target.value)}
+            >
+              <option value="dateAsc">Date (Ascending)</option>
+              <option value="dateDesc">Date (Descending)</option>
+              <option value="titleAsc">Title (A-Z)</option>
+              <option value="titleDesc">Title (Z-A)</option>
+            </select>
+          </div>
+          <button 
+            className="dashboard-button" 
+            onClick={() => {
+              setSelectedEvent(null);
+              setIsModalOpen(true);
+            }} 
+            disabled={loading}
           >
-            <option value="dateAsc">Date (Ascending)</option>
-            <option value="dateDesc">Date (Descending)</option>
-            <option value="titleAsc">Title (A-Z)</option>
-            <option value="titleDesc">Title (Z-A)</option>
-          </select>
-    </div>
-          <button className="dashboard-button" onClick={() => {
-            setSelectedEvent(null); // Clear previous event data
-            setIsModalOpen(true);
-          }} disabled={loading}>
             <FontAwesomeIcon icon={faPlus} />
           </button>
         </div>
@@ -427,27 +430,26 @@ const EventM = ({ userRole, userCollege }) => {
           userCollege={userCollege}
           initialEventData={selectedEvent ? {
             ...selectedEvent,
-            customParticipants: selectedEvent.customParticipants.map(email => ({ email })) // Wrap emails in objects with email key
+            customParticipants: selectedEvent.customParticipants.map(email => ({ email }))
           } : null}
         />
-  {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+
+        {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
         <DeleteModal
           isOpen={isDeleteModalOpen}
           onClose={() => setIsDeleteModalOpen(false)}
           onConfirmDelete={confirmDelete}
         />
-   
 
-{/* Events */}
-<div className="context-card">
+        <div className="context-card">
           <div className="admin-event-list">
-            {currentEvents.map((event, index) => (
+            {currentEvents.map((event) => (
               <div className="admin-event-card" key={`${event._id}-${event.startTime.getTime()}`}>
                 <div className="event-image">
                   <img
                     src={`http://localhost:3000/eventPictures/${event.eventPicture}`}
-                    alt={`${event.title || "No"} image`}
+                    alt={event.title}
                     className="event-img"
                     onError={(e) => (e.target.src = '/src/assets/default-eventPicture.jpg')}
                   />
@@ -458,43 +460,58 @@ const EventM = ({ userRole, userCollege }) => {
                   </div>
                   <p className="event-description">{event.description}</p>
                   <div className="event-info">
-                    <span><FontAwesomeIcon icon={faCalendarCheck} /> {new Date(event.eventDate).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</span>
-                    <span><FontAwesomeIcon icon={faClock} /> {formatTime(event.startTime)} - {formatTime(event.endTime)}</span>
-                    <span><FontAwesomeIcon icon={faMapMarkerAlt} /> {event.location}</span>
+                    <span>
+                      <FontAwesomeIcon icon={faCalendarCheck} />
+                      {new Date(event.eventDate).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric"
+                      })}
+                    </span>
+                    <span>
+                      <FontAwesomeIcon icon={faClock} />
+                      {formatTime(event.startTime)} - {formatTime(event.endTime)}
+                    </span>
+                    <span>
+                      <FontAwesomeIcon icon={faMapMarkerAlt} />
+                      {event.location}
+                    </span>
                   </div>
-                </div>
-                <div className="event-actions">
-                  {event.isLocked ? (
-                    <FontAwesomeIcon icon={faLock} className="lock-icon" title="Event is being edited by another admin" />
-                  ) : (
-                    <>
-                      <button onClick={() => handleEdit(event)}>Edit</button>
-                      <button onClick={() => handleDelete(event._id)}>Delete</button>
-                    </>
-                  )}
+                  <div className="event-actions">
+                    {event.isLocked ? (
+                      <FontAwesomeIcon icon={faLock} className="lock-icon" title="Event is being edited by another admin" />
+                    ) : (
+                      <>
+                        <button onClick={() => handleEdit(event)}>Edit</button>
+                        <button onClick={() => handleDelete(event._id)}>Delete</button>
+                      </>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}
           </div>
-{/* Pagination */}
-<div className="pagination">
-            <button className='prev-next' onClick={prevPage} disabled={currentPage === 1}>
+
+          <div className="pagination">
+            <button
+              onClick={prevPage}
+              disabled={currentPage === 1}
+            >
               <FontAwesomeIcon icon={faChevronLeft} />
             </button>
-            {Array.from({ length: visiblePagesEnd - visiblePagesStart + 1 }, (_, idx) => {
-              const page = visiblePagesStart + idx;
+            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+              const pageNumber = Math.max(1, Math.min(currentPage - 2, totalPages - 4)) + i;
               return (
                 <button
-                  key={page}
-                  onClick={() => setCurrentPage(page)}
-                  className={`page-button ${currentPage === page ? 'active' : ''}`}
+                  key={pageNumber}
+                  onClick={() => setCurrentPage(pageNumber)}
+                  className={currentPage === pageNumber ? 'active' : ''}
                 >
-                  {page}
+                  {pageNumber}
                 </button>
               );
             })}
             <button
-              className='prev-next'
               onClick={nextPage}
               disabled={currentPage === totalPages}
             >

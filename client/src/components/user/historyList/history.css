@@ -3,17 +3,15 @@
   min-height: 40rem;
 }
 
-.kanban-board {
+.userHistory-container .kanban-board {
   display: flex;
-  align-items: flex-start; /* Add this */
+  align-items: flex-start;
   width: 100%;
-  height: auto;
-  display: flex;
   gap: 1rem; 
   padding: 1rem;
 }
 
-.kanban-column {
+.userHistory-container .kanban-column {
   background-color: #ffffff;
   border-radius: 1rem;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -21,196 +19,204 @@
   flex: 1;
 }
 
-.kanban-column:nth-child(1) .column-header { /* Upcoming column */
-  background-color:  #011c39; /* Light blue */
+.userHistory-container .kanban-column:nth-child(1) .column-header {
+  background-color: #011c39;
   color: #ffffff;
 }
 
-.kanban-column:nth-child(2) .column-header { /* In Progress column */
-  background-color: #feb800 ; /* Light yellow */
+.userHistory-container .kanban-column:nth-child(2) .column-header {
+  background-color: #feb800;
 }
 
-.kanban-column:nth-child(3) .column-header { /* Completed column */
-  background-color: #75ba75; /* Light cyan */
+.userHistory-container .kanban-column:nth-child(3) .column-header {
+  background-color: #75ba75;
 }
 
-.date i{
-  font-size: .9rem; /* Adjust the font size value as needed */
-  margin-right: .7rem; /* Add some space between the icon and the text */
-}
- 
-.event-time i {
-  font-size: .8rem; /* Adjust the font size value as needed */
-  margin-right: .7rem;  /* Add some space between the icon and the text */
+.userHistory-container .date i,
+.userHistory-container .event-time i {
+  font-size: 0.9rem;
+  margin-right: 0.5rem;
 }
 
-.event-details p{
-  margin-bottom: 0;
+.userHistory-container .event-details {
+  display: block;
+  margin: 0;
+  padding: 0;
 }
 
-.column-header {
-  padding: 1rem;
-  background-color: #011c39; 
+.userHistory-container .event-details h5 {
+  font-size: 1rem;
+  font-weight: 600;
   color: #011c39;
-  border-bottom: 1px solid #eee;
+  margin: 0;
+  padding: 0;
+  display: block;
+  height: 20px;
+}
+
+.userHistory-container .event-details p {
+  margin: 0;
+  padding: 0;
+  font-size: 0.85rem;
+  color: #666;
+  display: block;
+  height: 18px;
+}
+
+.userHistory-container .column-header {
+  padding: 0.75rem 1rem;
+  color: #011c39;
   border-top-left-radius: 1rem;
   border-top-right-radius: 1rem;
   margin-bottom: 0.5rem;
   font-weight: 600;
 }
 
-.kanban-item {
+.userHistory-container .kanban-item {
   border-bottom: 1px solid #eee;
-  transition: background-color 0.2s ease; 
+  transition: background-color 0.2s ease;
+  padding: 1rem;
+  height: 7rem;
 }
 
-.kanban-item:hover {
+.userHistory-container .kanban-item:hover {
   background-color: #f9f9f9;
 }
 
-.kanban-item img {
-  border-radius: 8px;
-  width: 5rem; 
-  height: 5rem; 
+.userHistory-container .kanban-item img {
+  width: 4rem;
+  height: 4rem;
   object-fit: cover;
-  margin-left: 1rem;
-  margin-top: 1rem;
+  border-radius: 6px;
+  margin: 0;
+  padding: 0;
 }
 
-.kanban-item h5{
-  font-size: 1.2rem;
+.userHistory-container .kanban-item h5 {
+  font-size: 1rem;
   font-weight: 600;
-  margin-top: .2rem;
-  margin-bottom: 0;
+  margin: 0 0 0.25rem 0;
+  color: #011c39;
 }
 
-.kanban-item p{
-  font-size: 0.8rem;
-  color: grey;
-  margin-bottom: 0;
+.userHistory-container .kanban-item-content {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  gap: 1rem;
 }
 
-.kanban-item-content {
-  display: grid; /* Use grid layout for columns */
-  grid-template-columns: 1fr 3fr; /* Adjust column widths as needed (1fr for image, 3fr for details) */
-  align-items: flex-start; 
-  gap: .5rem; /* Add spacing between columns */
-  margin-bottom: 1rem;
-  margin-left: 1rem;
+.userHistory-container .event-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
 }
 
-
-
-.userHistory-sort-container {
-  width: 80%;
-  margin: 10px;
+/* Custom Select Styles */
+.userHistory-container .custom-select {
+  appearance: none;
+  padding: 0.7rem;
+  border: none;
+  border-radius: 8px;
+  background-color: #f5f6fa;
+  font-size: 16px;
+  cursor: pointer;
+  position: relative;
+  margin-left: 15px;
 }
-  /* Custom Select Styles */
-  .custom-select {
-    appearance: none;
-    padding: .7rem;
-    border: none;
-    border-radius: 8px;
-    background-color: #f5f6fa;
-    font-size: 16px;
-    cursor: pointer;
-    position: relative;
-    margin-left: 15px;
-    /* Spacing between dropdowns */
-  }
-  
-  .custom-select:hover {
-    background-color: #ffffff;
-  }
-  
-  .custom-select:focus {
-    outline: none;
-    box-shadow: 0 0 0 2px rgba(1, 28, 57, 0.3);
-  }
-  
-  .custom-select::after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    right: 15px;
-    transform: translateY(-50%);
-    border-top: 6px solid #333;
-    border-left: 6px solid transparent;
-    border-right: 6px solid transparent;
-    pointer-events: none;
-  }
-  
-  /* Custom Select Options Styles */
-  .custom-select-options {
-    position: absolute;
-    top: calc(100% + 5px);
-    left: 0;
-    z-index: 10;
-    background-color: #f5f6fa;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    width: max-content;
-    display: none;
-  }
-  
-  .custom-select:hover .custom-select-options,
-  .custom-select:focus .custom-select-options {
-    display: block;
-  }
-  
-  .custom-select-options li {
-    padding: 10px 15px;
-    list-style: none;
-    cursor: pointer;
-  }
-  
-  .custom-select-options li:hover {
-    background-color: #f0f0f0;
-  }
-  
-  /* Custom Button Styles */
-  .custom-button {
-    appearance: none;
-    /* Remove default button appearance */
-    padding: 10px 15px;
-    border: none;
-    border-radius: 8px;
-    background-color: #f5f6fa;
-    /* White background */
-    font-size: 16px;
-    cursor: pointer;
-    position: relative;
-    /* For positioning the dropdown arrow */
-    margin-left: 15px;
-    /* Spacing between dropdowns */
-  }
-  
-  .custom-button:hover {
-    background-color: #f0f0f0;
-    /* Subtle hover effect */
-  }
-  
-  .custom-button:focus {
-    outline: none;
-    /* Remove default focus outline */
-    box-shadow: 0 0 0 2px rgba(1, 28, 57, 0.3);
-    /* Add a focus ring */
-  }
-  
-  .custom-button::after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    right: 15px;
-    transform: translateY(-50%);
-    border-top: 6px solid #333;
-  }
 
-  .pagination-controls button:disabled {
-    background-color: grey;
-    cursor: not-allowed;
-  }
-  
-  .pagination-controls button:hover:not(:disabled) {
-    background-color: #feb800;
-  }
+.userHistory-container .custom-select:hover {
+  background-color: #ffffff;
+}
+
+.userHistory-container .custom-select:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(1, 28, 57, 0.3);
+}
+
+.userHistory-container .custom-select::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 15px;
+  transform: translateY(-50%);
+  border-top: 6px solid #333;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  pointer-events: none;
+}
+
+/* Custom Select Options Styles */
+.userHistory-container .custom-select-options {
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 0;
+  z-index: 10;
+  background-color: #f5f6fa;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  width: max-content;
+  display: none;
+}
+
+.userHistory-container .custom-select:hover .custom-select-options,
+.userHistory-container .custom-select:focus .custom-select-options {
+  display: block;
+}
+
+.userHistory-container .custom-select-options li {
+  padding: 10px 15px;
+  list-style: none;
+  cursor: pointer;
+}
+
+.userHistory-container .custom-select-options li:hover {
+  background-color: #f0f0f0;
+}
+
+/* Custom Button Styles */
+.userHistory-container .custom-button {
+  appearance: none;
+  /* Remove default button appearance */
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  background-color: #f5f6fa;
+  /* White background */
+  font-size: 16px;
+  cursor: pointer;
+  position: relative;
+  /* For positioning the dropdown arrow */
+  margin-left: 15px;
+  /* Spacing between dropdowns */
+}
+
+.userHistory-container .custom-button:hover {
+  background-color: #f0f0f0;
+  /* Subtle hover effect */
+}
+
+.userHistory-container .custom-button:focus {
+  outline: none;
+  /* Remove default focus outline */
+  box-shadow: 0 0 0 2px rgba(1, 28, 57, 0.3);
+  /* Add a focus ring */
+}
+
+.userHistory-container .custom-button::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 15px;
+  transform: translateY(-50%);
+  border-top: 6px solid #333;
+}
+
+.userHistory-container .pagination-controls button:disabled {
+  background-color: grey;
+  cursor: not-allowed;
+}
+
+.userHistory-container .pagination-controls button:hover:not(:disabled) {
+  background-color: #feb800;
+}

@@ -1,6 +1,6 @@
 /*EvenetM*/
 .event-content {
-  height: 100%;
+  padding: 2rem;
   width: 100%;
 }
 .dashboard-container {
@@ -8,185 +8,198 @@
 }
 .dashboard-inline {
   display: flex;
-  padding: 8px;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: white;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  width: 100%;
 }
 .dashboard-inline .search-bar {
-  margin-left: 20px;
+  width: 400px;
+  padding: 0.75rem 1rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  margin: 0 1rem;
 }
 .dashboard-button {
-  padding: 10px 40px;
-  background-color: #ffc107;
-  color: white;
+  padding: 0.75 rem 1.5rem;
+  background-color: #feb800;
+  color: #011c39;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   margin-left: auto;
-
+  font-weight: 500;
+  transition: all 0.3s ease;
 }
-
 .dashboard-button:hover {
-  background-color: #c79202;
-
+  background-color: #e5a600;
 }
-
-
 .context-card {
-  background-color: #f9f9f9; 
-  padding: 20px ; 
-  border-radius: 10px; 
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); 
-  max-width: 100%; 
-  margin-left: 40px;
-  border: 1px solid #c2c2c2;
-  height: 110%;
-} 
-
-.admin-event-list {
-  display: flex;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 24px; /* Space between cards */
   background-color: #f5f6fa;
-  margin: 0rem auto; /* Center grid horizontally */
-  width: 72rem; /* Set max width for the grid */
-  height: 40rem;
+  padding: 0;
+  border-radius: 12px;
+  width: 100%;
 }
-
+.admin-event-list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  padding: 1.5rem;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 1400px;
+}
 .admin-event-card {
-  cursor: pointer;
-  width: 17rem;
-  text-align: left;
   background-color: white;
-  padding: 30px;
-  border-radius: 18px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  align-items: left;
-  height: 100%; /* Make each card take full height in its grid cell */
+  height: 100%;
 }
 .admin-event-card:hover {
-background-color: rgb(226, 241, 241);/* Zoom in effect */
-box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Slightly darker shadow on hover */
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
-.admin-event-card p {
-margin-top: 6px;
-font-size: 14px;
-color: #011c39;
-
-}
-.admin-event-card .date {
-color: grey;
-font-size: 12px;
-margin-bottom: 12px;
-text-align: left;
-}
-.admin-event-card button {
-background-color: white;
-color: #011c39;
-border: 1px solid grey;
-border-radius: 18px;
-height: 2.5rem;
-padding: 0 16px;
-cursor: pointer;
-transition: background-color 0.3s ease, color 0.3s ease;
-margin-top: auto; /* Push button to bottom of card */
-}
-.admin-event-card:hover button {
-background-color: #feb800; /* Change button color to yellow */
-color: #333; /* Optional: Change text color when button is hovered */
-}
-.admin-event-card:hover .event-image {
-transform: scale(1.05);
-}
-.admin-event-card .event-description {
-height: 15rem;
-margin-bottom: 20px;
-overflow: hidden;
-}
-
-.event-title {
-  height: 2.3rem;
-  overflow: hidden;
-}
-.event-title h3{
-  font-size: 16px; 
-  color: #333; 
-}
-
-.event-description {
-  font-size: 16px; 
-  color: #666; 
-  margin-bottom: 10px; 
-}
-
-.event-info {
-  display: flex; 
-  gap: 15px; 
-  color: #555; 
-  overflow: hidden;
-  height: 68px;
-}
-
-.event-actions {
-  display: flex; 
-  gap: 10px; 
-  margin-left: auto;
- 
-}
-
-
-.btn-edit {
-  background-color: #ffc107; /* Yellow color */
-  color: #fff;
-  padding: 0.4em 1em;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.btn-edit:hover {
-  background-color: #e0a800; /* Slightly darker yellow on hover */
-}
-
-.btn-delete {
-  background-color: #dc3545; /* Red color */
-  color: #fff;
-  padding: 0.4em 1em;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-  margin-left: 0.5em; /* Space between edit and delete button */
-}
-
-.btn-delete:hover {
-  background-color: #c82333; /* Slightly darker red on hover */
-}
-
-.admin-event-management-image {
+.event-image {
+  position: relative;
   width: 100%;
   height: 200px;
   overflow: hidden;
-  border-radius: 10px; 
 }
-
 .event-img {
   width: 100%;
-  height: auto;
+  height: 100%;
   object-fit: cover;
+  transition: transform 0.3s ease;
 }
-.pagination .prev-next {
-  width: 45px;
+.admin-event-card:hover .event-img {
+  transform: scale(1.05);
 }
-/* Sort Container ====================================== */
+.event-details {
+  padding: 1rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+.event-title {
+  margin-bottom: 0.5rem;
+}
+.event-title h3 {
+  font-size: 1.1rem;
+  color: #011c39;
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 0;
+}
+.event-description {
+  font-size: 0.9rem;
+  color: #444;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.event-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  font-size: 0.85rem;
+  color: #666;
+}
+.event-info span {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.event-actions {
+  padding: 1rem;
+  display: flex;
+  gap: 0.5rem;
+  border-top: 1px solid #eee;
+}
+.event-actions button {
+  flex: 1;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.event-actions button:first-child {
+  background-color: #f5f6fa;
+  color: #011c39;
+}
+.event-actions button:last-child {
+  background-color: #fee7e7;
+  color: #dc3545;
+}
+.event-actions button:first-child:hover {
+  background-color: #feb800;
+  color: #011c39;
+}
+.event-actions button:last-child:hover {
+  background-color: #dc3545;
+  color: white;
+}
+.sort-container {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
 .sort-label {
-font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  color: #6c757d;
+  font-size: 0.95rem;
+  font-weight: normal;
 }
 .sort-container select {
-border-radius: 10px;
-margin: 5px;
-padding: 3px;
-font-size: 14px;
+  padding: 0.6rem 1rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  background-color: white;
+  font-size: 0.95rem;
+  color: #495057;
+  cursor: pointer;
+  min-width: 150px;
+}
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 2rem 0;
+}
+.pagination button {
+  padding: 0.5rem 1rem;
+  border: none;
+  background-color: #011c39;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.pagination button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+.pagination button:not(:disabled):hover {
+  background-color: #feb800;
+}
+.pagination button.active {
+  background-color: #feb800;
+  color: #011c39;
+  font-weight: 500;
+}
+.lock-icon {
+  color: #6c757d;
+  font-size: 1.2rem;
 }
