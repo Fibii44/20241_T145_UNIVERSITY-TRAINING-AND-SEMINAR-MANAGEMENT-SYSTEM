@@ -1,17 +1,151 @@
 .save-btns {
     display: flex;
     flex-direction: row;
+    gap: 10px;
+    margin-top: 20px;
+    margin-bottom: 1.5rem;
+    justify-content: center;
 }
 .save-btns .save {
-    background-color:#FEB800;
+    background-color: #FEB800;
     border: #FEB800;
     color: #011c39;
+    padding: 8px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    min-width: 120px;
 }
 .save-btns .save:hover {
-    background-color:#805b00;
+    background-color: #805b00;
 }
 .edit {
-    background-color:#FEB800;
+    background-color: #FEB800;
     border: #FEB800;
     color: #011c39;
+    padding: 8px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    min-width: 120px;
+}
+
+/* Profile form styling */
+.profile-form-group {
+    margin-bottom: 1.5rem;
+    width: 100%;
+}
+
+.form-control, .form-select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    background-color: #fff;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    height: 45px; /* Fixed height for consistency */
+    font-size: 1rem;
+}
+
+.form-select {
+    padding-right: 2rem; /* Space for the dropdown arrow */
+}
+
+.form-control:disabled, .form-select:disabled {
+    background-color: #f8f9fa;
+    cursor: not-allowed;
+    opacity: 0.8;
+    border: 1px solid #ced4da;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #FEB800;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(254, 184, 0, 0.25);
+}
+
+.form-label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    display: block;
+    color: #011c39;
+    font-size: 1rem;
+}
+
+/* Profile container styling */
+.profile-container {
+    width: 100%;
+    max-width: 1200px; /* Increased for wider container */
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+.profile-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid #eee;
+}
+
+.profile-image {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 1.5rem;
+    border: 4px solid #FEB800;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.profile-name {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #011c39;
+}
+
+.profile-email {
+    color: #6c757d;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+/* Form container */
+.profile-form {
+    width: 100%;
+    max-width: 1000px; /* Increased for wider form */
+    margin: 0 auto;
+    padding: 0 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Form grid layout */
+.form-row {
+    display: flex;
+    gap: 2rem;
+    width: 100%;
+}
+
+.form-row .profile-form-group {
+    flex: 1;
+    min-width: 0; /* Allows flex items to shrink below content size */
+    margin-bottom: 0; /* Remove bottom margin since we're using gap */
+}
+
+/* Cancel button styling */
+.cancel-btn {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    min-width: 120px;
+}
+
+.cancel-btn:hover {
+    background-color: #5a6268;
 }
