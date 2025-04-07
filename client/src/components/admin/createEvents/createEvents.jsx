@@ -251,6 +251,15 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
     if (!endTime) {
       errors.endTime = 'End time is required';
     }
+
+    // Validate that end time is after start time
+    if (startTime && endTime) {
+      const start = new Date(`2000-01-01T${startTime}`);
+      const end = new Date(`2000-01-01T${endTime}`);
+      if (end <= start) {
+        errors.endTime = 'End time must be after start time';
+      }
+    }
     
     if (!location.trim()) {
       errors.location = 'Location is required';
