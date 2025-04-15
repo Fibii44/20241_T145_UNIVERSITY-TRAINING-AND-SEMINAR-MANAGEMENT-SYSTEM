@@ -111,66 +111,79 @@ const UsersTable = ({
               <th>
                 <div className="filter-container">
                   <span>ROLE</span>
-                  <select
-                    className="filter-role"
-                    onChange={(e) => onRoleFilterChange(e.target.value)}
-                  >
-                    <option value="all">All</option>
-                    <option value="faculty_staff">Faculty Staff</option>
-                    <option value="departmental_admin">Departmental Admin</option>
-                    <option value="admin">Admin</option>
-                  </select>
+                  <div className="dropdown-wrapper">
+                    <select
+                      className="filter-role"
+                      onChange={(e) => onRoleFilterChange(e.target.value)}
+                      title="Filter by role"
+                    >
+                      <option value="all">All Roles</option>
+                      <option value="faculty_staff">Faculty Staff</option>
+                      <option value="departmental_admin">Departmental Admin</option>
+                      <option value="admin">Admin</option>
+                    </select>
+                  </div>
                 </div>
               </th>
               <th>POSITION</th>
               <th>
                 <div className="filter-container">
                   <span>COLLEGE</span>
-                  <select
-                    className="filter-college"
-                    value={selectedCollege || "all"}
-                    onChange={(e) => {
-                      const selectedCollege = e.target.value;
-                      onCollegeFilterChange(selectedCollege);
-                      onDepartmentFilterChange("all"); // Reset department filter when college changes
-                    }}
-                  >
-                    <option value="all">All</option>
-                    {colleges.map((college) => (
-                      <option key={college} value={college}>
-                        {college}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="dropdown-wrapper">
+                    <select
+                      className="filter-college"
+                      value={selectedCollege || "all"}
+                      onChange={(e) => {
+                        const selectedCollege = e.target.value;
+                        onCollegeFilterChange(selectedCollege);
+                        onDepartmentFilterChange("all");
+                      }}
+                      title="Filter by college"
+                    >
+                      <option value="all">All Colleges</option>
+                      {colleges.map((college) => (
+                        <option key={college} value={college}>
+                          {college}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
               </th>
               <th>
                 <div className="filter-container">
-                  <span>DEPARTMENT</span>
-                  <select
-                    className="filter-department"
-                    value={selectedDepartment || "all"}
-                    onChange={(e) => onDepartmentFilterChange(e.target.value)}
-                  >
-                    <option value="all">All</option>
-                    {departmentOptions.map((department) => (
-                      <option key={department} value={department}>
-                        {department}
-                      </option>
-                    ))}
-                  </select>
+                  <span>DEPT</span>
+                  <div className="dropdown-wrapper">
+                    <select
+                      className="filter-department"
+                      value={selectedDepartment || "all"}
+                      onChange={(e) => onDepartmentFilterChange(e.target.value)}
+                      disabled={!selectedCollege || selectedCollege === "all"}
+                      title="Filter by department"
+                    >
+                      <option value="all">All Departments</option>
+                      {departmentOptions.map((department) => (
+                        <option key={department} value={department}>
+                          {department}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
               </th>
               <th>
                 <div className="filter-container">
                   <span>STATUS</span>
-                  <select
-                    className="filter-status"
-                    onChange={(e) => onStatusFilterChange(e.target.value)}
-                  >
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                  </select>
+                  <div className="dropdown-wrapper">
+                    <select
+                      className="filter-status"
+                      onChange={(e) => onStatusFilterChange(e.target.value)}
+                      title="Filter by status"
+                    >
+                      <option value="active">Active</option>
+                      <option value="inactive">Inactive</option>
+                    </select>
+                  </div>
                 </div>
               </th>
               <th>ACTIONS</th>
@@ -203,6 +216,13 @@ const UserRow = ({ user, onUpdate, selectAllChecked, showInactive }) => {
   const [isRestoreModalOpen, setIsRestoreModalOpen] = useState(false);
 
   const [modalAction, setModalAction] = useState(null);
+
+  // Function to get the profile picture URL
+  const getProfilePictureUrl = (profilePicture) => {
+    if (!profilePicture) return defaultEventPicture;
+    return `http://localhost:3000/profilePictures/${profilePicture}`;
+  };
+
   useEffect(() => {
     setFormData({
       name: user.name,
@@ -212,6 +232,7 @@ const UserRow = ({ user, onUpdate, selectAllChecked, showInactive }) => {
       college: user.college,
       department: user.department,
       status: user.status,
+      profilePicture: user.profilePicture
     });
   }, [user]);
 
@@ -303,7 +324,7 @@ return (
       {isEditing ? (
         <>
           <td><input className="form-control" type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} /></td>
-          <td><input className="form-control" type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} /></td>
+          <td>{formData.email}</td>
           <td>
             <select className="form-select" value={formData.role} onChange={(e) => setFormData({ ...formData, role: e.target.value })}>
               <option value="faculty_staff">Faculty Staff</option>
@@ -340,9 +361,13 @@ return (
         <>
           <td className="profile-container">
             <img
-              src={user.profilePicture || defaultEventPicture}
+              src={getProfilePictureUrl(user.profilePicture)}
               alt="Profile"
               className="profile-image"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = defaultEventPicture;
+              }}
             />
             {user.name}
           </td>
@@ -597,7 +622,6 @@ const Table = () => {
               }}> 
                 <FontAwesomeIcon icon={faUserPlus} /> 
               </a>
-              <AddPersonnelModal show={isModalOpen} onClose={handleCloseModal} />
             </div>
           </div>
         </div>
@@ -627,6 +651,8 @@ const Table = () => {
             Next
           </button>
         </div>
+        
+        <AddPersonnelModal show={isModalOpen} onClose={handleCloseModal} />
       </div>
     </div>
   );

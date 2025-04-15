@@ -1,4 +1,3 @@
-
 .content {
   flex: 1; 
   padding: 0;
@@ -367,4 +366,20 @@ cursor: not-allowed;
 
 .pagination-button:hover:not(:disabled) {
 background-color: #e8e8e8;
+}
+
+.profile-cell {
+  width: 50px;
+  padding: 8px;
+  vertical-align: middle;
+}
+
+.dashboard-profile-image {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #e0e0e0;
+  display: block;
+  margin: 0 auto;
 }

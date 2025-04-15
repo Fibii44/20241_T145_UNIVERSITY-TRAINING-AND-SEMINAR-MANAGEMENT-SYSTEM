@@ -143,28 +143,77 @@ const AddPersonnelModal = ({ show, onClose }) => {
       return;
     }
 
-    const data = new FormData();
-    Object.keys(formData).forEach((key) => {
-      data.append(key, formData[key]);
+    // Log all form data for debugging
+    console.log("Form data being submitted:", {
+      name: formData.name,
+      email: formData.email,
+      role: formData.role,
+      phoneNumber: formData.phoneNumber,
+      college: formData.college,
+      department: formData.department,
+      position: formData.position,
+      profilePicture: formData.profilePicture ? `[File: ${formData.profilePicture.name}]` : null
     });
 
+    const data = new FormData();
+    
+    // Handle each form field individually to ensure proper formatting
+    if (formData.profilePicture) {
+      console.log("Adding profile picture to form data:", formData.profilePicture.name);
+      data.append("profilePicture", formData.profilePicture);
+    }
+    
+    data.append("name", formData.name || "");
+    data.append("email", formData.email || "");
+    data.append("phoneNumber", formData.phoneNumber || "");
+    data.append("college", formData.college || "");
+    data.append("department", formData.department || "");
+    data.append("position", formData.position || "");
+    data.append("role", formData.role || "");
+
     try {
+      console.log("Sending user data to server at http://localhost:3000/a/personnel");
+      console.log("Auth token present:", !!token);
+      
       const response = await fetch("http://localhost:3000/a/personnel", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
+          // Don't include Content-Type for FormData with files
         },
         body: data,
       });
 
       if (!response.ok) {
         const errorResponse = await response.json();
-        setError(errorResponse.message);
+        console.error("Server error response:", errorResponse);
+        setError(errorResponse.message || "Failed to create user account");
       } else {
         console.log("User added successfully");
         handleCancel();
+        // Optional: refresh the user list
+        window.location.reload();
       }
     } catch (err) {
+      console.error("Error submitting form:", err);
+      console.error("Error details:", {
+        name: err.name,
+        message: err.message,
+        stack: err.stack
+      });
+      
+      // Check if server is running
+      try {
+        console.log("Checking if server is reachable...");
+        const pingResponse = await fetch("http://localhost:3000/", { 
+          method: "HEAD",
+          mode: "no-cors" 
+        });
+        console.log("Server ping response:", pingResponse);
+      } catch (pingErr) {
+        console.error("Server ping failed:", pingErr);
+      }
+      
       setError("Failed to create account. Please try again.");
     }
   };

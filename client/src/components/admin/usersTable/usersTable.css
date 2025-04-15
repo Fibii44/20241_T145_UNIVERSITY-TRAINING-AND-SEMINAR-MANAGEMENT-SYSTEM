@@ -109,35 +109,194 @@ width: 100%;
 
 .filter-container {
   display: flex;
-  justify-content: space-between;
-  align-items: center; /* Aligns the label and the filter vertically */
+  align-items: center;
+  gap: 4px;
+  position: relative;
 }
 
-.filter-role, .filter-department, .filter-college, .filter-status {
-  background-color: transparent;
-  border: none;
-  font-size: 14px;
-  width: 10px; /* Adjust width as needed */
-  padding: 8px;
+.filter-container span {
+  font-weight: bold;
+  white-space: nowrap;
+  margin-right: 4px;
+}
+
+.dropdown-wrapper {
+  position: relative;
+  width: 24px;
+  height: 24px;
+}
+
+.dropdown-wrapper::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 24px;
+  height: 24px;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 16px;
+  opacity: 0.6;
+  pointer-events: none;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.dropdown-wrapper:hover::after {
+  opacity: 1;
+  background-color: #f0f0f0;
+}
+
+.dropdown-wrapper select {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 24px;
+  height: 24px;
+  opacity: 0;
   cursor: pointer;
+  border: none;
+  background: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
 
-.filter-role {
-  border-color: #4CAF50; /* Green border for role filter */
+.dropdown-wrapper select:focus {
+  width: 150px;
+  height: auto;
+  opacity: 1;
+  padding: 8px;
+  background-color: white;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.filter-department {
-  border-color: #2196F3; /* Blue border for department filter */
-}
-
+.filter-role,
+.filter-department,
+.filter-college,
 .filter-status {
-  border-color: #FF5722; /* Orange border for status filter */
+  width: 24px;
+  height: 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding: 0;
+  margin-left: 4px;
+  position: relative;
+  color: transparent;
+  text-indent: -9999px;
+  overflow: hidden;
 }
 
-.filter-role:focus, .filter-department:focus, .filter-college:focus, .filter-status:focus {
-  border-color: transparent; /* Or choose any color you prefer */
-  outline: none; /* Optional: Removes the default outline */
+.filter-role:hover,
+.filter-department:hover,
+.filter-college:hover,
+.filter-status:hover {
+  opacity: 1;
+  background-color: #f0f0f0;
 }
+
+.filter-role:focus,
+.filter-department:focus,
+.filter-college:focus,
+.filter-status:focus {
+  outline: none;
+  opacity: 1;
+  background-color: #f0f0f0;
+}
+
+/* Style for the dropdown menu */
+.filter-role option,
+.filter-department option,
+.filter-college option,
+.filter-status option {
+  color: #333;
+  text-indent: 0;
+}
+
+/* Custom dropdown styling */
+.filter-container select {
+  position: relative;
+}
+
+.filter-container select:focus {
+  width: 24px;
+  height: 24px;
+}
+
+.filter-container select:focus + .dropdown-menu {
+  display: block;
+}
+
+/* Dropdown menu container */
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 150px;
+  background-color: white;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  z-index: 1000;
+  display: none;
+}
+
+/* Show dropdown on select focus */
+select:focus + .dropdown-menu {
+  display: block;
+}
+
+/* Keep the arrow button fixed size */
+.filter-role,
+.filter-department,
+.filter-college,
+.filter-status {
+  min-width: 24px;
+  max-width: 24px;
+  overflow: hidden;
+}
+
+/* When focused, show the dropdown as a separate element */
+.filter-role:focus,
+.filter-department:focus,
+.filter-college:focus,
+.filter-status:focus {
+  position: relative;
+}
+
+.filter-role:focus ~ .dropdown-menu,
+.filter-department:focus ~ .dropdown-menu,
+.filter-college:focus ~ .dropdown-menu,
+.filter-status:focus ~ .dropdown-menu {
+  display: block;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  width: auto;
+  min-width: 150px;
+}
+
+.personnel-table th {
+  background-color: #f8f9fa;
+  color: #333;
+  font-weight: bold;
+  padding: 12px;
+  text-align: left;
+  border-bottom: 2px solid #dee2e6;
+  position: relative;
+}
+
+.personnel-table thead {
+  background-color: #f8f9fa;
+}
+
 .user-heading {
   padding: 10px 20px;
   background-color: #f9f9f9;
@@ -176,17 +335,22 @@ width: 100%;
   background-color: #d1d1d1; /* Light cyan background for selected rows */
 }
 .profile-container {
-  align-items: center;    /* Vertically align the image and text */
-  white-space: nowrap;    /* Prevent the content from wrapping */
-
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px;
 }
 .profile-image {
-  margin-right: 10px;    /* Adjust spacing between image and text */
-  width: 25px;
-  height: 25px;         /* Adjust image size as needed */
-  border-radius: 50%;    /* Make the image circular (optional) */
-  object-fit: cover;     /* Ensure the image covers the area */
-}  /* Ensure the image covers the area */
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #e0e0e0;
+}
+.personnel-table td {
+  vertical-align: middle;
+  padding: 10px;
+}
 
 /* For action buttons and table controls */
 .table_edit,

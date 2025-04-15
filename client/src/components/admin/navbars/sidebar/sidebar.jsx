@@ -92,12 +92,7 @@ const Sidebar = ({ activePage }) => {
       </ul>
 
       <ul className="sidebar-footer"> 
-        <li className={`sidebar-footer-item ${activePage === 'settings' ? 'active' : ''}`}>
-          <Link to="/a/oqwidjoiqwj">
-            <span className="icon"><FontAwesomeIcon icon={faCog} size="lg" /></span>
-            {!isCollapsed && <span className='list-name'>Settings</span>}
-          </Link>
-        </li>
+       
         <li className="sidebar-footer-item">
                     <a href="#" onClick={openLogoutModal} className="logout-link">
                         <span className="icon"><FontAwesomeIcon icon={faSignOutAlt} size="lg" /></span>

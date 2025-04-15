@@ -28,7 +28,7 @@ const userNotification = require('./routes/user/userNotificationRoutes');
 const authRoutes = require('./routes/authRoutes');
 
 const corsOptions = {
-  origin: 'http://localhost:5000',
+  origin: ['http://localhost:5000', 'http://localhost:5001'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   credentials: true
 };
@@ -52,6 +52,7 @@ app.locals.sseClients = []; // Array to store SSE clients
 // Static file serving
 app.use('/eventPictures', express.static(path.join(__dirname, 'uploads', 'eventPictures')));
 app.use('/certificates', express.static(path.join(__dirname, 'uploads', 'certificates')));
+app.use('/profilePictures', express.static(path.join(__dirname, 'uploads', 'profilePictures')));
 
 // Event pictures download route
 app.get('/eventPictures/:filename', (req, res) => {

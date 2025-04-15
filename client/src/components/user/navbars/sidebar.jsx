@@ -85,12 +85,7 @@ const Sidebar = ({ activePage }) => {
                         {!isCollapsed && <span>Profile</span>}
                     </Link>
                 </li>
-                <li className={`sidebar-footer-item ${activePage === 'settings' ? 'active' : ''}`}>
-                    <Link to="/u/owaijdoiwajd">
-                        <span className="icon"><FontAwesomeIcon icon={faCog} size="lg" /></span>
-                        {!isCollapsed && <span>Settings</span>}
-                    </Link>
-                </li>
+                
                 <li className="sidebar-footer-item">
                     <a href="#" onClick={openLogoutModal} className="logout-link">
                         <span className="icon"><FontAwesomeIcon icon={faSignOutAlt} size="lg" /></span>

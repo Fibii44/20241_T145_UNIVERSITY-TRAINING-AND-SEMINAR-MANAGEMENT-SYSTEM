@@ -73,6 +73,12 @@ const UsersTable = ({ users }) => {
   const indexOfFirstUser = indexOfLastUser - rowsPerPage;
   const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
 
+  // Function to get the profile picture URL
+  const getProfilePictureUrl = (profilePicture) => {
+    if (!profilePicture) return Profile;
+    return `http://localhost:3000/profilePictures/${profilePicture}`;
+  };
+
   // Handle "Next" and "Prev" button clicks
   const handleNext = () => {
     if (currentPage * rowsPerPage < users.length) {
@@ -126,20 +132,16 @@ const UsersTable = ({ users }) => {
           <tbody>
             {currentUsers.map((user, index) => (
               <tr key={user._id || index}>
-                <td>
-                    {user.profilePicture ? (
-                        <img
-                            src={user.profilePicture}
-                            alt={`${user.name}'s profile`}
-                            style={{ width: '25px', height: '25px', borderRadius: '50%' }}
-                        />
-                    ) : (
-                      <img
-                      src={Profile}
-                      alt={`${user.name}'s profile`}
-                      style={{ width: '25px', height: '25px', borderRadius: '50%' }}
+                <td className="profile-cell">
+                  <img
+                    src={getProfilePictureUrl(user.profilePicture)}
+                    alt={`${user.name}'s profile`}
+                    className="dashboard-profile-image"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = Profile;
+                    }}
                   />
-                    )}
                 </td>
                 <td>{user.name}</td>
                 <td>{user.email}</td>
@@ -157,7 +159,6 @@ const UsersTable = ({ users }) => {
                   ></span>
                   {user.status}
                 </td>
-
               </tr>
             ))}
           </tbody>
