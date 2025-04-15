@@ -105,7 +105,6 @@ const HistoryM = () => {
                     <div className="left-section">
                         <h2 className="dashboard-heading">Past Events</h2>
                         <div className="search-input-container">
-                            <FontAwesomeIcon icon={faSearch} className="search-icon" />
                             <input
                                 type="text"
                                 placeholder="Search events..."
