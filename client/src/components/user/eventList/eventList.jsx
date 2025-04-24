@@ -19,12 +19,16 @@ function EventGrid() {
             try {
                 const response = await axios.get(`http://localhost:3000/u/events`);
                 setEvents(response.data);
-                // Apply initial filter for upcoming events
-                const today = new Date();
-                const upcomingEvents = response.data.filter(
-                    (event) => new Date(event.eventDate) >= today
+                // Apply initial filter for upcoming and ongoing events
+                const now = new Date();
+                const upcomingAndOngoingEvents = response.data.filter(
+                    (event) => {
+                        const eventStartTime = new Date(event.startTime);
+                        const eventEndTime = new Date(event.endTime);
+                        return eventStartTime > now || (now >= eventStartTime && now <= eventEndTime);
+                    }
                 );
-                setFilteredEvents(upcomingEvents);
+                setFilteredEvents(upcomingAndOngoingEvents);
             } catch (err) {
                 console.error("Failed to fetch events", err);
             }
@@ -34,7 +38,7 @@ function EventGrid() {
 
     // Combined filter function that handles both time and college filters
     const applyFilters = (timeFilter, collegeFilter, searchTerm = '') => {
-        const today = new Date();
+        const now = new Date();
         let filtered = [...events];
 
         console.log('Applying filters:', {
@@ -47,14 +51,19 @@ function EventGrid() {
         // First apply time filter
         if (timeFilter === 'upcoming') {
             filtered = filtered.filter(event => {
-                const eventDate = new Date(event.eventDate);
-                const isUpcoming = eventDate >= today;
-                return isUpcoming;
+                const eventStartTime = new Date(event.startTime);
+                return eventStartTime > now;
             });
         } else if (timeFilter === 'past') {
             filtered = filtered.filter(event => {
-                const eventDate = new Date(event.eventDate);
-                return eventDate < today;
+                const eventEndTime = new Date(event.endTime);
+                return eventEndTime < now;
+            });
+        } else if (timeFilter === 'ongoing') {
+            filtered = filtered.filter(event => {
+                const eventStartTime = new Date(event.startTime);
+                const eventEndTime = new Date(event.endTime);
+                return now >= eventStartTime && now <= eventEndTime;
             });
         }
 
@@ -172,6 +181,7 @@ function EventGrid() {
                             }}
                         >
                             <option value="upcoming">Upcoming Events</option>
+                            <option value="ongoing">Ongoing Events</option>
                             <option value="past">Past Events</option>
                             <option value="dateAsc">Date (Ascending)</option>
                             <option value="dateDesc">Date (Descending)</option>

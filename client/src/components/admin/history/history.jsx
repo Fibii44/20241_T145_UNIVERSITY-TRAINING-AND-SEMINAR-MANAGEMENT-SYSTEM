@@ -12,7 +12,7 @@ const HistoryM = () => {
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
-    const [sortBy, setSortBy] = useState({ field: 'date', direction: 'asc' });
+    const [sortBy, setSortBy] = useState({ field: 'date', direction: 'desc' });
     const [viewMode, setViewMode] = useState('grid');
     const [filteredEvents, setFilteredEvents] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -35,7 +35,8 @@ const HistoryM = () => {
                 const formattedEvents = response.data.events.map(event => ({
                     ...event,
                     eventDate: new Date(event.eventDate),
-                }));
+                    endTime: new Date(event.endTime)
+                })).sort((a, b) => b.endTime - a.endTime);
     
                 setEvents(formattedEvents);
                 setFilteredEvents(formattedEvents);
@@ -78,9 +79,11 @@ const HistoryM = () => {
         // Apply sorting
         filtered.sort((a, b) => {
             if (sortBy.field === 'date') {
+                const timeA = new Date(a.endTime).getTime();
+                const timeB = new Date(b.endTime).getTime();
                 return sortBy.direction === 'asc' 
-                    ? a.eventDate - b.eventDate 
-                    : b.eventDate - a.eventDate;
+                    ? timeA - timeB 
+                    : timeB - timeA;
             } else if (sortBy.field === 'title') {
                 return sortBy.direction === 'asc'
                     ? a.title.localeCompare(b.title)

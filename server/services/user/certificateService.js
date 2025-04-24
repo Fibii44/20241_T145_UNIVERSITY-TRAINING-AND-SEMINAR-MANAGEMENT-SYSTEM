@@ -193,11 +193,22 @@ const getUserCertificates = async (req, res) => {
     try {
         const userId = req.user.id;
 
-        const certificates = await Certificate.find({ userId })
-            .populate('eventId', 'title startTime')
-            .sort({ issuedDate: -1 });
+        // First find all certificates
+        const certificates = await Certificate.find({ userId });
+        
+        // Then populate event data explicitly
+        const populatedCertificates = await Promise.all(
+            certificates.map(async (cert) => {
+                const event = await Event.findById(cert.eventId);
+                const certObj = cert.toObject();
+                certObj.eventId = event;
+                return certObj;
+            })
+        );
 
-        res.json(certificates);
+        console.log('Fetched certificates with events:', JSON.stringify(populatedCertificates, null, 2));
+
+        res.json(populatedCertificates);
     } catch (error) {
         console.error('Error fetching certificates:', error);
         res.status(500).json({ message: 'Error fetching certificates' });

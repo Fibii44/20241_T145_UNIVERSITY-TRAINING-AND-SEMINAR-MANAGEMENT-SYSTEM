@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Document, Page } from 'react-pdf';
+import { Document, Page, pdfjs } from 'react-pdf';
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -12,6 +12,9 @@ import {
   faSearch,
 } from "@fortawesome/free-solid-svg-icons";
 import "./certificate.css";
+
+// Configure PDF.js worker
+pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
 
 function CertificateGrid() {
   const [certificates, setCertificates] = useState([]);
@@ -28,7 +31,10 @@ function CertificateGrid() {
         const response = await axios.get('http://localhost:3000/u/certificates', {
           headers: { Authorization: `Bearer ${token}` },
         });
+        console.log('Certificates response:', JSON.stringify(response.data, null, 2)); // Pretty print the response
         const updatedCertificates = response.data.map((certificate) => {
+          console.log('Certificate event title:', certificate.eventId?.title); // Log specifically the event title
+          console.log('Full certificate data:', JSON.stringify(certificate, null, 2)); // Pretty print each certificate
           return {
             ...certificate,
             previewImageUrl: `http://localhost:3000/certificates/${certificate.fileName}/preview`,
@@ -44,19 +50,21 @@ function CertificateGrid() {
   }, []);
 
   // Filter certificates based on search query
-  const filteredCertificates = certificates.filter((certificate) =>
-    certificate.fileName.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredCertificates = certificates.filter((certificate) => {
+    console.log('Filtering certificate:', certificate);
+    return certificate.eventId?.title?.toLowerCase().includes(searchQuery.toLowerCase()) || 
+           certificate.fileName.toLowerCase().includes(searchQuery.toLowerCase())
+  });
 
   // Sort certificates
   const sortedCertificates = [...filteredCertificates].sort((a, b) => {
     if (sortBy.field === "date") {
-      const dateA = new Date(a.eventDate);
-      const dateB = new Date(b.eventDate);
+      const dateA = new Date(a.issuedDate);
+      const dateB = new Date(b.issuedDate);
       return sortBy.direction === "asc" ? dateA - dateB : dateB - dateA;
     } else if (sortBy.field === "title") {
-      const titleA = a.title.toLowerCase();
-      const titleB = b.title.toLowerCase();
+      const titleA = (a.eventId?.title || '').toLowerCase();
+      const titleB = (b.eventId?.title || '').toLowerCase();
       return sortBy.direction === "asc"
         ? titleA.localeCompare(titleB)
         : titleB.localeCompare(titleA);
@@ -128,32 +136,40 @@ function CertificateGrid() {
       {/* Certificate List/Grid */}
       <div className={viewMode === "grid" ? "certificates-grid" : "certificates-list"}>
         {currentCertificate.map((certificate) => (
-          <div key={certificate.fileName} className="certificates-link">
-            <div className={viewMode === "grid" ? "certificates-card" : "certificates-list-item"}>
-              <div className="column-first">
-                <h3 style={{ color: "#011c39" }}>{certificate.fileName}</h3>
-                <p className="date">
-                  {new Date(certificate.issueDate).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
-                </p>
+          <div key={certificate._id} className="certificates-link">
+            <a
+              href={`http://localhost:3000/certificates/${certificate.fileName}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="certificate-link"
+            >
+              <div className={viewMode === "grid" ? "certificates-card" : "certificates-list-item"}>
+                <div className="column-first">
+                  <h3 style={{ color: "#011c39" }}>
+                    {certificate.eventId?.title || 'Untitled Event'}
+                  </h3>
+                  <p className="date">
+                    {new Date(certificate.issuedDate).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </p>
+                </div>
+                <div className="download-column" onClick={(e) => e.stopPropagation()}>
+                  <a
+                    href={`http://localhost:3000/certificates/${certificate.fileName}`}
+                    download={`${certificate.eventId?.title || 'certificate'}.pdf`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="download-button"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <FontAwesomeIcon icon={faDownload} />
+                  </a>
+                </div>
               </div>
-              <div className="pdf-viewer">
-                <Document file={`http://localhost:3000/certificates/${certificate.fileName}`}>
-                  <Page pageNumber={1} />
-                </Document>
-              </div>
-              <div className="download-column">
-                <a
-                  href={`http://localhost:3000/certificates/${certificate.fileName}`}
-                  download={`${certificate.fileName}.jpg`}
-                >
-                  <FontAwesomeIcon icon={faDownload} />
-                </a>
-              </div>
-            </div>
+            </a>
           </div>
         ))}
       </div>

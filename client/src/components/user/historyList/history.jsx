@@ -85,6 +85,13 @@ useEffect(() => {
           }
       });
 
+      // Sort completed events by end time (most recent first)
+      newColumns.Completed.items.sort((a, b) => {
+          const endTimeA = new Date(a.endTime);
+          const endTimeB = new Date(b.endTime);
+          return endTimeB - endTimeA;
+      });
+
       console.log("Updated columns:", newColumns); // Debugging
       setColumns(newColumns);
   };
