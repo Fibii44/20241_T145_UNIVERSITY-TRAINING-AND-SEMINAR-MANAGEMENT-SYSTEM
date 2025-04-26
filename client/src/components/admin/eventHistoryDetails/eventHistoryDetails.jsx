@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUsers, faCalendarCheck, faClock, faMapMarkerAlt, faChartBar, faGraduationCap } from '@fortawesome/free-solid-svg-icons';
@@ -18,8 +18,7 @@ import {
     Legend
 } from 'recharts';
 import './eventHistoryDetails.css';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
+import generatePDF from 'react-to-pdf';
 import Logo from '../../../assets/buksu-logo.png';
 
 // StatCard Component
@@ -137,6 +136,189 @@ const DepartmentBreakdown = ({ departmentData, collegeData, selectedFilter, onFi
     </div>
 );
 
+// New component for cleaner PDF output
+const PrintableContent = ({ eventDetail, registeredCount, attendedCount, chartData, departmentData, collegeData, attendedList, users }) => {
+    const formatTime = (date) => {
+        return new Date(date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+    };
+    
+    const eventDuration = calculateEventDuration(eventDetail.startTime, eventDetail.endTime);
+    
+    // Match users for the table and create organized data by college and department
+    const matchedUsers = attendedList
+        .map((attended) => {
+            const user = users.find((u) => u._id && attended.userId && u._id.toString() === attended.userId.toString());
+            if (user) {
+                return { 
+                    ...user, 
+                    eventRating: attended.eventRating,
+                    responses: attended.responses 
+                };
+            } else {
+                return {
+                    _id: attended.id,
+                    name: attended.userName,
+                    email: attended.userEmail,
+                    phoneNumber: 'N/A',
+                    college: 'N/A',
+                    department: 'N/A',
+                    role: 'N/A',
+                    eventRating: attended.eventRating,
+                    responses: attended.responses
+                };
+            }
+        })
+        .filter(Boolean);
+
+    // Organize participants by college and department
+    const organizedData = {};
+    matchedUsers.forEach((user) => {
+        const college = user.college || 'Unspecified College';
+        const department = user.department || 'Unspecified Department';
+        
+        if (!organizedData[college]) {
+            organizedData[college] = {};
+        }
+        
+        if (!organizedData[college][department]) {
+            organizedData[college][department] = [];
+        }
+        
+        organizedData[college][department].push(user);
+    });
+    
+    return (
+        <div className="pdf-capture-container" style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
+            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px', borderBottom: '2px solid #011c39', paddingBottom: '10px' }}>
+                <img src={Logo} alt="Logo" style={{ width: '40px', marginRight: '15px' }} />
+                <h1 style={{ color: '#011c39', margin: 0, fontSize: '22px', fontWeight: 'bold' }}>{eventDetail?.title} - Event Report</h1>
+            </div>
+            
+            <div style={{ marginBottom: '20px' }}>
+                <h2 style={{ color: '#011c39', borderBottom: '1px solid #ccc', paddingBottom: '5px', fontSize: '18px', margin: '10px 0' }}>Event Details</h2>
+                <p><strong>Date:</strong> {new Date(eventDetail.eventDate).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</p>
+                <p><strong>Time:</strong> {formatTime(eventDetail?.startTime)} - {formatTime(eventDetail?.endTime)}</p>
+                <p><strong>Location:</strong> {eventDetail?.location}</p>
+                <p><strong>Duration:</strong> {eventDuration}</p>
+                <p><strong>Description:</strong> {eventDetail?.description}</p>
+            </div>
+            
+            <div style={{ marginBottom: '20px' }}>
+                <h2 style={{ color: '#011c39', borderBottom: '1px solid #ccc', paddingBottom: '5px', fontSize: '18px', margin: '10px 0' }}>Event Statistics</h2>
+                <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+                    <div style={{ flex: '1', minWidth: '200px', border: '1px solid #ddd', padding: '10px', margin: '5px', borderRadius: '5px', backgroundColor: '#f8f9fa' }}>
+                        <p style={{ fontWeight: 'bold', margin: '0 0 5px 0' }}>Total Registrations</p>
+                        <p style={{ fontSize: '24px', margin: 0 }}>{registeredCount}</p>
+                    </div>
+                    <div style={{ flex: '1', minWidth: '200px', border: '1px solid #ddd', padding: '10px', margin: '5px', borderRadius: '5px', backgroundColor: '#f8f9fa' }}>
+                        <p style={{ fontWeight: 'bold', margin: '0 0 5px 0' }}>Participants Attended</p>
+                        <p style={{ fontSize: '24px', margin: 0 }}>{attendedCount}</p>
+                    </div>
+                    <div style={{ flex: '1', minWidth: '200px', border: '1px solid #ddd', padding: '10px', margin: '5px', borderRadius: '5px', backgroundColor: '#f8f9fa' }}>
+                        <p style={{ fontWeight: 'bold', margin: '0 0 5px 0' }}>Participants Absent</p>
+                        <p style={{ fontSize: '24px', margin: 0 }}>{registeredCount - attendedCount}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div style={{ marginBottom: '20px' }}>
+                <h2 style={{ color: '#011c39', borderBottom: '1px solid #ccc', paddingBottom: '5px', fontSize: '18px', margin: '10px 0' }}>Participants by College & Department</h2>
+                
+                {Object.keys(organizedData).length > 0 ? (
+                    Object.keys(organizedData).map((college) => (
+                        <div key={college} style={{ marginBottom: '20px' }}>
+                            <h3 style={{ 
+                                color: '#011c39',
+                                backgroundColor: '#f0f0f0',
+                                padding: '8px',
+                                borderRadius: '5px',
+                                fontSize: '18px',
+                                fontWeight: '600',
+                                margin: '10px 0'
+                            }}>
+                                {college}
+                            </h3>
+                            
+                            {Object.keys(organizedData[college]).map((department) => (
+                                <div key={department} style={{ marginBottom: '15px', marginLeft: '15px' }}>
+                                    <h4 style={{ 
+                                        color: '#333',
+                                        borderBottom: '1px solid #eee', 
+                                        paddingBottom: '5px',
+                                        fontSize: '16px',
+                                        fontWeight: '600',
+                                        margin: '8px 0'
+                                    }}>
+                                        {department}
+                                    </h4>
+                                    
+                                    <ul style={{ listStyleType: 'none', padding: 0, margin: 0 }}>
+                                        {organizedData[college][department].map((user, index) => (
+                                            <li key={user._id || index} style={{ marginBottom: '8px', padding: '5px 0', borderBottom: '1px dotted #eee' }}>
+                                                {index + 1}. {user.name || 'N/A'} 
+                                                <span style={{ float: 'right', marginRight: '20px' }}>
+                                                    Rating: <strong>{user.eventRating || 'N/A'}</strong>
+                                                </span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            ))}
+                        </div>
+                    ))
+                ) : (
+                    <p>No participant data available.</p>
+                )}
+            </div>
+            
+            <div style={{ marginBottom: '20px' }}>
+                <h2 style={{ color: '#011c39', borderBottom: '1px solid #ccc', paddingBottom: '5px', fontSize: '18px', margin: '10px 0' }}>Summary Statistics</h2>
+                
+                <h3 style={{ color: '#333', fontSize: '16px', margin: '15px 0 10px 0' }}>Participants by Department</h3>
+                <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '20px' }}>
+                    <thead>
+                        <tr>
+                            <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left', backgroundColor: '#f8f9fa' }}>Department</th>
+                            <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left', backgroundColor: '#f8f9fa' }}>Participants</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {departmentData.map((dept) => (
+                            <tr key={dept.name}>
+                                <td style={{ border: '1px solid #ddd', padding: '8px' }}>{dept.name}</td>
+                                <td style={{ border: '1px solid #ddd', padding: '8px' }}>{dept.count}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+                
+                <h3 style={{ color: '#333', fontSize: '16px', margin: '15px 0 10px 0' }}>Participants by College</h3>
+                <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '20px' }}>
+                    <thead>
+                        <tr>
+                            <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left', backgroundColor: '#f8f9fa' }}>College</th>
+                            <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left', backgroundColor: '#f8f9fa' }}>Participants</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {collegeData.map((college) => (
+                            <tr key={college.name}>
+                                <td style={{ border: '1px solid #ddd', padding: '8px' }}>{college.name}</td>
+                                <td style={{ border: '1px solid #ddd', padding: '8px' }}>{college.count}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+            
+            <div style={{ textAlign: 'center', marginTop: '30px', fontSize: '12px', color: '#666', borderTop: '1px solid #ddd', paddingTop: '10px' }}>
+                <p>Report generated on {new Date().toLocaleDateString()} at {new Date().toLocaleTimeString()}</p>
+                <p>University Training and Seminar Management System</p>
+            </div>
+        </div>
+    );
+};
+
 const EventDetails = () => {
     const { id } = useParams();
     const [eventDetail, setEventDetail] = useState(null);
@@ -149,7 +331,10 @@ const EventDetails = () => {
     const [departmentData, setDepartmentData] = useState([]);
     const [collegeData, setCollegeData] = useState([]);
     const [selectedDepartmentFilter, setSelectedDepartmentFilter] = useState('all');
-
+    
+    // Reference for the printable content
+    const printableRef = useRef(null);
+    
     // Fetch event details
     useEffect(() => {
         const fetchData = async () => {
@@ -268,135 +453,6 @@ const EventDetails = () => {
         return departmentData.filter(dept => collegeDepartments.includes(dept.name));
     };
 
-    const downloadPDF = async () => {
-        const pdf = new jsPDF();
-
-        // Add Logo
-        const logo = await fetch(Logo).then((res) => res.blob()).then((blob) => URL.createObjectURL(blob));
-        pdf.addImage(logo, 'PNG', 10, 5, 30, 15);
-
-        // Title
-        pdf.setFontSize(18);
-        pdf.text('Event Report', 50, 15);
-
-        // Event Details
-        pdf.setFontSize(14);
-        pdf.text(`Event: ${eventDetail?.title || 'N/A'}`, 10, 30);
-        pdf.text(`Date: ${new Date(eventDetail.eventDate).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })} ` || 'N/A', 10, 40);
-        pdf.text(`Location: ${eventDetail?.location || 'N/A'}`, 10, 50);
-
-        // Summary Data
-        pdf.text(`Total Registrations: ${registeredCount}`, 10, 60);
-        pdf.text(`Participants Attended: ${attendedCount}`, 10, 70);
-        pdf.text(`Participants Absent: ${registeredCount - attendedCount}`, 10, 80);
-
-        // Chart Screenshot
-        const chartElement = document.querySelector('.chart');
-        if (chartElement) {
-            const chartCanvas = await html2canvas(chartElement);
-            const chartImage = chartCanvas.toDataURL('image/png');
-            pdf.addImage(chartImage, 'PNG', 10, 90, 180, 60);
-        }
-
-        // Department Breakdown
-        pdf.setFontSize(16);
-        pdf.text('Participants by Department', 10, 160);
-        
-        let yPosition = 170;
-        
-        departmentData.forEach((dept, index) => {
-            pdf.setFontSize(12);
-            pdf.text(`${dept.name}: ${dept.count} participants`, 15, yPosition);
-            yPosition += 10;
-            
-            // If we're reaching the bottom of the page, create a new page
-            if (yPosition > 270) {
-                pdf.addPage();
-                yPosition = 20;
-            }
-        });
-        
-        // Create a new page for college breakdown
-        pdf.addPage();
-        pdf.setFontSize(16);
-        pdf.text('Participants by College', 10, 20);
-        
-        yPosition = 30;
-        collegeData.forEach((college) => {
-            pdf.setFontSize(12);
-            pdf.text(`${college.name}: ${college.count} participants`, 15, yPosition);
-            yPosition += 10;
-        });
-
-        // Department chart screenshot
-        const deptChartElement = document.querySelector('.department-charts');
-        if (deptChartElement) {
-            const deptChartCanvas = await html2canvas(deptChartElement);
-            const deptChartImage = deptChartCanvas.toDataURL('image/png');
-            pdf.addPage();
-            pdf.text('Department Charts', 10, 20);
-            pdf.addImage(deptChartImage, 'PNG', 10, 30, 180, 100);
-        }
-
-        // Users Table
-        const matchedUsers = attendedList
-            .map((attended) => {
-                // Try to find the associated user
-                const user = users.find((u) => u._id && attended.userId && u._id.toString() === attended.userId.toString());
-                
-                // If found, merge the data, otherwise use what we have from the form
-                if (user) {
-                    return { 
-                        ...user, 
-                        eventRating: attended.eventRating,
-                        responses: attended.responses 
-                    };
-                } else {
-                    // Use form data for user info if no matching user found
-                    return {
-                        _id: attended.id,
-                        name: attended.userName,
-                        email: attended.userEmail,
-                        phoneNumber: 'N/A',
-                        college: 'N/A',
-                        department: 'N/A',
-                        role: 'N/A',
-                        eventRating: attended.eventRating,
-                        responses: attended.responses
-                    };
-                }
-            })
-            .filter(Boolean);
-
-        // Add users table to a new page
-        pdf.addPage();
-        pdf.setFontSize(16);
-        pdf.text('Participants Details:', 10, 20);
-        
-        yPosition = 30;
-        matchedUsers.forEach((user, index) => {
-            pdf.setFontSize(12);
-            pdf.text(
-                `${index + 1}. ${user.name || 'N/A'} | ${user.email || 'N/A'} | ${user.department || 'N/A'} | Rating: ${
-                    user.eventRating || 'N/A'
-                }`,
-                10,
-                yPosition
-            );
-            yPosition += 10;
-            
-            // If we're reaching the bottom of the page, create a new page
-            if (yPosition > 270 && index < matchedUsers.length - 1) {
-                pdf.addPage();
-                yPosition = 20;
-            }
-        });
-
-        // Save PDF
-        pdf.save(`${eventDetail?.title || 'Event_Report'}.pdf`);
-    };
-
-
     if (loading) {
         return <div>Loading...</div>;
     }
@@ -496,86 +552,153 @@ const EventDetails = () => {
         return new Date(date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
     };
 
+    // Generate PDF using the printable content reference
+    const handleDownloadPDF = () => {
+        const options = {
+            filename: `${eventDetail?.title || 'Event_Report'}.pdf`,
+            page: { 
+                margin: 10, 
+                format: 'a4',
+                orientation: 'portrait' 
+            },
+            canvas: {
+                mimeType: 'image/png',
+                qualityRatio: 1
+            },
+            overrides: {
+                // Override pdf options
+                pdf: {
+                    compress: true,
+                    userUnit: 1.0,
+                    hotfixes: ["px_scaling"]
+                },
+                // Override canvas options
+                canvas: {
+                    scale: 2, // Higher scale for better quality
+                    useCORS: true,
+                    scrollX: 0,
+                    scrollY: 0,
+                    windowWidth: 800,
+                    windowHeight: 1200,
+                    logging: true
+                }
+            }
+        };
+        
+        // Use the imported default function with the ref
+        generatePDF(printableRef, options);
+    };
+
     return (
-        <div className="dashboard-container">
-            <div className="event-container">
-                <h2 className="event-report-title">Event Report</h2>
-                <div className="action-buttons">
-                    <button onClick={downloadPDF} className="download-btn">Download PDF</button>
-                    {eventDetail?.formId ? (
-                        <a 
-                            href={eventDetail.formId} 
-                            target="_blank" 
-                            rel="noopener noreferrer" 
-                            className="forms-btn"
-                        >
-                            View Form Responses
-                        </a>
-                    ) : (
-                        <button className="forms-btn disabled" disabled>
-                            No Forms Available
-                        </button>
-                    )}
+        <>
+            {/* Printable content for PDF generation - positioned offscreen instead of display:none */}
+            <div 
+                ref={printableRef} 
+                style={{ 
+                    position: 'absolute', 
+                    width: '210mm', /* A4 width */
+                    left: '-9999px', 
+                    top: 0,
+                    backgroundColor: 'white'
+                }}
+            >
+                <PrintableContent 
+                    eventDetail={eventDetail}
+                    registeredCount={registeredCount}
+                    attendedCount={attendedCount}
+                    chartData={chartData}
+                    departmentData={departmentData}
+                    collegeData={collegeData}
+                    attendedList={attendedList}
+                    users={users}
+                />
+            </div>
+            
+            {/* Visible content */}
+            <div className="event-details-container">
+                <div className="event-header">
+                    <h2 className="event-report-title">Event Report</h2>
+                    <div className="action-buttons">
+                        <button onClick={handleDownloadPDF} className="download-btn">Download PDF</button>
+                        {eventDetail?.formId ? (
+                            <a 
+                                href={eventDetail.formId} 
+                                target="_blank" 
+                                rel="noopener noreferrer" 
+                                className="forms-btn"
+                            >
+                                View Form Responses
+                            </a>
+                        ) : (
+                            <button className="forms-btn disabled" disabled>
+                                No Forms Available
+                            </button>
+                        )}
+                    </div>
                 </div>
-                <div className="details-section">
-                    <img
-                        src={`http://localhost:3000/eventPictures/${eventDetail?.eventPicture}`}
-                        alt="Event"
-                        className="history-event-img"
-                        onError={(e) => (e.target.src = '/src/assets/default-eventPicture.jpg')}
-                    />
-                    <h3>{eventDetail?.title}</h3>
-                    <p>{eventDetail?.description}</p>
-                    <div className="info-container">
-                        <span>
-                            <FontAwesomeIcon icon={faCalendarCheck} /> {new Date(eventDetail.eventDate).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
-                        </span>
-                        <span>
-                            <FontAwesomeIcon icon={faClock} /> {formatTime(eventDetail?.startTime)} - {formatTime(eventDetail?.endTime)}
-                        </span>
-                        <span>
-                            <FontAwesomeIcon icon={faMapMarkerAlt} /> {eventDetail?.location}
-                        </span>
+                
+                <div className="event-content">
+                    <div className="event-info-section">
+                        <img
+                            src={`http://localhost:3000/eventPictures/${eventDetail?.eventPicture}`}
+                            alt="Event"
+                            className="history-event-img"
+                            onError={(e) => (e.target.src = '/src/assets/default-eventPicture.jpg')}
+                        />
+                        <h3>{eventDetail?.title}</h3>
+                        <p>{eventDetail?.description}</p>
+                        <div className="info-container">
+                            <span>
+                                <FontAwesomeIcon icon={faCalendarCheck} /> {new Date(eventDetail.eventDate).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
+                            </span>
+                            <span>
+                                <FontAwesomeIcon icon={faClock} /> {formatTime(eventDetail?.startTime)} - {formatTime(eventDetail?.endTime)}
+                            </span>
+                            <span>
+                                <FontAwesomeIcon icon={faMapMarkerAlt} /> {eventDetail?.location}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div className="event-stats-section">
+                        <div className="dashboard">
+                            <StatCard
+                                title="Attendees Registered"
+                                count={registeredCount}
+                                icon={<FontAwesomeIcon icon={faUsers} size="2x" />}
+                                color="#4a90e2"
+                            />
+                            <StatCard
+                                title="Participants Attended"
+                                count={attendedCount}
+                                icon={<FontAwesomeIcon icon={faUsers} size="2x" />}
+                                color="#9b51e0"
+                            />
+                            <StatCard
+                                title="Participants Absent"
+                                count={registeredCount - attendedCount}
+                                icon={<FontAwesomeIcon icon={faUsers} size="2x" />}
+                                color="#F08080"
+                            />
+                            <StatCard
+                                title="Event Duration"
+                                count={eventDuration}
+                                icon={<FontAwesomeIcon icon={faClock} size="2x" />}
+                                color="#ff3b30"
+                            />
+                        </div>
+                        <Chart chartData={chartData} />
+                        <DepartmentBreakdown 
+                            departmentData={getFilteredDepartmentData()} 
+                            collegeData={collegeData}
+                            selectedFilter={selectedDepartmentFilter}
+                            onFilterChange={setSelectedDepartmentFilter}
+                        />
+                        <UsersTable attendedList={attendedList} users={users} />
                     </div>
                 </div>
             </div>
-            <div className="content">
-                <div className="dashboard">
-                    <StatCard
-                        title="Attendees Registered"
-                        count={registeredCount}
-                        icon={<FontAwesomeIcon icon={faUsers} size="2x" />}
-                        color="#4a90e2"
-                    />
-                    <StatCard
-                        title="Participants Attended"
-                        count={attendedCount}
-                        icon={<FontAwesomeIcon icon={faUsers} size="2x" />}
-                        color="#9b51e0"
-                    />
-                    <StatCard
-                        title="Participants Absent"
-                        count={registeredCount - attendedCount}
-                        icon={<FontAwesomeIcon icon={faUsers} size="2x" />}
-                        color="#F08080"
-                    />
-                    <StatCard
-                        title="Event Duration"
-                        count={eventDuration}
-                        icon={<FontAwesomeIcon icon={faClock} size="2x" />}
-                        color="#ff3b30"
-                    />
-                </div>
-                <Chart chartData={chartData} />
-                <DepartmentBreakdown 
-                    departmentData={getFilteredDepartmentData()} 
-                    collegeData={collegeData}
-                    selectedFilter={selectedDepartmentFilter}
-                    onFilterChange={setSelectedDepartmentFilter}
-                />
-                <UsersTable attendedList={attendedList} users={users} />
-            </div>
-        </div>
+        </>
     );
 };
 

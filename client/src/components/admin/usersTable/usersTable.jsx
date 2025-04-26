@@ -50,7 +50,7 @@ const departments = {
   ],
   "College of Law": ["Juris Doctor"],
   "College of Public Administration and Governance": [],
-  "College of Nursing": [],
+  "College of Nursing": ["Nursing"],
   "College of Technologies": [
     "Information Technology",
     "Electronics Technology",

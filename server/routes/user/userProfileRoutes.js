@@ -7,7 +7,7 @@ const certificateService = require('../../services/user/certificateService');
 
 // User Profile Page
 userProfileRoutes.get('/u/profile', authenticateJWT, userProfileService.renderProfilePage);
-userProfileRoutes.put('/u/profile', authenticateJWT, userProfileService.updateUserProfile);
+userProfileRoutes.patch('/u/profile', authenticateJWT, userProfileService.updateUserProfile);
 
 // Certificates
 userProfileRoutes.get('/u/certificates', authenticateJWT, certificateService.getUserCertificates);
