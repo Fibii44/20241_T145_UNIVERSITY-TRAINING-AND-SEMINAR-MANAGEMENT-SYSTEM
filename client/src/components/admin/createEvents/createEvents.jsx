@@ -203,6 +203,23 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
       setLocation(initialEventData.location || '');
       setDescription(initialEventData.description || '');
       setReminders(initialEventData.reminders || []);
+      
+      // Set the activeReminder based on the minutesBefore value in the reminders array
+      if (initialEventData.reminders && initialEventData.reminders.length > 0) {
+        const minutes = initialEventData.reminders[0].minutesBefore;
+        if (minutes === 60) {
+          setActiveReminder('1 hour before');
+        } else if (minutes === 1440) {
+          setActiveReminder('1 day before');
+        } else if (minutes === 10080) {
+          setActiveReminder('1 week before');
+        } else {
+          setActiveReminder('None');
+        }
+      } else {
+        setActiveReminder('None');
+      }
+      
       setColor(initialEventData.color || '');
       setSelectedParticipants(initialEventData.customParticipants || []);
       setParticipants({
