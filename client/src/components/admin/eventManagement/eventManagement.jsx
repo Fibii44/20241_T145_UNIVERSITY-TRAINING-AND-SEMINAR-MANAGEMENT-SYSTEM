@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCalendarCheck, faClock, faPlus, faMapMarkerAlt, faLock, faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { faCalendarCheck, faClock, faPlus, faMapMarkerAlt, faLock, faChevronLeft, faChevronRight, faUsers } from '@fortawesome/free-solid-svg-icons';
 import './eventManagement.css';
 import { jwtDecode } from 'jwt-decode';
 import EventModal from '../createEvents/createEvents';
@@ -20,6 +20,7 @@ const EventM = ({ userRole, userCollege }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const eventsPerPage = 4;
   const [toast, setToast] = useState(null);
+  const [registrationCounts, setRegistrationCounts] = useState({});
 
   const showToast = (message, type = 'success') => {
     setToast({ message, type });
@@ -29,6 +30,25 @@ const EventM = ({ userRole, userCollege }) => {
   const formatTime = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+  };
+
+  const fetchRegistrationCounts = async (token) => {
+    try {
+      // Get registration counts for each event
+      const response = await axios.get('http://localhost:3000/a/event-registration-counts', { 
+        headers: { Authorization: `Bearer ${token}` } 
+      });
+
+      // Create a map of event ID to registration count
+      const counts = {};
+      response.data.forEach(item => {
+        counts[item.eventId] = item.count;
+      });
+      
+      setRegistrationCounts(counts);
+    } catch (error) {
+      console.error('Error fetching registration counts:', error);
+    }
   };
 
   const fetchEvents = async () => {
@@ -44,6 +64,9 @@ const EventM = ({ userRole, userCollege }) => {
       }));
   
       setEvents(formattedEvents);
+      
+      // Fetch registration counts for all events
+      await fetchRegistrationCounts(token);
     } catch (error) {
       if (error.response) {
         showToast(
@@ -457,6 +480,10 @@ const EventM = ({ userRole, userCollege }) => {
                 <div className="event-details">
                   <div className="event-title">
                     <h3>{event.title}</h3>
+                    <div className="registration-count">
+                      <FontAwesomeIcon icon={faUsers} />
+                      <span>{registrationCounts[event._id] || 0} Registered</span>
+                    </div>
                   </div>
                   <p className="event-description">{event.description}</p>
                   <div className="event-info">

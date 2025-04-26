@@ -334,7 +334,7 @@ const EventDetails = () => {
     
     // Reference for the printable content
     const printableRef = useRef(null);
-    
+
     // Fetch event details
     useEffect(() => {
         const fetchData = async () => {
@@ -617,86 +617,86 @@ const EventDetails = () => {
             {/* Visible content */}
             <div className="event-details-container">
                 <div className="event-header">
-                    <h2 className="event-report-title">Event Report</h2>
-                    <div className="action-buttons">
+                <h2 className="event-report-title">Event Report</h2>
+                <div className="action-buttons">
                         <button onClick={handleDownloadPDF} className="download-btn">Download PDF</button>
-                        {eventDetail?.formId ? (
-                            <a 
-                                href={eventDetail.formId} 
-                                target="_blank" 
-                                rel="noopener noreferrer" 
-                                className="forms-btn"
-                            >
-                                View Form Responses
-                            </a>
-                        ) : (
-                            <button className="forms-btn disabled" disabled>
-                                No Forms Available
-                            </button>
-                        )}
-                    </div>
+                    {eventDetail?.formId ? (
+                        <a 
+                            href={eventDetail.formId} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            className="forms-btn"
+                        >
+                            View Form Responses
+                        </a>
+                    ) : (
+                        <button className="forms-btn disabled" disabled>
+                            No Forms Available
+                        </button>
+                    )}
+                </div>
                 </div>
                 
                 <div className="event-content">
                     <div className="event-info-section">
-                        <img
-                            src={`http://localhost:3000/eventPictures/${eventDetail?.eventPicture}`}
-                            alt="Event"
-                            className="history-event-img"
-                            onError={(e) => (e.target.src = '/src/assets/default-eventPicture.jpg')}
-                        />
-                        <h3>{eventDetail?.title}</h3>
-                        <p>{eventDetail?.description}</p>
-                        <div className="info-container">
-                            <span>
-                                <FontAwesomeIcon icon={faCalendarCheck} /> {new Date(eventDetail.eventDate).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
-                            </span>
-                            <span>
-                                <FontAwesomeIcon icon={faClock} /> {formatTime(eventDetail?.startTime)} - {formatTime(eventDetail?.endTime)}
-                            </span>
-                            <span>
-                                <FontAwesomeIcon icon={faMapMarkerAlt} /> {eventDetail?.location}
-                            </span>
-                        </div>
-                    </div>
-
-                    <div className="event-stats-section">
-                        <div className="dashboard">
-                            <StatCard
-                                title="Attendees Registered"
-                                count={registeredCount}
-                                icon={<FontAwesomeIcon icon={faUsers} size="2x" />}
-                                color="#4a90e2"
-                            />
-                            <StatCard
-                                title="Participants Attended"
-                                count={attendedCount}
-                                icon={<FontAwesomeIcon icon={faUsers} size="2x" />}
-                                color="#9b51e0"
-                            />
-                            <StatCard
-                                title="Participants Absent"
-                                count={registeredCount - attendedCount}
-                                icon={<FontAwesomeIcon icon={faUsers} size="2x" />}
-                                color="#F08080"
-                            />
-                            <StatCard
-                                title="Event Duration"
-                                count={eventDuration}
-                                icon={<FontAwesomeIcon icon={faClock} size="2x" />}
-                                color="#ff3b30"
-                            />
-                        </div>
-                        <Chart chartData={chartData} />
-                        <DepartmentBreakdown 
-                            departmentData={getFilteredDepartmentData()} 
-                            collegeData={collegeData}
-                            selectedFilter={selectedDepartmentFilter}
-                            onFilterChange={setSelectedDepartmentFilter}
-                        />
-                        <UsersTable attendedList={attendedList} users={users} />
+                    <img
+                        src={`http://localhost:3000/eventPictures/${eventDetail?.eventPicture}`}
+                        alt="Event"
+                        className="history-event-img"
+                        onError={(e) => (e.target.src = '/src/assets/default-eventPicture.jpg')}
+                    />
+                    <h3>{eventDetail?.title}</h3>
+                    <p>{eventDetail?.description}</p>
+                    <div className="info-container">
+                        <span>
+                            <FontAwesomeIcon icon={faCalendarCheck} /> {new Date(eventDetail.eventDate).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
+                        </span>
+                        <span>
+                            <FontAwesomeIcon icon={faClock} /> {formatTime(eventDetail?.startTime)} - {formatTime(eventDetail?.endTime)}
+                        </span>
+                        <span>
+                            <FontAwesomeIcon icon={faMapMarkerAlt} /> {eventDetail?.location}
+                        </span>
                     </div>
                 </div>
+
+                    <div className="event-stats-section">
+                <div className="dashboard">
+                    <StatCard
+                        title="Attendees Registered"
+                        count={registeredCount}
+                        icon={<FontAwesomeIcon icon={faUsers} size="2x" />}
+                        color="#4a90e2"
+                    />
+                    <StatCard
+                        title="Participants Attended"
+                        count={attendedCount}
+                        icon={<FontAwesomeIcon icon={faUsers} size="2x" />}
+                        color="#9b51e0"
+                    />
+                    <StatCard
+                        title="Participants Absent"
+                        count={registeredCount - attendedCount}
+                        icon={<FontAwesomeIcon icon={faUsers} size="2x" />}
+                        color="#F08080"
+                    />
+                    <StatCard
+                        title="Event Duration"
+                        count={eventDuration}
+                        icon={<FontAwesomeIcon icon={faClock} size="2x" />}
+                        color="#ff3b30"
+                    />
+                </div>
+                <Chart chartData={chartData} />
+                <DepartmentBreakdown 
+                    departmentData={getFilteredDepartmentData()} 
+                    collegeData={collegeData}
+                    selectedFilter={selectedDepartmentFilter}
+                    onFilterChange={setSelectedDepartmentFilter}
+                />
+                <UsersTable attendedList={attendedList} users={users} />
+            </div>
+        </div>
             </div>
         </>
     );

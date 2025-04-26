@@ -8,5 +8,6 @@ adminReportRoutes.get('/a/event-history', authenticateJWT, adminService.renderEv
 adminReportRoutes.get('/a/event/registrations/:id', authenticateJWT, adminService.getRegisteredUsers);
 //GET all submissions in a specific eventId
 adminReportRoutes.get('/a/event/form-submissions/:id', authenticateJWT, adminService.formSubmissionsEvent);
+adminReportRoutes.get('/a/event-registration-counts', authenticateJWT, adminService.getEventRegistrationCounts);
 
 module.exports = adminReportRoutes;

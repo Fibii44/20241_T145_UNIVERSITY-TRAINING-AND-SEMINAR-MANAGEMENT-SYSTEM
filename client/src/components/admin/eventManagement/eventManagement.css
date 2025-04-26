@@ -89,6 +89,9 @@
 }
 .event-title {
   margin-bottom: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
 }
 .event-title h3 {
   font-size: 1.1rem;
@@ -96,6 +99,22 @@
   font-weight: 600;
   line-height: 1.4;
   margin: 0;
+  flex: 1;
+}
+.registration-count {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background-color: #f0f7ff;
+  color: #4a90e2;
+  font-size: 0.8rem;
+  padding: 4px 8px;
+  border-radius: 16px;
+  white-space: nowrap;
+  font-weight: 500;
+}
+.registration-count svg {
+  font-size: 0.9rem;
 }
 .event-description {
   font-size: 0.9rem;
