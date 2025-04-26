@@ -34,18 +34,51 @@ const EventM = ({ userRole, userCollege }) => {
 
   const fetchRegistrationCounts = async (token) => {
     try {
-      // Get registration counts for each event
-      const response = await axios.get('http://localhost:3000/a/event-registration-counts', { 
-        headers: { Authorization: `Bearer ${token}` } 
-      });
-
-      // Create a map of event ID to registration count
-      const counts = {};
-      response.data.forEach(item => {
-        counts[item.eventId] = item.count;
-      });
+      // Initialize with current registration counts to avoid flickering
+      const newCounts = { ...registrationCounts };
       
-      setRegistrationCounts(counts);
+      // For each event, fetch its registrations
+      for (const event of events) {
+        try {
+          // Skip if we already have the count for this event
+          if (newCounts[event._id] !== undefined) {
+            continue;
+          }
+          
+          // Show loading state
+          setRegistrationCounts(prevCounts => ({
+            ...prevCounts,
+            [event._id]: '...'
+          }));
+          
+          // Get registrations for this specific event
+          const registeredResponse = await axios.get(`http://localhost:3000/a/event/registrations/${event._id}`, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          
+          // Store the count in the counts object
+          const count = registeredResponse.data.length || 0;
+          
+          // Update the specific event count (prevent overwriting the entire state)
+          setRegistrationCounts(prevCounts => ({
+            ...prevCounts,
+            [event._id]: count
+          }));
+          
+          // Also add to our local newCounts object
+          newCounts[event._id] = count;
+        } catch (eventError) {
+          console.error(`Error fetching registrations for event ${event._id}:`, eventError);
+          
+          // Set to 0 on error
+          setRegistrationCounts(prevCounts => ({
+            ...prevCounts,
+            [event._id]: 0
+          }));
+          
+          newCounts[event._id] = 0;
+        }
+      }
     } catch (error) {
       console.error('Error fetching registration counts:', error);
     }
@@ -65,15 +98,17 @@ const EventM = ({ userRole, userCollege }) => {
   
       setEvents(formattedEvents);
       
-      // Fetch registration counts for all events
-      await fetchRegistrationCounts(token);
+      // Fetch registration counts after events are loaded
+      if (formattedEvents.length > 0) {
+        fetchRegistrationCounts(token); // Don't await this to prevent blocking rendering
+      }
     } catch (error) {
       if (error.response) {
         showToast(
           `Error: ${error.response.status} - ${
             error.response.data?.message || "Failed to fetch events from the server."
           }`,
-          'error' // Pass 'error' for red color
+          'error'
         );
       } else if (error.request) {
         showToast(
@@ -408,6 +443,15 @@ const EventM = ({ userRole, userCollege }) => {
       };
     }, [selectedEvent]);
 
+  // Add this useEffect to preserve registration counts
+  useEffect(() => {
+    // Keep registration counts persistent during renders
+    const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken');
+    if (events.length > 0 && Object.keys(registrationCounts).length === 0) {
+      fetchRegistrationCounts(token);
+    }
+  }, [events]);
+
   return (
     <div className="dashboard-container">
       <div className="event-content">
@@ -482,7 +526,11 @@ const EventM = ({ userRole, userCollege }) => {
                     <h3>{event.title}</h3>
                     <div className="registration-count">
                       <FontAwesomeIcon icon={faUsers} />
-                      <span>{registrationCounts[event._id] || 0} Registered</span>
+                      <span>
+                        {registrationCounts[event._id] === '...' ? 
+                          <span className="loading-count">Loading...</span> : 
+                          `${registrationCounts[event._id] ?? 0} Registered`}
+                      </span>
                     </div>
                   </div>
                   <p className="event-description">{event.description}</p>

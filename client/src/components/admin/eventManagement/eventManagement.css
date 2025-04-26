@@ -88,33 +88,29 @@
   flex-direction: column;
 }
 .event-title {
-  margin-bottom: 0.5rem;
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: flex-start;
+  margin-bottom: 10px;
 }
 .event-title h3 {
-  font-size: 1.1rem;
-  color: #011c39;
-  font-weight: 600;
-  line-height: 1.4;
   margin: 0;
-  flex: 1;
+  font-size: 1.2rem;
+  color: #333;
 }
 .registration-count {
   display: flex;
   align-items: center;
   gap: 5px;
-  background-color: #f0f7ff;
-  color: #4a90e2;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
+  color: #666;
+  background-color: #f8f9fa;
   padding: 4px 8px;
-  border-radius: 16px;
-  white-space: nowrap;
-  font-weight: 500;
+  border-radius: 4px;
+  margin-left: 10px;
 }
 .registration-count svg {
-  font-size: 0.9rem;
+  color: #4a90e2;
 }
 .event-description {
   font-size: 0.9rem;
@@ -221,4 +217,20 @@
 .lock-icon {
   color: #6c757d;
   font-size: 1.2rem;
+}
+.loading-count {
+  display: inline-block;
+  color: #6c757d;
+  font-style: italic;
+  font-size: 0.85rem;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+
+.loading-count {
+  animation: pulse 1.5s infinite ease-in-out;
 }
