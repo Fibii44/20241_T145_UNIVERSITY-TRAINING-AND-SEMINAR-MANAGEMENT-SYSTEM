@@ -122,7 +122,7 @@ const EventModal = ({ isOpen, onClose, onSave, userRole, userCollege, initialEve
 
   const handleReminderClick = (reminder) => {
     if (reminder === 'None') {
-      setReminders([]);
+      setReminders([{ method: 'popup', minutesBefore: 0 }]); // Set a specific reminder object for 'None'
       setActiveReminder('None');
     } else {
       const reminderTime = getReminderTimeInMinutes(reminder);
