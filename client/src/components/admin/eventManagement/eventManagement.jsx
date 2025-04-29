@@ -455,38 +455,37 @@ const EventM = ({ userRole, userCollege }) => {
   return (
     <div className="dashboard-container">
       <div className="event-content">
-        <div className="dashboard-inline">        
-          <h2 className="dashboard-heading">Events</h2>
-          <input
-            type="text"
-            className="search-bar"
-            placeholder="Search events..."
-            value={searchQuery}
-            onChange={handleSearch}
-          />
-          <div className="sort-container">
-            <label className="sort-label" htmlFor="sort">Sort By:</label>
-            <select
-              id="sort"
-              value={sortOption}
-              onChange={(e) => handleSort(e.target.value)}
-            >
-              <option value="dateAsc">Date (Ascending)</option>
-              <option value="dateDesc">Date (Descending)</option>
-              <option value="titleAsc">Title (A-Z)</option>
-              <option value="titleDesc">Title (Z-A)</option>
-            </select>
+        <div className="search-filter-container">
+          <div className="left-section">
+            <h2 className="dashboard-heading">Events</h2>
+            <div className="search-input-container">
+              <input
+                type="text"
+                placeholder="Search events..."
+                value={searchQuery}
+                onChange={handleSearch}
+                className="search-input"
+              />
+            </div>
           </div>
-          <button 
-            className="dashboard-button" 
-            onClick={() => {
-              setSelectedEvent(null);
-              setIsModalOpen(true);
-            }} 
-            disabled={loading}
-          >
-            <FontAwesomeIcon icon={faPlus} />
-          </button>
+          <div className="filter-controls">
+            <div className="sort-group">
+              <label>Sort by:</label>
+              <select
+                value={sortOption}
+                onChange={(e) => setSortOption(e.target.value)}
+                className="custom-select"
+              >
+                <option value="dateAsc">Date (Ascending)</option>
+                <option value="dateDesc">Date (Descending)</option>
+                <option value="titleAsc">Title (A-Z)</option>
+                <option value="titleDesc">Title (Z-A)</option>
+              </select>
+            </div>
+            <button className="create-event-btn" onClick={() => setIsModalOpen(true)}>
+              <FontAwesomeIcon icon={faPlus} /> Create Event
+            </button>
+          </div>
         </div>
 
         <EventModal
@@ -509,7 +508,7 @@ const EventM = ({ userRole, userCollege }) => {
           onConfirmDelete={confirmDelete}
         />
 
-        <div className="context-card">
+        <div className="event-context-card">
           <div className="admin-event-list">
             {currentEvents.map((event) => (
               <div className="admin-event-card" key={`${event._id}-${event.startTime.getTime()}`}>

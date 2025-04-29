@@ -549,8 +549,8 @@ const Table = () => {
   return (
     <div className="usertable-container">
       <div className="content">
-        <div className="header-container">
-          <h2>Users Table</h2>
+        <div className="search-filter-container">
+          <h2 className="dashboard-heading">User Table</h2>
           <div className="filter-header">
             <div className="filter">
               <label htmlFor="collegeFilter">Colleges:</label>
@@ -559,18 +559,15 @@ const Table = () => {
                 value={collegeFilter}
                 onChange={(e) => {
                   setCollegeFilter(e.target.value);
-                  setDepartmentFilter('all'); // Reset department filter when college changes
+                  setDepartmentFilter('all');
                 }}
               >
                 <option value="all">All</option>
                 {colleges.map((college) => (
-                  <option key={college} value={college}>
-                    {college}
-                  </option>
+                  <option key={college} value={college}>{college}</option>
                 ))}
               </select>
             </div>
-
             <div className="filter">
               <label htmlFor="departmentFilter">Departments:</label>
               <select
@@ -580,15 +577,11 @@ const Table = () => {
                 disabled={collegeFilter === 'all'}
               >
                 <option value="all">All</option>
-                {collegeFilter !== 'all' &&
-                  departments[collegeFilter]?.map((department) => (
-                    <option key={department} value={department}>
-                      {department}
-                    </option>
-                  ))}
+                {collegeFilter !== 'all' && departments[collegeFilter]?.map((department) => (
+                  <option key={department} value={department}>{department}</option>
+                ))}
               </select>
             </div>
-
             <div className="filter">
               <label htmlFor="roleFilter">Role:</label>
               <select
@@ -602,7 +595,6 @@ const Table = () => {
                 <option value="admin">Admin</option>
               </select>
             </div>
-
             <div className="filter">
               <label htmlFor="statusFilter">Status:</label>
               <select
@@ -614,13 +606,9 @@ const Table = () => {
                 <option value="inactive">Inactive</option>
               </select>
             </div>
-
             <div className="add-personnel-button">
-              <a href="#" onClick={(e) => { 
-                e.preventDefault(); 
-                handleOpenModal(); 
-              }}> 
-                <FontAwesomeIcon icon={faUserPlus} /> 
+              <a href="#" onClick={(e) => { e.preventDefault(); handleOpenModal(); }}>
+                <FontAwesomeIcon icon={faUserPlus} />
               </a>
             </div>
           </div>

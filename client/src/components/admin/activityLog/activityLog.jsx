@@ -92,11 +92,49 @@ const ActivityLog = () => {
     }, []);
 
     // Filter logs based on search query
-    const filteredLogs = logs.filter((log) =>
-        log.action.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        moment(log.createdAt).format('YYYY-MM-DD HH:mm:ss').toLowerCase().includes(searchQuery.toLowerCase()) ||
-        log.userId?.name?.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const filteredLogs = logs.filter((log) => {
+        const searchLower = searchQuery.toLowerCase().trim();
+        
+        // If search query is empty, return all logs
+        if (!searchLower) return true;
+
+        // Check if search query is a date
+        const searchDate = moment(searchLower, [
+            'YYYY-MM-DD',
+            'MM-DD-YYYY',
+            'DD-MM-YYYY',
+            'MMMM D, YYYY',
+            'MMM D, YYYY',
+            'D MMM YYYY',
+            'D MMMM YYYY'
+        ], true);
+
+        // If search query is a valid date
+        if (searchDate.isValid()) {
+            const logDate = moment(log.createdAt);
+            return logDate.format('YYYY-MM-DD') === searchDate.format('YYYY-MM-DD');
+        }
+
+        // Search in action
+        if (log.action.toLowerCase().includes(searchLower)) return true;
+
+        // Search in user name
+        if (log.userId?.name?.toLowerCase().includes(searchLower)) return true;
+
+        // Search in timestamp with multiple formats
+        const logDate = moment(log.createdAt);
+        const dateFormats = [
+            logDate.format('YYYY-MM-DD'),
+            logDate.format('MM-DD-YYYY'),
+            logDate.format('DD-MM-YYYY'),
+            logDate.format('MMMM D, YYYY'),
+            logDate.format('MMM D, YYYY'),
+            logDate.format('D MMM YYYY'),
+            logDate.format('D MMMM YYYY')
+        ];
+
+        return dateFormats.some(format => format.toLowerCase().includes(searchLower));
+    });
 
     const totalPages = Math.ceil(filteredLogs.length / logsPerPage);
     const startIndex = (currentPage - 1) * logsPerPage;
@@ -132,7 +170,7 @@ const ActivityLog = () => {
             <h2 className="activity-log-header">Activity Logs</h2>
             <input
                 type="text"
-                placeholder="Search by action, date, or user..."
+                placeholder="Search by action, date (e.g., 2024-03-15, Mar 15 2024), or user..."
                 className="activity-log-search"
                 value={searchQuery}
                 onChange={handleSearch}
@@ -173,9 +211,36 @@ const ActivityLog = () => {
                 >
                     Previous
                 </button>
-                <span className="pagination-info">
-                    Page {currentPage} of {totalPages}
-                </span>
+                {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+                    let pageNumber;
+                    if (totalPages <= 5) {
+                        // If total pages is 5 or less, show all pages
+                        pageNumber = i + 1;
+                    } else {
+                        // If current page is near the start
+                        if (currentPage <= 3) {
+                            pageNumber = i + 1;
+                        }
+                        // If current page is near the end
+                        else if (currentPage >= totalPages - 2) {
+                            pageNumber = totalPages - 4 + i;
+                        }
+                        // If current page is in the middle
+                        else {
+                            pageNumber = currentPage - 2 + i;
+                        }
+                    }
+                    
+                    return (
+                        <button
+                            key={pageNumber}
+                            onClick={() => setCurrentPage(pageNumber)}
+                            className={`pagination-button ${currentPage === pageNumber ? 'active' : ''}`}
+                        >
+                            {pageNumber}
+                        </button>
+                    );
+                })}
                 <button 
                     onClick={handleNext} 
                     disabled={currentPage === totalPages} 

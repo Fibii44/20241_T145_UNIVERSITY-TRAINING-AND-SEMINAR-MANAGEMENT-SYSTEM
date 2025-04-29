@@ -1,11 +1,12 @@
 .header-container {
   margin-bottom: 20px;
-  margin-left: 20px;
   margin-top: 10px;
   display: flex;
   align-items: center;
   font-size: 12px;
   flex-wrap: wrap;
+  padding-left: 2rem;
+  padding-right: 2rem;
 }
 .usertable-search-bar{
   margin: 5px;
@@ -61,10 +62,14 @@ vertical-align: top; /* Add this line */
 }
 
 .user-table-container {
+  width: 100%;
   max-width: 100%;
-  overflow: hidden; /* Prevent the container from having its own scrollbar */
+  overflow: hidden;
   border: 2px solid #dfdfdf;
   background-color: #ffffff;
+  margin: 1.5rem 0 0 0;
+  padding-left: 0;
+  padding-right: 0;
 }
 
 .personnel-table {
@@ -458,4 +463,25 @@ white-space: nowrap; /* Prevent the tooltip text from wrapping */
 .add-personnel-button a:hover .tooltip {
 visibility: visible;
 opacity: 1;
+}
+
+.search-filter-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  border-radius: 8px;
+  padding: 0.5rem 2rem;
+  margin-bottom: 1rem;
+}
+
+.usertable-container {
+  padding: 0 2rem;
+}
+
+.dashboard-heading {
+  margin: 1.5rem 0 1rem 2rem;
+  color: #011c39;
+  font-size: 1.5rem;
+  white-space: nowrap;
 }
